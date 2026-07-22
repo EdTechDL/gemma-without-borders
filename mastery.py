@@ -89,16 +89,24 @@ def teach(session: MasterySession) -> str:
 def next_probe(session: MasterySession, questions: list) -> dict | None:
     """A FRESH check question on the same misconception.
 
-    Prefer a bank item (its answer key is ground truth). Fall back to asking
-    Gemma to generate one in strict JSON. Returns None if nothing usable."""
+    Order of preference (most trustworthy first):
+      1. an unused bank item tagged with the SAME misconception (ground-truth key)
+      2. an unused bank item from the same STRAND (still ground-truth key)
+      3. a Gemma-generated item (last resort: a small model can get its own
+         answer key wrong, so the bank always wins while items remain)"""
+    def take(q, why):
+        session.used_item_ids.append(q["id"])
+        session.history.append({"kind": "probe", "source": why, "id": q["id"]})
+        return {"source": why, **q}
+
     for q in questions:
         if q["id"] in session.used_item_ids:
             continue
         if any(o.get("misconception_id") == session.misconception_id for o in q["options"]):
-            session.used_item_ids.append(q["id"])
-            probe = {"source": "bank", **q}
-            session.history.append({"kind": "probe", "source": "bank", "id": q["id"]})
-            return probe
+            return take(q, "bank")
+    for q in questions:
+        if q["id"] not in session.used_item_ids and q["strand"] == session.strand:
+            return take(q, "bank-strand")
     return _generated_probe(session)
 
 
