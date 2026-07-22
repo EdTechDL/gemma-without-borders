@@ -12,6 +12,7 @@ from pathlib import Path
 import streamlit as st
 
 import agent
+import mastery as m
 
 QUESTIONS = json.loads((Path(__file__).parent / "data" / "questions.json").read_text())
 STRANDS = sorted({q["strand"] for q in QUESTIONS})
@@ -102,8 +103,28 @@ def pick_quiz(strand: str, n: int) -> list:
 
 
 def reset():
-    for k in ("stage", "quiz", "answers"):
+    for k in ("stage", "quiz", "answers", "msession", "mprobe", "mlesson", "mfeedback"):
         st.session_state.pop(k, None)
+
+
+def start_mastery(result, analysis):
+    """Enter the autonomous practice loop, targeting the priority misconception."""
+    pid = analysis["priority"]["id"]
+    seed = next(w for w in result["wrong"]
+                if w["misconception"] and w["misconception"].get("id") == pid)
+    s = m.MasterySession(
+        misconception_id=pid,
+        misconception_name=analysis["priority"]["name"],
+        strand=seed["item"]["strand"],
+        seed_question=seed["item"]["question"],
+        used_item_ids=[q["id"] for q in st.session_state.quiz],
+    )
+    st.session_state.msession = s
+    with st.spinner("The agent is preparing your first lesson..."):
+        st.session_state.mlesson = m.teach(s)
+        st.session_state.mprobe = m.next_probe(s, QUESTIONS)
+    st.session_state.mfeedback = None
+    st.session_state.stage = "mastery"
 
 
 # ---------------- INTRO ----------------
@@ -172,6 +193,13 @@ def results():
             f"Your main gap is <strong>{analysis['priority']['name']}</strong> "
             f"(missed {n} time{'s' if n != 1 else ''}). The study guide starts there.",
         )
+        st.button(
+            "Practice until I've mastered it",
+            type="primary",
+            on_click=start_mastery, args=(result, analysis),
+            help="The agent keeps teaching and checking, switching approaches "
+                 "when one doesn't land, until you get two in a row right.",
+        )
     if analysis["escalate"]:
         note(
             "Teacher hand-off",
@@ -200,6 +228,84 @@ def results():
     st.button("Take another quiz", on_click=reset)
 
 
+# ---------------- MASTERY LOOP ----------------
+def check_answer():
+    s = st.session_state.msession
+    probe = st.session_state.mprobe
+    chosen = st.session_state.get("mastery_choice")
+    if not chosen:
+        return
+    outcome = m.submit_answer(s, probe, chosen)
+    st.session_state.mfeedback = outcome
+    if outcome["state"] == m.IN_PROGRESS:
+        with st.spinner("The agent is deciding what to try next..."):
+            if outcome["strategy_changed"]:
+                st.session_state.mlesson = m.teach(s)
+            st.session_state.mprobe = m.next_probe(s, QUESTIONS)
+    st.session_state.pop("mastery_choice", None)
+
+
+def mastery_stage():
+    s = st.session_state.msession
+    st.markdown('<div class="gwb-kicker">Autonomous practice</div>', unsafe_allow_html=True)
+    st.title("Mastering: " + s.misconception_name)
+
+    cols = st.columns(3)
+    cols[0].metric("Attempt", f"{s.attempts + 1} of {m.MAX_ATTEMPTS}")
+    cols[1].metric("Approach", s.strategy_name)
+    cols[2].metric("Streak", f"{s.consecutive_correct} of {m.MASTERY_BAR}")
+
+    # terminal screens
+    if s.state == m.MASTERED:
+        note("Mastery demonstrated",
+             "Two fresh questions in a row, answered correctly. The gap is closed.")
+        st.code(m.mastery_recap(s))
+        st.button("Back to my results", on_click=lambda: st.session_state.update(stage="results"))
+        st.button("Take another quiz", on_click=reset)
+        return
+    if s.state == m.ESCALATED:
+        note("Teacher hand-off",
+             "The agent tried every approach it has. Time for a human — "
+             "here is exactly what the teacher needs to know.")
+        st.code(m.escalation_report(s))
+        st.button("Back to my results", on_click=lambda: st.session_state.update(stage="results"))
+        st.button("Take another quiz", on_click=reset)
+        return
+
+    # feedback from the previous answer
+    fb = st.session_state.get("mfeedback")
+    if fb:
+        if fb["correct"]:
+            note("Correct", f"One more in a row and you've shown mastery.")
+        elif fb["strategy_changed"]:
+            note("Not yet — switching approach",
+                 f"That explanation didn't land, so the agent is trying a different "
+                 f"way: <strong>{s.strategy_name}</strong>.")
+
+    # the lesson for the current strategy
+    with st.container(border=True):
+        st.caption(f"Lesson — {s.strategy_name}")
+        st.markdown(st.session_state.mlesson)
+
+    # the probe
+    probe = st.session_state.mprobe
+    if probe is None:
+        s.state = m.ESCALATED
+        s.escalation_reason = "no fresh check question available"
+        st.rerun()
+    st.markdown(f"**Check yourself: {probe['question']}**")
+    st.radio(
+        "mastery probe",
+        [o["label"] for o in probe["options"]],
+        format_func=lambda l: f"{l})  " + next(o["text"] for o in probe["options"] if o["label"] == l),
+        index=None,
+        key="mastery_choice",
+        label_visibility="collapsed",
+    )
+    st.button("Check my answer", type="primary", on_click=check_answer,
+              disabled=st.session_state.get("mastery_choice") is None)
+
+
 # ---------------- ROUTER ----------------
 stage = st.session_state.get("stage", "intro")
-{"intro": intro, "quiz": quiz, "results": results}[stage]()
+{"intro": intro, "quiz": quiz, "results": results, "mastery": mastery_stage}[stage]()
