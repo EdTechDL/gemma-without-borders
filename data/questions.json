@@ -1,0 +1,1305 @@
+[
+  {
+    "id": "NUM-ITEM-01",
+    "strand": "Number",
+    "difficulty": "Easy",
+    "question": "Simplify 2 to the power 3, times 2 to the power 4.",
+    "options": [
+      {
+        "label": "A",
+        "text": "2 to the power 7, which is 128",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "2 to the power 12, which is 4096",
+        "is_correct": false,
+        "misconception_id": "NUM-1",
+        "misconception_name": "Multiplying exponents when multiplying like bases"
+      },
+      {
+        "label": "C",
+        "text": "4 to the power 7, which is 16384",
+        "is_correct": false,
+        "misconception_id": "NUM-2",
+        "misconception_name": "Changing the base when operating on powers"
+      },
+      {
+        "label": "D",
+        "text": "4 to the power 12, which is 16,777,216",
+        "is_correct": false,
+        "misconception_id": "NUM-2",
+        "misconception_name": "Changing the base when operating on powers"
+      }
+    ],
+    "correct": "A",
+    "solution": "Same base, so keep the base and add the exponents: $2^3 \\times 2^4 = 2^{3+4} = 2^7 = 128$."
+  },
+  {
+    "id": "NUM-ITEM-02",
+    "strand": "Number",
+    "difficulty": "Easy",
+    "question": "Evaluate 2 to the power 3, all raised to the power 2.",
+    "options": [
+      {
+        "label": "A",
+        "text": "2 to the power 6, which is 64",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "2 to the power 5, which is 32",
+        "is_correct": false,
+        "misconception_id": "NUM-3",
+        "misconception_name": "Adding exponents for a power of a power"
+      },
+      {
+        "label": "C",
+        "text": "4 to the power 6, which is 4096",
+        "is_correct": false,
+        "misconception_id": "NUM-2",
+        "misconception_name": "Changing the base when operating on powers"
+      },
+      {
+        "label": "D",
+        "text": "4 to the power 5, which is 1024",
+        "is_correct": false,
+        "misconception_id": "NUM-2",
+        "misconception_name": "Changing the base when operating on powers"
+      }
+    ],
+    "correct": "A",
+    "solution": "Power of a power: multiply the exponents and keep the base. $(2^3)^2 = 2^{3 \\times 2} = 2^6 = 64$ (check: $8^2 = 64$)."
+  },
+  {
+    "id": "NUM-ITEM-03",
+    "strand": "Number",
+    "difficulty": "Medium",
+    "question": "Evaluate 3 to the power 0, plus 2 to the power negative 2.",
+    "options": [
+      {
+        "label": "A",
+        "text": "5/4 (one and one quarter)",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "1/4",
+        "is_correct": false,
+        "misconception_id": "NUM-4",
+        "misconception_name": "Zero exponent equals zero"
+      },
+      {
+        "label": "C",
+        "text": "negative 3",
+        "is_correct": false,
+        "misconception_id": "NUM-5",
+        "misconception_name": "Negative exponent makes the value negative"
+      },
+      {
+        "label": "D",
+        "text": "negative 4",
+        "is_correct": false,
+        "misconception_id": "NUM-5",
+        "misconception_name": "Negative exponent makes the value negative"
+      }
+    ],
+    "correct": "A",
+    "solution": "$3^0 = 1$ (any nonzero base to the power 0 is 1). $2^{-2} = \\dfrac{1}{2^2} = \\dfrac{1}{4}$. Sum: $1 + \\dfrac{1}{4} = \\dfrac{5}{4}$."
+  },
+  {
+    "id": "NUM-ITEM-04",
+    "strand": "Number",
+    "difficulty": "Medium",
+    "question": "Calculate two thirds plus one quarter.",
+    "options": [
+      {
+        "label": "A",
+        "text": "11/12",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "3/7",
+        "is_correct": false,
+        "misconception_id": "NUM-6",
+        "misconception_name": "Adding fractions straight across"
+      },
+      {
+        "label": "C",
+        "text": "1/4 (that is, 3/12)",
+        "is_correct": false,
+        "misconception_id": "NUM-6",
+        "misconception_name": "Adding fractions straight across"
+      },
+      {
+        "label": "D",
+        "text": "11/7",
+        "is_correct": false,
+        "misconception_id": "NUM-6",
+        "misconception_name": "Adding fractions straight across"
+      }
+    ],
+    "correct": "A",
+    "solution": "Find a common denominator (LCD $= 12$): $\\dfrac{2}{3} = \\dfrac{8}{12}$ and $\\dfrac{1}{4} = \\dfrac{3}{12}$. Then $\\dfrac{8}{12} + \\dfrac{3}{12} = \\dfrac{11}{12}$."
+  },
+  {
+    "id": "NUM-ITEM-05",
+    "strand": "Number",
+    "difficulty": "Easy",
+    "question": "Evaluate negative 3 minus negative 5.",
+    "options": [
+      {
+        "label": "A",
+        "text": "2",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "negative 8",
+        "is_correct": false,
+        "misconception_id": "NUM-7",
+        "misconception_name": "Mishandling subtraction of a negative integer"
+      },
+      {
+        "label": "C",
+        "text": "negative 2",
+        "is_correct": false,
+        "misconception_id": "NUM-7",
+        "misconception_name": "Mishandling subtraction of a negative integer"
+      },
+      {
+        "label": "D",
+        "text": "8",
+        "is_correct": false,
+        "misconception_id": "NUM-7",
+        "misconception_name": "Mishandling subtraction of a negative integer"
+      }
+    ],
+    "correct": "A",
+    "solution": "Subtracting a negative is the same as adding: $-3 - (-5) = -3 + 5 = 2$."
+  },
+  {
+    "id": "NUM-ITEM-06",
+    "strand": "Number",
+    "difficulty": "Medium",
+    "question": "What is 0.5 percent of 200?",
+    "options": [
+      {
+        "label": "A",
+        "text": "1",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "100",
+        "is_correct": false,
+        "misconception_id": "NUM-8",
+        "misconception_name": "Taking a percent at face value"
+      },
+      {
+        "label": "C",
+        "text": "10",
+        "is_correct": false,
+        "misconception_id": "NUM-8",
+        "misconception_name": "Taking a percent at face value"
+      },
+      {
+        "label": "D",
+        "text": "40,000",
+        "is_correct": false,
+        "misconception_id": "NUM-9",
+        "misconception_name": "Reversing part and whole in percent/proportion"
+      }
+    ],
+    "correct": "A",
+    "solution": "Convert the percent to a decimal: $0.5\\% = \\dfrac{0.5}{100} = 0.005$. Then $0.005 \\times 200 = 1$."
+  },
+  {
+    "id": "NUM-ITEM-07",
+    "strand": "Number",
+    "difficulty": "Medium",
+    "question": "15 is what percent of 60?",
+    "options": [
+      {
+        "label": "A",
+        "text": "25 percent",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "400 percent",
+        "is_correct": false,
+        "misconception_id": "NUM-9",
+        "misconception_name": "Reversing part and whole in percent/proportion"
+      },
+      {
+        "label": "C",
+        "text": "15 percent",
+        "is_correct": false,
+        "misconception_id": "NUM-8",
+        "misconception_name": "Taking a percent at face value"
+      },
+      {
+        "label": "D",
+        "text": "0.25 percent",
+        "is_correct": false,
+        "misconception_id": "NUM-8",
+        "misconception_name": "Taking a percent at face value"
+      }
+    ],
+    "correct": "A",
+    "solution": "Percent $= \\dfrac{\\text{part}}{\\text{whole}} \\times 100 = \\dfrac{15}{60} \\times 100 = 0.25 \\times 100 = 25\\%$."
+  },
+  {
+    "id": "NUM-ITEM-08",
+    "strand": "Number",
+    "difficulty": "Medium",
+    "question": "3 apples cost $1.20. At the same rate, how much do 7 apples cost?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$2.80",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "$5.20",
+        "is_correct": false,
+        "misconception_id": "NUM-10",
+        "misconception_name": "Additive instead of multiplicative proportional reasoning"
+      },
+      {
+        "label": "C",
+        "text": "$8.40",
+        "is_correct": false,
+        "misconception_id": "NUM-9",
+        "misconception_name": "Reversing part and whole in percent/proportion"
+      },
+      {
+        "label": "D",
+        "text": "$17.50",
+        "is_correct": false,
+        "misconception_id": "NUM-9",
+        "misconception_name": "Reversing part and whole in percent/proportion"
+      }
+    ],
+    "correct": "A",
+    "solution": "Unit rate $= \\dfrac{1.20}{3} = \\$0.40$ per apple. For 7 apples: $7 \\times 0.40 = \\$2.80$ (equivalently $\\dfrac{1.20 \\times 7}{3}$)."
+  },
+  {
+    "id": "ALG-ITEM-1",
+    "strand": "Algebra",
+    "difficulty": "Easy",
+    "question": "Simplify the expression: 3(2x - 4) - 5x.",
+    "options": [
+      {
+        "label": "A",
+        "text": "x - 12",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "x - 4",
+        "is_correct": false,
+        "misconception_id": "ALG-1",
+        "misconception_name": "Incomplete Distribution"
+      },
+      {
+        "label": "C",
+        "text": "-11x",
+        "is_correct": false,
+        "misconception_id": "ALG-3",
+        "misconception_name": "Combining Unlike Terms"
+      },
+      {
+        "label": "D",
+        "text": "11x - 12",
+        "is_correct": false,
+        "misconception_id": "ALG-2",
+        "misconception_name": "Negative-Sign Handling Error"
+      }
+    ],
+    "correct": "A",
+    "solution": "Distribute: $3(2x-4)=6x-12$. Then $6x-12-5x$. Combine like terms: $6x-5x=x$, giving $x-12$."
+  },
+  {
+    "id": "ALG-ITEM-2",
+    "strand": "Algebra",
+    "difficulty": "Easy",
+    "question": "Expand and simplify: -2(3x - 5).",
+    "options": [
+      {
+        "label": "A",
+        "text": "-6x + 10",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "-6x - 10",
+        "is_correct": false,
+        "misconception_id": "ALG-2",
+        "misconception_name": "Negative-Sign Handling Error"
+      },
+      {
+        "label": "C",
+        "text": "-6x - 5",
+        "is_correct": false,
+        "misconception_id": "ALG-1",
+        "misconception_name": "Incomplete Distribution"
+      },
+      {
+        "label": "D",
+        "text": "4x",
+        "is_correct": false,
+        "misconception_id": "ALG-3",
+        "misconception_name": "Combining Unlike Terms"
+      }
+    ],
+    "correct": "A",
+    "solution": "Distribute the $-2$ to both terms: $-2\\times 3x=-6x$ and $-2\\times(-5)=+10$. Result: $-6x+10$."
+  },
+  {
+    "id": "ALG-ITEM-3",
+    "strand": "Algebra",
+    "difficulty": "Medium",
+    "question": "Solve for x: 5x - 3 = 2x + 9.",
+    "options": [
+      {
+        "label": "A",
+        "text": "x = 4",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "x = 2",
+        "is_correct": false,
+        "misconception_id": "ALG-4",
+        "misconception_name": "Balancing / Inverse Operation Error"
+      },
+      {
+        "label": "C",
+        "text": "x = 12",
+        "is_correct": false,
+        "misconception_id": "ALG-9",
+        "misconception_name": "Partial Division"
+      },
+      {
+        "label": "D",
+        "text": "x = -4",
+        "is_correct": false,
+        "misconception_id": "ALG-4",
+        "misconception_name": "Balancing / Inverse Operation Error"
+      }
+    ],
+    "correct": "A",
+    "solution": "Subtract $2x$ from both sides: $3x-3=9$. Add $3$ to both sides: $3x=12$. Divide by $3$: $x=4$."
+  },
+  {
+    "id": "ALG-ITEM-4",
+    "strand": "Algebra",
+    "difficulty": "Medium",
+    "question": "A line passes through the points (2, 3) and (6, 11). What is its slope?",
+    "options": [
+      {
+        "label": "A",
+        "text": "2",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "1/2",
+        "is_correct": false,
+        "misconception_id": "ALG-5",
+        "misconception_name": "Inverted or Misordered Slope"
+      },
+      {
+        "label": "C",
+        "text": "3",
+        "is_correct": false,
+        "misconception_id": "ALG-7",
+        "misconception_name": "Point/Intercept Value Confusion"
+      },
+      {
+        "label": "D",
+        "text": "-2",
+        "is_correct": false,
+        "misconception_id": "ALG-5",
+        "misconception_name": "Inverted or Misordered Slope"
+      }
+    ],
+    "correct": "A",
+    "solution": "Slope $=\\dfrac{\\Delta y}{\\Delta x}=\\dfrac{11-3}{6-2}=\\dfrac{8}{4}=2$."
+  },
+  {
+    "id": "ALG-ITEM-5",
+    "strand": "Algebra",
+    "difficulty": "Easy",
+    "question": "The equation of a line is y = -4x + 7. Which statement is true?",
+    "options": [
+      {
+        "label": "A",
+        "text": "The slope is -4 and the y-intercept is 7.",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "The slope is 7 and the y-intercept is -4.",
+        "is_correct": false,
+        "misconception_id": "ALG-6",
+        "misconception_name": "Slope-Intercept Swap"
+      },
+      {
+        "label": "C",
+        "text": "The slope is -4x and the y-intercept is 7.",
+        "is_correct": false,
+        "misconception_id": "ALG-6",
+        "misconception_name": "Slope-Intercept Swap"
+      },
+      {
+        "label": "D",
+        "text": "The slope is 4 and the y-intercept is 7.",
+        "is_correct": false,
+        "misconception_id": "ALG-2",
+        "misconception_name": "Negative-Sign Handling Error"
+      }
+    ],
+    "correct": "A",
+    "solution": "In $y=mx+b$, the coefficient of $x$ is the slope $m=-4$ (a number, keeping its sign) and the constant $b=7$ is the $y$-intercept."
+  },
+  {
+    "id": "ALG-ITEM-6",
+    "strand": "Algebra",
+    "difficulty": "Medium",
+    "question": "A line has slope 3 and passes through the point (2, 5). What is its y-intercept?",
+    "options": [
+      {
+        "label": "A",
+        "text": "-1",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "5",
+        "is_correct": false,
+        "misconception_id": "ALG-7",
+        "misconception_name": "Point/Intercept Value Confusion"
+      },
+      {
+        "label": "C",
+        "text": "11",
+        "is_correct": false,
+        "misconception_id": "ALG-4",
+        "misconception_name": "Balancing / Inverse Operation Error"
+      },
+      {
+        "label": "D",
+        "text": "1",
+        "is_correct": false,
+        "misconception_id": "ALG-4",
+        "misconception_name": "Balancing / Inverse Operation Error"
+      }
+    ],
+    "correct": "A",
+    "solution": "Use $y=mx+b$ with $m=3$ and the point $(2,5)$: $5=3(2)+b=6+b$. Subtract $6$: $b=5-6=-1$."
+  },
+  {
+    "id": "ALG-ITEM-8",
+    "strand": "Algebra",
+    "difficulty": "Hard",
+    "question": "In a growing pattern, Figure 1 uses 4 tiles, Figure 2 uses 7 tiles, and Figure 3 uses 10 tiles. Which rule gives the number of tiles in Figure n?",
+    "options": [
+      {
+        "label": "A",
+        "text": "3n + 1",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "3n",
+        "is_correct": false,
+        "misconception_id": "ALG-8",
+        "misconception_name": "Pattern Rule Off-by-One"
+      },
+      {
+        "label": "C",
+        "text": "3n + 4",
+        "is_correct": false,
+        "misconception_id": "ALG-8",
+        "misconception_name": "Pattern Rule Off-by-One"
+      },
+      {
+        "label": "D",
+        "text": "4n",
+        "is_correct": false,
+        "misconception_id": "ALG-8",
+        "misconception_name": "Pattern Rule Off-by-One"
+      }
+    ],
+    "correct": "A",
+    "solution": "The tiles increase by $3$ each figure, so the coefficient of $n$ is $3$. Find the constant using Figure $1$: $3(1)+c=4$, so $c=1$. The rule is $3n+1$ (check Figure $3$: $3(3)+1=10$)."
+  },
+  {
+    "id": "DAT-Q1",
+    "strand": "Data",
+    "difficulty": "Easy",
+    "question": "A school has 1000 students. Priya wants to find out how students feel about the new cafeteria menu. Which survey plan will give the MOST representative results?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Randomly select 50 names from a list of all 1000 students.",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "Survey all 400 students eating in the cafeteria on Monday, because 400 is much bigger than 50.",
+        "is_correct": false,
+        "misconception_id": "DAT-1",
+        "misconception_name": "Bigger Sample Cures Bias"
+      },
+      {
+        "label": "C",
+        "text": "Post a voluntary online poll on the school website so anyone who wants to can answer.",
+        "is_correct": false,
+        "misconception_id": "DAT-2",
+        "misconception_name": "Convenience/Volunteer Samples Are Fair"
+      },
+      {
+        "label": "D",
+        "text": "Survey the 28 students in her own homeroom because they are easy to reach.",
+        "is_correct": false,
+        "misconception_id": "DAT-2",
+        "misconception_name": "Convenience/Volunteer Samples Are Fair"
+      }
+    ],
+    "correct": "A",
+    "solution": "Random selection from the full student list gives every student an equal chance of being chosen, so the sample represents the whole school. B is a large but biased convenience sample (cafeteria users are more invested in the menu); C is self-selected (only strong opinions respond); D is a convenience sample of one classroom. Sample size cannot fix a biased selection method."
+  },
+  {
+    "id": "DAT-Q2",
+    "strand": "Data",
+    "difficulty": "Easy",
+    "question": "What is the median of this data set? 14, 3, 20, 8, 11",
+    "options": [
+      {
+        "label": "A",
+        "text": "11",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "20",
+        "is_correct": false,
+        "misconception_id": "DAT-4",
+        "misconception_name": "Median Without Ordering"
+      },
+      {
+        "label": "C",
+        "text": "11.5",
+        "is_correct": false,
+        "misconception_id": "DAT-4",
+        "misconception_name": "Median Without Ordering"
+      },
+      {
+        "label": "D",
+        "text": "11.2",
+        "is_correct": false,
+        "misconception_id": "DAT-3",
+        "misconception_name": "Mean by Default"
+      }
+    ],
+    "correct": "A",
+    "solution": "Order the data first: $3,\\ 8,\\ 11,\\ 14,\\ 20$. The middle (3rd of 5) value is $11$. Distractor B ($20$) is the middle of the UNORDERED list; C ($11.5$) is the midpoint of min and max, $(3+20)/2$; D ($11.2$) is the mean, $56\\div 5$, computed by a student who treats every \"average\" as the mean."
+  },
+  {
+    "id": "DAT-Q3",
+    "strand": "Data",
+    "difficulty": "Medium",
+    "question": "A bar graph shows how many pets students own: 0 pets - 7 students; 1 pet - 9 students; 2 pets - 5 students; 3 pets - 4 students. What is the mode number of pets?",
+    "options": [
+      {
+        "label": "A",
+        "text": "1",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "9",
+        "is_correct": false,
+        "misconception_id": "DAT-5",
+        "misconception_name": "Mode/Value-Frequency Confusion"
+      },
+      {
+        "label": "C",
+        "text": "3",
+        "is_correct": false,
+        "misconception_id": "DAT-5",
+        "misconception_name": "Mode/Value-Frequency Confusion"
+      },
+      {
+        "label": "D",
+        "text": "1.24",
+        "is_correct": false,
+        "misconception_id": "DAT-3",
+        "misconception_name": "Mean by Default"
+      }
+    ],
+    "correct": "A",
+    "solution": "The mode is the data VALUE that occurs most often. The tallest bar is at $1$ pet ($9$ students), so the mode is $1$. Distractor B ($9$) reports the height (frequency) of the tallest bar instead of the value; C ($3$) picks the largest data value; D is the mean, $(0\\cdot7+1\\cdot9+2\\cdot5+3\\cdot4)\\div 25 = 31\\div 25 = 1.24$, from a student who reaches for the mean whenever an \"average\" is requested."
+  },
+  {
+    "id": "DAT-Q4",
+    "strand": "Data",
+    "difficulty": "Medium",
+    "question": "For 40 fires last year, a city plotted the number of firefighters sent against the damage cost. The scatter plot shows a strong positive correlation. Which conclusion is BEST supported by the data?",
+    "options": [
+      {
+        "label": "A",
+        "text": "A third variable, such as the size of the fire, likely increases both the firefighters sent and the damage.",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "Sending more firefighters causes greater damage.",
+        "is_correct": false,
+        "misconception_id": "DAT-7",
+        "misconception_name": "Correlation Implies Causation"
+      },
+      {
+        "label": "C",
+        "text": "The city should send fewer firefighters to each fire to reduce damage costs.",
+        "is_correct": false,
+        "misconception_id": "DAT-7",
+        "misconception_name": "Correlation Implies Causation"
+      },
+      {
+        "label": "D",
+        "text": "The line of best fit can reliably predict the damage for a fire with 10 times more firefighters than any fire in the data.",
+        "is_correct": false,
+        "misconception_id": "DAT-8",
+        "misconception_name": "Best-Fit Line and Extrapolation Overreach"
+      },
+      {
+        "label": "E",
+        "text": "The strong correlation proves the firefighters are poorly trained.",
+        "is_correct": false,
+        "misconception_id": "DAT-7",
+        "misconception_name": "Correlation Implies Causation"
+      }
+    ],
+    "correct": "A",
+    "solution": "Correlation shows association, not cause. A lurking variable — fire size — drives both variables: bigger fires need more firefighters AND cause more damage. B, C, and E all read the correlation as a causal mechanism (C even acts on it as policy). D trusts extrapolation far beyond the observed data range, where the linear model is not validated."
+  },
+  {
+    "id": "DAT-Q5",
+    "strand": "Data",
+    "difficulty": "Hard",
+    "question": "A cafe records its daily customers for five days: 30, 26, 102, 28, 29. (Day 3 was a festival.) The owner wants one number that describes a TYPICAL day. Which statement is true?",
+    "options": [
+      {
+        "label": "A",
+        "text": "The median, 29, is best because the outlier 102 pulls the mean up to 43, above every normal day.",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "The mean, 43, is best because it uses every data value and outliers do not affect it.",
+        "is_correct": false,
+        "misconception_id": "DAT-3",
+        "misconception_name": "Mean by Default"
+      },
+      {
+        "label": "C",
+        "text": "A typical day is 64 customers, halfway between the lowest (26) and highest (102) values.",
+        "is_correct": false,
+        "misconception_id": "DAT-4",
+        "misconception_name": "Median Without Ordering"
+      },
+      {
+        "label": "D",
+        "text": "The mode is 102 because it is the largest value, so a typical day has 102 customers.",
+        "is_correct": false,
+        "misconception_id": "DAT-5",
+        "misconception_name": "Mode/Value-Frequency Confusion"
+      }
+    ],
+    "correct": "A",
+    "solution": "Ordered data: $26, 28, 29, 30, 102$; median $= 29$. Mean $= 215\\div 5 = 43$, which exceeds four of the five days because the outlier $102$ inflates it — so the median better represents a typical day. B wrongly claims the mean resists outliers; C computes the midrange $(26+102)/2 = 64$ as if it were the median; D calls the largest value the mode."
+  },
+  {
+    "id": "GM-01",
+    "strand": "Geometry & Measurement",
+    "difficulty": "Easy",
+    "question": "A circular garden has a diameter of 12 m. Which value is closest to the area of the garden?",
+    "options": [
+      {
+        "label": "A",
+        "text": "113.1 m²",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "452.4 m²",
+        "is_correct": false,
+        "misconception_id": "GEO-7",
+        "misconception_name": "Radius–Diameter Confusion"
+      },
+      {
+        "label": "C",
+        "text": "37.7 m²",
+        "is_correct": false,
+        "misconception_id": "GEO-1",
+        "misconception_name": "Perimeter–Area Confusion"
+      },
+      {
+        "label": "D",
+        "text": "18.8 m²",
+        "is_correct": false,
+        "misconception_id": "GEO-2",
+        "misconception_name": "Additive/Linear Formula Reasoning"
+      }
+    ],
+    "correct": "A",
+    "solution": "The radius is half the diameter: $r = 12 \\div 2 = 6$ m. Area $= \\pi r^2 = \\pi (6)^2 = 36\\pi \\approx 113.1 \\text{ m}^2$. (B uses $\\pi(12)^2$, treating the diameter as the radius; C is the circumference $\\pi d \\approx 37.7$ m; D is $\\pi \\times 6$, forgetting to square the radius.)"
+  },
+  {
+    "id": "GM-02",
+    "strand": "Geometry & Measurement",
+    "difficulty": "Easy",
+    "question": "A ramp covers a horizontal distance of 8 m along the ground and rises a vertical height of 6 m. What is the length of the sloped surface of the ramp?",
+    "options": [
+      {
+        "label": "A",
+        "text": "10 m",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "14 m",
+        "is_correct": false,
+        "misconception_id": "GEO-2",
+        "misconception_name": "Additive/Linear Formula Reasoning"
+      },
+      {
+        "label": "C",
+        "text": "100 m",
+        "is_correct": false,
+        "misconception_id": "GEO-4",
+        "misconception_name": "Forgets the Final Square Root"
+      },
+      {
+        "label": "D",
+        "text": "24 m",
+        "is_correct": false,
+        "misconception_id": "GEO-1",
+        "misconception_name": "Perimeter–Area Confusion"
+      }
+    ],
+    "correct": "A",
+    "solution": "The ramp is the hypotenuse of a right triangle with legs $6$ and $8$: $c^2 = 6^2 + 8^2 = 36 + 64 = 100$, so $c = \\sqrt{100} = 10$ m. (B adds the legs $6+8$; C stops at $c^2 = 100$; D computes the triangle's area $\\tfrac{1}{2}\\times 6 \\times 8 = 24$ instead of a length.)"
+  },
+  {
+    "id": "GM-03",
+    "strand": "Geometry & Measurement",
+    "difficulty": "Medium",
+    "question": "A 13 m ladder leans against a vertical wall. The foot of the ladder is 5 m from the base of the wall. How far up the wall does the ladder reach?",
+    "options": [
+      {
+        "label": "A",
+        "text": "12 m",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "approximately 13.9 m",
+        "is_correct": false,
+        "misconception_id": "GEO-3",
+        "misconception_name": "Always Add in the Pythagorean Theorem"
+      },
+      {
+        "label": "C",
+        "text": "144 m",
+        "is_correct": false,
+        "misconception_id": "GEO-4",
+        "misconception_name": "Forgets the Final Square Root"
+      },
+      {
+        "label": "D",
+        "text": "8 m",
+        "is_correct": false,
+        "misconception_id": "GEO-2",
+        "misconception_name": "Additive/Linear Formula Reasoning"
+      }
+    ],
+    "correct": "A",
+    "solution": "The ladder is the hypotenuse, so the height is a leg: $h^2 = 13^2 - 5^2 = 169 - 25 = 144$, giving $h = \\sqrt{144} = 12$ m. (B adds the squares, $\\sqrt{169+25} = \\sqrt{194} \\approx 13.9$, which is impossibly longer than the ladder; C stops at $h^2 = 144$; D subtracts the lengths directly, $13 - 5 = 8$.)"
+  },
+  {
+    "id": "GM-04",
+    "strand": "Geometry & Measurement",
+    "difficulty": "Medium",
+    "question": "Two parallel lines are cut by a transversal. One interior angle measures 68 degrees. Angle x is the interior angle at the other parallel line on the same side of the transversal (the co-interior angle). What is the measure of x?",
+    "options": [
+      {
+        "label": "A",
+        "text": "112 degrees",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "68 degrees",
+        "is_correct": false,
+        "misconception_id": "GEO-6",
+        "misconception_name": "Parallel-Line Angle Pairs Swapped"
+      },
+      {
+        "label": "C",
+        "text": "22 degrees",
+        "is_correct": false,
+        "misconception_id": "GEO-10",
+        "misconception_name": "Angle Benchmark Confusion (90°/180°/360°)"
+      },
+      {
+        "label": "D",
+        "text": "292 degrees",
+        "is_correct": false,
+        "misconception_id": "GEO-10",
+        "misconception_name": "Angle Benchmark Confusion (90°/180°/360°)"
+      }
+    ],
+    "correct": "A",
+    "solution": "Co-interior (same-side interior) angles between parallel lines are supplementary: $x = 180^\\circ - 68^\\circ = 112^\\circ$. (B assumes co-interior angles are equal like alternate or corresponding angles; C uses the $90^\\circ$ benchmark, $90 - 68 = 22$; D uses the $360^\\circ$ benchmark, $360 - 68 = 292$.)"
+  },
+  {
+    "id": "GM-06",
+    "strand": "Geometry & Measurement",
+    "difficulty": "Medium",
+    "question": "A cylindrical can has a diameter of 10 cm and a height of 12 cm. Which value is closest to the volume of the can?",
+    "options": [
+      {
+        "label": "A",
+        "text": "942.5 cm³",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "3769.9 cm³",
+        "is_correct": false,
+        "misconception_id": "GEO-7",
+        "misconception_name": "Radius–Diameter Confusion"
+      },
+      {
+        "label": "C",
+        "text": "534.1 cm³",
+        "is_correct": false,
+        "misconception_id": "GEO-5",
+        "misconception_name": "Surface Area–Volume Confusion"
+      },
+      {
+        "label": "D",
+        "text": "188.5 cm³",
+        "is_correct": false,
+        "misconception_id": "GEO-2",
+        "misconception_name": "Additive/Linear Formula Reasoning"
+      }
+    ],
+    "correct": "A",
+    "solution": "$r = 10 \\div 2 = 5$ cm. $V = \\pi r^2 h = \\pi (5)^2 (12) = 300\\pi \\approx 942.5 \\text{ cm}^3$. (B uses the diameter as the radius: $\\pi(10)^2(12) = 1200\\pi$; C is the total surface area $2\\pi r h + 2\\pi r^2 = 170\\pi \\approx 534.1$; D forgets to square the radius: $\\pi(5)(12) = 60\\pi \\approx 188.5$.)"
+  },
+  {
+    "id": "GM-07",
+    "strand": "Geometry & Measurement",
+    "difficulty": "Hard",
+    "question": "A cone-shaped paper cup has a diameter of 6 cm and a vertical height of 4 cm. Which value is closest to the volume of the cup?",
+    "options": [
+      {
+        "label": "A",
+        "text": "37.7 cm³",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "113.1 cm³",
+        "is_correct": false,
+        "misconception_id": "GEO-8",
+        "misconception_name": "Dropped Formula Factor"
+      },
+      {
+        "label": "C",
+        "text": "150.8 cm³",
+        "is_correct": false,
+        "misconception_id": "GEO-7",
+        "misconception_name": "Radius–Diameter Confusion"
+      },
+      {
+        "label": "D",
+        "text": "75.4 cm³",
+        "is_correct": false,
+        "misconception_id": "GEO-5",
+        "misconception_name": "Surface Area–Volume Confusion"
+      }
+    ],
+    "correct": "A",
+    "solution": "$r = 6 \\div 2 = 3$ cm. $V = \\tfrac{1}{3}\\pi r^2 h = \\tfrac{1}{3}\\pi (3)^2 (4) = 12\\pi \\approx 37.7 \\text{ cm}^3$. (B omits the $\\tfrac{1}{3}$: $\\pi(9)(4) = 36\\pi \\approx 113.1$; C uses the diameter as the radius: $\\tfrac{1}{3}\\pi(6)^2(4) = 48\\pi \\approx 150.8$; D is the total surface area: slant height $s = \\sqrt{3^2+4^2} = 5$, so $\\pi r^2 + \\pi r s = 9\\pi + 15\\pi = 24\\pi \\approx 75.4$.)"
+  },
+  {
+    "id": "GM-08",
+    "strand": "Geometry & Measurement",
+    "difficulty": "Hard",
+    "question": "A rectangular photo measures 10 cm by 15 cm. It is enlarged so that its length and its width are each tripled. The area of the enlarged photo is how many times the area of the original photo?",
+    "options": [
+      {
+        "label": "A",
+        "text": "9 times",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "3 times",
+        "is_correct": false,
+        "misconception_id": "GEO-9",
+        "misconception_name": "Length Determines Area/Volume (Linear Scaling)"
+      },
+      {
+        "label": "C",
+        "text": "6 times",
+        "is_correct": false,
+        "misconception_id": "GEO-2",
+        "misconception_name": "Additive/Linear Formula Reasoning"
+      },
+      {
+        "label": "D",
+        "text": "27 times",
+        "is_correct": false,
+        "misconception_id": "GEO-5",
+        "misconception_name": "Surface Area–Volume Confusion"
+      }
+    ],
+    "correct": "A",
+    "solution": "Original area $= 10 \\times 15 = 150 \\text{ cm}^2$. Enlarged area $= 30 \\times 45 = 1350 \\text{ cm}^2$. Ratio $= 1350 \\div 150 = 9 = 3^2$: when lengths scale by $k$, area scales by $k^2$. (B assumes area triples along with the sides; C adds the factors $3 + 3 = 6$ instead of multiplying $3 \\times 3$; D applies the volume scale factor $3^3 = 27$ to an area.)"
+  },
+  {
+    "id": "GM-10",
+    "strand": "Geometry & Measurement",
+    "difficulty": "Easy",
+    "question": "A gift box is a rectangular prism measuring 5 cm by 4 cm by 3 cm. What is the minimum amount of wrapping paper needed to cover all six faces exactly, with no overlap?",
+    "options": [
+      {
+        "label": "A",
+        "text": "94 cm²",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "60 cm²",
+        "is_correct": false,
+        "misconception_id": "GEO-5",
+        "misconception_name": "Surface Area–Volume Confusion"
+      },
+      {
+        "label": "C",
+        "text": "47 cm²",
+        "is_correct": false,
+        "misconception_id": "GEO-8",
+        "misconception_name": "Dropped Formula Factor"
+      },
+      {
+        "label": "D",
+        "text": "12 cm²",
+        "is_correct": false,
+        "misconception_id": "GEO-2",
+        "misconception_name": "Additive/Linear Formula Reasoning"
+      }
+    ],
+    "correct": "A",
+    "solution": "Surface area $= 2(lw + lh + wh) = 2(5 \\times 4 + 5 \\times 3 + 4 \\times 3) = 2(20 + 15 + 12) = 2(47) = 94 \\text{ cm}^2$. (B is the volume $5 \\times 4 \\times 3 = 60 \\text{ cm}^3$; C drops the factor of $2$, counting only one face from each congruent pair: $20 + 15 + 12 = 47$; D adds the dimensions $5 + 4 + 3 = 12$.)"
+  },
+  {
+    "id": "FIN-Q1",
+    "strand": "Financial Literacy",
+    "difficulty": "Easy",
+    "question": "Priya deposits $800 in a savings account that pays 3% simple interest per year. How much interest does she earn after 6 months?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$144.00",
+        "is_correct": false,
+        "misconception_id": "FIN-3",
+        "misconception_name": "Time-period mishandling"
+      },
+      {
+        "label": "B",
+        "text": "$12.00",
+        "is_correct": true
+      },
+      {
+        "label": "C",
+        "text": "$812.00",
+        "is_correct": false,
+        "misconception_id": "FIN-2",
+        "misconception_name": "Wrong quantity reported"
+      },
+      {
+        "label": "D",
+        "text": "$1,200.00",
+        "is_correct": false,
+        "misconception_id": "FIN-9",
+        "misconception_name": "Percent–decimal conversion error"
+      }
+    ],
+    "correct": "B",
+    "solution": "Use $I = Prt$ with $P = 800$, $r = 0.03$ per year, and $t$ in years. Six months is $t = 0.5$ years. So $I = 800 \\times 0.03 \\times 0.5 = \\$12$. (A uses $t = 6$, treating months as years, giving $800 \\times 0.03 \\times 6 = \\$144$. C reports the total amount $800 + 12 = \\$812$ instead of the interest. D uses $r = 3$ instead of $0.03$, giving $800 \\times 3 \\times 0.5 = \\$1200$.)"
+  },
+  {
+    "id": "FIN-Q2",
+    "strand": "Financial Literacy",
+    "difficulty": "Medium",
+    "question": "Dario invests $1,000 at 4% per year, compounded annually. What is the total value of the investment after 3 years?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$1,120.00",
+        "is_correct": false,
+        "misconception_id": "FIN-1",
+        "misconception_name": "Simple–compound conflation"
+      },
+      {
+        "label": "B",
+        "text": "$124.86",
+        "is_correct": false,
+        "misconception_id": "FIN-2",
+        "misconception_name": "Wrong quantity reported"
+      },
+      {
+        "label": "C",
+        "text": "$1,124.86",
+        "is_correct": true
+      },
+      {
+        "label": "D",
+        "text": "$2,744.00",
+        "is_correct": false,
+        "misconception_id": "FIN-9",
+        "misconception_name": "Percent–decimal conversion error"
+      }
+    ],
+    "correct": "C",
+    "solution": "Compound interest: $A = P(1+i)^n = 1000(1.04)^3 = 1000 \\times 1.124864 \\approx \\$1124.86$. (A applies simple interest, $1000 + 1000 \\times 0.04 \\times 3 = \\$1120$, earning interest on the principal only. B is the interest earned, $\\$124.86$, not the total value asked for. D converts $4\\%$ to $0.4$, giving $1000(1.4)^3 = \\$2744$.)"
+  },
+  {
+    "id": "FIN-Q3",
+    "strand": "Financial Literacy",
+    "difficulty": "Medium",
+    "question": "A car bought for $24,000 depreciates by 15% of its value each year. What is the car worth after 2 years?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$16,800",
+        "is_correct": false,
+        "misconception_id": "FIN-4",
+        "misconception_name": "Additive percent change"
+      },
+      {
+        "label": "B",
+        "text": "$540",
+        "is_correct": false,
+        "misconception_id": "FIN-5",
+        "misconception_name": "\"By r%\" read as \"to r%\""
+      },
+      {
+        "label": "C",
+        "text": "$20,400",
+        "is_correct": false,
+        "misconception_id": "FIN-3",
+        "misconception_name": "Time-period mishandling"
+      },
+      {
+        "label": "D",
+        "text": "$17,340",
+        "is_correct": true
+      }
+    ],
+    "correct": "D",
+    "solution": "Each year the car keeps $100\\% - 15\\% = 85\\%$ of its value, so after $2$ years the value is $24000(0.85)^2 = 24000 \\times 0.7225 = \\$17{,}340$. (A subtracts $2 \\times 15\\% = 30\\%$ of the original price: $24000 \\times 0.70 = \\$16{,}800$. B multiplies by $0.15$ each year instead of $0.85$: $24000(0.15)^2 = \\$540$. C applies the $15\\%$ decrease only once: $24000 \\times 0.85 = \\$20{,}400$.)"
+  },
+  {
+    "id": "FIN-Q4",
+    "strand": "Financial Literacy",
+    "difficulty": "Easy",
+    "question": "A store sells juice in two sizes: 1.5 L for $3.60 and 2 L for $5.00. Which bottle is the better buy, and why?",
+    "options": [
+      {
+        "label": "A",
+        "text": "The 1.5 L bottle, because $3.60 divided by 1.5 is $2.40 per litre, which is less than $5.00 divided by 2, which is $2.50 per litre",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "The 2 L bottle, because larger packages always cost less per litre",
+        "is_correct": false,
+        "misconception_id": "FIN-6",
+        "misconception_name": "Value judged by size or total price"
+      },
+      {
+        "label": "C",
+        "text": "The 2 L bottle, because 2 divided by 5.00 equals 0.40, which is smaller than 1.5 divided by 3.60, which is about 0.42",
+        "is_correct": false,
+        "misconception_id": "FIN-10",
+        "misconception_name": "Rate inversion"
+      },
+      {
+        "label": "D",
+        "text": "The 1.5 L bottle, because its total price of $3.60 is lower than $5.00",
+        "is_correct": false,
+        "misconception_id": "FIN-6",
+        "misconception_name": "Value judged by size or total price"
+      }
+    ],
+    "correct": "A",
+    "solution": "Compare unit prices (dollars per litre): $3.60 \\div 1.5 = \\$2.40$/L and $5.00 \\div 2 = \\$2.50$/L. Since $2.40 < 2.50$, the $1.5$ L bottle is the better buy. (B assumes bigger is automatically cheaper per unit without calculating. C computes litres per dollar but then treats the smaller number as the cheaper option — for litres per dollar, bigger is better. D compares total prices, which ignores that the bottles contain different amounts.)"
+  },
+  {
+    "id": "FIN-Q5",
+    "strand": "Financial Literacy",
+    "difficulty": "Medium",
+    "question": "Zainab's net income is $1,480 per month. Her fixed expenses are rent $450, phone $65, and a transit pass $128. Her variable expenses last month were food $310 and entertainment $150. She also wants to put $300 into savings each month. If next month looks the same, how much money will she have left after all expenses and savings?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$837",
+        "is_correct": false,
+        "misconception_id": "FIN-7",
+        "misconception_name": "Incomplete budget"
+      },
+      {
+        "label": "B",
+        "text": "$1,403",
+        "is_correct": false,
+        "misconception_id": "FIN-2",
+        "misconception_name": "Wrong quantity reported"
+      },
+      {
+        "label": "C",
+        "text": "$77",
+        "is_correct": true
+      },
+      {
+        "label": "D",
+        "text": "$377",
+        "is_correct": false,
+        "misconception_id": "FIN-7",
+        "misconception_name": "Incomplete budget"
+      }
+    ],
+    "correct": "C",
+    "solution": "Total allocations: fixed $450 + 65 + 128 = \\$643$, variable $310 + 150 = \\$460$, savings $\\$300$. Total $= 643 + 460 + 300 = \\$1403$. Money left $= 1480 - 1403 = \\$77$. (A subtracts only the fixed expenses: $1480 - 643 = \\$837$. B reports the total spent, $\\$1403$, instead of the money remaining. D forgets to treat the planned savings as part of the budget: $1480 - 1103 = \\$377$.)"
+  },
+  {
+    "id": "FIN-Q6",
+    "strand": "Financial Literacy",
+    "difficulty": "Hard",
+    "question": "Ken invests $2,000 at 6% per year, compounded semi-annually (twice per year). What is the value of the investment after 2 years?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$2,251.02",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "$2,240.00",
+        "is_correct": false,
+        "misconception_id": "FIN-1",
+        "misconception_name": "Simple–compound conflation"
+      },
+      {
+        "label": "C",
+        "text": "$2,524.95",
+        "is_correct": false,
+        "misconception_id": "FIN-3",
+        "misconception_name": "Time-period mishandling"
+      },
+      {
+        "label": "D",
+        "text": "$251.02",
+        "is_correct": false,
+        "misconception_id": "FIN-2",
+        "misconception_name": "Wrong quantity reported"
+      }
+    ],
+    "correct": "A",
+    "solution": "Semi-annual compounding means the rate per period is $6\\% \\div 2 = 3\\%$ and there are $2 \\times 2 = 4$ periods. $A = 2000(1.03)^4 = 2000 \\times 1.12550881 \\approx \\$2251.02$. (B uses simple interest: $2000 + 2000 \\times 0.06 \\times 2 = \\$2240$. C applies the full annual rate every half-year: $2000(1.06)^4 \\approx \\$2524.95$. D reports only the interest earned, $\\$251.02$, not the total value.)"
+  },
+  {
+    "id": "FIN-Q8",
+    "strand": "Financial Literacy",
+    "difficulty": "Easy",
+    "question": "A limited-edition sneaker bought for $150 appreciates by 10% per year. What is it worth after 2 years?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$180.00",
+        "is_correct": false,
+        "misconception_id": "FIN-4",
+        "misconception_name": "Additive percent change"
+      },
+      {
+        "label": "B",
+        "text": "$181.50",
+        "is_correct": true
+      },
+      {
+        "label": "C",
+        "text": "$165.00",
+        "is_correct": false,
+        "misconception_id": "FIN-3",
+        "misconception_name": "Time-period mishandling"
+      },
+      {
+        "label": "D",
+        "text": "$31.50",
+        "is_correct": false,
+        "misconception_id": "FIN-2",
+        "misconception_name": "Wrong quantity reported"
+      }
+    ],
+    "correct": "B",
+    "solution": "Appreciation compounds on the current value: $150(1.10)^2 = 150 \\times 1.21 = \\$181.50$. (A adds $10\\%$ of the original price twice: $150(1 + 0.20) = \\$180$, missing the growth-on-growth. C applies the $10\\%$ increase only once: $150 \\times 1.10 = \\$165$. D reports the gain in value, $181.50 - 150 = \\$31.50$, instead of the value itself.)"
+  },
+  {
+    "id": "FIN-Q9",
+    "strand": "Financial Literacy",
+    "difficulty": "Hard",
+    "question": "A phone costs $600 if you pay up front. A payment plan instead charges $55 per month for 12 months. How much MORE does the payment plan cost in total than paying up front?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$660",
+        "is_correct": false,
+        "misconception_id": "FIN-2",
+        "misconception_name": "Wrong quantity reported"
+      },
+      {
+        "label": "B",
+        "text": "$0 — twelve payments of $55 just spread the same cost over time",
+        "is_correct": false,
+        "misconception_id": "FIN-8",
+        "misconception_name": "Payment-size fallacy"
+      },
+      {
+        "label": "C",
+        "text": "$5",
+        "is_correct": false,
+        "misconception_id": "FIN-3",
+        "misconception_name": "Time-period mishandling"
+      },
+      {
+        "label": "D",
+        "text": "$60",
+        "is_correct": true
+      }
+    ],
+    "correct": "D",
+    "solution": "Total cost of the plan: $55 \\times 12 = \\$660$. Difference: $660 - 600 = \\$60$ more than paying up front. (A gives the plan's total cost, not the extra cost asked for. B assumes installments never add cost, ignoring that $55 \\times 12 > 600$. C compares one month only: $600 \\div 12 = \\$50$ and $55 - 50 = \\$5$, forgetting to multiply the monthly difference by all $12$ months.)"
+  }
+]
