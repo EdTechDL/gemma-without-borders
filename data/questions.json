@@ -100,8 +100,8 @@
         "label": "D",
         "text": "negative 4",
         "is_correct": false,
-        "misconception_id": "NUM-5",
-        "misconception_name": "Negative exponent makes the value negative"
+        "misconception_id": "NUM-4",
+        "misconception_name": "Zero exponent equals zero (combined with the negative-exponent error)"
       }
     ],
     "correct": "A",
@@ -129,8 +129,8 @@
         "label": "C",
         "text": "1/4 (that is, 3/12)",
         "is_correct": false,
-        "misconception_id": "NUM-6",
-        "misconception_name": "Adding fractions straight across"
+        "misconception_id": "NUM-6b",
+        "misconception_name": "Common denominator found but numerators not rescaled"
       },
       {
         "label": "D",
@@ -201,8 +201,8 @@
         "label": "C",
         "text": "10",
         "is_correct": false,
-        "misconception_id": "NUM-8",
-        "misconception_name": "Taking a percent at face value"
+        "misconception_id": "NUM-8b",
+        "misconception_name": "Percent-to-decimal place-value error (divides by 10 instead of 100)"
       },
       {
         "label": "D",
@@ -273,8 +273,8 @@
         "label": "C",
         "text": "$8.40",
         "is_correct": false,
-        "misconception_id": "NUM-9",
-        "misconception_name": "Reversing part and whole in percent/proportion"
+        "misconception_id": "NUM-11",
+        "misconception_name": "Treats a group price as a unit price (ignores group size)"
       },
       {
         "label": "D",
@@ -453,8 +453,8 @@
         "label": "C",
         "text": "The slope is -4x and the y-intercept is 7.",
         "is_correct": false,
-        "misconception_id": "ALG-6",
-        "misconception_name": "Slope-Intercept Swap"
+        "misconception_id": "ALG-10",
+        "misconception_name": "Slope identified as a term (includes the variable x)"
       },
       {
         "label": "D",
@@ -532,8 +532,8 @@
         "label": "D",
         "text": "4n",
         "is_correct": false,
-        "misconception_id": "ALG-8",
-        "misconception_name": "Pattern Rule Off-by-One"
+        "misconception_id": "ALG-11",
+        "misconception_name": "Assumes a proportional pattern (uses the first term as multiplier)"
       }
     ],
     "correct": "A",
@@ -597,8 +597,8 @@
         "label": "C",
         "text": "11.5",
         "is_correct": false,
-        "misconception_id": "DAT-4",
-        "misconception_name": "Median Without Ordering"
+        "misconception_id": "DAT-9",
+        "misconception_name": "Median as midpoint of extremes (midrange)"
       },
       {
         "label": "D",
@@ -633,8 +633,8 @@
         "label": "C",
         "text": "3",
         "is_correct": false,
-        "misconception_id": "DAT-5",
-        "misconception_name": "Mode/Value-Frequency Confusion"
+        "misconception_id": "DAT-10",
+        "misconception_name": "Mode as the maximum value"
       },
       {
         "label": "D",
@@ -712,15 +712,15 @@
         "label": "C",
         "text": "A typical day is 64 customers, halfway between the lowest (26) and highest (102) values.",
         "is_correct": false,
-        "misconception_id": "DAT-4",
-        "misconception_name": "Median Without Ordering"
+        "misconception_id": "DAT-9",
+        "misconception_name": "Median as midpoint of extremes (midrange)"
       },
       {
         "label": "D",
         "text": "The mode is 102 because it is the largest value, so a typical day has 102 customers.",
         "is_correct": false,
-        "misconception_id": "DAT-5",
-        "misconception_name": "Mode/Value-Frequency Confusion"
+        "misconception_id": "DAT-10",
+        "misconception_name": "Mode as the maximum value"
       }
     ],
     "correct": "A",
