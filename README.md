@@ -1,4 +1,4 @@
-# 📘 Gemma Without Borders
+# Gemma Without Borders
 
 An **autonomous study agent** for the Grade 9 EQAO math assessment (Ontario MTH1W).
 
