@@ -12,6 +12,12 @@ a teacher with a summary.
 > Here the goal is: bring the student to mastery of their misconception with minimal
 > teacher intervention.
 
+## See how it works, cell by cell
+
+Open [docs/notebook-walkthrough.html](docs/notebook-walkthrough.html) in a browser — the
+whole pipeline shown as annotated Jupyter-style cells, with a plain-words explanation of
+every block. Good first stop for new teammates.
+
 ## Run it
 
 ```bash
