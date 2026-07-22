@@ -1,0 +1,390 @@
+<title>Gemma Without Borders — Notebook Walkthrough</title>
+<style>
+  :root {
+    --page: #FAF9F5;
+    --ink: #1F1E1B;
+    --muted: #6E6B63;
+    --cell: #FFFFFF;
+    --cell-line: #E4E1D7;
+    --accent: #C96442;
+    --explain-bg: #F5EDE4;
+    --explain-edge: #C96442;
+    --prompt-in: #2B5B9E;
+    --prompt-out: #B0472F;
+    --out-bg: #FBFAF7;
+    --code-kw: #0B7A3E;
+    --code-str: #B02A2A;
+    --code-com: #8A867C;
+    --code-num: #7A4BA6;
+    --code-fn: #2B5B9E;
+    --chip-bg: #EFE9DE;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --page: #191917;
+      --ink: #E9E6E0;
+      --muted: #A29D92;
+      --cell: #22221F;
+      --cell-line: #3A3934;
+      --accent: #D97C5B;
+      --explain-bg: #2A241E;
+      --explain-edge: #D97C5B;
+      --prompt-in: #7FA7DD;
+      --prompt-out: #DD8A6E;
+      --out-bg: #1E1E1B;
+      --code-kw: #6CC894;
+      --code-str: #E08585;
+      --code-com: #7E7A70;
+      --code-num: #BB9AE0;
+      --code-fn: #7FA7DD;
+      --chip-bg: #2E2D28;
+    }
+  }
+  :root[data-theme="dark"] {
+    --page: #191917; --ink: #E9E6E0; --muted: #A29D92; --cell: #22221F;
+    --cell-line: #3A3934; --accent: #D97C5B; --explain-bg: #2A241E;
+    --explain-edge: #D97C5B; --prompt-in: #7FA7DD; --prompt-out: #DD8A6E;
+    --out-bg: #1E1E1B; --code-kw: #6CC894; --code-str: #E08585;
+    --code-com: #7E7A70; --code-num: #BB9AE0; --code-fn: #7FA7DD; --chip-bg: #2E2D28;
+  }
+  :root[data-theme="light"] {
+    --page: #FAF9F5; --ink: #1F1E1B; --muted: #6E6B63; --cell: #FFFFFF;
+    --cell-line: #E4E1D7; --accent: #C96442; --explain-bg: #F5EDE4;
+    --explain-edge: #C96442; --prompt-in: #2B5B9E; --prompt-out: #B0472F;
+    --out-bg: #FBFAF7; --code-kw: #0B7A3E; --code-str: #B02A2A;
+    --code-com: #8A867C; --code-num: #7A4BA6; --code-fn: #2B5B9E; --chip-bg: #EFE9DE;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--page);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    margin: 0;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 2.5rem 1.25rem 5rem; }
+
+  /* ---------- header ---------- */
+  .kicker {
+    font-size: .72rem; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: .35rem;
+  }
+  h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 500; font-size: 2rem; margin: 0 0 .4rem;
+    text-wrap: balance;
+  }
+  .sub { color: var(--muted); margin: 0 0 1.6rem; max-width: 60ch; }
+
+  /* ---------- notebook chrome ---------- */
+  .nb {
+    border: 1px solid var(--cell-line);
+    border-radius: 8px;
+    background: var(--cell);
+    overflow: hidden;
+  }
+  .nb-bar {
+    display: flex; align-items: center; gap: .75rem;
+    padding: .6rem 1rem;
+    border-bottom: 1px solid var(--cell-line);
+    background: var(--out-bg);
+    flex-wrap: wrap;
+  }
+  .nb-name { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .85rem; }
+  .chip {
+    font-size: .7rem; letter-spacing: .05em;
+    background: var(--chip-bg); color: var(--muted);
+    border-radius: 999px; padding: .15rem .6rem;
+  }
+  .chip.live { color: var(--accent); }
+  .nb-body { padding: 1.25rem 1rem 1.75rem; display: flex; flex-direction: column; gap: 1.1rem; }
+
+  /* ---------- markdown-style section heads ---------- */
+  .md h2 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 500; font-size: 1.3rem;
+    margin: 1.2rem 0 .2rem;
+    padding-left: 3.9rem;
+  }
+  .md p { margin: .2rem 0 0; padding-left: 3.9rem; color: var(--muted); max-width: 68ch; }
+
+  /* ---------- explanation callout (the "different color") ---------- */
+  .explain {
+    margin-left: 3.9rem;
+    background: var(--explain-bg);
+    border-left: 3px solid var(--explain-edge);
+    border-radius: 6px;
+    padding: .7rem 1rem .75rem;
+    max-width: 68ch;
+  }
+  .explain .label {
+    display: block; font-size: .68rem; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: .25rem; font-weight: 600;
+  }
+  .explain p { margin: 0; font-size: .92rem; }
+
+  /* ---------- code cells ---------- */
+  .cell { display: flex; gap: .6rem; align-items: flex-start; }
+  .prompt {
+    flex: 0 0 3.3rem;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: .78rem; text-align: right; padding-top: .55rem;
+    color: var(--prompt-in); white-space: nowrap; user-select: none;
+  }
+  .prompt.out { color: var(--prompt-out); }
+  .code {
+    flex: 1; min-width: 0;
+    border: 1px solid var(--cell-line);
+    border-radius: 4px;
+    background: var(--cell);
+    overflow-x: auto;
+  }
+  .code pre {
+    margin: 0; padding: .6rem .8rem;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: .8rem; line-height: 1.5;
+    color: var(--ink);
+  }
+  .output {
+    flex: 1; min-width: 0; overflow-x: auto;
+    background: var(--out-bg);
+    border-radius: 4px;
+  }
+  .output pre {
+    margin: 0; padding: .6rem .8rem;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: .8rem; line-height: 1.5;
+    color: var(--ink); white-space: pre-wrap;
+  }
+  .k { color: var(--code-kw); }
+  .s { color: var(--code-str); }
+  .c { color: var(--code-com); font-style: italic; }
+  .n { color: var(--code-num); }
+  .f { color: var(--code-fn); }
+
+  .gemma-out { border-left: 3px solid var(--accent); }
+  .gemma-tag {
+    display: inline-block; font-size: .66rem; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--accent); font-weight: 600;
+    padding: .55rem .8rem 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+
+  /* ---------- footer note ---------- */
+  .endnote {
+    margin: 2rem auto 0; max-width: 68ch;
+    border-top: 1px solid var(--cell-line);
+    padding-top: 1.2rem; color: var(--muted); font-size: .92rem;
+  }
+  .endnote strong { color: var(--ink); }
+  code.inline {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: .85em; background: var(--chip-bg);
+    padding: .08em .35em; border-radius: 4px;
+  }
+</style>
+
+<div class="wrap">
+  <div class="kicker">Gemma Without Borders — team walkthrough</div>
+  <h1>Our app, as a Jupyter notebook</h1>
+  <p class="sub">
+    This is the exact pipeline running in our repo, laid out cell by cell the way it
+    would look in a notebook. Blue <span style="font-family:ui-monospace,Menlo,monospace">In&nbsp;[&nbsp;]</span> blocks are code.
+    The tinted blocks with the clay edge explain, in plain words, what each one does.
+  </p>
+
+  <div class="nb">
+    <div class="nb-bar">
+      <span class="nb-name">gemma_without_borders_demo.ipynb</span>
+      <span class="chip">Python 3 (ipykernel)</span>
+      <span class="chip live">Ollama: gemma3:1b running locally</span>
+    </div>
+    <div class="nb-body">
+
+      <!-- ============ 1 ============ -->
+      <div class="md"><h2>1. Load the question bank</h2></div>
+      <div class="explain">
+        <span class="label">In plain words</span>
+        <p>We open our file of 36 quiz questions. Every wrong answer in this file is
+        pre-labelled with the exact mistake a student would have made to pick it.
+        This file was checked by hand and by independent AI verifiers, so we trust it.</p>
+      </div>
+      <div class="cell">
+        <div class="prompt">In [1]:</div>
+        <div class="code"><pre><span class="k">import</span> json
+
+questions = json.load(<span class="f">open</span>(<span class="s">"data/questions.json"</span>))
+<span class="f">print</span>(<span class="f">len</span>(questions), <span class="s">"questions loaded"</span>)</pre></div>
+      </div>
+      <div class="cell">
+        <div class="prompt out">Out[1]:</div>
+        <div class="output"><pre>36 questions loaded
+Number: 8   Algebra: 7   Data: 5   Geometry &amp; Measurement: 8   Financial Literacy: 8</pre></div>
+      </div>
+
+      <!-- ============ 2 ============ -->
+      <div class="md"><h2>2. One door to Gemma</h2></div>
+      <div class="explain">
+        <span class="label">In plain words</span>
+        <p>This is the only place in the whole project that talks to the AI model.
+        We send it text, it sends text back. Gemma runs on our own computer through
+        Ollama, so no student data ever leaves the machine. To upgrade to the bigger
+        12B model later, we change one name.</p>
+      </div>
+      <div class="cell">
+        <div class="prompt">In [2]:</div>
+        <div class="code"><pre><span class="k">import</span> requests
+
+MODEL = <span class="s">"gemma3:1b"</span>  <span class="c"># later: "gemma3:12b" — one string, nothing else changes</span>
+
+<span class="k">def</span> <span class="f">ask_gemma</span>(prompt):
+    r = requests.post(<span class="s">"http://localhost:11434/api/generate"</span>,
+                      json={<span class="s">"model"</span>: MODEL, <span class="s">"prompt"</span>: prompt,
+                            <span class="s">"stream"</span>: <span class="k">False</span>,
+                            <span class="s">"options"</span>: {<span class="s">"temperature"</span>: <span class="n">0.2</span>}})
+    <span class="k">return</span> r.json()[<span class="s">"response"</span>]</pre></div>
+      </div>
+
+      <!-- ============ 3 ============ -->
+      <div class="md"><h2>3. Prove the model is alive</h2></div>
+      <div class="explain">
+        <span class="label">In plain words</span>
+        <p>A quick test question. The answer below was written by Gemma running
+        locally on the laptop, in about four seconds. This is real output, not a mock.</p>
+      </div>
+      <div class="cell">
+        <div class="prompt">In [3]:</div>
+        <div class="code"><pre><span class="f">print</span>(<span class="f">ask_gemma</span>(<span class="s">"A student calculated 2/3 + 1/4 and got 3/7. "</span>
+                <span class="s">"What mistake did they make? Explain for a 14-year-old."</span>))</pre></div>
+      </div>
+      <div class="cell">
+        <div class="prompt out">Out[3]:</div>
+        <div class="output gemma-out"><span class="gemma-tag">Live Gemma output</span><pre>The mistake was adding the numerators and denominators separately. When we add
+fractions, we need the same denominator first. 2/3 becomes 8/12 and 1/4 becomes
+3/12, so 8/12 + 3/12 = 11/12. Adding tops and bottoms straight across (2+1 over
+3+4) gives 3/7, which is not how fractions work.</pre></div>
+      </div>
+
+      <!-- ============ 4 ============ -->
+      <div class="md"><h2>4. A student takes the quiz</h2></div>
+      <div class="explain">
+        <span class="label">In plain words</span>
+        <p>We pretend a student answered five questions and got three wrong. In the
+        real app this comes from the quiz screen — here we just write their choices
+        down so you can see what the agent receives.</p>
+      </div>
+      <div class="cell">
+        <div class="prompt">In [4]:</div>
+        <div class="code"><pre>quiz = questions[:<span class="n">5</span>]
+answers = {
+    <span class="s">"NUM-ITEM-01"</span>: <span class="s">"B"</span>,  <span class="c"># wrong — 2^12 (multiplied the exponents)</span>
+    <span class="s">"NUM-ITEM-02"</span>: <span class="s">"A"</span>,  <span class="c"># correct</span>
+    <span class="s">"NUM-ITEM-03"</span>: <span class="s">"B"</span>,  <span class="c"># wrong — thought 3^0 = 0</span>
+    <span class="s">"NUM-ITEM-04"</span>: <span class="s">"B"</span>,  <span class="c"># wrong — 3/7 (added straight across)</span>
+    <span class="s">"NUM-ITEM-05"</span>: <span class="s">"A"</span>,  <span class="c"># correct</span>
+}</pre></div>
+      </div>
+
+      <!-- ============ 5 ============ -->
+      <div class="md"><h2>5. The agent grades and diagnoses — without the AI</h2></div>
+      <div class="explain">
+        <span class="label">In plain words</span>
+        <p>Here is our reliability trick. To figure out <em>why</em> the student picked a
+        wrong answer, we do not ask the AI to guess. We look it up in the question
+        file, where every wrong option is already labelled with its mistake. A lookup
+        cannot hallucinate. The AI is saved for the jobs it is actually good at.</p>
+      </div>
+      <div class="cell">
+        <div class="prompt">In [5]:</div>
+        <div class="code"><pre><span class="k">from</span> agent <span class="k">import</span> grade_quiz, analyze
+
+result = <span class="f">grade_quiz</span>(quiz, answers)
+analysis = <span class="f">analyze</span>(result)
+
+<span class="f">print</span>(<span class="s">"Score:"</span>, result[<span class="s">"correct"</span>], <span class="s">"/"</span>, result[<span class="s">"total"</span>])
+<span class="f">print</span>(<span class="s">"Priority misconception:"</span>, analysis[<span class="s">"priority"</span>][<span class="s">"name"</span>])
+<span class="f">print</span>(<span class="s">"Tell the teacher?"</span>, analysis[<span class="s">"escalate"</span>])</pre></div>
+      </div>
+      <div class="cell">
+        <div class="prompt out">Out[5]:</div>
+        <div class="output"><pre>Score: 2 / 5
+Priority misconception: Multiplying exponents when multiplying like bases
+Tell the teacher? True</pre></div>
+      </div>
+      <div class="explain">
+        <span class="label">Why this makes it an agent</span>
+        <p>Notice what just happened: the system looked across <em>all</em> the mistakes,
+        found the pattern, decided which gap matters most, and decided the teacher
+        should be told. It is making decisions about what to do next — that is the
+        difference between an agent and a chatbot that answers one message at a time.</p>
+      </div>
+
+      <!-- ============ 6 ============ -->
+      <div class="md"><h2>6. Gemma writes the study guide</h2></div>
+      <div class="explain">
+        <span class="label">In plain words</span>
+        <p>Now the AI does its real job. For each wrong answer, we tell Gemma exactly
+        which mistake was made (from our lookup — so it never teaches the wrong
+        thing) and ask it to write a friendly explanation plus one fresh practice
+        question. This output is from the live model.</p>
+      </div>
+      <div class="cell">
+        <div class="prompt">In [6]:</div>
+        <div class="code"><pre><span class="k">from</span> agent <span class="k">import</span> build_study_guides
+
+guides = <span class="f">build_study_guides</span>(result)
+<span class="f">print</span>(guides[<span class="n">0</span>][<span class="s">"explanation"</span>][:<span class="n">400</span>])</pre></div>
+      </div>
+      <div class="cell">
+        <div class="prompt out">Out[6]:</div>
+        <div class="output gemma-out"><span class="gemma-tag">Live Gemma output</span><pre>Okay, let's tackle this together! You were thinking of multiplying the exponents,
+which is a common mix-up. When we multiply powers with the same base, we keep the
+base and ADD the exponents. So 2^3 x 2^4 = 2^(3+4) = 2^7.
+
+Check it the long way: 2^3 = 8 and 2^4 = 16, and 8 x 16 = 128 — the same as 2^7.
+
+Now you try: simplify 5^2 x 5^3. (Answer: 5^5, which is 3,125.)</pre></div>
+      </div>
+
+      <!-- ============ 7 ============ -->
+      <div class="md"><h2>7. The teacher hand-off</h2></div>
+      <div class="explain">
+        <span class="label">In plain words</span>
+        <p>Because this student missed more than half the quiz, the agent writes a
+        short report a teacher can read in ten seconds. This part is plain code, no
+        AI — a safety report should never be a guess.</p>
+      </div>
+      <div class="cell">
+        <div class="prompt">In [7]:</div>
+        <div class="code"><pre><span class="k">from</span> agent <span class="k">import</span> teacher_report
+<span class="f">print</span>(<span class="f">teacher_report</span>(result, analysis))</pre></div>
+      </div>
+      <div class="cell">
+        <div class="prompt out">Out[7]:</div>
+        <div class="output"><pre>TEACHER SUMMARY — Gemma Without Borders
+Score: 2/5 (40%)
+
+Misconception patterns observed:
+  - NUM-1: Multiplying exponents when multiplying like bases  (missed 1x)
+  - NUM-4: Zero exponent equals zero  (missed 1x)
+  - NUM-6: Adding fractions straight across  (missed 1x)
+
+Recommended focus: Multiplying exponents when multiplying like bases
+Suggested action: short 1:1 on the focus misconception before moving on.</pre></div>
+      </div>
+
+    </div>
+  </div>
+
+  <p class="endnote">
+    <strong>That is the whole system.</strong> Cells 1, 4, 5, and 7 are plain Python —
+    fast, predictable, impossible to hallucinate. Gemma appears in exactly two places
+    (cells 3 and 6), both through the single <code class="inline">ask_gemma()</code> door.
+    Swapping to the 12B model when it finishes downloading is one edit:
+    <code class="inline">MODEL = "gemma3:12b"</code>. The same cells run unchanged in a
+    Kaggle notebook for the judges — point <code class="inline">ask_gemma()</code> at the
+    Kaggle GPU version from our notebook and everything else stays identical.
+  </p>
+</div>
