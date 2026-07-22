@@ -1,41 +1,74 @@
 """
 gemma_client.py  —  THE ONE DOOR TO GEMMA.
 
-Everywhere the app needs AI, it calls ask_gemma(). Right now this returns clean
-PLACEHOLDER text so we can build and demo the whole app WITHOUT the model running.
+Everywhere the app needs AI, it calls ask_gemma(). The model runs locally via
+Ollama (http://localhost:11434) — fully on-device, no data leaves the machine.
 
-Later, integrating Gemma is a single change: flip USE_REAL_GEMMA = True and fill in
-_real_gemma(). Nothing else in the app has to change.
+Model selection: set the GEMMA_MODEL environment variable to switch models with
+zero code changes (e.g. GEMMA_MODEL=gemma3:12b once the larger pull finishes).
+
+If Ollama isn't running (a teammate without it installed), the app still works:
+it falls back to clearly-marked placeholder text instead of crashing.
 """
+import os
+import requests
 
-USE_REAL_GEMMA = False   # flip to True once Gemma is wired in (Ollama or transformers)
+OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434")
+MODEL = os.environ.get("GEMMA_MODEL", "gemma3:1b")
+TIMEOUT_S = int(os.environ.get("GEMMA_TIMEOUT_S", "120"))
 
 
 def ask_gemma(prompt: str, max_new_tokens: int = 600) -> str:
     """Text in, text out. The only function that talks to the model."""
-    if USE_REAL_GEMMA:
-        return _real_gemma(prompt, max_new_tokens)
+    if gemma_available():
+        return _ollama(prompt, max_new_tokens)
     return _stub(prompt)
 
 
+_available = None
+
+def gemma_available() -> bool:
+    """True if the local Ollama server is reachable (checked once per process)."""
+    global _available
+    if _available is None:
+        try:
+            requests.get(f"{OLLAMA_URL}/api/tags", timeout=2)
+            _available = True
+        except requests.RequestException:
+            _available = False
+    return _available
+
+
+def _ollama(prompt: str, max_new_tokens: int) -> str:
+    r = requests.post(
+        f"{OLLAMA_URL}/api/generate",
+        json={
+            "model": MODEL,
+            "prompt": prompt,
+            "stream": False,
+            "options": {
+                "temperature": 0.2,      # low = consistent math
+                "num_predict": max_new_tokens,
+            },
+        },
+        timeout=TIMEOUT_S,
+    )
+    r.raise_for_status()
+    return r.json()["response"].strip()
+
+
 # --------------------------------------------------------------------------
-# STUB — remove or ignore once Gemma is connected.
-# It reads a "TASK:" and "MISCONCEPTION:" hint from the prompt so the demo
-# shows something sensible in each spot Gemma will eventually fill.
+# Fallback stub — used only when no local model is available, so the app
+# still runs for teammates without Ollama installed.
 # --------------------------------------------------------------------------
 def _stub(prompt: str) -> str:
     task = _tag(prompt, "TASK") or "explain"
     misc = _tag(prompt, "MISCONCEPTION") or "this misconception"
     if task == "practice":
         return ("_(Gemma will generate a fresh practice question here — one that targets "
-                f"'{misc}', so the student can prove they've got it.)_")
-    if task == "visual":
-        return ("_(Gemma will describe a visual/step-by-step explanation here — the agent "
-                f"escalates to this strategy when the plain explanation didn't land for '{misc}'.)_")
-    if task == "grade":
-        return "PLACEHOLDER"  # the agent's evaluate step; real Gemma returns a label
-    return ("_(Gemma will write a friendly, personalized explanation here: what the student "
-            f"did wrong for '{misc}' and how to think about it correctly.)_")
+                f"'{misc}'. Install Ollama and pull a Gemma model to see it live.)_")
+    return ("_(Gemma will write a personalized explanation here for '"
+            f"{misc}'. Install Ollama and pull a Gemma model to see it live.)_")
 
 
 def _tag(prompt: str, key: str) -> str:
@@ -43,18 +76,3 @@ def _tag(prompt: str, key: str) -> str:
         if line.strip().upper().startswith(key + ":"):
             return line.split(":", 1)[1].strip()
     return ""
-
-
-# --------------------------------------------------------------------------
-# REAL GEMMA — fill this in at integration time. Sketch of the two options:
-#
-#   Local (Edge / on-device) via Ollama:
-#       import requests
-#       r = requests.post("http://localhost:11434/api/generate",
-#                         json={"model": "gemma3:4b", "prompt": prompt, "stream": False})
-#       return r.json()["response"]
-#
-#   Kaggle / transformers: reuse the ask_gemma() from gemma-tutor-CLEAN.ipynb.
-# --------------------------------------------------------------------------
-def _real_gemma(prompt: str, max_new_tokens: int) -> str:
-    raise NotImplementedError("Wire real Gemma here — see the sketch above.")
