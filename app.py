@@ -129,7 +129,8 @@ def pick_quiz(strand: str, n: int) -> list:
 
 def reset():
     for k in ("stage", "quiz", "answers", "guides", "mastered", "teacher_report",
-              "escal_report", "msession", "mprobe", "mlesson", "mfeedback", "mtranscript"):
+              "escal_report", "msession", "mprobe", "mlesson", "mlesson_why",
+              "mfeedback", "mtranscript"):
         st.session_state.pop(k, None)
 
 
@@ -150,6 +151,8 @@ def start_mastery(result, analysis):
     with st.spinner("The agent is preparing your first lesson..."):
         st.session_state.mlesson = m.teach(s)
         st.session_state.mprobe = m.next_probe(s, QUESTIONS)
+    st.session_state.mlesson_why = ("Starting with the most direct explanation of the "
+                                    "mistake — the quickest path to seeing it.")
     st.session_state.mfeedback = None
     st.session_state.stage = "mastery"
 
@@ -225,10 +228,13 @@ def results():
         st.button("Take another quiz", type="primary", key="again_top", on_click=reset)
     elif priority:
         n = priority["count"]
+        reason = (f"you missed it {n} times — more than any other gap"
+                  if len(analysis["patterns"]) > 1 and n > 1
+                  else f"it's the clearest gap in your answers")
         note(
-            "Agent analysis",
-            f"Your main gap is <strong>{priority['name']}</strong> "
-            f"(missed {n} time{'s' if n != 1 else ''}). The study guide starts there.",
+            "Why the agent starts here",
+            f"Your main gap is <strong>{priority['name']}</strong>. The agent tackles this "
+            f"first because {reason}. The study guide starts there.",
         )
         st.button(
             "Practice until I've mastered it",
@@ -321,6 +327,9 @@ def check_answer():
         with st.spinner("The agent is deciding what to try next..."):
             if outcome["strategy_changed"]:
                 st.session_state.mlesson = m.teach(s)
+                st.session_state.mlesson_why = (
+                    outcome.get("strategy_why")
+                    or f"Trying a different approach: {s.strategy_name}.")
             st.session_state.mprobe = m.next_probe(s, QUESTIONS)
     st.session_state.pop("mastery_choice", None)
     st.session_state.pop("mastery_reason", None)
@@ -343,8 +352,9 @@ def mastery_stage():
     if s.state == m.MASTERED:
         # remember it: the results page now shows this gap as closed
         st.session_state.setdefault("mastered", set()).add(s.misconception_id)
-        note("Mastery demonstrated",
-             "Two fresh questions in a row, answered correctly. The gap is closed.")
+        note("Why the agent declared mastery",
+             "Two fresh questions in a row, answered correctly — and your reasoning showed "
+             "real understanding, not a lucky guess. That's the evidence bar for mastery.")
         st.code(m.mastery_recap(s))
         st.button("Back to my results", key="back_mastered",
                   on_click=lambda: st.session_state.update(stage="results"))
@@ -368,28 +378,19 @@ def mastery_stage():
     if st.session_state.get("mtranscript"):
         note("What Gemma read from your photo",
              st.session_state.mtranscript.replace("\n", "<br>"))
-    if fb:
-        if fb["correct"] and fb.get("label") == "SHALLOW":
-            note("Right answer — but shaky reasoning",
-                 "The agent read your explanation and isn't convinced yet, so this "
-                 "one doesn't count toward mastery. Say how you'd solve the next "
-                 "one and prove it.")
-        elif fb["correct"] and fb.get("label") == "SAME_ERROR":
-            note("Right answer — wrong path",
-                 "Your explanation still shows the original misconception, so the "
-                 "streak resets. Read the lesson once more before the next question.")
-        elif fb["correct"]:
-            note("Correct", "One more in a row and you've shown mastery.")
-        elif fb["strategy_changed"]:
-            why = f" {fb['strategy_why'].rstrip('.')}." if fb.get("strategy_why") else ""
-            note("Not yet — switching approach",
-                 f"The agent is trying a different way: "
-                 f"<strong>{s.strategy_name}</strong>.{why}")
+    if fb and fb.get("rationale"):
+        # explainable AI: every decision shows its evidence-based "why"
+        headline = ("Correct" if fb["correct"] and fb.get("label") == "RESOLVED"
+                    else "Right answer — but not yet" if fb["correct"]
+                    else "Not yet")
+        note(f"Why the agent decided this · {headline}", esc(fb["rationale"]))
 
-    # the lesson for the current strategy
+    # the lesson for the current strategy, with the reason this approach was chosen
     with st.container(border=True):
         st.caption(f"Lesson — {s.strategy_name}")
-        st.markdown(st.session_state.mlesson)
+        st.markdown(esc(st.session_state.mlesson))
+        if st.session_state.get("mlesson_why"):
+            st.caption("Why this approach: " + st.session_state.mlesson_why)
 
     # the probe
     probe = st.session_state.mprobe

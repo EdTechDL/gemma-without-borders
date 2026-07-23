@@ -285,8 +285,36 @@ def submit_answer(session: MasterySession, probe: dict, chosen_label: str,
         session.state = ESCALATED
         session.escalation_reason = "model call budget reached"
 
+    rationale = _rationale(session, correct, label, strategy_changed, strategy_why)
     return {"correct": correct, "label": label, "state": session.state,
-            "strategy_changed": strategy_changed, "strategy_why": strategy_why}
+            "strategy_changed": strategy_changed, "strategy_why": strategy_why,
+            "rationale": rationale}
+
+
+def _rationale(session, correct, label, strategy_changed, strategy_why) -> str:
+    """The agent's evidence-based reason for the decision it just made — composed
+    from the real session state so it is always accurate (explainable AI)."""
+    if session.state == MASTERED:
+        return ("Two fresh questions correct in a row, and your reasoning showed real "
+                "understanding — that is the bar for mastery, so we can stop.")
+    if session.state == ESCALATED:
+        return (f"Handing off to a teacher because {session.escalation_reason} — drilling "
+                "further is unlikely to help more than a person can.")
+    if correct and label == "SHALLOW":
+        return ("You got it right, but your explanation was thin, so it does not count "
+                "toward mastery yet. Show your reasoning on the next one.")
+    if correct and label == "SAME_ERROR":
+        return ("Right answer, but your reasoning still shows the misconception — so the "
+                "streak resets and we keep working on it rather than move on.")
+    if correct:
+        return (f"Correct, and your reasoning held up — that is "
+                f"{session.consecutive_correct} of {MASTERY_BAR} in a row. One more like "
+                "that and you have shown mastery.")
+    if strategy_changed:
+        base = "You missed it, so the current explanation is not landing. "
+        return base + (strategy_why.rstrip(".") + "." if strategy_why
+                       else f"Switching to a different approach: {session.strategy_name}.")
+    return "You missed it — let's try once more."
 
 
 # ------------------------------------------------------------------ REPORTS
