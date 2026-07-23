@@ -11,7 +11,7 @@ The `strategy` argument is how the AGENT adapts: if a plain explanation doesn't
 land, it re-calls with a different strategy (see agent.py / the blueprint).
 """
 from __future__ import annotations
-from gemma_client import ask_gemma
+from gemma_client import ask_gemma, plainify
 
 STRATEGIES = ["explanation", "worked_example", "visual", "analogy"]
 
@@ -39,14 +39,14 @@ def pick_practice(item: dict, misc: dict, questions: list, used_ids: set) -> dic
         if q["id"] not in used_ids and q["strand"] == item["strand"]:
             used_ids.add(q["id"])
             return {"source": "bank", **q}
-    text = ask_gemma(
+    text = plainify(ask_gemma(
         f"TASK: practice\n"
         f"MISCONCEPTION: {misc['name']}\n"
         f"Write ONE fresh Grade 9 practice question, in English, that tests the "
         f"same skill as: {item['question']}\n"
         f"Use different numbers. Output ONLY the question itself - no answer, "
         f"no solution, no extra commentary."
-    )
+    ))
     return {"source": "generated", "id": f"GEN-{item['id']}", "question": text}
 
 
@@ -58,14 +58,15 @@ def hint(practice: dict, misc: dict, level: int) -> str:
              "the first concrete step of the solution, but not the final answer")
     grounding = (f"The verified solution is: {practice.get('solution', '')}\n"
                  if practice.get("solution") else "")
-    return ask_gemma(
+    return plainify(ask_gemma(
         f"TASK: explain\n"
         f"MISCONCEPTION: {misc['name']}\n"
         f"A Grade 9 student is attempting: {practice['question']}\n"
         f"{grounding}"
-        f"Give ONE hint - {depth}. One or two sentences, encouraging, and any "
-        f"numbers must come from the verified solution above."
-    )
+        f"Give ONE hint - {depth}. One or two sentences, encouraging, in plain "
+        f"text (no LaTeX, no dollar signs), and any numbers must come from the "
+        f"verified solution above."
+    ))
 
 
 def study_guide(item: dict, chosen_label: str, strategy: str = "explanation",
@@ -99,7 +100,7 @@ def study_guide(item: dict, chosen_label: str, strategy: str = "explanation",
         "correct": correct["text"],
         "misconception": misc,
         "strategy": strategy,
-        "explanation": ask_gemma(explain_prompt),      # Gemma (stub for now)
+        "explanation": plainify(ask_gemma(explain_prompt)),  # Gemma, LaTeX stripped
         "worked_solution": item.get("solution", ""),    # real, from the bank
         "practice": pick_practice(item, misc, questions, used_ids),
     }

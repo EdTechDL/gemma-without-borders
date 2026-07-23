@@ -20,7 +20,7 @@ import json
 import re
 from dataclasses import dataclass, field
 
-from gemma_client import ask_gemma
+from gemma_client import ask_gemma, plainify
 
 # ---- the strategy ladder: each entry is a different way to teach ----
 STRATEGY_LADDER = [
@@ -87,6 +87,7 @@ def teach(session: MasterySession) -> str:
         f"calculations or results. Do not give them a new question to answer; "
         f"just teach."
     )
+    lesson = plainify(lesson)
     session.history.append({"kind": "lesson", "strategy": name, "text": lesson})
     return lesson
 
@@ -142,8 +143,8 @@ def _generated_probe(session: MasterySession) -> dict | None:
                 probe = {
                     "source": "generated",
                     "id": f"GEN-{session.attempts + 1}",
-                    "question": data["question"],
-                    "options": [{"label": k, "text": v, "is_correct": k == data["correct"]}
+                    "question": plainify(data["question"]),
+                    "options": [{"label": k, "text": plainify(v), "is_correct": k == data["correct"]}
                                 for k, v in sorted(opts.items())],
                     "correct": data["correct"],
                     "solution": "",
@@ -231,7 +232,7 @@ def _choose_strategy(session: MasterySession, explanation: str) -> str:
                 for offset, (name, _) in enumerate(remaining):
                     if name.lower() in str(data.get("strategy", "")).lower():
                         session.strategy_index += 1 + offset
-                        return data.get("why", fallback_reason)
+                        return plainify(data.get("why", fallback_reason))
             except json.JSONDecodeError:
                 pass
     session.strategy_index += 1

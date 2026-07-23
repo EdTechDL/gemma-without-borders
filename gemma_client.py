@@ -11,7 +11,50 @@ If Ollama isn't running (a teammate without it installed), the app still works:
 it falls back to clearly-marked placeholder text instead of crashing.
 """
 import os
+import re
 import requests
+
+# --------------------------------------------------------------------------
+# plainify(): strip LaTeX from model output so no raw "$" / "\frac" ever
+# reaches the UI. The app's house style is plain-English math ("2/3", "2^3"),
+# so we convert rather than render. Applied to every human-facing string
+# Gemma produces (NOT to JSON responses, which are parsed, not shown).
+# --------------------------------------------------------------------------
+_SUP = str.maketrans("0123456789+-=()n", "⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ⁿ")
+
+_SYMBOLS = {
+    r"\\times": "×", r"\\cdot": "·", r"\\div": "÷", r"\\pm": "±",
+    r"\\leq": "≤", r"\\le": "≤", r"\\geq": "≥", r"\\ge": "≥",
+    r"\\neq": "≠", r"\\ne": "≠", r"\\approx": "≈", r"\\pi": "π",
+    r"\\circ": "°", r"\\degree": "°", r"\\%": "%",
+    r"\\left": "", r"\\right": "", r"\\,": " ", r"\\;": " ", r"\\!": "",
+    r"\\quad": "  ", r"\\qquad": "   ",
+}
+
+
+def plainify(text: str) -> str:
+    if not text:
+        return text
+    t = text
+    t = t.replace("$$", "").replace("$", "")          # math delimiters
+    t = re.sub(r"\\[\(\)\[\]]", "", t)                 # \( \) \[ \]
+    t = re.sub(r"\\begin\{[^}]*\}|\\end\{[^}]*\}", "", t)
+    t = re.sub(r"\\[dt]?frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}", r"\1/\2", t)  # fractions
+    t = re.sub(r"\\sqrt\s*\{([^{}]*)\}", r"√(\1)", t)
+    t = re.sub(r"\\(?:text|mathrm|mathbf|mathit|operatorname)\s*\{([^{}]*)\}", r"\1", t)
+    for pat, rep in _SYMBOLS.items():
+        t = re.sub(pat, rep, t)
+
+    def _sup(match):
+        s = match.group(1)
+        return s.translate(_SUP) if all(c in "0123456789+-=()n" for c in s) else "^" + s
+    t = re.sub(r"\^\{([^{}]*)\}", _sup, t)             # ^{...}
+    t = re.sub(r"\^([0-9n])", lambda m: m.group(1).translate(_SUP), t)  # ^2
+    t = re.sub(r"_\{([^{}]*)\}", r"_\1", t)            # _{...}
+    t = t.replace("\\\\", " ")                          # LaTeX line breaks
+    t = re.sub(r"\\([a-zA-Z]+)", r"\1", t)             # drop any leftover \command
+    t = re.sub(r"[ \t]{2,}", " ", t)
+    return t.strip()
 
 OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434")
 MODEL = os.environ.get("GEMMA_MODEL", "gemma3:1b")
@@ -94,7 +137,7 @@ def transcribe_image(image_bytes: bytes) -> str:
         timeout=TIMEOUT_S,
     )
     r.raise_for_status()
-    return r.json()["message"]["content"].strip()
+    return plainify(r.json()["message"]["content"].strip())
 
 
 # --------------------------------------------------------------------------

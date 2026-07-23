@@ -8,13 +8,14 @@ AGENT builds from your wrong answers (explanation + fresh practice per mistake),
 plus the agent's read on your #1 misconception and a teacher hand-off if needed.
 """
 import json
+import re
 from pathlib import Path
 import streamlit as st
 
 import agent
 import mastery as m
 import tutor
-from gemma_client import vision_available, transcribe_image
+from gemma_client import vision_available, transcribe_image, plainify
 
 QUESTIONS = json.loads((Path(__file__).parent / "data" / "questions.json").read_text())
 STRANDS = sorted({q["strand"] for q in QUESTIONS})
@@ -92,9 +93,18 @@ hr { border-color: var(--line) !important; }
 """, unsafe_allow_html=True)
 
 
+def _inline_md(s: str) -> str:
+    """Render **bold** / *italic* as HTML inside our note boxes (raw HTML doesn't
+    process markdown). The italic rule ignores '2 * 3' (asterisks hugging text
+    only), so multiplication is never mistaken for emphasis."""
+    s = re.sub(r"\*\*(\S(?:.*?\S)?)\*\*", r"<strong>\1</strong>", s)
+    s = re.sub(r"(?<![\*\w])\*(?!\s)([^*]+?)(?<!\s)\*(?![\*\w])", r"<em>\1</em>", s)
+    return s
+
+
 def note(label: str, body: str):
     st.markdown(
-        f'<div class="gwb-note"><span class="label">{label}</span>{body}</div>',
+        f'<div class="gwb-note"><span class="label">{label}</span>{_inline_md(body)}</div>',
         unsafe_allow_html=True,
     )
 
@@ -237,7 +247,7 @@ def results():
             st.markdown("**Why:** " + guide["explanation"])
             if guide["worked_solution"]:
                 with st.expander("See the worked solution"):
-                    st.markdown(guide["worked_solution"])
+                    st.markdown(plainify(guide["worked_solution"]))
 
             # --- interactive "Now you try" ---
             p = guide["practice"]
@@ -268,7 +278,7 @@ def results():
                                    on_click=add_hint, args=(i,))
                 if p.get("solution"):
                     with st.expander("See this one worked out"):
-                        st.markdown(p["solution"])
+                        st.markdown(plainify(p["solution"]))
 
     st.button("Take another quiz", on_click=reset)
 
