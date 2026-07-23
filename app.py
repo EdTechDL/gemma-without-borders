@@ -11,6 +11,7 @@ import json
 import re
 from pathlib import Path
 import streamlit as st
+import streamlit.components.v1 as components
 
 import agent
 import mastery as m
@@ -176,6 +177,327 @@ def intro():
         st.session_state.answers = {}
         st.rerun()
 
+    st.divider()
+    st.caption("Or explore a different way:")
+    if st.button("Play GEMMA Monsters  (beta)"):
+        st.session_state.adventure = True
+        st.session_state.stage = "map"
+        st.rerun()
+
+
+# ---------------- GEMMA MONSTERS (optional, additive game layer) ----------------
+# Every unit is guarded by a Gemma Monster — a personified misconception. The hub
+# is a 3D nexus (three.js, bloom). Clicking a monster shows its game card; Begin
+# enters that unit's real quiz via ?station=. Deliberately NOT the app's clean
+# design language — it's a different world.
+MONSTERS = {
+    "Number": {
+        "monster": "Fractis", "color": "#ff8a5c", "shape": "shard",
+        "lore": "Feeds on fractions added straight across. Weak to common denominators."},
+    "Algebra": {
+        "monster": "Equazor", "color": "#ff6b9d", "shape": "knot",
+        "lore": "Twists equations until the signs flip wrong. Weak to balanced moves."},
+    "Data": {
+        "monster": "Statiq", "color": "#35d0c0", "shape": "blob",
+        "lore": "Blurs means and medians into noise. Weak to ordered data."},
+    "Geometry & Measurement": {
+        "monster": "Polygor", "color": "#a78bfa", "shape": "poly",
+        "lore": "Hoards angles and stolen area formulas. Weak to a true diagram."},
+    "Financial Literacy": {
+        "monster": "Ledgerling", "color": "#ffd166", "shape": "coin",
+        "lore": "Skims your interest while you sleep. Weak to a sharp budget."},
+}
+STATIONS = MONSTERS  # router alias: ?station= keys
+
+
+def monster_for(misconception_strand):
+    return MONSTERS.get(misconception_strand)
+
+
+def monster_svg(color, size):
+    """Tiny original monster mark (blob + eyes) used in the 2D app when a
+    Gemma Monster 'gets you'. Inline SVG, no assets."""
+    return (f'<svg width="{size}" height="{size}" viewBox="0 0 40 40" '
+            f'style="vertical-align:middle">'
+            f'<path d="M20 3 C31 3 37 12 37 21 C37 32 30 37 20 37 C10 37 3 32 3 21 '
+            f'C3 12 9 3 20 3 Z" fill="{color}"/>'
+            f'<circle cx="14" cy="18" r="4.2" fill="#14101c"/>'
+            f'<circle cx="26" cy="18" r="4.2" fill="#14101c"/>'
+            f'<circle cx="15.4" cy="16.6" r="1.4" fill="#fff"/>'
+            f'<circle cx="27.4" cy="16.6" r="1.4" fill="#fff"/>'
+            f'<path d="M13 28 Q20 33 27 28" stroke="#14101c" stroke-width="2.4" '
+            f'fill="none" stroke-linecap="round"/></svg>')
+
+
+_HUB_TEMPLATE = r"""
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;background:#0b0710;
+    font-family:'Trebuchet MS','Segoe UI',sans-serif;color:#f2e8dc;user-select:none}
+  #canvas-container{position:absolute;inset:0;z-index:1}
+  #ui{position:absolute;inset:0;z-index:10;pointer-events:none;display:flex;
+    flex-direction:column;justify-content:space-between;padding:28px}
+  header h1{font-size:2.6rem;font-weight:900;letter-spacing:-1px;text-transform:uppercase;
+    background:linear-gradient(135deg,#ffe9d6 25%,#e08d6d 70%,#b98868);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    filter:drop-shadow(0 0 14px rgba(224,141,109,.55))}
+  header p{color:#b9a794;font-size:.95rem;margin-top:4px;max-width:430px}
+  header{display:flex;justify-content:space-between;align-items:flex-start}
+  .hbtns{display:flex;gap:10px}
+  .hbtn{pointer-events:auto;background:rgba(255,240,225,.06);border:1px solid rgba(255,240,225,.16);
+    color:#d9c6b2;padding:10px 20px;border-radius:24px;cursor:pointer;font-weight:700;
+    text-transform:uppercase;letter-spacing:1px;font-size:.75rem;text-decoration:none;
+    transition:all .25s}
+  .hbtn:hover{background:rgba(255,240,225,.16);color:#fff}
+
+  /* ---- GAME CARD ---- */
+  #card{align-self:flex-end;width:320px;opacity:0;transform:translateY(26px) rotate(1.5deg) scale(.96);
+    transition:all .5s cubic-bezier(.16,1,.3,1);pointer-events:auto;
+    --mc:#e08d6d}
+  #card.active{opacity:1;transform:translateY(0) rotate(0) scale(1)}
+  .cardframe{border-radius:16px;padding:7px;
+    background:linear-gradient(160deg,var(--mc),#241322 55%,var(--mc));
+    box-shadow:0 24px 50px rgba(0,0,0,.85),0 0 34px color-mix(in srgb,var(--mc) 45%,transparent)}
+  .cardinner{border-radius:11px;background:
+      radial-gradient(120% 65% at 50% 0%,color-mix(in srgb,var(--mc) 26%,#160e18) 0%,#160e18 55%),
+      repeating-linear-gradient(45deg,rgba(255,255,255,.02) 0 2px,transparent 2px 6px),#160e18;
+    border:1px solid rgba(255,236,214,.14);padding:0 0 14px 0;overflow:hidden}
+  .unitchip{display:inline-block;margin:12px 0 0 14px;padding:3px 11px;border-radius:4px;
+    background:var(--mc);color:#1a0f14;font-size:.66rem;font-weight:900;letter-spacing:.18em}
+  .mname{font-size:2rem;font-weight:900;letter-spacing:-.5px;text-transform:uppercase;
+    margin:6px 14px 2px;color:#ffefdd;text-shadow:0 0 12px color-mix(in srgb,var(--mc) 70%,transparent)}
+  .mstage{height:96px;margin:8px 14px;border-radius:8px;position:relative;
+    background:radial-gradient(60% 90% at 50% 60%,color-mix(in srgb,var(--mc) 38%,#0d0810),#0d0810);
+    border:1px solid rgba(255,236,214,.12);display:flex;align-items:center;justify-content:center}
+  .mstage svg{filter:drop-shadow(0 0 10px var(--mc))}
+  .lore{font-style:italic;color:#cbb8a4;font-size:.9rem;line-height:1.5;margin:2px 16px 10px;
+    border-left:3px solid var(--mc);padding-left:10px}
+  .stats{display:flex;gap:8px;margin:0 14px 12px}
+  .stat{flex:1;text-align:center;background:rgba(255,236,214,.06);border:1px solid rgba(255,236,214,.1);
+    border-radius:6px;padding:6px 2px;font-size:.62rem;letter-spacing:.12em;color:#d9c6b2}
+  .stat b{display:block;font-size:.95rem;color:#ffefdd;letter-spacing:0}
+  .fight{display:block;margin:0 14px;padding:14px;text-align:center;border-radius:9px;
+    background:linear-gradient(135deg,var(--mc),color-mix(in srgb,var(--mc) 45%,#7a2a3a));
+    color:#1a0f14;font-weight:900;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;
+    font-size:.95rem;box-shadow:0 8px 22px color-mix(in srgb,var(--mc) 55%,transparent);
+    transition:transform .15s}
+  .fight:hover{transform:translateY(-2px)}
+  footer{color:#8d7c6b;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase}
+</style>
+<div id="canvas-container"></div>
+<div id="ui">
+  <header>
+    <div>
+      <h1>Gemma Monsters</h1>
+      <p>Every monster is a misconception in disguise. Challenge one — master the math that defeats it.</p>
+    </div>
+    <div class="hbtns">
+      <button class="hbtn" onclick="resetCamera()">Nexus view</button>
+      <a class="hbtn" target="_top" id="exitlink" href="#">Exit game</a>
+    </div>
+  </header>
+  <div id="card">
+    <div class="cardframe"><div class="cardinner">
+      <span class="unitchip" id="c-unit">UNIT</span>
+      <div class="mname" id="c-name">Monster</div>
+      <div class="mstage" id="c-stage"></div>
+      <p class="lore" id="c-lore">...</p>
+      <div class="stats">
+        <div class="stat">QUESTIONS<b>5</b></div>
+        <div class="stat">GRADE<b>9</b></div>
+        <div class="stat">REWARD<b>MASTERY</b></div>
+      </div>
+      <a class="fight" target="_top" id="c-fight" href="#">Begin challenge</a>
+    </div></div>
+  </div>
+  <footer>Click a monster to inspect its card &middot; drag nothing &mdash; the nexus turns on its own</footer>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+<script>
+const UNITS = __UNITS__;
+const NAMES = Object.keys(UNITS);
+let base=''; try{ base = window.top.location.pathname || '/'; }catch(e){}
+document.getElementById('exitlink').href = base + '?exit=1';
+
+let scene,camera,renderer,composer,selected=null;
+const monsters=[],groups=[],ray=new THREE.Raycaster(),mouse=new THREE.Vector2();
+const CAM={x:0,y:20,z:34},look={x:0,y:0,z:0};
+
+init(); animate();
+
+function init(){
+  const el=document.getElementById('canvas-container');
+  scene=new THREE.Scene(); scene.fog=new THREE.FogExp2(0x0b0710,0.016);
+  camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,0.1,1000);
+  camera.position.set(CAM.x,CAM.y,CAM.z); camera.lookAt(0,0,0);
+  renderer=new THREE.WebGLRenderer({antialias:true});
+  renderer.setSize(innerWidth,innerHeight);
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  el.appendChild(renderer.domElement);
+  scene.add(new THREE.AmbientLight(0x2a1f22,1.1));
+  const warm=new THREE.PointLight(0xffd9b8,1.6,60); warm.position.set(0,12,0); scene.add(warm);
+
+  // nexus core
+  const plat=new THREE.Mesh(new THREE.CylinderGeometry(6,6.5,1,6),
+    new THREE.MeshStandardMaterial({color:0x1a1016,roughness:.55,metalness:.85,flatShading:true}));
+  plat.position.y=-0.5; scene.add(plat);
+  const core=new THREE.Mesh(new THREE.IcosahedronGeometry(1.8,1),
+    new THREE.MeshBasicMaterial({color:0xffe9d6,wireframe:true,transparent:true,opacity:.65}));
+  core.position.y=3; scene.add(core);
+  const cl=new THREE.PointLight(0xe08d6d,2.6,22); cl.position.y=3; scene.add(cl);
+  gsap.to(core.rotation,{y:Math.PI*2,duration:22,repeat:-1,ease:"none"});
+
+  // stations
+  const R=15;
+  NAMES.forEach((name,i)=>{
+    const u=UNITS[name], col=new THREE.Color(u.color);
+    const ang=(i/NAMES.length)*Math.PI*2, x=Math.cos(ang)*R, z=Math.sin(ang)*R;
+    const g=new THREE.Group(); g.position.set(x,0,z); groups.push(g);
+    const p=new THREE.Mesh(new THREE.CylinderGeometry(3,3.2,.6,6),
+      new THREE.MeshStandardMaterial({color:0x180f16,metalness:.8}));
+    g.add(p);
+    const ringG=new THREE.TorusGeometry(3.1,.06,16,6); ringG.rotateX(Math.PI/2);
+    const ring=new THREE.Mesh(ringG,new THREE.MeshBasicMaterial({color:col}));
+    ring.position.y=.35; g.add(ring);
+    const monster=makeMonster(u.shape,col); monster.position.y=3.4;
+    monster.userData={i,baseY:3.4}; g.add(monster); monsters.push(monster);
+    const lt=new THREE.PointLight(col,1.3,12); lt.position.y=3.4; g.add(lt);
+    scene.add(g);
+  });
+
+  // dust
+  const n=900,geo=new THREE.BufferGeometry(),pos=new Float32Array(n*3);
+  for(let i=0;i<n*3;i+=3){pos[i]=(Math.random()-.5)*100;pos[i+1]=Math.random()*38-4;pos[i+2]=(Math.random()-.5)*100;}
+  geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  scene.add(new THREE.Points(geo,new THREE.PointsMaterial({size:.1,color:0xe0a888,transparent:true,opacity:.35})));
+
+  composer=new THREE.EffectComposer(renderer);
+  composer.addPass(new THREE.RenderPass(scene,camera));
+  composer.addPass(new THREE.UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),1.35,.55,.12));
+
+  addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth,innerHeight);composer.setSize(innerWidth,innerHeight);});
+  addEventListener('click',onClick);
+}
+
+function makeMonster(shape,col){
+  const mat=new THREE.MeshStandardMaterial({color:col,metalness:.8,roughness:.12,flatShading:true});
+  const wire=new THREE.MeshBasicMaterial({color:0xfff1e2,wireframe:true,transparent:true,opacity:.35});
+  let m,w;
+  if(shape==='shard'){m=new THREE.Mesh(new THREE.OctahedronGeometry(1.5,0),mat);m.scale.y=2;
+    w=new THREE.Mesh(new THREE.OctahedronGeometry(1.62,0),wire);w.scale.y=2;}
+  else if(shape==='knot'){m=new THREE.Mesh(new THREE.TorusKnotGeometry(.8,.3,100,16),mat);
+    w=new THREE.Mesh(new THREE.TorusKnotGeometry(.85,.32,100,16),wire);}
+  else if(shape==='blob'){m=new THREE.Mesh(new THREE.IcosahedronGeometry(1.4,2),mat);
+    w=new THREE.Mesh(new THREE.IcosahedronGeometry(1.5,2),wire);}
+  else if(shape==='poly'){m=new THREE.Mesh(new THREE.DodecahedronGeometry(1.5,0),mat);
+    w=new THREE.Mesh(new THREE.DodecahedronGeometry(1.62,0),wire);}
+  else {m=new THREE.Mesh(new THREE.TorusGeometry(1.2,.42,16,50),mat);m.rotateX(Math.PI/2);
+    w=new THREE.Mesh(new THREE.TorusGeometry(1.25,.46,16,50),wire);w.rotateX(Math.PI/2);}
+  const g=new THREE.Group(); g.add(m); g.add(w);
+  // eyes so it reads as a creature
+  for(const sx of [-0.45,0.45]){
+    const eye=new THREE.Group();
+    const ball=new THREE.Mesh(new THREE.SphereGeometry(.19,12,12),
+      new THREE.MeshBasicMaterial({color:0xfff6ec}));
+    const pup=new THREE.Mesh(new THREE.SphereGeometry(.09,10,10),
+      new THREE.MeshBasicMaterial({color:0x14101c}));
+    pup.position.z=.13; eye.add(ball); eye.add(pup);
+    eye.position.set(sx,.35,1.35); g.add(eye);
+  }
+  return g;
+}
+
+function svgMini(col){
+  return '<svg width="72" height="72" viewBox="0 0 40 40"><path d="M20 3 C31 3 37 12 37 21 C37 32 30 37 20 37 C10 37 3 32 3 21 C3 12 9 3 20 3 Z" fill="'+col+'"/><circle cx="14" cy="18" r="4.2" fill="#14101c"/><circle cx="26" cy="18" r="4.2" fill="#14101c"/><circle cx="15.4" cy="16.6" r="1.4" fill="#fff"/><circle cx="27.4" cy="16.6" r="1.4" fill="#fff"/><path d="M13 28 Q20 33 27 28" stroke="#14101c" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>';
+}
+
+function onClick(e){
+  if(e.target.closest && e.target.closest('#ui a, #ui button, #card')) return;
+  mouse.x=(e.clientX/innerWidth)*2-1; mouse.y=-(e.clientY/innerHeight)*2+1;
+  ray.setFromCamera(mouse,camera);
+  const hit=ray.intersectObjects(monsters,true);
+  if(hit.length){
+    let o=hit[0].object;
+    while(o.parent && o.userData.i===undefined) o=o.parent;
+    if(o.userData.i!==undefined) focus(o.userData.i);
+  }
+}
+
+function focus(i){
+  if(selected===i) return; selected=i;
+  const name=NAMES[i], u=UNITS[name];
+  const R=15, ang=(i/NAMES.length)*Math.PI*2;
+  const sx=Math.cos(ang)*R, sz=Math.sin(ang)*R;
+  gsap.to(camera.position,{x:Math.cos(ang)*(R+8),y:6,z:Math.sin(ang)*(R+8),duration:1.8,ease:"power3.inOut"});
+  gsap.to(look,{x:sx,y:3.4,z:sz,duration:1.8,ease:"power3.inOut",
+    onUpdate:()=>camera.lookAt(look.x,look.y,look.z)});
+  const card=document.getElementById('card');
+  card.style.setProperty('--mc',u.color);
+  document.getElementById('c-unit').textContent=name.toUpperCase()+' UNIT';
+  document.getElementById('c-name').textContent=u.monster;
+  document.getElementById('c-lore').textContent='"'+u.lore+'"';
+  document.getElementById('c-stage').innerHTML=svgMini(u.color);
+  document.getElementById('c-fight').href=base+'?station='+encodeURIComponent(name);
+  card.classList.add('active');
+}
+
+function resetCamera(){
+  selected=null; document.getElementById('card').classList.remove('active');
+  gsap.to(camera.position,{x:CAM.x,y:CAM.y,z:CAM.z,duration:1.8,ease:"power2.inOut"});
+  gsap.to(look,{x:0,y:0,z:0,duration:1.8,ease:"power2.inOut",
+    onUpdate:()=>camera.lookAt(look.x,look.y,look.z)});
+}
+
+function animate(time){
+  requestAnimationFrame(animate);
+  const t=(time||0)*0.001;
+  monsters.forEach((m,i)=>{
+    m.rotation.y+=(selected===i?0.045:0.006);
+    m.position.y=m.userData.baseY+Math.sin(t*2+i)*(selected===i?.12:.3);
+  });
+  // slow nexus orbit while nothing selected
+  if(selected===null){
+    const a=t*0.05;
+    camera.position.x=Math.sin(a)*34; camera.position.z=Math.cos(a)*34;
+    camera.lookAt(0,0,0);
+  }
+  composer.render();
+}
+</script>
+"""
+
+
+def _hub_html():
+    data = {n: {"monster": m["monster"], "color": m["color"], "shape": m["shape"],
+                "lore": m["lore"]} for n, m in MONSTERS.items()}
+    return _HUB_TEMPLATE.replace("__UNITS__", json.dumps(data))
+
+
+def back_to_map():
+    for k in ("quiz", "answers", "guides", "mastered", "teacher_report", "escal_report",
+              "msession", "mprobe", "mlesson", "mlesson_why", "mfeedback", "mtranscript"):
+        st.session_state.pop(k, None)
+    st.session_state.stage = "map"
+
+
+def map_stage():
+    # full-bleed: strip Streamlit chrome so the game IS the screen (this stage only)
+    st.markdown("""<style>
+      [data-testid="stHeader"]{display:none}
+      [data-testid="stMainBlockContainer"], .block-container{
+        padding:0 !important; max-width:100% !important}
+      [data-testid="stAppViewContainer"]{background:#0b0710}
+      [data-testid="stElementContainer"]:has(iframe){width:100% !important}
+    </style>""", unsafe_allow_html=True)
+    components.html(_hub_html(), height=800, scrolling=False)
+
 
 # ---------------- QUIZ ----------------
 def quiz():
@@ -218,6 +540,25 @@ def results():
     # --- the agent's decision: what matters most ---
     priority = analysis["priority"]
     mastered = st.session_state.get("mastered", set())
+    adventure = st.session_state.get("adventure")
+    if adventure and priority and priority["id"] not in mastered and result["wrong"]:
+        strand = result["wrong"][0]["item"]["strand"]
+        mon = monster_for(strand)
+        if mon:
+            st.markdown(
+                f'''<div style="background:linear-gradient(160deg,#1a1016,#241322);
+                border:2px solid {mon["color"]};border-radius:14px;padding:20px 24px;
+                margin:6px 0 14px;display:flex;align-items:center;gap:20px;
+                box-shadow:0 0 26px {mon["color"]}44">
+                <div style="flex-shrink:0">{monster_svg(mon["color"], 96)}</div>
+                <div><div style="font-size:.72rem;letter-spacing:.16em;color:{mon["color"]};
+                font-weight:700">A GEMMA MONSTER GOT YOU</div>
+                <div style="font-family:Georgia,serif;font-size:1.6rem;color:#ffefdd">
+                {mon["monster"]} strikes!</div>
+                <div style="color:#cbb8a4;font-size:.95rem">It feeds on
+                <strong style="color:#ffefdd">{priority["name"].lower()}</strong> —
+                master the concept below to defeat it.</div></div></div>''',
+                unsafe_allow_html=True)
     if priority and priority["id"] in mastered:
         note(
             "Mastered",
@@ -237,7 +578,8 @@ def results():
             f"first because {reason}. The study guide starts there.",
         )
         st.button(
-            "Practice until I've mastered it",
+            ("Defeat the monster — practice to mastery"
+             if st.session_state.get("adventure") else "Practice until I've mastered it"),
             type="primary",
             on_click=start_mastery, args=(result, analysis),
             help="The agent keeps teaching and checking, switching approaches "
@@ -270,7 +612,16 @@ def results():
             st.markdown(f"**{esc(guide['question'])}**")
             st.markdown(f"You picked **{esc(guide['chosen'])}** — the correct answer is **{esc(guide['correct'])}**")
             if guide["misconception"].get("name"):
-                st.caption(f"Misconception: {guide['misconception']['name']}")
+                gmon = monster_for(guide["strand"]) if st.session_state.get("adventure") else None
+                if gmon:
+                    st.markdown(
+                        f"<div style='font-size:.85rem;color:#8a8378'>"
+                        f"{monster_svg(gmon['color'], 20)} "
+                        f"<strong>{gmon['monster']}</strong>&nbsp;&middot;&nbsp;"
+                        f"{guide['misconception']['name']}</div>",
+                        unsafe_allow_html=True)
+                else:
+                    st.caption(f"Misconception: {guide['misconception']['name']}")
             st.markdown("**Why:** " + esc(guide["explanation"]))
             if guide["worked_solution"]:
                 with st.expander("See the worked solution"):
@@ -307,6 +658,8 @@ def results():
                         with st.expander("See this one worked out"):
                             st.markdown(esc(plainify(p["solution"])))
 
+    if st.session_state.get("adventure"):
+        st.button("Back to the monster nexus", key="tomap_bottom", on_click=back_to_map)
     st.button("Take another quiz", key="again_bottom", on_click=reset)
 
 
@@ -431,5 +784,18 @@ def mastery_stage():
 
 
 # ---------------- ROUTER ----------------
+# Stepping through a maze portal navigates here with ?station=<strand>; turn that
+# into the real quiz for that strand (survives the reload — a quiz needs no prior state).
+if st.query_params.get("exit"):
+    st.query_params.clear()
+    reset()
+_station = st.query_params.get("station")
+if _station in STATIONS:
+    st.session_state.adventure = True
+    st.session_state.quiz = pick_quiz(_station, 5)
+    st.session_state.answers = {}
+    st.session_state.stage = "quiz"
+    st.query_params.clear()
+
 stage = st.session_state.get("stage", "intro")
-{"intro": intro, "quiz": quiz, "results": results, "mastery": mastery_stage}[stage]()
+{"intro": intro, "map": map_stage, "quiz": quiz, "results": results, "mastery": mastery_stage}[stage]()
