@@ -59,6 +59,8 @@ so a model mistake cannot corrupt the loop:
 | `mastery._grade_reasoning` | Classifies the student's typed reasoning: RESOLVED / SHALLOW / SAME_ERROR | Reasoning, structured output | Closed label set; fail-open to RESOLVED; a right answer with shaky reasoning does not count toward mastery |
 | `mastery._choose_strategy` | Picks the next teaching strategy from the remaining ladder, with a stated reason | Reasoning, decision-making, structured output | Choice restricted to the remaining menu; deterministic ladder fallback on any parse failure |
 | `mastery._generated_probe` | Authors a new check question (JSON) when the bank is exhausted | Structured output | Must pass a blind self-solve audit before a student ever sees it |
+| `tutor.hint` | Progressive hints on practice questions (nudge, then first step) | Generation | Grounded in the verified solution; may not invent numbers |
+| `gemma_client.transcribe_image` | Reads a photo of the student's handwritten work, on-device | Multimodal (vision) | Transcribes only — correctness is always judged against the verified bank |
 
 What Gemma is deliberately NOT allowed to do: grade multiple-choice answers
 (ground-truth key), diagnose bank items (ground-truth tags), or decide loop

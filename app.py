@@ -13,6 +13,8 @@ import streamlit as st
 
 import agent
 import mastery as m
+import tutor
+from gemma_client import vision_available, transcribe_image
 
 QUESTIONS = json.loads((Path(__file__).parent / "data" / "questions.json").read_text())
 STRANDS = sorted({q["strand"] for q in QUESTIONS})
@@ -103,8 +105,19 @@ def pick_quiz(strand: str, n: int) -> list:
 
 
 def reset():
-    for k in ("stage", "quiz", "answers", "msession", "mprobe", "mlesson", "mfeedback"):
+    for k in ("stage", "quiz", "answers", "guides", "msession", "mprobe",
+              "mlesson", "mfeedback", "mtranscript"):
         st.session_state.pop(k, None)
+
+
+def add_hint(i: int):
+    """Fetch the next hint (level 1 then 2) for study-guide card i."""
+    guide = st.session_state.guides[i]
+    hints = guide.setdefault("hints", [])
+    if len(hints) < 2:
+        with st.spinner("The agent is thinking of a good hint..."):
+            hints.append(tutor.hint(guide["practice"], guide["misconception"],
+                                    level=len(hints) + 1))
 
 
 def start_mastery(result, analysis):
@@ -212,9 +225,10 @@ def results():
 
     # --- a study-guide card per missed question ---
     st.subheader("Your study guide")
-    with st.spinner("The agent is studying your mistakes and writing your guide..."):
-        guides = agent.build_study_guides(result, QUESTIONS)
-    for guide in guides:
+    if "guides" not in st.session_state:
+        with st.spinner("The agent is studying your mistakes and writing your guide..."):
+            st.session_state.guides = agent.build_study_guides(result, QUESTIONS)
+    for i, guide in enumerate(st.session_state.guides):
         with st.container(border=True):
             st.markdown(f"**{guide['question']}**")
             st.markdown(f"You picked **{guide['chosen']}** — the correct answer is **{guide['correct']}**")
@@ -224,7 +238,37 @@ def results():
             if guide["worked_solution"]:
                 with st.expander("See the worked solution"):
                     st.markdown(guide["worked_solution"])
-            st.markdown("**Now you try:** " + guide["practice"])
+
+            # --- interactive "Now you try" ---
+            p = guide["practice"]
+            st.markdown("**Now you try:** " + p["question"])
+            if p.get("options"):
+                choice = st.radio(
+                    f"practice_{i}",
+                    [o["label"] for o in p["options"]],
+                    format_func=lambda l, p=p: f"{l})  " + next(
+                        o["text"] for o in p["options"] if o["label"] == l),
+                    index=None, key=f"practice_{i}", label_visibility="collapsed",
+                )
+                if choice:
+                    if choice == p["correct"]:
+                        note("Correct", "That's exactly it.")
+                    else:
+                        o = next(o for o in p["options"] if o["label"] == choice)
+                        trap = o.get("misconception_name")
+                        note("Not quite",
+                             f"That's the <strong>{trap}</strong> trap again — "
+                             "try a hint, or peek at the solution." if trap else
+                             "Try a hint, or peek at the solution.")
+                for h in guide.get("hints", []):
+                    note("Hint", h)
+                cols = st.columns([1, 1, 2])
+                if len(guide.get("hints", [])) < 2:
+                    cols[0].button("Get a hint", key=f"hint_{i}",
+                                   on_click=add_hint, args=(i,))
+                if p.get("solution"):
+                    with st.expander("See this one worked out"):
+                        st.markdown(p["solution"])
 
     st.button("Take another quiz", on_click=reset)
 
@@ -237,6 +281,14 @@ def check_answer():
     if not chosen:
         return
     explanation = st.session_state.get("mastery_reason", "")
+    photo = st.session_state.get(f"mastery_photo_{s.attempts}")
+    st.session_state.mtranscript = None
+    if photo is not None and vision_available():
+        with st.spinner("Gemma is reading your written work (on-device)..."):
+            transcript = transcribe_image(photo.getvalue())
+        st.session_state.mtranscript = transcript
+        explanation = (explanation + "\n" if explanation else "") + \
+            f"My written work: {transcript}"
     with st.spinner("The agent is reading your answer..."):
         outcome = m.submit_answer(s, probe, chosen, explanation)
     st.session_state.mfeedback = outcome
@@ -278,6 +330,9 @@ def mastery_stage():
 
     # feedback from the previous answer
     fb = st.session_state.get("mfeedback")
+    if st.session_state.get("mtranscript"):
+        note("What Gemma read from your photo",
+             st.session_state.mtranscript.replace("\n", "<br>"))
     if fb:
         if fb["correct"] and fb.get("label") == "SHALLOW":
             note("Right answer — but shaky reasoning",
@@ -321,6 +376,11 @@ def mastery_stage():
         key="mastery_reason",
         placeholder="e.g. I found a common denominator of 12, then added the tops",
     )
+    if vision_available():
+        st.file_uploader(
+            "...or photograph your written work — Gemma reads it on this device",
+            type=["png", "jpg", "jpeg"], key=f"mastery_photo_{s.attempts}",
+        )
     st.button("Check my answer", type="primary", on_click=check_answer,
               disabled=st.session_state.get("mastery_choice") is None)
 

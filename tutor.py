@@ -25,26 +25,46 @@ def diagnose(item: dict, chosen_label: str) -> dict | None:
     return None
 
 
-def pick_practice(item: dict, misc: dict, questions: list, used_ids: set) -> str:
-    """The 'Now you try' question. Bank-first (verified), generation last:
-    a small model can produce a garbled or wrong question, a bank item cannot."""
+def pick_practice(item: dict, misc: dict, questions: list, used_ids: set) -> dict:
+    """The 'Now you try' question, as a full interactive item. Bank-first
+    (verified answer key + worked solution), generation last: a small model can
+    produce a garbled or wrong question, a bank item cannot."""
     for q in questions or []:
         if q["id"] in used_ids:
             continue
         if any(o.get("misconception_id") == misc.get("id") for o in q["options"]):
             used_ids.add(q["id"])
-            return q["question"]
+            return {"source": "bank", **q}
     for q in questions or []:
         if q["id"] not in used_ids and q["strand"] == item["strand"]:
             used_ids.add(q["id"])
-            return q["question"]
-    return ask_gemma(
+            return {"source": "bank", **q}
+    text = ask_gemma(
         f"TASK: practice\n"
         f"MISCONCEPTION: {misc['name']}\n"
         f"Write ONE fresh Grade 9 practice question, in English, that tests the "
         f"same skill as: {item['question']}\n"
         f"Use different numbers. Output ONLY the question itself - no answer, "
         f"no solution, no extra commentary."
+    )
+    return {"source": "generated", "id": f"GEN-{item['id']}", "question": text}
+
+
+def hint(practice: dict, misc: dict, level: int) -> str:
+    """A progressive hint for a practice item, grounded in its verified
+    solution. Level 1 = a nudge; level 2 = the first concrete step."""
+    depth = ("a gentle nudge at the right first thing to think about - do NOT "
+             "reveal any step of the solution" if level <= 1 else
+             "the first concrete step of the solution, but not the final answer")
+    grounding = (f"The verified solution is: {practice.get('solution', '')}\n"
+                 if practice.get("solution") else "")
+    return ask_gemma(
+        f"TASK: explain\n"
+        f"MISCONCEPTION: {misc['name']}\n"
+        f"A Grade 9 student is attempting: {practice['question']}\n"
+        f"{grounding}"
+        f"Give ONE hint - {depth}. One or two sentences, encouraging, and any "
+        f"numbers must come from the verified solution above."
     )
 
 

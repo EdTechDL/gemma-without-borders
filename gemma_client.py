@@ -15,6 +15,8 @@ import requests
 
 OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434")
 MODEL = os.environ.get("GEMMA_MODEL", "gemma3:1b")
+# Vision needs a multimodal Gemma (4b/12b/27b - the 1b is text-only).
+VISION_MODEL = os.environ.get("GEMMA_VISION_MODEL", "gemma3:12b")
 TIMEOUT_S = int(os.environ.get("GEMMA_TIMEOUT_S", "120"))
 
 
@@ -55,6 +57,44 @@ def _ollama(prompt: str, max_new_tokens: int) -> str:
     )
     r.raise_for_status()
     return r.json()["response"].strip()
+
+
+def vision_available() -> bool:
+    """True if a multimodal Gemma is installed locally."""
+    try:
+        r = requests.get(f"{OLLAMA_URL}/api/tags", timeout=2)
+        names = [m["name"] for m in r.json().get("models", [])]
+        return any(n.startswith(VISION_MODEL.split(":")[0]) and "1b" not in n
+                   for n in names) and any(VISION_MODEL in n for n in names)
+    except requests.RequestException:
+        return False
+
+
+def transcribe_image(image_bytes: bytes) -> str:
+    """Gemma reads a photo of handwritten work - on-device, like everything
+    else. It TRANSCRIBES ONLY; judging correctness stays with the grader and
+    the verified bank (transcription is where vision models are weakest, so
+    we never let the photo decide what is mathematically true)."""
+    import base64
+    r = requests.post(
+        f"{OLLAMA_URL}/api/chat",
+        json={
+            "model": VISION_MODEL,
+            "messages": [{
+                "role": "user",
+                "content": ("Transcribe this handwritten math work verbatim, one "
+                            "line per step, as plain text like 2/3 + 1/4 = 3/7. "
+                            "Do NOT correct any mistakes. If a line is illegible, "
+                            "write [illegible]. Output only the transcription."),
+                "images": [base64.b64encode(image_bytes).decode()],
+            }],
+            "stream": False,
+            "options": {"temperature": 0},
+        },
+        timeout=TIMEOUT_S,
+    )
+    r.raise_for_status()
+    return r.json()["message"]["content"].strip()
 
 
 # --------------------------------------------------------------------------
