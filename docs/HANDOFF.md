@@ -126,3 +126,16 @@ Teammates can also clone + run locally (README has steps; 1B model is an 815MB p
   the game world is exempt (dark, warm-tinted neon).
 - One feature at a time, discussed before building. Verify in browser before pushing.
 - Commit style: descriptive, with Co-Authored-By: Claude line. Push after each verified change.
+
+
+## Addendum (July 24, late)
+- GEMMA MONSTERS is fully wired: nexus hub (bloom, slow orbit, whole-platform click
+  targets) -> game card -> challenge. IMPORTANT: Streamlit sandboxes component iframes
+  without ancestor-navigation, so the in-card Begin button opens a NEW TAB (allowed),
+  and the reliable single-tab path is the five PORTAL KEY buttons under the canvas.
+- Adventure mode has a full dark game skin (looks only); quiz page = "Face <Monster>",
+  results = "The Battle Report", practice = "TRAINING GROUNDS". Classic mode unchanged.
+- Vocabulary rule (user): never the words "misconception" or "confusion" anywhere
+  student-facing or in README - monsters "make you forget your math", each has a
+  "trick"; README is game-voice; docs/ARCHITECTURE.md is the professional judge doc.
+- Team tunnel: cloudflared quick tunnel on :8501 (URL in /tmp/gwb_tunnel.log).

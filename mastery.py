@@ -304,7 +304,7 @@ def _rationale(session, correct, label, strategy_changed, strategy_why) -> str:
         return ("You got it right, but your explanation was thin, so it does not count "
                 "toward mastery yet. Show your reasoning on the next one.")
     if correct and label == "SAME_ERROR":
-        return ("Right answer, but your reasoning still shows the misconception — so the "
+        return ("Right answer, but your reasoning shows the same trap is still set - so the "
                 "streak resets and we keep working on it rather than move on.")
     if correct:
         return (f"Correct, and your reasoning held up — that is "

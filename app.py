@@ -21,9 +21,46 @@ from gemma_client import vision_available, transcribe_image, plainify
 QUESTIONS = json.loads((Path(__file__).parent / "data" / "questions.json").read_text())
 STRANDS = sorted({q["strand"] for q in QUESTIONS})
 
-st.set_page_config(page_title="Gemma Without Borders", layout="centered")
+st.set_page_config(
+    page_title=("GEMMA MONSTERS" if st.session_state.get("adventure") else "Gemma Without Borders"),
+    layout="centered")
 
-# ---- global styling: warm neutrals, serif display, one clay accent ----
+# ---- global styling: classic (ivory) or game skin (dark) — looks only, no logic ----
+_GAME_SKIN = """
+<style>
+:root { --ink:#f2e8dc; --muted:#b9a794; --line:#3a2a35; --card:#1c1119; --accent:#e08d6d; }
+[data-testid="stAppViewContainer"], [data-testid="stHeader"]{background:#0b0710 !important}
+html,body,p,li,label,span,div{color:var(--ink)}
+h1,h2,h3{font-family:Georgia,'Times New Roman',serif !important;font-weight:500 !important;
+  color:#ffefdd !important;text-shadow:0 0 18px rgba(224,141,109,.35)}
+.stCaption,[data-testid="stCaptionContainer"]{color:var(--muted) !important}
+.stButton button, .stDownloadButton button{border-radius:8px;border:1px solid var(--line);
+  background:#241322;color:#f2e8dc;box-shadow:none}
+.stButton button[kind="primary"]{background:linear-gradient(135deg,#e08d6d,#b25638);
+  border:1px solid #e08d6d;color:#1a0f14;font-weight:700;letter-spacing:.05em;
+  box-shadow:0 0 18px rgba(224,141,109,.4)}
+[data-testid="stVerticalBlockBorderWrapper"]{background:var(--card);
+  border:1px solid var(--line) !important;border-radius:10px}
+[data-testid="stExpander"]{border:1px solid var(--line);border-radius:8px;background:var(--card)}
+[data-testid="stExpander"] summary{color:#f2e8dc}
+[data-testid="stMetricValue"]{font-family:Georgia,serif;color:#ffefdd}
+hr{border-color:var(--line) !important}
+.stRadio label p, .stRadio label{color:#f2e8dc !important}
+[data-testid="stWidgetLabel"] p{color:#d9c6b2 !important}
+.stTextInput input{background:#241322;color:#f2e8dc;border:1px solid var(--line)}
+[data-testid="stFileUploaderDropzone"]{background:#241322;border:1px dashed var(--line)}
+code, pre{background:#241322 !important;color:#ffd9b8 !important}
+.gwb-note{border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;
+  background:var(--card);padding:.85rem 1.1rem;margin:.4rem 0 .9rem;color:var(--ink);
+  box-shadow:0 0 14px rgba(224,141,109,.12)}
+.gwb-note .label{display:block;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:.25rem;font-weight:700}
+.gwb-kicker{font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:.2rem;font-weight:700}
+.katex{color:#ffefdd}
+</style>
+"""
+
 st.markdown("""
 <style>
 :root {
@@ -91,7 +128,7 @@ hr { border-color: var(--line) !important; }
     margin-bottom: 0.2rem;
 }
 </style>
-""", unsafe_allow_html=True)
+""" if not st.session_state.get("adventure") else _GAME_SKIN, unsafe_allow_html=True)
 
 
 def _inline_md(s: str) -> str:
@@ -288,7 +325,7 @@ _HUB_TEMPLATE = r"""
   <header>
     <div>
       <h1>Gemma Monsters</h1>
-      <p>Every monster is a misconception in disguise. Challenge one — master the math that defeats it.</p>
+      <p>Every monster is here to make you forget your math. Defeat them by proving you remember.</p>
     </div>
     <div class="hbtns">
       <button class="hbtn" onclick="resetCamera()">Nexus view</button>
@@ -306,10 +343,10 @@ _HUB_TEMPLATE = r"""
         <div class="stat">GRADE<b>9</b></div>
         <div class="stat">REWARD<b>MASTERY</b></div>
       </div>
-      <a class="fight" target="_top" id="c-fight" href="#">Begin challenge</a>
+      <a class="fight" target="_top" id="c-fight" href="#">Begin challenge &nearr;</a>
     </div></div>
   </div>
-  <footer>Click a monster to inspect its card &middot; drag nothing &mdash; the nexus turns on its own</footer>
+  <footer>Click a monster to inspect its card &middot; drag nothing &mdash; the platform turns on its own</footer>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -322,8 +359,19 @@ _HUB_TEMPLATE = r"""
 <script>
 const UNITS = __UNITS__;
 const NAMES = Object.keys(UNITS);
-let base=''; try{ base = window.top.location.pathname || '/'; }catch(e){}
-document.getElementById('exitlink').href = base + '?exit=1';
+let base='/';
+try{ base = window.parent.location.pathname || '/'; }
+catch(e){ try{ base = new URL(document.referrer).pathname || '/'; }catch(_){} }
+function go(url){
+  // Streamlit sandboxes this iframe without ancestor-navigation permission,
+  // so open the challenge in a fresh tab (explicitly allowed to escape the sandbox).
+  const w = window.open(url, '_blank');
+  if(!w){
+    const el = document.getElementById('obj');
+    el.textContent = 'POP-UP BLOCKED — USE ITS PORTAL KEY BELOW THE NEXUS';
+  }
+}
+document.getElementById('exitlink').addEventListener('click',function(ev){ev.preventDefault();go(base+'?exit=1');});
 
 let scene,camera,renderer,composer,selected=null;
 const monsters=[],groups=[],ray=new THREE.Raycaster(),mouse=new THREE.Vector2();
@@ -358,7 +406,7 @@ function init(){
   NAMES.forEach((name,i)=>{
     const u=UNITS[name], col=new THREE.Color(u.color);
     const ang=(i/NAMES.length)*Math.PI*2, x=Math.cos(ang)*R, z=Math.sin(ang)*R;
-    const g=new THREE.Group(); g.position.set(x,0,z); groups.push(g);
+    const g=new THREE.Group(); g.position.set(x,0,z); g.userData={gi:i}; groups.push(g);
     const p=new THREE.Mesh(new THREE.CylinderGeometry(3,3.2,.6,6),
       new THREE.MeshStandardMaterial({color:0x180f16,metalness:.8}));
     g.add(p);
@@ -422,11 +470,11 @@ function onClick(e){
   if(e.target.closest && e.target.closest('#ui a, #ui button, #card')) return;
   mouse.x=(e.clientX/innerWidth)*2-1; mouse.y=-(e.clientY/innerHeight)*2+1;
   ray.setFromCamera(mouse,camera);
-  const hit=ray.intersectObjects(monsters,true);
+  const hit=ray.intersectObjects(groups,true);
   if(hit.length){
     let o=hit[0].object;
-    while(o.parent && o.userData.i===undefined) o=o.parent;
-    if(o.userData.i!==undefined) focus(o.userData.i);
+    while(o.parent && o.userData.gi===undefined) o=o.parent;
+    if(o.userData.gi!==undefined) focus(o.userData.gi);
   }
 }
 
@@ -444,7 +492,8 @@ function focus(i){
   document.getElementById('c-name').textContent=u.monster;
   document.getElementById('c-lore').textContent='"'+u.lore+'"';
   document.getElementById('c-stage').innerHTML=svgMini(u.color);
-  document.getElementById('c-fight').href=base+'?station='+encodeURIComponent(name);
+  const fbtn=document.getElementById('c-fight');
+  fbtn.onclick=function(ev){ev.preventDefault();go(base+'?station='+encodeURIComponent(name));};
   card.classList.add('active');
 }
 
@@ -464,7 +513,7 @@ function animate(time){
   });
   // slow nexus orbit while nothing selected
   if(selected===null){
-    const a=t*0.05;
+    const a=t*0.015;
     camera.position.x=Math.sin(a)*34; camera.position.z=Math.cos(a)*34;
     camera.lookAt(0,0,0);
   }
@@ -496,13 +545,34 @@ def map_stage():
       [data-testid="stAppViewContainer"]{background:#0b0710}
       [data-testid="stElementContainer"]:has(iframe){width:100% !important}
     </style>""", unsafe_allow_html=True)
-    components.html(_hub_html(), height=800, scrolling=False)
+    components.html(_hub_html(), height=720, scrolling=False)
+    st.markdown(
+        '<div style="text-align:center;letter-spacing:.18em;font-size:.72rem;'
+        'color:#e08d6d;font-weight:700;margin:2px 0 6px">PORTAL KEYS — JUMP STRAIGHT INTO A CHALLENGE</div>',
+        unsafe_allow_html=True)
+    cols = st.columns(len(MONSTERS) + 2)
+    for i, (sname, mon) in enumerate(MONSTERS.items()):
+        if cols[i + 1].button(mon["monster"], key=f"portal_{i}", use_container_width=True):
+            st.session_state.quiz = pick_quiz(sname, 5)
+            st.session_state.answers = {}
+            st.session_state.stage = "quiz"
+            st.rerun()
+    mid = st.columns([2, 1, 2])
+    mid[1].button("Leave the game", key="leave_game", on_click=reset, use_container_width=True)
 
 
 # ---------------- QUIZ ----------------
 def quiz():
-    st.title("Quiz")
-    st.caption("Answer every question, then submit.")
+    if st.session_state.get("adventure"):
+        strand0 = st.session_state.quiz[0]["strand"] if st.session_state.get("quiz") else None
+        mon = MONSTERS.get(strand0)
+        st.markdown('<div class="gwb-kicker">GEMMA MONSTERS</div>', unsafe_allow_html=True)
+        st.title(f"Face {mon['monster']}" if mon else "The Challenge")
+        st.caption("Answer every question, then submit. Wrong answers feed the monster.")
+        st.button("Back to the Nexus", key="quiz_to_nexus", on_click=back_to_map)
+    else:
+        st.title("Quiz")
+        st.caption("Answer every question, then submit.")
     for i, q in enumerate(st.session_state.quiz, 1):
         st.markdown(f"**{i}. {esc(q['question'])}**")
         labels = [o["label"] for o in q["options"]]
@@ -529,11 +599,15 @@ def results():
     result = agent.grade_quiz(st.session_state.quiz, st.session_state.answers)
     analysis = agent.analyze(result)
 
-    st.title("Results")
+    if st.session_state.get("adventure"):
+        st.markdown('<div class="gwb-kicker">GEMMA MONSTERS</div>', unsafe_allow_html=True)
+        st.title("The Battle Report")
+    else:
+        st.title("Results")
     st.metric("Score", f"{result['correct']} / {result['total']}", f"{result['score_pct']}%")
 
     if not result["wrong"]:
-        st.write("A perfect score — no misconceptions to address.")
+        st.write("A perfect score — nothing got past you this time.")
         st.button("Take another quiz", key="again_perfect", on_click=reset)
         return
 
@@ -557,7 +631,7 @@ def results():
                 {mon["monster"]} strikes!</div>
                 <div style="color:#cbb8a4;font-size:.95rem">It feeds on
                 <strong style="color:#ffefdd">{priority["name"].lower()}</strong> —
-                master the concept below to defeat it.</div></div></div>''',
+                learn its weakness below and defeat it.</div></div></div>''',
                 unsafe_allow_html=True)
     if priority and priority["id"] in mastered:
         note(
@@ -621,7 +695,7 @@ def results():
                         f"{guide['misconception']['name']}</div>",
                         unsafe_allow_html=True)
                 else:
-                    st.caption(f"Misconception: {guide['misconception']['name']}")
+                    st.caption(f"The trick that got you: {guide['misconception']['name']}")
             st.markdown("**Why:** " + esc(guide["explanation"]))
             if guide["worked_solution"]:
                 with st.expander("See the worked solution"):
@@ -696,8 +770,11 @@ def check_answer():
 
 def mastery_stage():
     s = st.session_state.msession
-    st.markdown('<div class="gwb-kicker">Autonomous practice</div>', unsafe_allow_html=True)
-    st.title("Mastering: " + s.misconception_name)
+    st.markdown('<div class="gwb-kicker">' +
+                ("GEMMA MONSTERS · TRAINING GROUNDS" if st.session_state.get("adventure")
+                 else "Autonomous practice") + '</div>', unsafe_allow_html=True)
+    st.title(("Defeat the trick: " if st.session_state.get("adventure") else "Mastering: ")
+             + s.misconception_name)
 
     # one quiet status line + an escape hatch while practising
     if s.state == m.IN_PROGRESS:

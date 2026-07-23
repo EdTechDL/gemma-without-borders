@@ -1,22 +1,48 @@
-# Gemma Without Borders
+# GEMMA MONSTERS
 
-An **autonomous study agent** for the Grade 9 EQAO math assessment (Ontario MTH1W).
+*An on-device math adventure powered by Gemma — built for the GDG Windsor Build with AI hackathon, Edge/On-Device track.*
 
-A student takes a short quiz. On submit, the agent looks across **all** their wrong
-answers, decides which misconception matters most, and builds a personalized study
-guide — for each mistake: what went wrong, the correct method, and a **fresh practice
-question** to prove they've got it. If a student is struggling badly, it hands off to
-a teacher with a summary.
+## The story
 
-> A chatbot responds. **An agent pursues a goal and decides what to do next.**
-> Here the goal is: bring the student to mastery of their misconception with minimal
-> teacher intervention.
+Deep in the Nexus live five monsters. They are here to make you forget your math — each one plants a trick in your head, a wrong idea that feels right, which is exactly why it works. You cannot beat a monster by luck. You beat it by proving its trick doesn't fool you anymore: two fresh questions in a row, with reasoning that holds up.
 
-## See how it works, cell by cell
+## The monsters
 
-Open [docs/notebook-walkthrough.html](docs/notebook-walkthrough.html) in a browser — the
-whole pipeline shown as annotated Jupyter-style cells, with a plain-words explanation of
-every block. Good first stop for new teammates.
+| Monster | Unit | Its trick |
+|---|---|---|
+| **Fractis** | Number | Whispers "just add fractions straight across." Tops with tops, bottoms with bottoms. Feels tidy. Totally wrong. It fears a common denominator. |
+| **Equazor** | Algebra | Twists your equations so signs flip the wrong way when you move things across the equals sign. Hates when you balance both sides. |
+| **Statiq** | Data | Blurs mean and median into one fuzzy word so you grab the wrong one. Falls apart the moment you put the data in order. |
+| **Polygor** | Geometry & Measurement | Hoards angles and hands you stolen area formulas that almost fit. One honest diagram and it crumbles. |
+| **Ledgerling** | Financial Literacy | Skims your interest while you sleep and hopes you never check the math. A sharp budget cuts it down. |
+
+## How to play
+
+1. From the intro page, hit **Play GEMMA Monsters** to enter the Nexus.
+2. Click a monster. Read its card. Press **Begin challenge** to face its quiz.
+3. Miss questions and the monster **gets you** — its trick was in your head all along.
+4. Now the agent steps in. It teaches you, checks if the lesson landed, and switches to a different teaching style when one doesn't work — until you defeat the monster.
+5. Defeat = two fresh questions right in a row, with reasoning that holds up. No fluke wins.
+
+Not in the mood for monsters? Classic mode (no game, same brain) is still right there on the intro page.
+
+## What GEMMA does behind the curtain
+
+Gemma runs locally on your machine and does the actual thinking, one job per line:
+
+| Job | What Gemma does |
+|---|---|
+| Rescue lessons | Writes the lesson that pulls you out after a monster gets you. |
+| Reasoning check | Reads HOW you got your answer — a right answer with wobbly reasoning does not count. |
+| Next move | Picks its next teaching move and tells you why. |
+| Fresh questions | Forges brand-new questions, then secretly re-solves them to check its own answer key. |
+| Hints | Gives hints that nudge but never spoil. |
+| Photo vision | Reads a photo of your paper work, right on your device. |
+| Teacher note | Writes your teacher a note they can actually use. |
+
+One plain fact: the math answers always come from a bank of verified questions, never from the model guessing.
+
+Engineers and judges: the serious version of all this lives in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Run it
 
@@ -25,56 +51,23 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Opens in your browser. No model or internet needed yet — Gemma's responses are
-**placeholders** so the whole app runs today (see "Wiring in Gemma" below).
+Optional, for the live brain: install [Ollama](https://ollama.com) and pull a model —
 
-## How it's built
+```bash
+ollama pull gemma3:1b     # small and fast
+ollama pull gemma3:12b    # bigger brain, plus photo vision
+```
 
-| File | Job |
-|------|-----|
-| `app.py` | The quiz UI (Streamlit): quiz → submit → score + study guide |
-| `agent.py` | **The agent controller** — grades, finds the misconception pattern, decides the priority, escalates to a teacher |
-| `tutor.py` | Turns one wrong answer into a study-guide card |
-| `gemma_client.py` | **The one door to Gemma** — every AI call goes through `ask_gemma()` |
-| `data/questions.json` | 36 verified EQAO-style questions, each wrong answer tagged with its misconception |
+Without Ollama the app still runs, just with placeholder text instead of Gemma. Switch models any time with the `GEMMA_MODEL` environment variable:
 
-## Wiring in Gemma (later — one change)
+```bash
+GEMMA_MODEL=gemma3:12b streamlit run app.py
+```
 
-The app is built so Gemma plugs into a single spot. In `gemma_client.py`, set
-`USE_REAL_GEMMA = True` and fill in `_real_gemma()` — either **local via Ollama**
-(the on-device / Edge story) or the **Kaggle/transformers** path from
-`gemma-tutor-CLEAN.ipynb`. Nothing else in the app changes.
+## Credits
 
-## Where Gemma does the thinking
-
-Gemma is not a text box bolted onto a quiz — it sits at every decision point of the
-agent loop, always through one auditable door (`gemma_client.py`), always constrained
-so a model mistake cannot corrupt the loop:
-
-| Call site | What Gemma does | Capability | Guardrail |
-|---|---|---|---|
-| `tutor.study_guide` | Personalized explanation of the student's specific error | Generation | Facts (correct answer, solution) come from the verified bank, not the model |
-| `tutor.study_guide` | Fresh practice question per mistake | Generation | Clearly separated from graded content |
-| `mastery.teach` | Strategy-specific lesson (4 distinct pedagogies) | Generation | Strategy recipe fixed by the ladder; model writes within it |
-| `mastery._grade_reasoning` | Classifies the student's typed reasoning: RESOLVED / SHALLOW / SAME_ERROR | Reasoning, structured output | Closed label set; fail-open to RESOLVED; a right answer with shaky reasoning does not count toward mastery |
-| `mastery._choose_strategy` | Picks the next teaching strategy from the remaining ladder, with a stated reason | Reasoning, decision-making, structured output | Choice restricted to the remaining menu; deterministic ladder fallback on any parse failure |
-| `mastery._generated_probe` | Authors a new check question (JSON) when the bank is exhausted | Structured output | Must pass a blind self-solve audit before a student ever sees it |
-| `tutor.hint` | Progressive hints on practice questions (nudge, then first step) | Generation | Grounded in the verified solution; may not invent numbers |
-| `gemma_client.transcribe_image` | Reads a photo of the student's handwritten work, on-device | Multimodal (vision) | Transcribes only — correctness is always judged against the verified bank |
-
-What Gemma is deliberately NOT allowed to do: grade multiple-choice answers
-(ground-truth key), diagnose bank items (ground-truth tags), or decide loop
-termination (hard caps in plain code). We caught the 1B model generating a
-question with a wrong answer key during testing — that is why generated probes
-are last-resort and self-audited. Model size is a dial, not a rewrite: set
-`GEMMA_MODEL=gemma3:12b` and every call above upgrades in place.
-
-## Reliability by design
-
-The parts that must be correct never rely on the model guessing: diagnosis is a
-**table lookup** from the tagged answer key, and the correct solution comes straight
-from the verified bank. Gemma is used only where it's strong — writing the explanation
-and generating fresh practice.
+- Built with Google's Gemma, running locally via Ollama.
+- "Ninja by BRUNO 365 (Sketchfab), CC Attribution" — reserved for the upcoming player character.
 
 ---
 *Built for the GDG Windsor · Build with AI — Gemma Hackathon. Edge / On-Device track.*
