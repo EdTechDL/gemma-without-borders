@@ -21,6 +21,11 @@ from gemma_client import vision_available, transcribe_image, plainify
 QUESTIONS = json.loads((Path(__file__).parent / "data" / "questions.json").read_text())
 STRANDS = sorted({q["strand"] for q in QUESTIONS})
 
+# GEMMA MONSTERS is the front door; the classic dashboard is one click away
+if "stage" not in st.session_state:
+    st.session_state.adventure = True
+    st.session_state.stage = "map"
+
 st.set_page_config(
     page_title=("GEMMA MONSTERS" if st.session_state.get("adventure") else "Gemma Without Borders"),
     layout="centered")
@@ -28,35 +33,70 @@ st.set_page_config(
 # ---- global styling: classic (ivory) or game skin (dark) — looks only, no logic ----
 _GAME_SKIN = """
 <style>
-:root { --ink:#f2e8dc; --muted:#b9a794; --line:#3a2a35; --card:#1c1119; --accent:#e08d6d; }
-[data-testid="stAppViewContainer"], [data-testid="stHeader"]{background:#0b0710 !important}
+:root { --ink:#f2e8dc; --muted:#b9a794; --line:#3a2a35; --card:#160e18; --accent:#e08d6d; }
+html, body, [class*="css"], p, li, label, span, div, button, input {
+  font-family:'Trebuchet MS','Segoe UI',sans-serif;
+}
+[data-testid="stAppViewContainer"]{
+  background:radial-gradient(70% 45% at 50% 0%, #1c1019 0%, #0b0710 55%) #0b0710 !important}
+[data-testid="stHeader"]{background:transparent !important}
 html,body,p,li,label,span,div{color:var(--ink)}
-h1,h2,h3{font-family:Georgia,'Times New Roman',serif !important;font-weight:500 !important;
-  color:#ffefdd !important;text-shadow:0 0 18px rgba(224,141,109,.35)}
-.stCaption,[data-testid="stCaptionContainer"]{color:var(--muted) !important}
-.stButton button, .stDownloadButton button{border-radius:8px;border:1px solid var(--line);
-  background:#241322;color:#f2e8dc;box-shadow:none}
-.stButton button[kind="primary"]{background:linear-gradient(135deg,#e08d6d,#b25638);
-  border:1px solid #e08d6d;color:#1a0f14;font-weight:700;letter-spacing:.05em;
-  box-shadow:0 0 18px rgba(224,141,109,.4)}
-[data-testid="stVerticalBlockBorderWrapper"]{background:var(--card);
-  border:1px solid var(--line) !important;border-radius:10px}
-[data-testid="stExpander"]{border:1px solid var(--line);border-radius:8px;background:var(--card)}
-[data-testid="stExpander"] summary{color:#f2e8dc}
-[data-testid="stMetricValue"]{font-family:Georgia,serif;color:#ffefdd}
+h1,h2,h3{
+  font-weight:900 !important; text-transform:uppercase; letter-spacing:-0.5px;
+  background:linear-gradient(135deg,#ffe9d6 25%,#e08d6d 70%,#b98868);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 12px rgba(224,141,109,.4));
+}
+.stCaption,[data-testid="stCaptionContainer"]{color:var(--muted) !important;
+  letter-spacing:.06em}
+.stButton button, .stDownloadButton button{
+  border-radius:24px;border:1px solid rgba(255,240,225,.16);
+  background:rgba(255,240,225,.06);color:#d9c6b2;font-weight:700;
+  text-transform:uppercase;letter-spacing:.08em;font-size:.8rem;box-shadow:none}
+.stButton button:hover{background:rgba(255,240,225,.15);color:#fff;
+  border-color:rgba(255,240,225,.3)}
+.stButton button[kind="primary"]{
+  background:linear-gradient(135deg,#e08d6d,#a8434f);border:none;color:#1a0f14;
+  border-radius:10px;font-weight:900;letter-spacing:.12em;
+  box-shadow:0 8px 24px rgba(224,141,109,.45)}
+.stButton button[kind="primary"]:hover{transform:translateY(-1px);color:#0b0710}
+[data-testid="stVerticalBlockBorderWrapper"]{
+  background:linear-gradient(160deg,#1c1119,#160e18);
+  border:1px solid rgba(255,236,214,.12) !important;border-radius:14px;
+  box-shadow:0 14px 34px rgba(0,0,0,.5), 0 0 22px rgba(224,141,109,.08)}
+[data-testid="stExpander"]{border:1px solid rgba(255,236,214,.12);border-radius:10px;
+  background:var(--card)}
+[data-testid="stExpander"] summary{color:#d9c6b2;text-transform:uppercase;
+  font-size:.78rem;letter-spacing:.1em;font-weight:700}
+[data-testid="stMetricValue"]{
+  font-weight:900;
+  background:linear-gradient(135deg,#ffe9d6,#e08d6d);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+[data-testid="stMetricLabel"] p{text-transform:uppercase;letter-spacing:.14em;
+  font-size:.68rem;color:var(--muted) !important}
 hr{border-color:var(--line) !important}
-.stRadio label p, .stRadio label{color:#f2e8dc !important}
+/* answer options as selectable game chips */
+.stRadio > div{gap:6px}
+.stRadio label{
+  background:#1c1119;border:1px solid rgba(255,236,214,.12);border-radius:10px;
+  padding:9px 14px;margin:0;width:100%;transition:border-color .15s, box-shadow .15s}
+.stRadio label:hover{border-color:#e08d6d;box-shadow:0 0 14px rgba(224,141,109,.25)}
+.stRadio label p,.stRadio label{color:#f2e8dc !important}
 [data-testid="stWidgetLabel"] p{color:#d9c6b2 !important}
-.stTextInput input{background:#241322;color:#f2e8dc;border:1px solid var(--line)}
-[data-testid="stFileUploaderDropzone"]{background:#241322;border:1px dashed var(--line)}
-code, pre{background:#241322 !important;color:#ffd9b8 !important}
-.gwb-note{border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;
-  background:var(--card);padding:.85rem 1.1rem;margin:.4rem 0 .9rem;color:var(--ink);
-  box-shadow:0 0 14px rgba(224,141,109,.12)}
-.gwb-note .label{display:block;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--accent);margin-bottom:.25rem;font-weight:700}
-.gwb-kicker{font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--accent);margin-bottom:.2rem;font-weight:700}
+.stProgress > div > div > div{background:linear-gradient(90deg,#e08d6d,#ffd166) !important;
+  box-shadow:0 0 12px rgba(224,141,109,.5)}
+.stTextInput input{background:#1c1119;color:#f2e8dc;border:1px solid var(--line);
+  border-radius:10px}
+[data-testid="stFileUploaderDropzone"]{background:#1c1119;border:1px dashed var(--line)}
+code, pre{background:#1c1119 !important;color:#ffd9b8 !important}
+.gwb-note{border:1px solid rgba(255,236,214,.12);border-left:3px solid var(--accent);
+  border-radius:10px;background:linear-gradient(160deg,#1c1119,#160e18);
+  padding:.85rem 1.1rem;margin:.4rem 0 .9rem;color:var(--ink);
+  box-shadow:0 0 18px rgba(224,141,109,.14)}
+.gwb-note .label{display:block;font-size:.68rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:.3rem;font-weight:900}
+.gwb-kicker{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:.2rem;font-weight:900}
 .katex{color:#ffefdd}
 </style>
 """
@@ -208,15 +248,15 @@ def intro():
     col1, col2 = st.columns(2)
     strand = col1.selectbox("Topic", ["Mixed"] + STRANDS)
     n = col2.slider("Questions", 3, 8, 5)
-    if st.button("Start quiz", type="primary"):
+    if st.button("Start quiz"):
         st.session_state.stage = "quiz"
         st.session_state.quiz = pick_quiz(strand, n)
         st.session_state.answers = {}
         st.rerun()
 
     st.divider()
-    st.caption("Or explore a different way:")
-    if st.button("Play GEMMA Monsters  (beta)"):
+    st.caption("Rather play than scroll?")
+    if st.button("Back to GEMMA Monsters", type="primary"):
         st.session_state.adventure = True
         st.session_state.stage = "map"
         st.rerun()
@@ -329,7 +369,7 @@ _HUB_TEMPLATE = r"""
     </div>
     <div class="hbtns">
       <button class="hbtn" onclick="resetCamera()">Nexus view</button>
-      <a class="hbtn" target="_top" id="exitlink" href="#">Exit game</a>
+      <a class="hbtn" target="_top" id="exitlink" href="#">Simple dashboard</a>
     </div>
   </header>
   <div id="card">
@@ -529,6 +569,12 @@ def _hub_html():
     return _HUB_TEMPLATE.replace("__UNITS__", json.dumps(data))
 
 
+def to_dashboard():
+    reset()
+    st.session_state.adventure = False
+    st.session_state.stage = "intro"
+
+
 def back_to_map():
     for k in ("quiz", "answers", "guides", "mastered", "teacher_report", "escal_report",
               "msession", "mprobe", "mlesson", "mlesson_why", "mfeedback", "mtranscript"):
@@ -558,7 +604,7 @@ def map_stage():
             st.session_state.stage = "quiz"
             st.rerun()
     mid = st.columns([2, 1, 2])
-    mid[1].button("Leave the game", key="leave_game", on_click=reset, use_container_width=True)
+    mid[1].button("Open the simple dashboard", key="leave_game", on_click=to_dashboard, use_container_width=True)
 
 
 # ---------------- QUIZ ----------------
@@ -865,7 +911,7 @@ def mastery_stage():
 # into the real quiz for that strand (survives the reload — a quiz needs no prior state).
 if st.query_params.get("exit"):
     st.query_params.clear()
-    reset()
+    to_dashboard()
 _station = st.query_params.get("station")
 if _station in STATIONS:
     st.session_state.adventure = True
