@@ -98,6 +98,15 @@ code, pre{background:#1c1119 !important;color:#ffd9b8 !important}
 .gwb-kicker{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;
   color:var(--accent);margin-bottom:.2rem;font-weight:900}
 .katex{color:#ffefdd}
+.gwb-taunt{position:fixed;bottom:20px;right:20px;z-index:999;display:flex;
+  align-items:flex-end;gap:10px;animation:gwbBob 3.2s ease-in-out infinite}
+.gwb-bubble{background:#1c1119;border:1px solid #e08d6d;
+  border-radius:14px 14px 2px 14px;padding:9px 13px;color:#f2e8dc;font-size:.82rem;
+  max-width:210px;box-shadow:0 0 16px rgba(224,141,109,.35)}
+.gwb-tmon{filter:drop-shadow(0 0 12px rgba(224,141,109,.5));
+  animation:gwbSway 2.6s ease-in-out infinite}
+@keyframes gwbBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+@keyframes gwbSway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
 </style>
 """
 
@@ -269,19 +278,19 @@ def intro():
 # design language — it's a different world.
 MONSTERS = {
     "Number": {
-        "monster": "Fractis", "color": "#ff8a5c", "shape": "shard", "model": "/app/static/monsters/alien.glb",
+        "monster": "Fractis", "taunt": "Ready to watch you crumble like a bad fraction.", "color": "#ff8a5c", "shape": "shard", "model": "/app/static/monsters/alien.glb",
         "lore": "Feeds on fractions added straight across. Weak to common denominators."},
     "Algebra": {
-        "monster": "Equazor", "color": "#ff6b9d", "shape": "knot", "model": "/app/static/monsters/dragon.glb",
+        "monster": "Equazor", "taunt": "I am ready to watch you lose this battle. Your signs will slip.", "color": "#ff6b9d", "shape": "knot", "model": "/app/static/monsters/dragon.glb",
         "lore": "Twists equations until the signs flip wrong. Weak to balanced moves."},
     "Data": {
-        "monster": "Statiq", "color": "#35d0c0", "shape": "blob", "model": "/app/static/monsters/fish.glb",
+        "monster": "Statiq", "taunt": "Your answers will drown in my noise.", "color": "#35d0c0", "shape": "blob", "model": "/app/static/monsters/fish.glb",
         "lore": "Blurs means and medians into noise. Weak to ordered data."},
     "Geometry & Measurement": {
-        "monster": "Polygor", "color": "#a78bfa", "shape": "poly", "model": "/app/static/monsters/frog.glb",
+        "monster": "Polygor", "taunt": "Every angle you pick will be the wrong one, little hero.", "color": "#a78bfa", "shape": "poly", "model": "/app/static/monsters/frog.glb",
         "lore": "Hoards angles and stolen area formulas. Weak to a true diagram."},
     "Financial Literacy": {
-        "monster": "Ledgerling", "color": "#ffd166", "shape": "coin", "model": "/app/static/monsters/demon.glb",
+        "monster": "Ledgerling", "taunt": "I collect mistakes - and I charge interest.", "color": "#ffd166", "shape": "coin", "model": "/app/static/monsters/demon.glb",
         "lore": "Skims your interest while you sleep. Weak to a sharp budget."},
 }
 STATIONS = MONSTERS  # router alias: ?station= keys
@@ -342,7 +351,7 @@ _HUB_TEMPLATE = r"""
     background:var(--mc);color:#1a0f14;font-size:.66rem;font-weight:900;letter-spacing:.18em}
   .mname{font-size:2rem;font-weight:900;letter-spacing:-.5px;text-transform:uppercase;
     margin:6px 14px 2px;color:#ffefdd;text-shadow:0 0 12px color-mix(in srgb,var(--mc) 70%,transparent)}
-  .mstage{height:96px;margin:8px 14px;border-radius:8px;position:relative;
+  .mstage{height:132px;margin:8px 14px;border-radius:8px;position:relative;
     background:radial-gradient(60% 90% at 50% 60%,color-mix(in srgb,var(--mc) 38%,#0d0810),#0d0810);
     border:1px solid rgba(255,236,214,.12);display:flex;align-items:center;justify-content:center}
   .mstage svg{filter:drop-shadow(0 0 10px var(--mc))}
@@ -418,6 +427,7 @@ document.getElementById('exitlink').addEventListener('click',function(ev){ev.pre
 let scene,camera,renderer,composer,selected=null;
 const monsters=[],groups=[],mixers=[],ray=new THREE.Raycaster(),mouse=new THREE.Vector2();
 let prevT=0;
+let miniR=null,miniScene=null,miniCam=null,miniMix=null,miniObj=null;
 const CAM={x:0,y:20,z:34},look={x:0,y:0,z:0};
 
 init(); animate();
@@ -464,7 +474,7 @@ function init(){
         const obj=gltf.scene;
         const box=new THREE.Box3().setFromObject(obj);
         const size=box.getSize(new THREE.Vector3());
-        const scale=3.4/Math.max(size.x,size.y,size.z,0.001);
+        const scale=4.7/Math.max(size.x,size.y,size.z,0.001);
         obj.scale.setScalar(scale);
         const box2=new THREE.Box3().setFromObject(obj);
         const c=box2.getCenter(new THREE.Vector3());
@@ -478,6 +488,9 @@ function init(){
       }, undefined, fallback);
     } else fallback();
     const lt=new THREE.PointLight(col,1.5,14); lt.position.y=3.2; g.add(lt);
+    // a soft warm spotlight straight above the monster so it reads against the dark
+    const spot=new THREE.SpotLight(0xfff3e0, 3.6, 24, Math.PI/4, 0.5, 1);
+    spot.position.set(0,8.5,0.6); spot.target=holder; g.add(spot); g.add(spot.target);
     scene.add(g);
   });
 
@@ -524,6 +537,45 @@ function makeMonster(shape,col){
   return g;
 }
 
+// ---- the card's glass pane: a live close-up of the monster walking toward you ----
+function ensureMini(){
+  if(miniR) return;
+  const stage=document.getElementById('c-stage');
+  miniR=new THREE.WebGLRenderer({antialias:true,alpha:true});
+  stage.innerHTML=''; stage.appendChild(miniR.domElement);
+  miniScene=new THREE.Scene();
+  miniCam=new THREE.PerspectiveCamera(40,2,0.1,50);
+  miniCam.position.set(0,1.5,4.4); miniCam.lookAt(0,1.0,0);
+  miniScene.add(new THREE.AmbientLight(0xffffff,0.95));
+  const sp=new THREE.SpotLight(0xfff3e0,2.6,30,Math.PI/4,0.5);
+  sp.position.set(0,6,3); miniScene.add(sp);
+}
+function showMini(name){
+  const u=UNITS[name]; ensureMini();
+  const stage=document.getElementById('c-stage');
+  const wpx=Math.max(stage.clientWidth,240);
+  miniR.setSize(wpx,132); miniCam.aspect=wpx/132; miniCam.updateProjectionMatrix();
+  if(miniObj){ miniScene.remove(miniObj); miniObj=null; } miniMix=null;
+  if(loader && u.model){
+    loader.load((window.__ORIGIN||'')+u.model,(gltf)=>{
+      const obj=gltf.scene;
+      const box=new THREE.Box3().setFromObject(obj);
+      const size=box.getSize(new THREE.Vector3());
+      const sc=2.3/Math.max(size.x,size.y,size.z,0.001); obj.scale.setScalar(sc);
+      const b2=new THREE.Box3().setFromObject(obj);
+      const c=b2.getCenter(new THREE.Vector3());
+      obj.position.set(-c.x,-b2.min.y,-c.z);
+      obj.userData.t0=performance.now();
+      miniScene.add(obj); miniObj=obj;
+      if(gltf.animations&&gltf.animations.length){
+        miniMix=new THREE.AnimationMixer(obj);
+        const clip=gltf.animations.find(a=>/walk|run|fly|swim|attack|bite|jump/i.test(a.name))||gltf.animations[0];
+        miniMix.clipAction(clip).play();
+      }
+    });
+  }
+}
+
 function svgMini(col){
   return '<svg width="72" height="72" viewBox="0 0 40 40"><path d="M20 3 C31 3 37 12 37 21 C37 32 30 37 20 37 C10 37 3 32 3 21 C3 12 9 3 20 3 Z" fill="'+col+'"/><circle cx="14" cy="18" r="4.2" fill="#14101c"/><circle cx="26" cy="18" r="4.2" fill="#14101c"/><circle cx="15.4" cy="16.6" r="1.4" fill="#fff"/><circle cx="27.4" cy="16.6" r="1.4" fill="#fff"/><path d="M13 28 Q20 33 27 28" stroke="#14101c" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>';
 }
@@ -546,6 +598,8 @@ function focus(i){
   const R=15, ang=(i/NAMES.length)*Math.PI*2;
   const sx=Math.cos(ang)*R, sz=Math.sin(ang)*R;
   gsap.to(camera.position,{x:Math.cos(ang)*(R+8),y:6,z:Math.sin(ang)*(R+8),duration:1.8,ease:"power3.inOut"});
+  monsters.forEach((m,j)=>{ gsap.to(m.scale,{x:j===i?1.6:1,y:j===i?1.6:1,z:j===i?1.6:1,duration:0.9,ease:"power2.out"}); });
+  gsap.to(monsters[i].rotation,{y:Math.round(monsters[i].rotation.y/(Math.PI*2))*Math.PI*2+ang+Math.PI/2,duration:0.9});
   gsap.to(look,{x:sx,y:3.4,z:sz,duration:1.8,ease:"power3.inOut",
     onUpdate:()=>camera.lookAt(look.x,look.y,look.z)});
   const card=document.getElementById('card');
@@ -553,7 +607,7 @@ function focus(i){
   document.getElementById('c-unit').textContent=name.toUpperCase()+' UNIT';
   document.getElementById('c-name').textContent=u.monster;
   document.getElementById('c-lore').textContent='"'+u.lore+'"';
-  document.getElementById('c-stage').innerHTML=svgMini(u.color);
+  showMini(name);
   const fbtn=document.getElementById('c-fight');
   fbtn.onclick=function(ev){ev.preventDefault();go(base+'?station='+encodeURIComponent(name));};
   card.classList.add('active');
@@ -562,6 +616,7 @@ function focus(i){
 function resetCamera(){
   selected=null; document.getElementById('card').classList.remove('active');
   gsap.to(camera.position,{x:CAM.x,y:CAM.y,z:CAM.z,duration:1.8,ease:"power2.inOut"});
+  monsters.forEach(m=>gsap.to(m.scale,{x:1,y:1,z:1,duration:0.7}));
   gsap.to(look,{x:0,y:0,z:0,duration:1.8,ease:"power2.inOut",
     onUpdate:()=>camera.lookAt(look.x,look.y,look.z)});
 }
@@ -570,9 +625,16 @@ function animate(time){
   requestAnimationFrame(animate);
   const t=(time||0)*0.001, dt=Math.min(0.05, t-prevT); prevT=t;
   mixers.forEach(m=>m.update(dt));
+  if(miniMix) miniMix.update(dt);
+  if(miniObj){
+    const tt=(performance.now()-miniObj.userData.t0)*0.001;
+    miniObj.position.z=Math.min(1.15,tt*0.55)+Math.sin(tt*1.7)*0.07;
+  }
+  if(miniR && document.getElementById('card').classList.contains('active'))
+    miniR.render(miniScene,miniCam);
   monsters.forEach((m,i)=>{
-    m.rotation.y+=(selected===i?0.03:0.005);
-    m.position.y=m.userData.baseY+Math.sin(t*2+i)*(selected===i?.08:.2);
+    if(selected===null) m.rotation.y+=0.0035;           // slow spin, nexus view only
+    if(selected!==i) m.position.y=m.userData.baseY+Math.sin(t*2+i)*.2;
   });
   // slow nexus orbit while nothing selected
   if(selected===null){
@@ -647,6 +709,12 @@ def quiz():
         mon = MONSTERS.get(strand0)
         st.markdown('<div class="gwb-kicker">GEMMA MONSTERS</div>', unsafe_allow_html=True)
         st.title(f"Face {mon['monster']}" if mon else "The Challenge")
+        if mon:
+            st.markdown(
+                f"""<div class="gwb-taunt">
+                <div class="gwb-bubble"><strong>{mon['monster']}:</strong> {mon.get('taunt','')}</div>
+                <div class="gwb-tmon">{monster_svg(mon['color'], 84)}</div></div>""",
+                unsafe_allow_html=True)
         st.caption("Answer every question, then submit. Wrong answers feed the monster.")
         st.button("Back to the Nexus", key="quiz_to_nexus", on_click=back_to_map)
     else:
