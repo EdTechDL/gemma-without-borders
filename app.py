@@ -109,25 +109,28 @@ def note(label: str, body: str):
     )
 
 
+_FRAC = re.compile(r"(?<![\w.$])(\d+)\s*/\s*(\d+)(?![\w.])")
+
+
+def esc(text) -> str:
+    """Prepare text for display: (1) escape currency '$' so $3.60 shows literally
+    instead of the run between two '$' rendering as LaTeX; (2) turn plain integer
+    fractions like 3/7 into proper stacked fractions via KaTeX. Decimals and
+    money (3.60 / 1.5, $3.60) are left alone by the fraction rule."""
+    t = str(text).replace("$", "\\$")                 # currency first
+    t = _FRAC.sub(r"$\\frac{\1}{\2}$", t)             # 3/7 -> stacked fraction
+    return t
+
+
 def pick_quiz(strand: str, n: int) -> list:
     pool = QUESTIONS if strand == "Mixed" else [q for q in QUESTIONS if q["strand"] == strand]
     return pool[:n]
 
 
 def reset():
-    for k in ("stage", "quiz", "answers", "guides", "msession", "mprobe",
-              "mlesson", "mfeedback", "mtranscript"):
+    for k in ("stage", "quiz", "answers", "guides", "mastered", "teacher_report",
+              "escal_report", "msession", "mprobe", "mlesson", "mfeedback", "mtranscript"):
         st.session_state.pop(k, None)
-
-
-def add_hint(i: int):
-    """Fetch the next hint (level 1 then 2) for study-guide card i."""
-    guide = st.session_state.guides[i]
-    hints = guide.setdefault("hints", [])
-    if len(hints) < 2:
-        with st.spinner("The agent is thinking of a good hint..."):
-            hints.append(tutor.hint(guide["practice"], guide["misconception"],
-                                    level=len(hints) + 1))
 
 
 def start_mastery(result, analysis):
@@ -176,12 +179,12 @@ def quiz():
     st.title("Quiz")
     st.caption("Answer every question, then submit.")
     for i, q in enumerate(st.session_state.quiz, 1):
-        st.markdown(f"**{i}. {q['question']}**")
+        st.markdown(f"**{i}. {esc(q['question'])}**")
         labels = [o["label"] for o in q["options"]]
         choice = st.radio(
             f"q_{q['id']}",
             labels,
-            format_func=lambda l, q=q: f"{l})  " + next(o['text'] for o in q['options'] if o['label'] == l),
+            format_func=lambda l, q=q: f"{l})  " + esc(next(o['text'] for o in q['options'] if o['label'] == l)),
             index=None,
             key=f"radio_{q['id']}",
             label_visibility="collapsed",
@@ -206,15 +209,25 @@ def results():
 
     if not result["wrong"]:
         st.write("A perfect score — no misconceptions to address.")
-        st.button("Take another quiz", on_click=reset)
+        st.button("Take another quiz", key="again_perfect", on_click=reset)
         return
 
     # --- the agent's decision: what matters most ---
-    if analysis["priority"]:
-        n = analysis["priority"]["count"]
+    priority = analysis["priority"]
+    mastered = st.session_state.get("mastered", set())
+    if priority and priority["id"] in mastered:
+        note(
+            "Mastered",
+            f"You've closed your main gap — <strong>{priority['name']}</strong>. "
+            "Well done.",
+        )
+        st.write("Not feeling fully confident yet? Take another quiz to prove it sticks.")
+        st.button("Take another quiz", type="primary", key="again_top", on_click=reset)
+    elif priority:
+        n = priority["count"]
         note(
             "Agent analysis",
-            f"Your main gap is <strong>{analysis['priority']['name']}</strong> "
+            f"Your main gap is <strong>{priority['name']}</strong> "
             f"(missed {n} time{'s' if n != 1 else ''}). The study guide starts there.",
         )
         st.button(
@@ -224,14 +237,18 @@ def results():
             help="The agent keeps teaching and checking, switching approaches "
                  "when one doesn't land, until you get two in a row right.",
         )
-    if analysis["escalate"]:
+    # only nudge the teacher when the main gap is still open
+    if analysis["escalate"] and not (priority and priority["id"] in mastered):
         note(
             "Teacher hand-off",
-            "Several questions were missed, so the agent would notify your teacher "
-            "with a short summary at this point.",
+            "Several questions were missed. The agent writes the teacher a report they "
+            "can act on — not just a score.",
         )
-        with st.expander("Preview the teacher hand-off report"):
-            st.code(agent.teacher_report(result, analysis))
+        with st.expander("See the teacher report", expanded=True):
+            if "teacher_report" not in st.session_state:
+                with st.spinner("Writing a report the teacher can act on..."):
+                    st.session_state.teacher_report = agent.teacher_report(result, analysis)
+            st.code(st.session_state.teacher_report)
 
     # --- a study-guide card per missed question ---
     st.subheader("Your study guide")
@@ -240,8 +257,8 @@ def results():
             st.session_state.guides = agent.build_study_guides(result, QUESTIONS)
     for i, guide in enumerate(st.session_state.guides):
         with st.container(border=True):
-            st.markdown(f"**{guide['question']}**")
-            st.markdown(f"You picked **{guide['chosen']}** — the correct answer is **{guide['correct']}**")
+            st.markdown(f"**{esc(guide['question'])}**")
+            st.markdown(f"You picked **{esc(guide['chosen'])}** — the correct answer is **{esc(guide['correct'])}**")
             if guide["misconception"].get("name"):
                 st.caption(f"Misconception: {guide['misconception']['name']}")
             st.markdown("**Why:** " + guide["explanation"])
@@ -251,13 +268,13 @@ def results():
 
             # --- interactive "Now you try" ---
             p = guide["practice"]
-            st.markdown("**Now you try:** " + p["question"])
+            st.markdown("**Now you try:** " + esc(p["question"]))
             if p.get("options"):
                 choice = st.radio(
                     f"practice_{i}",
                     [o["label"] for o in p["options"]],
-                    format_func=lambda l, p=p: f"{l})  " + next(
-                        o["text"] for o in p["options"] if o["label"] == l),
+                    format_func=lambda l, p=p: f"{l})  " + esc(next(
+                        o["text"] for o in p["options"] if o["label"] == l)),
                     index=None, key=f"practice_{i}", label_visibility="collapsed",
                 )
                 if choice:
@@ -268,19 +285,17 @@ def results():
                         trap = o.get("misconception_name")
                         note("Not quite",
                              f"That's the <strong>{trap}</strong> trap again — "
-                             "try a hint, or peek at the solution." if trap else
-                             "Try a hint, or peek at the solution.")
-                for h in guide.get("hints", []):
-                    note("Hint", h)
-                cols = st.columns([1, 1, 2])
-                if len(guide.get("hints", [])) < 2:
-                    cols[0].button("Get a hint", key=f"hint_{i}",
-                                   on_click=add_hint, args=(i,))
+                             "open a hint, or peek at the solution." if trap else
+                             "Open a hint, or peek at the solution.")
+                # hint + solution are expanders: they open in place, no page jump
+                if guide.get("hint"):
+                    with st.expander("Stuck? Show a hint"):
+                        st.markdown(guide["hint"])
                 if p.get("solution"):
                     with st.expander("See this one worked out"):
                         st.markdown(plainify(p["solution"]))
 
-    st.button("Take another quiz", on_click=reset)
+    st.button("Take another quiz", key="again_bottom", on_click=reset)
 
 
 # ---------------- MASTERY LOOP ----------------
@@ -316,26 +331,36 @@ def mastery_stage():
     st.markdown('<div class="gwb-kicker">Autonomous practice</div>', unsafe_allow_html=True)
     st.title("Mastering: " + s.misconception_name)
 
-    # one quiet status line while practising (terminal screens stay clean)
+    # one quiet status line + an escape hatch while practising
     if s.state == m.IN_PROGRESS:
         st.caption(f"Attempt {s.attempts + 1} of {m.MAX_ATTEMPTS} · "
                    f"{s.strategy_name} · streak {s.consecutive_correct} of {m.MASTERY_BAR}")
+        st.button("← Back to results", key="leave_practice",
+                  on_click=lambda: st.session_state.update(stage="results"),
+                  help="Leave practice — you can start it again from your results anytime.")
 
     # terminal screens
     if s.state == m.MASTERED:
+        # remember it: the results page now shows this gap as closed
+        st.session_state.setdefault("mastered", set()).add(s.misconception_id)
         note("Mastery demonstrated",
              "Two fresh questions in a row, answered correctly. The gap is closed.")
         st.code(m.mastery_recap(s))
-        st.button("Back to my results", on_click=lambda: st.session_state.update(stage="results"))
-        st.button("Take another quiz", on_click=reset)
+        st.button("Back to my results", key="back_mastered",
+                  on_click=lambda: st.session_state.update(stage="results"))
+        st.button("Take another quiz", key="again_mastered", on_click=reset)
         return
     if s.state == m.ESCALATED:
         note("Teacher hand-off",
-             "The agent tried every approach it has. Time for a human — "
-             "here is exactly what the teacher needs to know.")
-        st.code(m.escalation_report(s))
-        st.button("Back to my results", on_click=lambda: st.session_state.update(stage="results"))
-        st.button("Take another quiz", on_click=reset)
+             "The agent tried every approach it has. Time for a human — here is a report "
+             "the teacher can act on, informed by what already didn't work.")
+        if "escal_report" not in st.session_state:
+            with st.spinner("Writing a report the teacher can act on..."):
+                st.session_state.escal_report = m.escalation_report(s)
+        st.code(st.session_state.escal_report)
+        st.button("Back to my results", key="back_escalated",
+                  on_click=lambda: st.session_state.update(stage="results"))
+        st.button("Take another quiz", key="again_escalated", on_click=reset)
         return
 
     # feedback from the previous answer
@@ -372,11 +397,11 @@ def mastery_stage():
         s.state = m.ESCALATED
         s.escalation_reason = "no fresh check question available"
         st.rerun()
-    st.markdown(f"**Check yourself: {probe['question']}**")
+    st.markdown(f"**Check yourself: {esc(probe['question'])}**")
     st.radio(
         "mastery probe",
         [o["label"] for o in probe["options"]],
-        format_func=lambda l: f"{l})  " + next(o["text"] for o in probe["options"] if o["label"] == l),
+        format_func=lambda l: f"{l})  " + esc(next(o["text"] for o in probe["options"] if o["label"] == l)),
         index=None,
         key="mastery_choice",
         label_visibility="collapsed",

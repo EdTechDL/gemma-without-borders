@@ -92,6 +92,7 @@ def study_guide(item: dict, chosen_label: str, strategy: str = "explanation",
         f"Plain, encouraging language."
     )
 
+    practice = pick_practice(item, misc, questions, used_ids)
     return {
         "item_id": item["id"],
         "strand": item["strand"],
@@ -102,7 +103,8 @@ def study_guide(item: dict, chosen_label: str, strategy: str = "explanation",
         "strategy": strategy,
         "explanation": plainify(ask_gemma(explain_prompt)),  # Gemma, LaTeX stripped
         "worked_solution": item.get("solution", ""),    # real, from the bank
-        "practice": pick_practice(item, misc, questions, used_ids),
+        "practice": practice,
+        "hint": hint(practice, misc, level=1),          # ready instantly, no rerun
     }
 
 

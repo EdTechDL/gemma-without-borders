@@ -65,18 +65,33 @@ def build_study_guides(result: dict, questions: list = None) -> list:
 
 
 def teacher_report(result: dict, analysis: dict) -> str:
-    """Deterministic (no-model) handoff report — the escalation path."""
-    lines = [
-        "TEACHER SUMMARY — Gemma Without Borders",
-        f"Score: {result['correct']}/{result['total']} ({result['score_pct']}%)",
-        "",
-        "Misconception patterns observed:",
-    ]
-    for p in analysis["patterns"]:
-        lines.append(f"  - {p['id']}: {p['name']}  (missed {p['count']}x)")
-    if analysis["priority"]:
-        lines.append("")
-        lines.append(f"Recommended focus: {analysis['priority']['name']}")
-    lines.append("")
-    lines.append("Suggested action: short 1:1 on the focus misconception before moving on.")
-    return "\n".join(lines)
+    """A report a teacher can act on. The FACTS (score, misconceptions) are
+    deterministic; Gemma writes the interpretation and concrete interventions,
+    grounded in those facts."""
+    from gemma_client import ask_gemma, plainify
+
+    patterns = "; ".join(f"{p['name']} (missed {p['count']})"
+                         for p in analysis["patterns"]) or "none identified"
+    focus = analysis["priority"]["name"] if analysis["priority"] else "n/a"
+
+    narrative = plainify(ask_gemma(
+        "TASK: teacher\n"
+        "You are writing a brief report for a Grade 9 math teacher about ONE student, "
+        "using ONLY the facts below. Do not invent numbers or facts.\n"
+        f"Diagnostic-quiz score: {result['correct']} of {result['total']}.\n"
+        f"Misconceptions the student showed: {patterns}.\n"
+        f"Highest-priority gap: {focus}.\n\n"
+        "Write, in plain text (no LaTeX, no dollar signs), addressed to the teacher:\n"
+        "First, TWO sentences naming the underlying misunderstanding in teaching terms "
+        "and what it reveals about how the student is thinking.\n"
+        "Then a line exactly 'Try in class:' followed by THREE specific, classroom-ready "
+        "interventions (each on its own line starting with '- ') that target THIS "
+        "misconception. Be concrete — name the strategy, not generic advice.",
+        max_new_tokens=380))
+
+    return (
+        "TEACHER REPORT - Gemma Without Borders\n"
+        f"Snapshot: scored {result['correct']}/{result['total']} "
+        f"({result['score_pct']}%). Priority gap: {focus}.\n\n"
+        + narrative
+    )

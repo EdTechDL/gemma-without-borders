@@ -301,14 +301,37 @@ def mastery_recap(session: MasterySession) -> str:
 
 
 def escalation_report(session: MasterySession) -> str:
-    tried = [h["strategy"] for h in session.history if h["kind"] == "lesson"]
+    """A teacher-actionable hand-off. Facts are deterministic; Gemma interprets
+    the session (what worked, where the student is stuck) and proposes concrete
+    interventions informed by which tutoring approaches already failed."""
+    tried = list(dict.fromkeys(h["strategy"] for h in session.history if h["kind"] == "lesson"))
     answers = [h for h in session.history if h["kind"] == "answer"]
     right = sum(1 for a in answers if a["correct"])
+    reasoning = [h["label"] for h in session.history if h["kind"] == "reasoning_grade"]
+
+    narrative = plainify(ask_gemma(
+        "TASK: teacher\n"
+        "Write a brief report for a Grade 9 math teacher about ONE student whom an AI "
+        "tutor worked with but could not bring to mastery. Use ONLY these facts; do not "
+        "invent numbers.\n"
+        f"Misconception: {session.misconception_name}.\n"
+        f"The tutor tried these teaching approaches, in order, and none fully worked: "
+        f"{', '.join(tried) or 'none'}.\n"
+        f"Across {len(answers)} follow-up questions the student got {right} correct.\n"
+        f"Reasoning quality when correct: {', '.join(reasoning) or 'not assessed'}.\n"
+        f"The tutor stopped because: {session.escalation_reason}.\n\n"
+        "Write, in plain text (no LaTeX, no dollar signs), addressed to the teacher:\n"
+        "First, TWO sentences: the underlying misunderstanding, and what the session "
+        "showed about where the student improved and where they are still stuck.\n"
+        "Then a line exactly 'Try in class:' followed by THREE specific interventions "
+        "(each on its own line starting with '- ') targeting this misconception - and "
+        "different from the tutoring approaches that already failed above.",
+        max_new_tokens=400))
+
     return (
-        "TEACHER HAND-OFF - Gemma Without Borders\n"
-        f"Student is stuck on: {session.misconception_id}: {session.misconception_name}\n"
-        f"Stopped because: {session.escalation_reason}\n"
-        f"Probes: {right}/{len(answers)} correct across {session.attempts} attempts\n"
-        f"Strategies tried: {', '.join(dict.fromkeys(tried)) or 'none'}\n"
-        "Suggested action: a short 1:1 on this concept before further practice."
+        "TEACHER REPORT - Gemma Without Borders\n"
+        f"Stuck on: {session.misconception_name}.\n"
+        f"Tutor tried: {', '.join(tried) or 'none'}. "
+        f"Follow-up questions: {right}/{len(answers)} correct.\n\n"
+        + narrative
     )
