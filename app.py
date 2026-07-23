@@ -422,12 +422,14 @@ function go(url){
     el.textContent = 'POP-UP BLOCKED — USE ITS PORTAL KEY BELOW THE NEXUS';
   }
 }
-document.getElementById('exitlink').addEventListener('click',function(ev){ev.preventDefault();go(base+'?exit=1');});
+(function(){var x=document.getElementById('exitlink');
+  x.href=base+'?exit=1'; x.target='_blank';})();
 
 let scene,camera,renderer,composer,selected=null;
 const monsters=[],groups=[],mixers=[],ray=new THREE.Raycaster(),mouse=new THREE.Vector2();
 let prevT=0;
 let miniR=null,miniScene=null,miniCam=null,miniMix=null,miniObj=null;
+let loader=null;
 const CAM={x:0,y:20,z:34},look={x:0,y:0,z:0};
 
 init(); animate();
@@ -455,7 +457,7 @@ function init(){
   gsap.to(core.rotation,{y:Math.PI*2,duration:22,repeat:-1,ease:"none"});
 
   // stations with REAL monster models (Quaternius, CC0); procedural fallback
-  const R=15, loader=(typeof THREE.GLTFLoader!=='undefined')?new THREE.GLTFLoader():null;
+  const R=15; loader=(typeof THREE.GLTFLoader!=='undefined')?new THREE.GLTFLoader():null;
   NAMES.forEach((name,i)=>{
     const u=UNITS[name], col=new THREE.Color(u.color);
     const ang=(i/NAMES.length)*Math.PI*2, x=Math.cos(ang)*R, z=Math.sin(ang)*R;
@@ -569,15 +571,19 @@ function showMini(name){
       miniScene.add(obj); miniObj=obj;
       if(gltf.animations&&gltf.animations.length){
         miniMix=new THREE.AnimationMixer(obj);
-        const clip=gltf.animations.find(a=>/walk|run|fly|swim|attack|bite|jump/i.test(a.name))||gltf.animations[0];
-        miniMix.clipAction(clip).play();
+        const clip=gltf.animations.find(a=>/walk/i.test(a.name))
+                 ||gltf.animations.find(a=>/idle|swim|fly/i.test(a.name))
+                 ||gltf.animations[0];
+        const act=miniMix.clipAction(clip);
+        act.timeScale=0.55;   // calm, menacing pace - not double speed
+        act.play();
       }
     });
   }
 }
 
 function svgMini(col){
-  return '<svg width="72" height="72" viewBox="0 0 40 40"><path d="M20 3 C31 3 37 12 37 21 C37 32 30 37 20 37 C10 37 3 32 3 21 C3 12 9 3 20 3 Z" fill="'+col+'"/><circle cx="14" cy="18" r="4.2" fill="#14101c"/><circle cx="26" cy="18" r="4.2" fill="#14101c"/><circle cx="15.4" cy="16.6" r="1.4" fill="#fff"/><circle cx="27.4" cy="16.6" r="1.4" fill="#fff"/><path d="M13 28 Q20 33 27 28" stroke="#14101c" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>';
+  return '<svg width="72" height="72" viewBox="0 0 40 40"><circle cx="20" cy="20" r="14" fill="'+col+'" opacity="0.85"/><circle cx="20" cy="20" r="17" fill="none" stroke="'+col+'" stroke-width="1.4" opacity="0.5"/></svg>';
 }
 
 function onClick(e){
@@ -599,7 +605,7 @@ function focus(i){
   const sx=Math.cos(ang)*R, sz=Math.sin(ang)*R;
   gsap.to(camera.position,{x:Math.cos(ang)*(R+8),y:6,z:Math.sin(ang)*(R+8),duration:1.8,ease:"power3.inOut"});
   monsters.forEach((m,j)=>{ gsap.to(m.scale,{x:j===i?1.6:1,y:j===i?1.6:1,z:j===i?1.6:1,duration:0.9,ease:"power2.out"}); });
-  gsap.to(monsters[i].rotation,{y:Math.round(monsters[i].rotation.y/(Math.PI*2))*Math.PI*2+ang+Math.PI/2,duration:0.9});
+  gsap.to(monsters[i].rotation,{y:Math.PI/2-ang,duration:0.9,ease:'power2.out'});
   gsap.to(look,{x:sx,y:3.4,z:sz,duration:1.8,ease:"power3.inOut",
     onUpdate:()=>camera.lookAt(look.x,look.y,look.z)});
   const card=document.getElementById('card');
@@ -607,9 +613,11 @@ function focus(i){
   document.getElementById('c-unit').textContent=name.toUpperCase()+' UNIT';
   document.getElementById('c-name').textContent=u.monster;
   document.getElementById('c-lore').textContent='"'+u.lore+'"';
-  showMini(name);
+  try{ showMini(name); }catch(e){ document.getElementById('c-stage').innerHTML=svgMini(u.color); }
   const fbtn=document.getElementById('c-fight');
-  fbtn.onclick=function(ev){ev.preventDefault();go(base+'?station='+encodeURIComponent(name));};
+  fbtn.onclick=null;
+  fbtn.href=base+'?station='+encodeURIComponent(name);
+  fbtn.target='_blank'; fbtn.rel='opener';
   card.classList.add('active');
 }
 
@@ -645,6 +653,7 @@ function animate(time){
   composer.render();
 }
 window.resetCamera = resetCamera;
+window.__focus = focus;
 });
 </script>
 """
@@ -653,20 +662,23 @@ window.resetCamera = resetCamera;
 _VENDOR_FILES = ["three.min.js", "gsap.min.js", "EffectComposer.js", "RenderPass.js",
                  "ShaderPass.js", "CopyShader.js", "LuminosityHighPassShader.js",
                  "UnrealBloomPass.js", "GLTFLoader.js"]
-_vendor_cache = None
+_vendor_cache = None  # dict of tuple(files)->joined script tags
 
 
-def _vendor_js() -> str:
+def _vendor_js(files=None) -> str:
     global _vendor_cache
+    key = tuple(files) if files else tuple(_VENDOR_FILES)
     if _vendor_cache is None:
+        _vendor_cache = {}
+    if key not in _vendor_cache:
         parts = []
         vdir = Path(__file__).parent / "static" / "vendor"
-        for f in _VENDOR_FILES:
+        for f in key:
             p = vdir / f
             if p.exists():
                 parts.append("<script>\n" + p.read_text() + "\n</script>")
-        _vendor_cache = "\n".join(parts)
-    return _vendor_cache
+        _vendor_cache[key] = "\n".join(parts)
+    return _vendor_cache[key]
 
 
 def _hub_html():
@@ -681,6 +693,157 @@ def to_dashboard():
     reset()
     st.session_state.adventure = False
     st.session_state.stage = "intro"
+
+
+_TAUNT_TEMPLATE = r"""
+<style>html,body{margin:0;background:#0b0710;overflow:hidden}</style>
+<div id="v"></div>
+<script>
+(function(){ let o='';
+  try{ o=window.parent.location.origin; }catch(e){ try{ o=new URL(document.referrer).origin; }catch(_){} }
+  window.__ORIGIN=o; })();
+</script>
+__VENDOR__
+<script>
+window.addEventListener('load', function(){
+  const W=170,H=170;
+  const r=new THREE.WebGLRenderer({antialias:true,alpha:true});
+  r.setSize(W,H); document.getElementById('v').appendChild(r.domElement);
+  const sc=new THREE.Scene();
+  const cam=new THREE.PerspectiveCamera(38,W/H,0.1,50);
+  cam.position.set(0,1.6,4.6); cam.lookAt(0,1.1,0);
+  sc.add(new THREE.AmbientLight(0xffffff,0.95));
+  const sp=new THREE.SpotLight(0xfff3e0,3.0,30,Math.PI/4,0.5);
+  sp.position.set(0,7,3); sc.add(sp);
+  let mix=null,obj=null;
+  new THREE.GLTFLoader().load((window.__ORIGIN||'')+"__MODEL__",(g)=>{
+    obj=g.scene;
+    const b=new THREE.Box3().setFromObject(obj), sz=b.getSize(new THREE.Vector3());
+    obj.scale.setScalar(2.6/Math.max(sz.x,sz.y,sz.z,0.001));
+    const b2=new THREE.Box3().setFromObject(obj), c=b2.getCenter(new THREE.Vector3());
+    obj.position.set(-c.x,-b2.min.y,-c.z); sc.add(obj);
+    if(g.animations&&g.animations.length){
+      mix=new THREE.AnimationMixer(obj);
+      const pref=new RegExp("__CLIPPREF__","i");
+      const clip=g.animations.find(a=>pref.test(a.name))
+               ||g.animations.find(a=>/idle|walk|swim|fly/i.test(a.name))||g.animations[0];
+      const act=mix.clipAction(clip); act.timeScale=__TS__; act.play();
+    }
+  });
+  let pt=0;
+  (function loop(t){ requestAnimationFrame(loop);
+    const tt=(t||0)*0.001, dt=Math.min(0.05,tt-pt); pt=tt;
+    if(mix) mix.update(dt);
+    if(obj) obj.rotation.y=Math.sin(tt*0.7)*0.35;
+    r.render(sc,cam); })(0);
+});
+</script>
+"""
+
+
+_FIGHT_TEMPLATE = r"""
+<style>
+html,body{margin:0;background:#0b0710;overflow:hidden;font-family:'Trebuchet MS',sans-serif}
+#hud{position:absolute;inset:0;pointer-events:none;color:#f2e8dc}
+#title{position:absolute;top:8px;left:12px;font-size:.68rem;letter-spacing:.16em;color:#e08d6d;font-weight:900}
+#hp{position:absolute;top:8px;right:12px;width:170px}
+#hp .lbl{font-size:.6rem;letter-spacing:.14em;color:#b9a794;text-align:right}
+#hp .bar{height:10px;border:1px solid #3a2a35;border-radius:6px;background:#160e18;overflow:hidden}
+#hp .fill{height:100%;width:100%;background:linear-gradient(90deg,#ff6b6b,__COLOR__);transition:width .2s}
+#bub{position:absolute;bottom:10px;left:12px;max-width:60%;background:#1c1119;
+  border:1px solid __COLOR__;border-radius:12px 12px 12px 2px;padding:7px 11px;
+  font-size:.78rem;box-shadow:0 0 14px __COLOR__55}
+#win{position:absolute;inset:0;display:none;align-items:center;justify-content:center;
+  font-size:1.1rem;font-weight:900;letter-spacing:.14em;color:#ffefdd;
+  text-shadow:0 0 18px __COLOR__}
+</style>
+<div id="v"></div>
+<div id="hud">
+  <div id="title">WHILE GEMMA FORGES YOUR GUIDE... CLICK THE MONSTER</div>
+  <div id="hp"><div class="lbl">__NAME__ HP</div><div class="bar"><div class="fill" id="fill"></div></div></div>
+  <div id="bub"><strong>__NAME__:</strong> <span id="line"></span></div>
+  <div id="win">DOWN - NOW FINISH IT WITH THE MATH BELOW</div>
+</div>
+<script>
+(function(){ let o='';
+  try{ o=window.parent.location.origin; }catch(e){ try{ o=new URL(document.referrer).origin; }catch(_){} }
+  window.__ORIGIN=o; })();
+</script>
+__VENDOR__
+<script>
+window.addEventListener('load', function(){
+  const TAUNTS=__TAUNTS__;
+  let li=0; const lineEl=document.getElementById('line');
+  lineEl.textContent=TAUNTS[0];
+  setInterval(()=>{ li=(li+1)%TAUNTS.length; lineEl.textContent=TAUNTS[li]; },3600);
+  const W=innerWidth,H=innerHeight;
+  const r=new THREE.WebGLRenderer({antialias:true});
+  r.setSize(W,H); r.setClearColor(0x0b0710);
+  document.getElementById('v').appendChild(r.domElement);
+  const sc=new THREE.Scene();
+  const cam=new THREE.PerspectiveCamera(36,W/H,0.1,60);
+  cam.position.set(0,1.8,5.4); cam.lookAt(0,1.1,0);
+  sc.add(new THREE.AmbientLight(0xffffff,0.9));
+  const sp=new THREE.SpotLight(0xfff3e0,3.2,40,Math.PI/4,0.5); sp.position.set(0,8,4); sc.add(sp);
+  let mix=null,obj=null,hp=100,down=false,flash=0;
+  new THREE.GLTFLoader().load((window.__ORIGIN||'')+"__MODEL__",(g)=>{
+    obj=g.scene;
+    const b=new THREE.Box3().setFromObject(obj), sz=b.getSize(new THREE.Vector3());
+    obj.scale.setScalar(2.8/Math.max(sz.x,sz.y,sz.z,0.001));
+    const b2=new THREE.Box3().setFromObject(obj), c=b2.getCenter(new THREE.Vector3());
+    obj.position.set(-c.x,-b2.min.y,-c.z); sc.add(obj);
+    if(g.animations&&g.animations.length){
+      mix=new THREE.AnimationMixer(obj);
+      const clip=g.animations.find(a=>/attack|bite|roar|jump/i.test(a.name))
+               ||g.animations.find(a=>/walk|idle/i.test(a.name))||g.animations[0];
+      const act=mix.clipAction(clip); act.timeScale=0.7; act.play();
+    }
+  });
+  addEventListener('click',()=>{
+    if(down||!obj) return;
+    hp=Math.max(0,hp-9); flash=1;
+    document.getElementById('fill').style.width=hp+'%';
+    if(hp===0){ down=true;
+      document.getElementById('win').style.display='flex';
+      document.getElementById('bub').style.display='none'; }
+  });
+  let pt=0;
+  (function loop(t){ requestAnimationFrame(loop);
+    const tt=(t||0)*0.001, dt=Math.min(0.05,tt-pt); pt=tt;
+    if(mix) mix.update(dt);
+    if(obj){
+      obj.rotation.y=Math.sin(tt*0.8)*0.4;
+      if(flash>0){ flash-=dt*4; obj.position.x=Math.sin(tt*60)*0.06*flash; }
+      if(down){ obj.rotation.z=Math.min(Math.PI/2,obj.rotation.z+dt*2); }
+    }
+    r.render(sc,cam); })(0);
+});
+</script>
+"""
+
+
+def _fight_html(mon, score, total):
+    taunts = [
+        f"{score} out of {total}? I barely felt that.",
+        "Keep clicking, hero - the real fight is the math below.",
+        "I have devoured sharper answers for breakfast.",
+        f"Gemma is writing your rescue plan. You will need it after {score}/{total}.",
+        "Hit me all you want - only understanding defeats me.",
+    ]
+    return (_FIGHT_TEMPLATE
+            .replace("__VENDOR__", _vendor_js(["three.min.js", "GLTFLoader.js"]))
+            .replace("__MODEL__", mon["model"])
+            .replace("__COLOR__", mon["color"])
+            .replace("__NAME__", mon["monster"])
+            .replace("__TAUNTS__", json.dumps(taunts)))
+
+
+def _taunt_html(model, clip_pref="walk", speed=0.55):
+    return (_TAUNT_TEMPLATE
+            .replace("__VENDOR__", _vendor_js(["three.min.js", "GLTFLoader.js"]))
+            .replace("__MODEL__", model)
+            .replace("__CLIPPREF__", clip_pref)
+            .replace("__TS__", str(speed)))
 
 
 def back_to_map():
@@ -710,11 +873,21 @@ def quiz():
         st.markdown('<div class="gwb-kicker">GEMMA MONSTERS</div>', unsafe_allow_html=True)
         st.title(f"Face {mon['monster']}" if mon else "The Challenge")
         if mon:
-            st.markdown(
-                f"""<div class="gwb-taunt">
-                <div class="gwb-bubble"><strong>{mon['monster']}:</strong> {mon.get('taunt','')}</div>
-                <div class="gwb-tmon">{monster_svg(mon['color'], 84)}</div></div>""",
-                unsafe_allow_html=True)
+            # markdown turns indented HTML into a code block - keep this flush-left
+            taunt_html = (
+                '<style>'
+                '[data-testid="stElementContainer"]:has(iframe) {'
+                'position:fixed; bottom:14px; right:14px; width:180px !important;'
+                'z-index:998; margin:0;'
+                f'filter:drop-shadow(0 0 14px {mon["color"]}66);'
+                'animation:gwbBob 3.2s ease-in-out infinite}'
+                '</style>'
+                '<div class="gwb-taunt" style="bottom:190px;right:18px">'
+                f'<div class="gwb-bubble"><strong>{mon["monster"]}:</strong> '
+                f'{mon.get("taunt", "")}</div></div>'
+            )
+            st.markdown(taunt_html, unsafe_allow_html=True)
+            components.html(_taunt_html(mon["model"]), height=170)
         st.caption("Answer every question, then submit. Wrong answers feed the monster.")
         st.button("Back to the Nexus", key="quiz_to_nexus", on_click=back_to_map)
     else:
@@ -766,20 +939,23 @@ def results():
         strand = result["wrong"][0]["item"]["strand"]
         mon = monster_for(strand)
         if mon:
-            st.markdown(
-                f'''<div style="background:linear-gradient(160deg,#1a1016,#241322);
-                border:2px solid {mon["color"]};border-radius:14px;padding:20px 24px;
-                margin:6px 0 14px;display:flex;align-items:center;gap:20px;
-                box-shadow:0 0 26px {mon["color"]}44">
-                <div style="flex-shrink:0">{monster_svg(mon["color"], 96)}</div>
-                <div><div style="font-size:.72rem;letter-spacing:.16em;color:{mon["color"]};
-                font-weight:700">A GEMMA MONSTER GOT YOU</div>
-                <div style="font-family:Georgia,serif;font-size:1.6rem;color:#ffefdd">
-                {mon["monster"]} strikes!</div>
-                <div style="color:#cbb8a4;font-size:.95rem">It feeds on
-                <strong style="color:#ffefdd">{priority["name"].lower()}</strong> —
-                learn its weakness below and defeat it.</div></div></div>''',
-                unsafe_allow_html=True)
+            bcols = st.columns([1, 3])
+            with bcols[0]:
+                components.html(_taunt_html(mon["model"],
+                                            clip_pref="attack|bite|jump|roar|hit|dance|yes",
+                                            speed=0.7), height=175)
+            with bcols[1]:
+                st.markdown(
+                    f'<div style="border-left:3px solid {mon["color"]};padding:6px 0 6px 16px;'
+                    f'margin-top:14px">'
+                    f'<div style="font-size:.72rem;letter-spacing:.16em;color:{mon["color"]};'
+                    f'font-weight:700">A GEMMA MONSTER GOT YOU</div>'
+                    f'<div style="font-size:1.55rem;color:#ffefdd;font-weight:900;'
+                    f'text-transform:uppercase">{mon["monster"]} strikes!</div>'
+                    f'<div style="color:#cbb8a4;font-size:.95rem">It feeds on '
+                    f'<strong style="color:#ffefdd">{priority["name"].lower()}</strong> '
+                    f'— learn its weakness below and defeat it.</div></div>',
+                    unsafe_allow_html=True)
     if priority and priority["id"] in mastered:
         note(
             "Mastered",
@@ -825,9 +1001,21 @@ def results():
     # --- a study-guide card per missed question ---
     st.subheader("Your study guide")
     if "guides" not in st.session_state:
+        fight_ph = st.empty()
+        if st.session_state.get("adventure") and result["wrong"]:
+            try:
+                fmon = monster_for(result["wrong"][0]["item"]["strand"])
+                if fmon:
+                    with fight_ph.container():
+                        components.html(
+                            _fight_html(fmon, result["correct"], result["total"]),
+                            height=240)
+            except Exception:
+                pass  # the mini-fight must never break the results page
         with st.spinner("The agent is studying your mistakes and writing your guide..."):
             seen = {q["id"] for q in st.session_state.quiz}
             st.session_state.guides = agent.build_study_guides(result, QUESTIONS, seen_ids=seen)
+        fight_ph.empty()
     for i, guide in enumerate(st.session_state.guides):
         with st.container(border=True):
             st.markdown(f"**{esc(guide['question'])}**")
@@ -837,9 +1025,9 @@ def results():
                 if gmon:
                     st.markdown(
                         f"<div style='font-size:.85rem;color:#8a8378'>"
-                        f"{monster_svg(gmon['color'], 20)} "
-                        f"<strong>{gmon['monster']}</strong>&nbsp;&middot;&nbsp;"
-                        f"{guide['misconception']['name']}</div>",
+                        f"<span style='color:{gmon['color']};font-size:1rem'>&#9670;</span> "
+                        f"<strong style='color:{gmon['color']}'>{gmon['monster']}</strong>"
+                        f"&nbsp;&middot;&nbsp;{guide['misconception']['name']}</div>",
                         unsafe_allow_html=True)
                 else:
                     st.caption(f"The trick that got you: {guide['misconception']['name']}")

@@ -150,3 +150,20 @@ Teammates can also clone + run locally (README has steps; 1B model is an 815MB p
 - Portal keys row removed — the game card's Begin button (opens a new tab) is the
   door into the challenge.
 - three.js is vendored under static/vendor so everything works offline.
+
+## Addendum — July 24 (late-2)
+
+- Quiz pages now show the unit's REAL animated 3D monster in the bottom-right:
+  a tiny three.js viewer injected via components.html and pinned with a CSS
+  :has selector; a vendored subset (three.min + GLTFLoader) is inlined; the
+  walk/idle clip plays at 0.55 timeScale. The taunt bubble sits above the monster.
+- Nexus card fixes:
+  - GLTF loader hoisted to top scope (focus() was crashing before the card opened).
+  - Monster faces the camera when enlarged (rotation y = PI/2 - ang).
+  - Card viewer animations slowed.
+  - showMini wrapped in try/catch with mark fallback.
+- Begin/Exit are now plain anchors with target=_blank, so they are never
+  popup-blocked.
+- window.__focus is exposed for debugging.
+- Ghost Skull (static/monsters/skull.glb) is staged for the under-50% defeat
+  moment with a Gemma-written villain line — NOT built yet.
