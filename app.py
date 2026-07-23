@@ -306,10 +306,10 @@ def mastery_stage():
     st.markdown('<div class="gwb-kicker">Autonomous practice</div>', unsafe_allow_html=True)
     st.title("Mastering: " + s.misconception_name)
 
-    cols = st.columns(3)
-    cols[0].metric("Attempt", f"{s.attempts + 1} of {m.MAX_ATTEMPTS}")
-    cols[1].metric("Approach", s.strategy_name)
-    cols[2].metric("Streak", f"{s.consecutive_correct} of {m.MASTERY_BAR}")
+    # one quiet status line while practising (terminal screens stay clean)
+    if s.state == m.IN_PROGRESS:
+        st.caption(f"Attempt {s.attempts + 1} of {m.MAX_ATTEMPTS} · "
+                   f"{s.strategy_name} · streak {s.consecutive_correct} of {m.MASTERY_BAR}")
 
     # terminal screens
     if s.state == m.MASTERED:
