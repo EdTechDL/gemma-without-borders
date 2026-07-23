@@ -54,12 +54,13 @@ def analyze(result: dict) -> dict:
     return {"patterns": patterns, "priority": priority, "escalate": escalate}
 
 
-def build_study_guides(result: dict, questions: list = None) -> list:
+def build_study_guides(result: dict, questions: list = None, seen_ids=None) -> list:
     """One study-guide card per missed question (the student-facing output).
 
-    Passing the question bank lets each card's 'Now you try' come from verified
-    items; already-used ids are shared so no card repeats another's question."""
-    used = {w["item"]["id"] for w in result["wrong"]}
+    'Now you try' comes from verified bank items the student has NOT already seen:
+    seed with seen_ids (every quiz question) so a practice item is never one they
+    just answered, and share the set so no two cards repeat a question."""
+    used = set(seen_ids or ()) | {w["item"]["id"] for w in result["wrong"]}
     return [study_guide(w["item"], w["chosen"], questions=questions, used_ids=used)
             for w in result["wrong"]]
 

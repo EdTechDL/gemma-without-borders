@@ -260,7 +260,8 @@ def results():
     st.subheader("Your study guide")
     if "guides" not in st.session_state:
         with st.spinner("The agent is studying your mistakes and writing your guide..."):
-            st.session_state.guides = agent.build_study_guides(result, QUESTIONS)
+            seen = {q["id"] for q in st.session_state.quiz}
+            st.session_state.guides = agent.build_study_guides(result, QUESTIONS, seen_ids=seen)
     for i, guide in enumerate(st.session_state.guides):
         with st.container(border=True):
             st.markdown(f"**{esc(guide['question'])}**")
@@ -283,6 +284,12 @@ def results():
                         o["text"] for o in p["options"] if o["label"] == l)),
                     index=None, key=f"practice_{i}", label_visibility="collapsed",
                 )
+                # a hint (a nudge, never the answer) is available before attempting
+                if guide.get("hint"):
+                    with st.expander("Stuck? Show a hint"):
+                        st.markdown(esc(guide["hint"]))
+                # feedback + the full worked solution appear ONLY after an attempt,
+                # so the answer isn't handed over before the student tries
                 if choice:
                     if choice == p["correct"]:
                         note("Correct", "That's exactly it.")
@@ -291,15 +298,11 @@ def results():
                         trap = o.get("misconception_name")
                         note("Not quite",
                              f"That's the <strong>{trap}</strong> trap again — "
-                             "open a hint, or peek at the solution." if trap else
-                             "Open a hint, or peek at the solution.")
-                # hint + solution are expanders: they open in place, no page jump
-                if guide.get("hint"):
-                    with st.expander("Stuck? Show a hint"):
-                        st.markdown(guide["hint"])
-                if p.get("solution"):
-                    with st.expander("See this one worked out"):
-                        st.markdown(plainify(p["solution"]))
+                             "open a hint and try once more." if trap else
+                             "Take another look, or open a hint.")
+                    if p.get("solution"):
+                        with st.expander("See this one worked out"):
+                            st.markdown(esc(plainify(p["solution"])))
 
     st.button("Take another quiz", key="again_bottom", on_click=reset)
 
