@@ -59,9 +59,9 @@
   \begin{columns}[T]
     \begin{column}{0.55\textwidth}
       \begin{itemize}\setlength\itemsep{0.7em}
-        \item Every Ontario Grade 9 student writes the EQAO math assessment. Many arrive with \textbf{specific, well-documented misconceptions} --- not general weakness.
+        \item Every Ontario Grade 9 student writes the EQAO math assessment. Many arrive with \textbf{specific, well-documented tricks} --- wrong ideas that feel right, not general weakness.
         \item A student who answers $\tfrac{2}{3}+\tfrac{1}{4}=\tfrac{3}{7}$ doesn't need more practice. They need someone to notice they \textbf{add tops and bottoms straight across} --- and fix exactly that.
-        \item Teachers can't do this per-student, per-misconception. Generic review apps don't even try.
+        \item Teachers can't do this per-student, per-trick. Generic review apps don't even try.
       \end{itemize}
     \end{column}
     \begin{column}{0.41\textwidth}
@@ -72,7 +72,7 @@
           {\small \textbf{B) $\tfrac{3}{7}$} \hfill {\color{clay}\scriptsize adds straight across}}\\[2pt]
           {\small C) $\tfrac{3}{12}$ \hfill {\color{muted}\scriptsize didn't rescale tops}}\\[2pt]
           {\small D) $\tfrac{11}{7}$ \hfill {\color{muted}\scriptsize mixed method}}\\[4pt]
-          {\scriptsize\color{muted} Every wrong option is the exact result of a \emph{known} misconception --- so the wrong answer itself is the diagnosis.}
+          {\scriptsize\color{muted} Every wrong option is the exact result of a \emph{known} trick --- so the wrong answer itself is the diagnosis.}
         };
       \end{tikzpicture}
     \end{column}
@@ -89,7 +89,7 @@
       accent/.style={draw=clay, thick, fill=card, rounded corners=2pt, inner sep=5pt, align=center, font=\scriptsize},
       arr/.style={-{Stealth[length=2mm]}, thick, color=clayd}]
     \node[box] (quiz) {Short quiz\\ \scriptsize verified EQAO-style items};
-    \node[box, right=of quiz] (diag) {Diagnose\\ \scriptsize misconception per mistake};
+    \node[box, right=of quiz] (diag) {Diagnose\\ \scriptsize trick behind each mistake};
     \node[box, right=of diag] (guide) {Study guide\\ \scriptsize why it's wrong + practice};
     \node[accent, right=of guide] (loop) {Mastery loop\\ \scriptsize the autonomous agent};
     \node[box, above right=0.3cm and 0.42cm of loop.east, anchor=west] (win) {\color{okg}Mastery\\ \tiny 2 fresh correct in a row};
@@ -103,7 +103,7 @@
   \end{center}
   \vspace{0.4em}
   \begin{itemize}\setlength\itemsep{0.4em}
-    \item Student takes a 5-question quiz. On submit, the agent reads \textbf{all} the mistakes, finds the pattern, and picks the \textbf{priority misconception}.
+    \item Student takes a 5-question quiz. On submit, the agent reads \textbf{all} the mistakes, finds the pattern, and picks the \textbf{priority trick to untangle}.
     \item Then it \textbf{pursues a goal}: keep teaching --- with different strategies --- until the student \emph{demonstrates} understanding, or a human should take over.
   \end{itemize}
 \end{frame}
@@ -133,7 +133,7 @@
       \textbf{A chatbot responds once.}\\
       \textbf{An agent pursues a goal:}\par
       \vspace{0.3em}
-      \mutedtext{\small ``Two consecutive fresh questions answered correctly, with reasoning that shows the misconception is gone.''}\par
+      \mutedtext{\small ``Two consecutive fresh questions answered correctly, with reasoning that shows the trick is gone.''}\par
       \vspace{0.8em}
       \textbf{It cannot run away:}
       \begin{itemize}
@@ -200,8 +200,8 @@
       \textbf{A verified diagnostic bank:}
       \begin{itemize}\setlength\itemsep{0.45em}
         \item {\small 36 original EQAO-style questions across all 5 strands of the Ontario MTH1W curriculum}
-        \item {\small 48-misconception taxonomy, each with the flawed thinking spelled out}
-        \item {\small every wrong option tagged with the misconception that produces it}
+        \item {\small a taxonomy of 48 tricks, each with the flawed thinking spelled out}
+        \item {\small every wrong option tagged with the trick that produces it}
         \item {\small independently re-solved and adversarially checked; 10 tags corrected in review}
       \end{itemize}
     \end{column}
@@ -271,7 +271,7 @@
 \begin{frame}{The 90-second live demo}
   \begin{enumerate}\setlength\itemsep{0.55em}
     \item {\small \textbf{Quiz} --- five questions, we miss the fraction item with the classic straight-across error.}
-    \item {\small \textbf{Results} --- the agent finds the pattern, names the misconception, builds the study guide.}
+    \item {\small \textbf{Results} --- the agent finds the pattern, names the trick, builds the study guide.}
     \item {\small \textbf{``Practice until I've mastered it''} --- lesson appears; we answer wrong \emph{and type our flawed reasoning}.}
     \item {\small \textbf{The moment}: the agent reads our words, \textbf{switches teaching strategy, and explains why} --- attempt counter, approach, and streak all visible.}
     \item {\small We answer two fresh questions correctly $\rightarrow$ \textbf{Mastery demonstrated}, with a recap of which approaches it took.}

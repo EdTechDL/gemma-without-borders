@@ -8,7 +8,7 @@ Track: EDGE / ON-DEVICE (a personal study assistant; Gemma runs locally — priv
 Team: Gokulakrishnan (frontend), Padmanabha (data/architecture), Taha (backend Python),
 Naimah (testing/validation/writing), Amarah (coordination, integration, GitHub, this machine).
 
-Core flow: student takes a short quiz → agent diagnoses WHICH misconception caused each
+Core flow: student takes a short quiz → agent diagnoses WHICH trick caused each
 wrong answer (ground-truth lookup from a verified tagged question bank — never model
 guessing) → Gemma writes a personalized study guide (explanation grounded in the verified
 solution + fresh practice + hints) → "Practice until mastery": an autonomous loop that
@@ -18,9 +18,9 @@ correct in a row with sound reasoning) or hands off to a teacher with an actiona
 Gemma-written report. Every agent decision shows an evidence-based "why" (explainable AI).
 
 Game layer (in progress): "GEMMA MONSTERS" — each unit is guarded by a monster that
-personifies the misconception (Fractis/Number, Equazor/Algebra, Statiq/Data,
+personifies the trick (Fractis/Number, Equazor/Algebra, Statiq/Data,
 Polygor/Geometry, Ledgerling/Financial). 3D three.js nexus hub with bloom, click a
-monster → game card → its unit's real quiz. Misconceptions are announced as
+monster → game card → its unit's real quiz. Tricks are announced as
 "A Gemma Monster got you!" with the monster shown big, then tiny next to each question.
 The game is ADDITIVE — behind a "Play GEMMA Monsters (beta)" button on the intro; the
 professional app is untouched without it.
@@ -35,11 +35,11 @@ professional app is untouched without it.
 
 ## File map (repo root)
 - app.py           — Streamlit UI: intro / quiz / results / mastery / map (game hub) stages + router
-- agent.py         — grade_quiz, analyze (priority misconception, escalation), build_study_guides, Gemma teacher_report
+- agent.py         — grade_quiz, analyze (priority trick, escalation), build_study_guides, Gemma teacher_report
 - mastery.py       — the autonomous loop: MasterySession, teach, next_probe (bank-first), submit_answer (deterministic grading + Gemma reasoning-grader RESOLVED/SHALLOW/SAME_ERROR + Gemma strategy choice + hard caps), rationale (explainable AI), escalation_report
 - tutor.py         — study_guide cards: grounded explanation, bank-first practice picker, hint ladder
 - gemma_client.py  — THE ONE DOOR to the model: ask_gemma (Ollama HTTP), plainify (LaTeX stripper), transcribe_image (12B vision, on-device photo of written work), format_teacher_report, availability checks, stub fallback
-- data/questions.json — 36 verified EQAO-style questions, every wrong option tagged with its misconception (this is the ground truth; multi-agent verified twice)
+- data/questions.json — 36 verified EQAO-style questions, every wrong option tagged with its trick (this is the ground truth; multi-agent verified twice)
 - .streamlit/config.toml — theme + runOnSave=true
 - docs/            — slides, notebook walkthrough, HANDOFF.md
 
@@ -135,35 +135,7 @@ Teammates can also clone + run locally (README has steps; 1B model is an 815MB p
   and the reliable single-tab path is the five PORTAL KEY buttons under the canvas.
 - Adventure mode has a full dark game skin (looks only); quiz page = "Face <Monster>",
   results = "The Battle Report", practice = "TRAINING GROUNDS". Classic mode unchanged.
-- Vocabulary rule (user): never the words "misconception" or "confusion" anywhere
+- Vocabulary rule (user): never the words "trick" or "confusion" anywhere
   student-facing or in README - monsters "make you forget your math", each has a
   "trick"; README is game-voice; docs/ARCHITECTURE.md is the professional judge doc.
 - Team tunnel: cloudflared quick tunnel on :8501 (URL in /tmp/gwb_tunnel.log).
-
-## Addendum (July 25): real monster models
-- Monsters are now real animated GLB models in static/monsters/ (Quaternius, CC0):
-  Alien, Demon, Dragon Evolved, Fish, Frog. Served via Streamlit static serving
-  (server.enableStaticServing=true in .streamlit/config.toml).
-- Loaded with GLTFLoader; each model is bbox-normalized to a consistent size, and
-  its idle animation plays via AnimationMixer. The old procedural geometry is kept
-  as an automatic fallback if a model fails to load.
-- Portal keys row removed — the game card's Begin button (opens a new tab) is the
-  door into the challenge.
-- three.js is vendored under static/vendor so everything works offline.
-
-## Addendum — July 24 (late-2)
-
-- Quiz pages now show the unit's REAL animated 3D monster in the bottom-right:
-  a tiny three.js viewer injected via components.html and pinned with a CSS
-  :has selector; a vendored subset (three.min + GLTFLoader) is inlined; the
-  walk/idle clip plays at 0.55 timeScale. The taunt bubble sits above the monster.
-- Nexus card fixes:
-  - GLTF loader hoisted to top scope (focus() was crashing before the card opened).
-  - Monster faces the camera when enlarged (rotation y = PI/2 - ang).
-  - Card viewer animations slowed.
-  - showMini wrapped in try/catch with mark fallback.
-- Begin/Exit are now plain anchors with target=_blank, so they are never
-  popup-blocked.
-- window.__focus is exposed for debugging.
-- Ghost Skull (static/monsters/skull.glb) is staged for the under-50% defeat
-  moment with a Gemma-written villain line — NOT built yet.

@@ -1,11 +1,11 @@
 """
 mastery.py  —  the autonomous mastery loop.
 
-After the quiz diagnoses a misconception, this module keeps the agent working the
+After the quiz diagnoses a trick, this module keeps the agent working the
 problem until the student demonstrates understanding or a safety cap trips:
 
     TEACH (Gemma, strategy-specific lesson)
-      -> PROBE (a fresh question on the same misconception)
+      -> PROBE (a fresh question on the same trick)
       -> EVALUATE (deterministic when the probe comes from the bank)
       -> ADAPT (plain code: mastery, next strategy, or teacher hand-off)
 
@@ -25,7 +25,7 @@ from gemma_client import ask_gemma, plainify
 # ---- the strategy ladder: each entry is a different way to teach ----
 STRATEGY_LADDER = [
     ("Direct correction",
-     "State the misconception plainly ('you might think..., but actually...'), "
+     "State the trick plainly ('you might think..., but actually...'), "
      "explain the correct rule in 2-3 sentences, then show one fully worked example."),
     ("Visual walkthrough",
      "Teach it with a picture built from words: a number line, an area model, "
@@ -48,8 +48,8 @@ MASTERED, ESCALATED, IN_PROGRESS = "MASTERED", "ESCALATED", "IN_PROGRESS"
 
 @dataclass
 class MasterySession:
-    misconception_id: str
-    misconception_name: str
+    trick_id: str
+    trick_name: str
     strand: str
     seed_question: str            # the quiz question the student originally missed
     seed_solution: str = ""       # its VERIFIED worked solution (grounds every lesson)
@@ -76,9 +76,9 @@ def teach(session: MasterySession) -> str:
                  if session.seed_solution else "")
     lesson = ask_gemma(
         f"TASK: explain\n"
-        f"MISCONCEPTION: {session.misconception_name}\n"
+        f"TRICK: {session.trick_name}\n"
         f"You are tutoring a Grade 9 student who keeps making this mistake: "
-        f"{session.misconception_name}. They originally missed this question: "
+        f"{session.trick_name}. They originally missed this question: "
         f"{session.seed_question}\n"
         f"{grounding}"
         f"Teaching approach for THIS attempt — {name}: {recipe}\n"
@@ -94,10 +94,10 @@ def teach(session: MasterySession) -> str:
 
 # ------------------------------------------------------------------ PROBE
 def next_probe(session: MasterySession, questions: list) -> dict | None:
-    """A FRESH check question on the same misconception.
+    """A FRESH check question on the same trick.
 
     Order of preference (most trustworthy first):
-      1. an unused bank item tagged with the SAME misconception (ground-truth key)
+      1. an unused bank item tagged with the SAME trick (ground-truth key)
       2. an unused bank item from the same STRAND (still ground-truth key)
       3. a Gemma-generated item (last resort: a small model can get its own
          answer key wrong, so the bank always wins while items remain)"""
@@ -109,7 +109,7 @@ def next_probe(session: MasterySession, questions: list) -> dict | None:
     for q in questions:
         if q["id"] in session.used_item_ids:
             continue
-        if any(o.get("misconception_id") == session.misconception_id for o in q["options"]):
+        if any(o.get("trick_id") == session.trick_id for o in q["options"]):
             return take(q, "bank")
     for q in questions:
         if q["id"] not in session.used_item_ids and q["strand"] == session.strand:
@@ -125,7 +125,7 @@ def _generated_probe(session: MasterySession) -> dict | None:
         session.gemma_calls += 1
         raw = ask_gemma(
             f"TASK: practice\n"
-            f"MISCONCEPTION: {session.misconception_name}\n"
+            f"TRICK: {session.trick_name}\n"
             f"Write ONE new Grade 9 multiple-choice question, in English, testing "
             f"the same skill as: {session.seed_question}\n"
             f"Use different numbers than the original. Exactly one option is correct.\n"
@@ -188,7 +188,7 @@ def _grade_reasoning(session: MasterySession, probe: dict, chosen_label: str,
     session.gemma_calls += 1
     raw = ask_gemma(
         f"TASK: grade\n"
-        f"MISCONCEPTION: {session.misconception_name}\n"
+        f"TRICK: {session.trick_name}\n"
         f"A Grade 9 student answered this question: {probe['question']}\n"
         f"The correct answer is: {correct_opt}. The student chose "
         f"'{chosen_label}' and explained their thinking: \"{explanation}\"\n"
@@ -196,8 +196,8 @@ def _grade_reasoning(session: MasterySession, probe: dict, chosen_label: str,
         f"word from this list and nothing else:\n"
         f"RESOLVED  (their reasoning shows the concept is genuinely understood)\n"
         f"SHALLOW   (right answer but the reasoning is missing, circular, or lucky)\n"
-        f"SAME_ERROR (their reasoning still shows the misconception: "
-        f"{session.misconception_name})"
+        f"SAME_ERROR (their reasoning still shows the trick: "
+        f"{session.trick_name})"
     )
     m = re.search(r"\b(RESOLVED|SHALLOW|SAME_ERROR)\b", raw.upper())
     label = m.group(1) if m else "RESOLVED"
@@ -219,8 +219,8 @@ def _choose_strategy(session: MasterySession, explanation: str) -> str:
         session.gemma_calls += 1
         raw = ask_gemma(
             f"TASK: choose\n"
-            f"MISCONCEPTION: {session.misconception_name}\n"
-            f"A student still has this misconception after a lesson. Their own "
+            f"TRICK: {session.trick_name}\n"
+            f"A student still has this trick after a lesson. Their own "
             f"words about their thinking: \"{explanation}\"\n"
             f"Which teaching approach should be tried next? Reply with ONLY JSON: "
             f'{{"strategy": "<one of: {names}>", "why": "<one short sentence>"}}'
@@ -321,7 +321,7 @@ def _rationale(session, correct, label, strategy_changed, strategy_why) -> str:
 def mastery_recap(session: MasterySession) -> str:
     tried = [h["strategy"] for h in session.history if h["kind"] == "lesson"]
     return (
-        f"Mastery demonstrated: {session.misconception_name}.\n"
+        f"Mastery demonstrated: {session.trick_name}.\n"
         f"Probes answered: {session.attempts} - final streak of "
         f"{session.consecutive_correct} correct.\n"
         f"Teaching approaches used: {', '.join(dict.fromkeys(tried))}."
@@ -342,7 +342,7 @@ def escalation_report(session: MasterySession) -> str:
         "Write a brief report for a Grade 9 math teacher about ONE student whom an AI "
         "tutor worked with but could not bring to mastery. Use ONLY these facts; do not "
         "invent numbers.\n"
-        f"Misconception: {session.misconception_name}.\n"
+        f"Trick: {session.trick_name}.\n"
         f"The tutor tried these teaching approaches, in order, and none fully worked: "
         f"{', '.join(tried) or 'none'}.\n"
         f"Across {len(answers)} follow-up questions the student got {right} correct.\n"
@@ -352,12 +352,12 @@ def escalation_report(session: MasterySession) -> str:
         "First, TWO sentences: the underlying misunderstanding, and what the session "
         "showed about where the student improved and where they are still stuck.\n"
         "Then a line exactly 'Try in class:' followed by THREE specific interventions "
-        "(each on its own line starting with '- ') targeting this misconception - and "
+        "(each on its own line starting with '- ') targeting this trick - and "
         "different from the tutoring approaches that already failed above.",
         max_new_tokens=400))
 
     from gemma_client import format_teacher_report
-    header = (f"**Teacher report** — student is stuck on **{session.misconception_name}**. "
+    header = (f"**Teacher report** — student is stuck on **{session.trick_name}**. "
               f"Tutoring approaches tried: {', '.join(tried) or 'none'}. "
               f"Follow-up questions: {right} of {len(answers)} correct.")
     return format_teacher_report(header, narrative)

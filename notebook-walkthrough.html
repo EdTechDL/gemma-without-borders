@@ -304,13 +304,13 @@ result = <span class="f">grade_quiz</span>(quiz, answers)
 analysis = <span class="f">analyze</span>(result)
 
 <span class="f">print</span>(<span class="s">"Score:"</span>, result[<span class="s">"correct"</span>], <span class="s">"/"</span>, result[<span class="s">"total"</span>])
-<span class="f">print</span>(<span class="s">"Priority misconception:"</span>, analysis[<span class="s">"priority"</span>][<span class="s">"name"</span>])
+<span class="f">print</span>(<span class="s">"Priority trick:"</span>, analysis[<span class="s">"priority"</span>][<span class="s">"name"</span>])
 <span class="f">print</span>(<span class="s">"Tell the teacher?"</span>, analysis[<span class="s">"escalate"</span>])</pre></div>
       </div>
       <div class="cell">
         <div class="prompt out">Out[5]:</div>
         <div class="output"><pre>Score: 2 / 5
-Priority misconception: Multiplying exponents when multiplying like bases
+Priority trick: Multiplying exponents when multiplying like bases
 Tell the teacher? True</pre></div>
       </div>
       <div class="explain">
@@ -366,13 +366,13 @@ Now you try: simplify 5^2 x 5^3. (Answer: 5^5, which is 3,125.)</pre></div>
         <div class="output"><pre>TEACHER SUMMARY — Gemma Without Borders
 Score: 2/5 (40%)
 
-Misconception patterns observed:
+Tricks the student fell for:
   - NUM-1: Multiplying exponents when multiplying like bases  (missed 1x)
   - NUM-4: Zero exponent equals zero  (missed 1x)
   - NUM-6: Adding fractions straight across  (missed 1x)
 
 Recommended focus: Multiplying exponents when multiplying like bases
-Suggested action: short 1:1 on the focus misconception before moving on.</pre></div>
+Suggested action: short 1:1 on the focus trick before moving on.</pre></div>
       </div>
 
     </div>

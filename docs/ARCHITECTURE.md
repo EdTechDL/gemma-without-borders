@@ -2,7 +2,7 @@
 
 ## System overview
 
-Gemma Without Borders is a Streamlit application wrapped around an agent controller and an autonomous mastery loop, with a single auditable door to the model. The student takes a diagnostic quiz; `agent.py` grades it, diagnoses the misconception behind each wrong answer by table lookup against a verified 36-item tagged question bank (`data/questions.json` — the ground truth for all answer keys, misconception tags, and worked solutions), prioritizes the most frequent misconception, and builds personalized study guides. `mastery.py` then runs a state machine — TEACH, PROBE, EVALUATE, ADAPT — that teaches through a fixed ladder of four strategies, probes with fresh questions, grades typed reasoning, and terminates deterministically at mastery (two consecutive correct with sound reasoning) or teacher hand-off. Every model call in the system goes through one function, `ask_gemma()` in `gemma_client.py`, backed by a local Gemma via Ollama — fully on-device, with a placeholder stub if no model is installed.
+Gemma Without Borders is a Streamlit application wrapped around an agent controller and an autonomous mastery loop, with a single auditable door to the model. The student takes a diagnostic quiz; `agent.py` grades it, diagnoses the trick behind each wrong answer — the specific wrong idea that felt right — by table lookup against a verified 36-item tagged question bank (`data/questions.json` — the ground truth for all answer keys, trick tags, and worked solutions), prioritizes the most frequent trick, and builds personalized study guides. `mastery.py` then runs a state machine — TEACH, PROBE, EVALUATE, ADAPT — that teaches through a fixed ladder of four strategies, probes with fresh questions, grades typed reasoning, and terminates deterministically at mastery (two consecutive correct with sound reasoning) or teacher hand-off. Every model call in the system goes through one function, `ask_gemma()` in `gemma_client.py`, backed by a local Gemma via Ollama — fully on-device, with a placeholder stub if no model is installed.
 
 ## Where Gemma does the thinking
 
@@ -19,13 +19,13 @@ Gemma is not a text box bolted onto a quiz — it sits at every decision point o
 | `tutor.hint` | Progressive hints on practice questions (nudge, then first step) | Generation | Grounded in the verified solution; may not invent numbers |
 | `gemma_client.transcribe_image` | Reads a photo of the student's handwritten work, on-device | Multimodal (vision) | Transcribes only — correctness is always judged against the verified bank |
 
-Teacher reports (`agent.teacher_report`, `mastery.escalation_report`) use the same door: the facts (score, misconceptions, strategies tried, attempt counts) are computed deterministically and injected into the prompt; Gemma writes only the interpretation and classroom interventions.
+Teacher reports (`agent.teacher_report`, `mastery.escalation_report`) use the same door: the facts (score, diagnosed tricks, strategies tried, attempt counts) are computed deterministically and injected into the prompt; Gemma writes only the interpretation and classroom interventions.
 
 What Gemma is deliberately not allowed to do: grade multiple-choice answers (ground-truth key), diagnose bank items (ground-truth tags), or decide loop termination (hard caps in plain code). Model size is a dial, not a rewrite: set `GEMMA_MODEL=gemma3:12b` and every call above upgrades in place.
 
 ## Reliability by design
 
-- **Diagnosis is a table lookup.** Every wrong option in the bank is tagged with the misconception it reveals; `tutor.diagnose` reads the tag. No model call, no guessing — 100 percent deterministic.
+- **Diagnosis is a table lookup.** Every wrong option in the bank is tagged with the trick it reveals; `tutor.diagnose` reads the tag. No model call, no guessing — 100 percent deterministic.
 - **Answer keys and worked solutions come from the verified bank.** Multiple-choice grading and the "correct method" shown to students never depend on the model.
 - **Model output is sanitized and grounded.** Every human-facing string passes through `plainify()` (LaTeX stripped to plain math notation), and every generation prompt carries the verified solution with an explicit rule: do not invent numbers or recompute.
 - **Generated questions must audit themselves.** When the bank is exhausted, a Gemma-authored probe is only used if Gemma can solve it blind — without seeing its own answer key — and agree with itself. A question that fails its own audit is silently discarded.
@@ -41,10 +41,10 @@ What Gemma is deliberately not allowed to do: grade multiple-choice answers (gro
 ## File map
 
 - `app.py` — Streamlit UI and stage router: intro, quiz, results, mastery, map (game hub)
-- `agent.py` — agent controller: grade_quiz, analyze (priority misconception, escalation), build_study_guides, Gemma teacher report
+- `agent.py` — agent controller: grade_quiz, analyze (priority trick, escalation), build_study_guides, Gemma teacher report
 - `mastery.py` — autonomous mastery loop: MasterySession state machine, teach, next_probe, submit_answer, rationale, escalation report
 - `tutor.py` — study-guide cards: diagnosis lookup, grounded explanation, bank-first practice picker, hint ladder
 - `gemma_client.py` — the one door to the model: ask_gemma (Ollama HTTP), plainify, transcribe_image (vision), report formatting, stub fallback
-- `data/questions.json` — 36 verified EQAO-style questions, every wrong option tagged with its misconception (ground truth)
+- `data/questions.json` — 36 verified EQAO-style questions, every wrong option tagged with its trick (ground truth)
 - `.streamlit/config.toml` — theme and hot-reload settings
 - `docs/` — slides, notebook walkthrough, handoff, this document

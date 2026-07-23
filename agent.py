@@ -26,7 +26,7 @@ def grade_quiz(questions: list, answers: dict) -> dict:
             correct_count += 1
         elif chosen:  # answered, but wrong
             misc = diagnose(q, chosen)
-            wrong.append({"item": q, "chosen": chosen, "misconception": misc})
+            wrong.append({"item": q, "chosen": chosen, "trick": misc})
     return {
         "total": len(questions),
         "correct": correct_count,
@@ -36,11 +36,11 @@ def grade_quiz(questions: list, answers: dict) -> dict:
 
 
 def analyze(result: dict) -> dict:
-    """The 'decide what to do' step: find the misconception pattern across all
+    """The 'decide what to do' step: find the trick pattern across all
     wrong answers and pick the priority one to tackle first."""
     counts = Counter()
     for w in result["wrong"]:
-        m = w["misconception"]
+        m = w["trick"]
         if m and m.get("id"):
             counts[(m["id"], m["name"])] += 1
 
@@ -66,7 +66,7 @@ def build_study_guides(result: dict, questions: list = None, seen_ids=None) -> l
 
 
 def teacher_report(result: dict, analysis: dict) -> str:
-    """A report a teacher can act on. The FACTS (score, misconceptions) are
+    """A report a teacher can act on. The FACTS (score, tricks) are
     deterministic; Gemma writes the interpretation and concrete interventions,
     grounded in those facts."""
     from gemma_client import ask_gemma, plainify, format_teacher_report
@@ -80,14 +80,14 @@ def teacher_report(result: dict, analysis: dict) -> str:
         "You are writing a brief report for a Grade 9 math teacher about ONE student, "
         "using ONLY the facts below. Do not invent numbers or facts.\n"
         f"Diagnostic-quiz score: {result['correct']} of {result['total']}.\n"
-        f"Misconceptions the student showed: {patterns}.\n"
+        f"Tricks the student showed: {patterns}.\n"
         f"Highest-priority gap: {focus}.\n\n"
         "Write, in plain text (no LaTeX, no dollar signs), addressed to the teacher:\n"
         "First, TWO sentences naming the underlying misunderstanding in teaching terms "
         "and what it reveals about how the student is thinking.\n"
         "Then a line exactly 'Try in class:' followed by THREE specific, classroom-ready "
         "interventions (each on its own line starting with '- ') that target THIS "
-        "misconception. Be concrete — name the strategy, not generic advice.",
+        "trick. Be concrete — name the strategy, not generic advice.",
         max_new_tokens=380))
 
     header = (f"**Teacher report** — scored {result['correct']} of {result['total']} "

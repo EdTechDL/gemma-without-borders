@@ -5,7 +5,7 @@ Run it:   streamlit run app.py
 
 Flow:  take a short quiz  ->  submit  ->  score + a personalized study guide the
 AGENT builds from your wrong answers (explanation + fresh practice per mistake),
-plus the agent's read on your #1 misconception and a teacher hand-off if needed.
+plus the agent's read on your #1 trick and a teacher hand-off if needed.
 """
 import json
 import re
@@ -222,13 +222,13 @@ def reset():
 
 
 def start_mastery(result, analysis):
-    """Enter the autonomous practice loop, targeting the priority misconception."""
+    """Enter the autonomous practice loop, targeting the priority trick."""
     pid = analysis["priority"]["id"]
     seed = next(w for w in result["wrong"]
-                if w["misconception"] and w["misconception"].get("id") == pid)
+                if w["trick"] and w["trick"].get("id") == pid)
     s = m.MasterySession(
-        misconception_id=pid,
-        misconception_name=analysis["priority"]["name"],
+        trick_id=pid,
+        trick_name=analysis["priority"]["name"],
         strand=seed["item"]["strand"],
         seed_question=seed["item"]["question"],
         seed_solution=seed["item"].get("solution", ""),
@@ -272,7 +272,7 @@ def intro():
 
 
 # ---------------- GEMMA MONSTERS (optional, additive game layer) ----------------
-# Every unit is guarded by a Gemma Monster — a personified misconception. The hub
+# Every unit is guarded by a Gemma Monster — a personified trick. The hub
 # is a 3D nexus (three.js, bloom). Clicking a monster shows its game card; Begin
 # enters that unit's real quiz via ?station=. Deliberately NOT the app's clean
 # design language — it's a different world.
@@ -296,8 +296,8 @@ MONSTERS = {
 STATIONS = MONSTERS  # router alias: ?station= keys
 
 
-def monster_for(misconception_strand):
-    return MONSTERS.get(misconception_strand)
+def monster_for(trick_strand):
+    return MONSTERS.get(trick_strand)
 
 
 def monster_svg(color, size):
@@ -1020,17 +1020,17 @@ def results():
         with st.container(border=True):
             st.markdown(f"**{esc(guide['question'])}**")
             st.markdown(f"You picked **{esc(guide['chosen'])}** — the correct answer is **{esc(guide['correct'])}**")
-            if guide["misconception"].get("name"):
+            if guide["trick"].get("name"):
                 gmon = monster_for(guide["strand"]) if st.session_state.get("adventure") else None
                 if gmon:
                     st.markdown(
                         f"<div style='font-size:.85rem;color:#8a8378'>"
                         f"<span style='color:{gmon['color']};font-size:1rem'>&#9670;</span> "
                         f"<strong style='color:{gmon['color']}'>{gmon['monster']}</strong>"
-                        f"&nbsp;&middot;&nbsp;{guide['misconception']['name']}</div>",
+                        f"&nbsp;&middot;&nbsp;{guide['trick']['name']}</div>",
                         unsafe_allow_html=True)
                 else:
-                    st.caption(f"The trick that got you: {guide['misconception']['name']}")
+                    st.caption(f"The trick that got you: {guide['trick']['name']}")
             st.markdown("**Why:** " + esc(guide["explanation"]))
             if guide["worked_solution"]:
                 with st.expander("See the worked solution"):
@@ -1058,7 +1058,7 @@ def results():
                         note("Correct", "That's exactly it.")
                     else:
                         o = next(o for o in p["options"] if o["label"] == choice)
-                        trap = o.get("misconception_name")
+                        trap = o.get("trick_name")
                         note("Not quite",
                              f"That's the <strong>{trap}</strong> trap again — "
                              "open a hint and try once more." if trap else
@@ -1109,7 +1109,7 @@ def mastery_stage():
                 ("GEMMA MONSTERS · TRAINING GROUNDS" if st.session_state.get("adventure")
                  else "Autonomous practice") + '</div>', unsafe_allow_html=True)
     st.title(("Defeat the trick: " if st.session_state.get("adventure") else "Mastering: ")
-             + s.misconception_name)
+             + s.trick_name)
 
     # one quiet status line + an escape hatch while practising
     if s.state == m.IN_PROGRESS:
@@ -1122,7 +1122,7 @@ def mastery_stage():
     # terminal screens
     if s.state == m.MASTERED:
         # remember it: the results page now shows this gap as closed
-        st.session_state.setdefault("mastered", set()).add(s.misconception_id)
+        st.session_state.setdefault("mastered", set()).add(s.trick_id)
         note("Why the agent declared mastery",
              "Two fresh questions in a row, answered correctly — and your reasoning showed "
              "real understanding, not a lucky guess. That's the evidence bar for mastery.")

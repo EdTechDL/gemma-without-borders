@@ -178,7 +178,7 @@ def transcribe_image(image_bytes: bytes) -> str:
 # --------------------------------------------------------------------------
 def _stub(prompt: str) -> str:
     task = _tag(prompt, "TASK") or "explain"
-    misc = _tag(prompt, "MISCONCEPTION") or "this misconception"
+    misc = _tag(prompt, "TRICK") or "this trick"
     if task == "practice":
         return ("_(Gemma will generate a fresh practice question here — one that targets "
                 f"'{misc}'. Install Ollama and pull a Gemma model to see it live.)_")

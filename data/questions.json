@@ -14,22 +14,22 @@
         "label": "B",
         "text": "2 to the power 12, which is 4096",
         "is_correct": false,
-        "misconception_id": "NUM-1",
-        "misconception_name": "Multiplying exponents when multiplying like bases"
+        "trick_id": "NUM-1",
+        "trick_name": "Multiplying exponents when multiplying like bases"
       },
       {
         "label": "C",
         "text": "4 to the power 7, which is 16384",
         "is_correct": false,
-        "misconception_id": "NUM-2",
-        "misconception_name": "Changing the base when operating on powers"
+        "trick_id": "NUM-2",
+        "trick_name": "Changing the base when operating on powers"
       },
       {
         "label": "D",
         "text": "4 to the power 12, which is 16,777,216",
         "is_correct": false,
-        "misconception_id": "NUM-2",
-        "misconception_name": "Changing the base when operating on powers"
+        "trick_id": "NUM-2",
+        "trick_name": "Changing the base when operating on powers"
       }
     ],
     "correct": "A",
@@ -50,22 +50,22 @@
         "label": "B",
         "text": "2 to the power 5, which is 32",
         "is_correct": false,
-        "misconception_id": "NUM-3",
-        "misconception_name": "Adding exponents for a power of a power"
+        "trick_id": "NUM-3",
+        "trick_name": "Adding exponents for a power of a power"
       },
       {
         "label": "C",
         "text": "4 to the power 6, which is 4096",
         "is_correct": false,
-        "misconception_id": "NUM-2",
-        "misconception_name": "Changing the base when operating on powers"
+        "trick_id": "NUM-2",
+        "trick_name": "Changing the base when operating on powers"
       },
       {
         "label": "D",
         "text": "4 to the power 5, which is 1024",
         "is_correct": false,
-        "misconception_id": "NUM-2",
-        "misconception_name": "Changing the base when operating on powers"
+        "trick_id": "NUM-2",
+        "trick_name": "Changing the base when operating on powers"
       }
     ],
     "correct": "A",
@@ -86,22 +86,22 @@
         "label": "B",
         "text": "1/4",
         "is_correct": false,
-        "misconception_id": "NUM-4",
-        "misconception_name": "Zero exponent equals zero"
+        "trick_id": "NUM-4",
+        "trick_name": "Zero exponent equals zero"
       },
       {
         "label": "C",
         "text": "negative 3",
         "is_correct": false,
-        "misconception_id": "NUM-5",
-        "misconception_name": "Negative exponent makes the value negative"
+        "trick_id": "NUM-5",
+        "trick_name": "Negative exponent makes the value negative"
       },
       {
         "label": "D",
         "text": "negative 4",
         "is_correct": false,
-        "misconception_id": "NUM-4",
-        "misconception_name": "Zero exponent equals zero (combined with the negative-exponent error)"
+        "trick_id": "NUM-4",
+        "trick_name": "Zero exponent equals zero (combined with the negative-exponent error)"
       }
     ],
     "correct": "A",
@@ -122,22 +122,22 @@
         "label": "B",
         "text": "3/7",
         "is_correct": false,
-        "misconception_id": "NUM-6",
-        "misconception_name": "Adding fractions straight across"
+        "trick_id": "NUM-6",
+        "trick_name": "Adding fractions straight across"
       },
       {
         "label": "C",
         "text": "1/4 (that is, 3/12)",
         "is_correct": false,
-        "misconception_id": "NUM-6b",
-        "misconception_name": "Common denominator found but numerators not rescaled"
+        "trick_id": "NUM-6b",
+        "trick_name": "Common denominator found but numerators not rescaled"
       },
       {
         "label": "D",
         "text": "11/7",
         "is_correct": false,
-        "misconception_id": "NUM-6",
-        "misconception_name": "Adding fractions straight across"
+        "trick_id": "NUM-6",
+        "trick_name": "Adding fractions straight across"
       }
     ],
     "correct": "A",
@@ -158,22 +158,22 @@
         "label": "B",
         "text": "negative 8",
         "is_correct": false,
-        "misconception_id": "NUM-7",
-        "misconception_name": "Mishandling subtraction of a negative integer"
+        "trick_id": "NUM-7",
+        "trick_name": "Mishandling subtraction of a negative integer"
       },
       {
         "label": "C",
         "text": "negative 2",
         "is_correct": false,
-        "misconception_id": "NUM-7",
-        "misconception_name": "Mishandling subtraction of a negative integer"
+        "trick_id": "NUM-7",
+        "trick_name": "Mishandling subtraction of a negative integer"
       },
       {
         "label": "D",
         "text": "8",
         "is_correct": false,
-        "misconception_id": "NUM-7",
-        "misconception_name": "Mishandling subtraction of a negative integer"
+        "trick_id": "NUM-7",
+        "trick_name": "Mishandling subtraction of a negative integer"
       }
     ],
     "correct": "A",
@@ -194,22 +194,22 @@
         "label": "B",
         "text": "100",
         "is_correct": false,
-        "misconception_id": "NUM-8",
-        "misconception_name": "Taking a percent at face value"
+        "trick_id": "NUM-8",
+        "trick_name": "Taking a percent at face value"
       },
       {
         "label": "C",
         "text": "10",
         "is_correct": false,
-        "misconception_id": "NUM-8b",
-        "misconception_name": "Percent-to-decimal place-value error (divides by 10 instead of 100)"
+        "trick_id": "NUM-8b",
+        "trick_name": "Percent-to-decimal place-value error (divides by 10 instead of 100)"
       },
       {
         "label": "D",
         "text": "40,000",
         "is_correct": false,
-        "misconception_id": "NUM-9",
-        "misconception_name": "Reversing part and whole in percent/proportion"
+        "trick_id": "NUM-9",
+        "trick_name": "Reversing part and whole in percent/proportion"
       }
     ],
     "correct": "A",
@@ -230,22 +230,22 @@
         "label": "B",
         "text": "400 percent",
         "is_correct": false,
-        "misconception_id": "NUM-9",
-        "misconception_name": "Reversing part and whole in percent/proportion"
+        "trick_id": "NUM-9",
+        "trick_name": "Reversing part and whole in percent/proportion"
       },
       {
         "label": "C",
         "text": "15 percent",
         "is_correct": false,
-        "misconception_id": "NUM-8",
-        "misconception_name": "Taking a percent at face value"
+        "trick_id": "NUM-8",
+        "trick_name": "Taking a percent at face value"
       },
       {
         "label": "D",
         "text": "0.25 percent",
         "is_correct": false,
-        "misconception_id": "NUM-8",
-        "misconception_name": "Taking a percent at face value"
+        "trick_id": "NUM-8",
+        "trick_name": "Taking a percent at face value"
       }
     ],
     "correct": "A",
@@ -266,22 +266,22 @@
         "label": "B",
         "text": "$5.20",
         "is_correct": false,
-        "misconception_id": "NUM-10",
-        "misconception_name": "Additive instead of multiplicative proportional reasoning"
+        "trick_id": "NUM-10",
+        "trick_name": "Additive instead of multiplicative proportional reasoning"
       },
       {
         "label": "C",
         "text": "$8.40",
         "is_correct": false,
-        "misconception_id": "NUM-11",
-        "misconception_name": "Treats a group price as a unit price (ignores group size)"
+        "trick_id": "NUM-11",
+        "trick_name": "Treats a group price as a unit price (ignores group size)"
       },
       {
         "label": "D",
         "text": "$17.50",
         "is_correct": false,
-        "misconception_id": "NUM-9",
-        "misconception_name": "Reversing part and whole in percent/proportion"
+        "trick_id": "NUM-9",
+        "trick_name": "Reversing part and whole in percent/proportion"
       }
     ],
     "correct": "A",
@@ -302,22 +302,22 @@
         "label": "B",
         "text": "x - 4",
         "is_correct": false,
-        "misconception_id": "ALG-1",
-        "misconception_name": "Incomplete Distribution"
+        "trick_id": "ALG-1",
+        "trick_name": "Incomplete Distribution"
       },
       {
         "label": "C",
         "text": "-11x",
         "is_correct": false,
-        "misconception_id": "ALG-3",
-        "misconception_name": "Combining Unlike Terms"
+        "trick_id": "ALG-3",
+        "trick_name": "Combining Unlike Terms"
       },
       {
         "label": "D",
         "text": "11x - 12",
         "is_correct": false,
-        "misconception_id": "ALG-2",
-        "misconception_name": "Negative-Sign Handling Error"
+        "trick_id": "ALG-2",
+        "trick_name": "Negative-Sign Handling Error"
       }
     ],
     "correct": "A",
@@ -338,22 +338,22 @@
         "label": "B",
         "text": "-6x - 10",
         "is_correct": false,
-        "misconception_id": "ALG-2",
-        "misconception_name": "Negative-Sign Handling Error"
+        "trick_id": "ALG-2",
+        "trick_name": "Negative-Sign Handling Error"
       },
       {
         "label": "C",
         "text": "-6x - 5",
         "is_correct": false,
-        "misconception_id": "ALG-1",
-        "misconception_name": "Incomplete Distribution"
+        "trick_id": "ALG-1",
+        "trick_name": "Incomplete Distribution"
       },
       {
         "label": "D",
         "text": "4x",
         "is_correct": false,
-        "misconception_id": "ALG-3",
-        "misconception_name": "Combining Unlike Terms"
+        "trick_id": "ALG-3",
+        "trick_name": "Combining Unlike Terms"
       }
     ],
     "correct": "A",
@@ -374,22 +374,22 @@
         "label": "B",
         "text": "x = 2",
         "is_correct": false,
-        "misconception_id": "ALG-4",
-        "misconception_name": "Balancing / Inverse Operation Error"
+        "trick_id": "ALG-4",
+        "trick_name": "Balancing / Inverse Operation Error"
       },
       {
         "label": "C",
         "text": "x = 12",
         "is_correct": false,
-        "misconception_id": "ALG-9",
-        "misconception_name": "Partial Division"
+        "trick_id": "ALG-9",
+        "trick_name": "Partial Division"
       },
       {
         "label": "D",
         "text": "x = -4",
         "is_correct": false,
-        "misconception_id": "ALG-4",
-        "misconception_name": "Balancing / Inverse Operation Error"
+        "trick_id": "ALG-4",
+        "trick_name": "Balancing / Inverse Operation Error"
       }
     ],
     "correct": "A",
@@ -410,22 +410,22 @@
         "label": "B",
         "text": "1/2",
         "is_correct": false,
-        "misconception_id": "ALG-5",
-        "misconception_name": "Inverted or Misordered Slope"
+        "trick_id": "ALG-5",
+        "trick_name": "Inverted or Misordered Slope"
       },
       {
         "label": "C",
         "text": "3",
         "is_correct": false,
-        "misconception_id": "ALG-7",
-        "misconception_name": "Point/Intercept Value Confusion"
+        "trick_id": "ALG-7",
+        "trick_name": "Point/Intercept Value Confusion"
       },
       {
         "label": "D",
         "text": "-2",
         "is_correct": false,
-        "misconception_id": "ALG-5",
-        "misconception_name": "Inverted or Misordered Slope"
+        "trick_id": "ALG-5",
+        "trick_name": "Inverted or Misordered Slope"
       }
     ],
     "correct": "A",
@@ -446,22 +446,22 @@
         "label": "B",
         "text": "The slope is 7 and the y-intercept is -4.",
         "is_correct": false,
-        "misconception_id": "ALG-6",
-        "misconception_name": "Slope-Intercept Swap"
+        "trick_id": "ALG-6",
+        "trick_name": "Slope-Intercept Swap"
       },
       {
         "label": "C",
         "text": "The slope is -4x and the y-intercept is 7.",
         "is_correct": false,
-        "misconception_id": "ALG-10",
-        "misconception_name": "Slope identified as a term (includes the variable x)"
+        "trick_id": "ALG-10",
+        "trick_name": "Slope identified as a term (includes the variable x)"
       },
       {
         "label": "D",
         "text": "The slope is 4 and the y-intercept is 7.",
         "is_correct": false,
-        "misconception_id": "ALG-2",
-        "misconception_name": "Negative-Sign Handling Error"
+        "trick_id": "ALG-2",
+        "trick_name": "Negative-Sign Handling Error"
       }
     ],
     "correct": "A",
@@ -482,22 +482,22 @@
         "label": "B",
         "text": "5",
         "is_correct": false,
-        "misconception_id": "ALG-7",
-        "misconception_name": "Point/Intercept Value Confusion"
+        "trick_id": "ALG-7",
+        "trick_name": "Point/Intercept Value Confusion"
       },
       {
         "label": "C",
         "text": "11",
         "is_correct": false,
-        "misconception_id": "ALG-4",
-        "misconception_name": "Balancing / Inverse Operation Error"
+        "trick_id": "ALG-4",
+        "trick_name": "Balancing / Inverse Operation Error"
       },
       {
         "label": "D",
         "text": "1",
         "is_correct": false,
-        "misconception_id": "ALG-4",
-        "misconception_name": "Balancing / Inverse Operation Error"
+        "trick_id": "ALG-4",
+        "trick_name": "Balancing / Inverse Operation Error"
       }
     ],
     "correct": "A",
@@ -518,22 +518,22 @@
         "label": "B",
         "text": "3n",
         "is_correct": false,
-        "misconception_id": "ALG-8",
-        "misconception_name": "Pattern Rule Off-by-One"
+        "trick_id": "ALG-8",
+        "trick_name": "Pattern Rule Off-by-One"
       },
       {
         "label": "C",
         "text": "3n + 4",
         "is_correct": false,
-        "misconception_id": "ALG-8",
-        "misconception_name": "Pattern Rule Off-by-One"
+        "trick_id": "ALG-8",
+        "trick_name": "Pattern Rule Off-by-One"
       },
       {
         "label": "D",
         "text": "4n",
         "is_correct": false,
-        "misconception_id": "ALG-11",
-        "misconception_name": "Assumes a proportional pattern (uses the first term as multiplier)"
+        "trick_id": "ALG-11",
+        "trick_name": "Assumes a proportional pattern (uses the first term as multiplier)"
       }
     ],
     "correct": "A",
@@ -554,22 +554,22 @@
         "label": "B",
         "text": "Survey all 400 students eating in the cafeteria on Monday, because 400 is much bigger than 50.",
         "is_correct": false,
-        "misconception_id": "DAT-1",
-        "misconception_name": "Bigger Sample Cures Bias"
+        "trick_id": "DAT-1",
+        "trick_name": "Bigger Sample Cures Bias"
       },
       {
         "label": "C",
         "text": "Post a voluntary online poll on the school website so anyone who wants to can answer.",
         "is_correct": false,
-        "misconception_id": "DAT-2",
-        "misconception_name": "Convenience/Volunteer Samples Are Fair"
+        "trick_id": "DAT-2",
+        "trick_name": "Convenience/Volunteer Samples Are Fair"
       },
       {
         "label": "D",
         "text": "Survey the 28 students in her own homeroom because they are easy to reach.",
         "is_correct": false,
-        "misconception_id": "DAT-2",
-        "misconception_name": "Convenience/Volunteer Samples Are Fair"
+        "trick_id": "DAT-2",
+        "trick_name": "Convenience/Volunteer Samples Are Fair"
       }
     ],
     "correct": "A",
@@ -590,22 +590,22 @@
         "label": "B",
         "text": "20",
         "is_correct": false,
-        "misconception_id": "DAT-4",
-        "misconception_name": "Median Without Ordering"
+        "trick_id": "DAT-4",
+        "trick_name": "Median Without Ordering"
       },
       {
         "label": "C",
         "text": "11.5",
         "is_correct": false,
-        "misconception_id": "DAT-9",
-        "misconception_name": "Median as midpoint of extremes (midrange)"
+        "trick_id": "DAT-9",
+        "trick_name": "Median as midpoint of extremes (midrange)"
       },
       {
         "label": "D",
         "text": "11.2",
         "is_correct": false,
-        "misconception_id": "DAT-3",
-        "misconception_name": "Mean by Default"
+        "trick_id": "DAT-3",
+        "trick_name": "Mean by Default"
       }
     ],
     "correct": "A",
@@ -626,22 +626,22 @@
         "label": "B",
         "text": "9",
         "is_correct": false,
-        "misconception_id": "DAT-5",
-        "misconception_name": "Mode/Value-Frequency Confusion"
+        "trick_id": "DAT-5",
+        "trick_name": "Mode/Value-Frequency Confusion"
       },
       {
         "label": "C",
         "text": "3",
         "is_correct": false,
-        "misconception_id": "DAT-10",
-        "misconception_name": "Mode as the maximum value"
+        "trick_id": "DAT-10",
+        "trick_name": "Mode as the maximum value"
       },
       {
         "label": "D",
         "text": "1.24",
         "is_correct": false,
-        "misconception_id": "DAT-3",
-        "misconception_name": "Mean by Default"
+        "trick_id": "DAT-3",
+        "trick_name": "Mean by Default"
       }
     ],
     "correct": "A",
@@ -662,29 +662,29 @@
         "label": "B",
         "text": "Sending more firefighters causes greater damage.",
         "is_correct": false,
-        "misconception_id": "DAT-7",
-        "misconception_name": "Correlation Implies Causation"
+        "trick_id": "DAT-7",
+        "trick_name": "Correlation Implies Causation"
       },
       {
         "label": "C",
         "text": "The city should send fewer firefighters to each fire to reduce damage costs.",
         "is_correct": false,
-        "misconception_id": "DAT-7",
-        "misconception_name": "Correlation Implies Causation"
+        "trick_id": "DAT-7",
+        "trick_name": "Correlation Implies Causation"
       },
       {
         "label": "D",
         "text": "The line of best fit can reliably predict the damage for a fire with 10 times more firefighters than any fire in the data.",
         "is_correct": false,
-        "misconception_id": "DAT-8",
-        "misconception_name": "Best-Fit Line and Extrapolation Overreach"
+        "trick_id": "DAT-8",
+        "trick_name": "Best-Fit Line and Extrapolation Overreach"
       },
       {
         "label": "E",
         "text": "The strong correlation proves the firefighters are poorly trained.",
         "is_correct": false,
-        "misconception_id": "DAT-7",
-        "misconception_name": "Correlation Implies Causation"
+        "trick_id": "DAT-7",
+        "trick_name": "Correlation Implies Causation"
       }
     ],
     "correct": "A",
@@ -705,22 +705,22 @@
         "label": "B",
         "text": "The mean, 43, is best because it uses every data value and outliers do not affect it.",
         "is_correct": false,
-        "misconception_id": "DAT-3",
-        "misconception_name": "Mean by Default"
+        "trick_id": "DAT-3",
+        "trick_name": "Mean by Default"
       },
       {
         "label": "C",
         "text": "A typical day is 64 customers, halfway between the lowest (26) and highest (102) values.",
         "is_correct": false,
-        "misconception_id": "DAT-9",
-        "misconception_name": "Median as midpoint of extremes (midrange)"
+        "trick_id": "DAT-9",
+        "trick_name": "Median as midpoint of extremes (midrange)"
       },
       {
         "label": "D",
         "text": "The mode is 102 because it is the largest value, so a typical day has 102 customers.",
         "is_correct": false,
-        "misconception_id": "DAT-10",
-        "misconception_name": "Mode as the maximum value"
+        "trick_id": "DAT-10",
+        "trick_name": "Mode as the maximum value"
       }
     ],
     "correct": "A",
@@ -741,22 +741,22 @@
         "label": "B",
         "text": "452.4 m²",
         "is_correct": false,
-        "misconception_id": "GEO-7",
-        "misconception_name": "Radius–Diameter Confusion"
+        "trick_id": "GEO-7",
+        "trick_name": "Radius–Diameter Confusion"
       },
       {
         "label": "C",
         "text": "37.7 m²",
         "is_correct": false,
-        "misconception_id": "GEO-1",
-        "misconception_name": "Perimeter–Area Confusion"
+        "trick_id": "GEO-1",
+        "trick_name": "Perimeter–Area Confusion"
       },
       {
         "label": "D",
         "text": "18.8 m²",
         "is_correct": false,
-        "misconception_id": "GEO-2",
-        "misconception_name": "Additive/Linear Formula Reasoning"
+        "trick_id": "GEO-2",
+        "trick_name": "Additive/Linear Formula Reasoning"
       }
     ],
     "correct": "A",
@@ -777,22 +777,22 @@
         "label": "B",
         "text": "14 m",
         "is_correct": false,
-        "misconception_id": "GEO-2",
-        "misconception_name": "Additive/Linear Formula Reasoning"
+        "trick_id": "GEO-2",
+        "trick_name": "Additive/Linear Formula Reasoning"
       },
       {
         "label": "C",
         "text": "100 m",
         "is_correct": false,
-        "misconception_id": "GEO-4",
-        "misconception_name": "Forgets the Final Square Root"
+        "trick_id": "GEO-4",
+        "trick_name": "Forgets the Final Square Root"
       },
       {
         "label": "D",
         "text": "24 m",
         "is_correct": false,
-        "misconception_id": "GEO-1",
-        "misconception_name": "Perimeter–Area Confusion"
+        "trick_id": "GEO-1",
+        "trick_name": "Perimeter–Area Confusion"
       }
     ],
     "correct": "A",
@@ -813,22 +813,22 @@
         "label": "B",
         "text": "approximately 13.9 m",
         "is_correct": false,
-        "misconception_id": "GEO-3",
-        "misconception_name": "Always Add in the Pythagorean Theorem"
+        "trick_id": "GEO-3",
+        "trick_name": "Always Add in the Pythagorean Theorem"
       },
       {
         "label": "C",
         "text": "144 m",
         "is_correct": false,
-        "misconception_id": "GEO-4",
-        "misconception_name": "Forgets the Final Square Root"
+        "trick_id": "GEO-4",
+        "trick_name": "Forgets the Final Square Root"
       },
       {
         "label": "D",
         "text": "8 m",
         "is_correct": false,
-        "misconception_id": "GEO-2",
-        "misconception_name": "Additive/Linear Formula Reasoning"
+        "trick_id": "GEO-2",
+        "trick_name": "Additive/Linear Formula Reasoning"
       }
     ],
     "correct": "A",
@@ -849,22 +849,22 @@
         "label": "B",
         "text": "68 degrees",
         "is_correct": false,
-        "misconception_id": "GEO-6",
-        "misconception_name": "Parallel-Line Angle Pairs Swapped"
+        "trick_id": "GEO-6",
+        "trick_name": "Parallel-Line Angle Pairs Swapped"
       },
       {
         "label": "C",
         "text": "22 degrees",
         "is_correct": false,
-        "misconception_id": "GEO-10",
-        "misconception_name": "Angle Benchmark Confusion (90°/180°/360°)"
+        "trick_id": "GEO-10",
+        "trick_name": "Angle Benchmark Confusion (90°/180°/360°)"
       },
       {
         "label": "D",
         "text": "292 degrees",
         "is_correct": false,
-        "misconception_id": "GEO-10",
-        "misconception_name": "Angle Benchmark Confusion (90°/180°/360°)"
+        "trick_id": "GEO-10",
+        "trick_name": "Angle Benchmark Confusion (90°/180°/360°)"
       }
     ],
     "correct": "A",
@@ -885,22 +885,22 @@
         "label": "B",
         "text": "3769.9 cm³",
         "is_correct": false,
-        "misconception_id": "GEO-7",
-        "misconception_name": "Radius–Diameter Confusion"
+        "trick_id": "GEO-7",
+        "trick_name": "Radius–Diameter Confusion"
       },
       {
         "label": "C",
         "text": "534.1 cm³",
         "is_correct": false,
-        "misconception_id": "GEO-5",
-        "misconception_name": "Surface Area–Volume Confusion"
+        "trick_id": "GEO-5",
+        "trick_name": "Surface Area–Volume Confusion"
       },
       {
         "label": "D",
         "text": "188.5 cm³",
         "is_correct": false,
-        "misconception_id": "GEO-2",
-        "misconception_name": "Additive/Linear Formula Reasoning"
+        "trick_id": "GEO-2",
+        "trick_name": "Additive/Linear Formula Reasoning"
       }
     ],
     "correct": "A",
@@ -921,22 +921,22 @@
         "label": "B",
         "text": "113.1 cm³",
         "is_correct": false,
-        "misconception_id": "GEO-8",
-        "misconception_name": "Dropped Formula Factor"
+        "trick_id": "GEO-8",
+        "trick_name": "Dropped Formula Factor"
       },
       {
         "label": "C",
         "text": "150.8 cm³",
         "is_correct": false,
-        "misconception_id": "GEO-7",
-        "misconception_name": "Radius–Diameter Confusion"
+        "trick_id": "GEO-7",
+        "trick_name": "Radius–Diameter Confusion"
       },
       {
         "label": "D",
         "text": "75.4 cm³",
         "is_correct": false,
-        "misconception_id": "GEO-5",
-        "misconception_name": "Surface Area–Volume Confusion"
+        "trick_id": "GEO-5",
+        "trick_name": "Surface Area–Volume Confusion"
       }
     ],
     "correct": "A",
@@ -957,22 +957,22 @@
         "label": "B",
         "text": "3 times",
         "is_correct": false,
-        "misconception_id": "GEO-9",
-        "misconception_name": "Length Determines Area/Volume (Linear Scaling)"
+        "trick_id": "GEO-9",
+        "trick_name": "Length Determines Area/Volume (Linear Scaling)"
       },
       {
         "label": "C",
         "text": "6 times",
         "is_correct": false,
-        "misconception_id": "GEO-2",
-        "misconception_name": "Additive/Linear Formula Reasoning"
+        "trick_id": "GEO-2",
+        "trick_name": "Additive/Linear Formula Reasoning"
       },
       {
         "label": "D",
         "text": "27 times",
         "is_correct": false,
-        "misconception_id": "GEO-5",
-        "misconception_name": "Surface Area–Volume Confusion"
+        "trick_id": "GEO-5",
+        "trick_name": "Surface Area–Volume Confusion"
       }
     ],
     "correct": "A",
@@ -993,22 +993,22 @@
         "label": "B",
         "text": "60 cm²",
         "is_correct": false,
-        "misconception_id": "GEO-5",
-        "misconception_name": "Surface Area–Volume Confusion"
+        "trick_id": "GEO-5",
+        "trick_name": "Surface Area–Volume Confusion"
       },
       {
         "label": "C",
         "text": "47 cm²",
         "is_correct": false,
-        "misconception_id": "GEO-8",
-        "misconception_name": "Dropped Formula Factor"
+        "trick_id": "GEO-8",
+        "trick_name": "Dropped Formula Factor"
       },
       {
         "label": "D",
         "text": "12 cm²",
         "is_correct": false,
-        "misconception_id": "GEO-2",
-        "misconception_name": "Additive/Linear Formula Reasoning"
+        "trick_id": "GEO-2",
+        "trick_name": "Additive/Linear Formula Reasoning"
       }
     ],
     "correct": "A",
@@ -1024,8 +1024,8 @@
         "label": "A",
         "text": "$144.00",
         "is_correct": false,
-        "misconception_id": "FIN-3",
-        "misconception_name": "Time-period mishandling"
+        "trick_id": "FIN-3",
+        "trick_name": "Time-period mishandling"
       },
       {
         "label": "B",
@@ -1036,15 +1036,15 @@
         "label": "C",
         "text": "$812.00",
         "is_correct": false,
-        "misconception_id": "FIN-2",
-        "misconception_name": "Wrong quantity reported"
+        "trick_id": "FIN-2",
+        "trick_name": "Wrong quantity reported"
       },
       {
         "label": "D",
         "text": "$1,200.00",
         "is_correct": false,
-        "misconception_id": "FIN-9",
-        "misconception_name": "Percent–decimal conversion error"
+        "trick_id": "FIN-9",
+        "trick_name": "Percent–decimal conversion error"
       }
     ],
     "correct": "B",
@@ -1060,15 +1060,15 @@
         "label": "A",
         "text": "$1,120.00",
         "is_correct": false,
-        "misconception_id": "FIN-1",
-        "misconception_name": "Simple–compound conflation"
+        "trick_id": "FIN-1",
+        "trick_name": "Simple–compound conflation"
       },
       {
         "label": "B",
         "text": "$124.86",
         "is_correct": false,
-        "misconception_id": "FIN-2",
-        "misconception_name": "Wrong quantity reported"
+        "trick_id": "FIN-2",
+        "trick_name": "Wrong quantity reported"
       },
       {
         "label": "C",
@@ -1079,8 +1079,8 @@
         "label": "D",
         "text": "$2,744.00",
         "is_correct": false,
-        "misconception_id": "FIN-9",
-        "misconception_name": "Percent–decimal conversion error"
+        "trick_id": "FIN-9",
+        "trick_name": "Percent–decimal conversion error"
       }
     ],
     "correct": "C",
@@ -1096,22 +1096,22 @@
         "label": "A",
         "text": "$16,800",
         "is_correct": false,
-        "misconception_id": "FIN-4",
-        "misconception_name": "Additive percent change"
+        "trick_id": "FIN-4",
+        "trick_name": "Additive percent change"
       },
       {
         "label": "B",
         "text": "$540",
         "is_correct": false,
-        "misconception_id": "FIN-5",
-        "misconception_name": "\"By r%\" read as \"to r%\""
+        "trick_id": "FIN-5",
+        "trick_name": "\"By r%\" read as \"to r%\""
       },
       {
         "label": "C",
         "text": "$20,400",
         "is_correct": false,
-        "misconception_id": "FIN-3",
-        "misconception_name": "Time-period mishandling"
+        "trick_id": "FIN-3",
+        "trick_name": "Time-period mishandling"
       },
       {
         "label": "D",
@@ -1137,22 +1137,22 @@
         "label": "B",
         "text": "The 2 L bottle, because larger packages always cost less per litre",
         "is_correct": false,
-        "misconception_id": "FIN-6",
-        "misconception_name": "Value judged by size or total price"
+        "trick_id": "FIN-6",
+        "trick_name": "Value judged by size or total price"
       },
       {
         "label": "C",
         "text": "The 2 L bottle, because 2 divided by 5.00 equals 0.40, which is smaller than 1.5 divided by 3.60, which is about 0.42",
         "is_correct": false,
-        "misconception_id": "FIN-10",
-        "misconception_name": "Rate inversion"
+        "trick_id": "FIN-10",
+        "trick_name": "Rate inversion"
       },
       {
         "label": "D",
         "text": "The 1.5 L bottle, because its total price of $3.60 is lower than $5.00",
         "is_correct": false,
-        "misconception_id": "FIN-6",
-        "misconception_name": "Value judged by size or total price"
+        "trick_id": "FIN-6",
+        "trick_name": "Value judged by size or total price"
       }
     ],
     "correct": "A",
@@ -1168,15 +1168,15 @@
         "label": "A",
         "text": "$837",
         "is_correct": false,
-        "misconception_id": "FIN-7",
-        "misconception_name": "Incomplete budget"
+        "trick_id": "FIN-7",
+        "trick_name": "Incomplete budget"
       },
       {
         "label": "B",
         "text": "$1,403",
         "is_correct": false,
-        "misconception_id": "FIN-2",
-        "misconception_name": "Wrong quantity reported"
+        "trick_id": "FIN-2",
+        "trick_name": "Wrong quantity reported"
       },
       {
         "label": "C",
@@ -1187,8 +1187,8 @@
         "label": "D",
         "text": "$377",
         "is_correct": false,
-        "misconception_id": "FIN-7",
-        "misconception_name": "Incomplete budget"
+        "trick_id": "FIN-7",
+        "trick_name": "Incomplete budget"
       }
     ],
     "correct": "C",
@@ -1209,22 +1209,22 @@
         "label": "B",
         "text": "$2,240.00",
         "is_correct": false,
-        "misconception_id": "FIN-1",
-        "misconception_name": "Simple–compound conflation"
+        "trick_id": "FIN-1",
+        "trick_name": "Simple–compound conflation"
       },
       {
         "label": "C",
         "text": "$2,524.95",
         "is_correct": false,
-        "misconception_id": "FIN-3",
-        "misconception_name": "Time-period mishandling"
+        "trick_id": "FIN-3",
+        "trick_name": "Time-period mishandling"
       },
       {
         "label": "D",
         "text": "$251.02",
         "is_correct": false,
-        "misconception_id": "FIN-2",
-        "misconception_name": "Wrong quantity reported"
+        "trick_id": "FIN-2",
+        "trick_name": "Wrong quantity reported"
       }
     ],
     "correct": "A",
@@ -1240,8 +1240,8 @@
         "label": "A",
         "text": "$180.00",
         "is_correct": false,
-        "misconception_id": "FIN-4",
-        "misconception_name": "Additive percent change"
+        "trick_id": "FIN-4",
+        "trick_name": "Additive percent change"
       },
       {
         "label": "B",
@@ -1252,15 +1252,15 @@
         "label": "C",
         "text": "$165.00",
         "is_correct": false,
-        "misconception_id": "FIN-3",
-        "misconception_name": "Time-period mishandling"
+        "trick_id": "FIN-3",
+        "trick_name": "Time-period mishandling"
       },
       {
         "label": "D",
         "text": "$31.50",
         "is_correct": false,
-        "misconception_id": "FIN-2",
-        "misconception_name": "Wrong quantity reported"
+        "trick_id": "FIN-2",
+        "trick_name": "Wrong quantity reported"
       }
     ],
     "correct": "B",
@@ -1276,22 +1276,22 @@
         "label": "A",
         "text": "$660",
         "is_correct": false,
-        "misconception_id": "FIN-2",
-        "misconception_name": "Wrong quantity reported"
+        "trick_id": "FIN-2",
+        "trick_name": "Wrong quantity reported"
       },
       {
         "label": "B",
         "text": "$0 — twelve payments of $55 just spread the same cost over time",
         "is_correct": false,
-        "misconception_id": "FIN-8",
-        "misconception_name": "Payment-size fallacy"
+        "trick_id": "FIN-8",
+        "trick_name": "Payment-size fallacy"
       },
       {
         "label": "C",
         "text": "$5",
         "is_correct": false,
-        "misconception_id": "FIN-3",
-        "misconception_name": "Time-period mishandling"
+        "trick_id": "FIN-3",
+        "trick_name": "Time-period mishandling"
       },
       {
         "label": "D",
