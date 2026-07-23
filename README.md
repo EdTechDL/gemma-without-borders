@@ -45,6 +45,28 @@ The app is built so Gemma plugs into a single spot. In `gemma_client.py`, set
 (the on-device / Edge story) or the **Kaggle/transformers** path from
 `gemma-tutor-CLEAN.ipynb`. Nothing else in the app changes.
 
+## Where Gemma does the thinking
+
+Gemma is not a text box bolted onto a quiz — it sits at every decision point of the
+agent loop, always through one auditable door (`gemma_client.py`), always constrained
+so a model mistake cannot corrupt the loop:
+
+| Call site | What Gemma does | Capability | Guardrail |
+|---|---|---|---|
+| `tutor.study_guide` | Personalized explanation of the student's specific error | Generation | Facts (correct answer, solution) come from the verified bank, not the model |
+| `tutor.study_guide` | Fresh practice question per mistake | Generation | Clearly separated from graded content |
+| `mastery.teach` | Strategy-specific lesson (4 distinct pedagogies) | Generation | Strategy recipe fixed by the ladder; model writes within it |
+| `mastery._grade_reasoning` | Classifies the student's typed reasoning: RESOLVED / SHALLOW / SAME_ERROR | Reasoning, structured output | Closed label set; fail-open to RESOLVED; a right answer with shaky reasoning does not count toward mastery |
+| `mastery._choose_strategy` | Picks the next teaching strategy from the remaining ladder, with a stated reason | Reasoning, decision-making, structured output | Choice restricted to the remaining menu; deterministic ladder fallback on any parse failure |
+| `mastery._generated_probe` | Authors a new check question (JSON) when the bank is exhausted | Structured output | Must pass a blind self-solve audit before a student ever sees it |
+
+What Gemma is deliberately NOT allowed to do: grade multiple-choice answers
+(ground-truth key), diagnose bank items (ground-truth tags), or decide loop
+termination (hard caps in plain code). We caught the 1B model generating a
+question with a wrong answer key during testing — that is why generated probes
+are last-resort and self-audited. Model size is a dial, not a rewrite: set
+`GEMMA_MODEL=gemma3:12b` and every call above upgrades in place.
+
 ## Reliability by design
 
 The parts that must be correct never rely on the model guessing: diagnosis is a

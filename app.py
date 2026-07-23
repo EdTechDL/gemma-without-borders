@@ -235,7 +235,9 @@ def check_answer():
     chosen = st.session_state.get("mastery_choice")
     if not chosen:
         return
-    outcome = m.submit_answer(s, probe, chosen)
+    explanation = st.session_state.get("mastery_reason", "")
+    with st.spinner("The agent is reading your answer..."):
+        outcome = m.submit_answer(s, probe, chosen, explanation)
     st.session_state.mfeedback = outcome
     if outcome["state"] == m.IN_PROGRESS:
         with st.spinner("The agent is deciding what to try next..."):
@@ -243,6 +245,7 @@ def check_answer():
                 st.session_state.mlesson = m.teach(s)
             st.session_state.mprobe = m.next_probe(s, QUESTIONS)
     st.session_state.pop("mastery_choice", None)
+    st.session_state.pop("mastery_reason", None)
 
 
 def mastery_stage():
@@ -275,12 +278,22 @@ def mastery_stage():
     # feedback from the previous answer
     fb = st.session_state.get("mfeedback")
     if fb:
-        if fb["correct"]:
-            note("Correct", f"One more in a row and you've shown mastery.")
+        if fb["correct"] and fb.get("label") == "SHALLOW":
+            note("Right answer — but shaky reasoning",
+                 "The agent read your explanation and isn't convinced yet, so this "
+                 "one doesn't count toward mastery. Say how you'd solve the next "
+                 "one and prove it.")
+        elif fb["correct"] and fb.get("label") == "SAME_ERROR":
+            note("Right answer — wrong path",
+                 "Your explanation still shows the original misconception, so the "
+                 "streak resets. Read the lesson once more before the next question.")
+        elif fb["correct"]:
+            note("Correct", "One more in a row and you've shown mastery.")
         elif fb["strategy_changed"]:
+            why = f" {fb['strategy_why'].rstrip('.')}." if fb.get("strategy_why") else ""
             note("Not yet — switching approach",
-                 f"That explanation didn't land, so the agent is trying a different "
-                 f"way: <strong>{s.strategy_name}</strong>.")
+                 f"The agent is trying a different way: "
+                 f"<strong>{s.strategy_name}</strong>.{why}")
 
     # the lesson for the current strategy
     with st.container(border=True):
@@ -301,6 +314,11 @@ def mastery_stage():
         index=None,
         key="mastery_choice",
         label_visibility="collapsed",
+    )
+    st.text_input(
+        "In one line: how did you get your answer? (optional — the agent reads it)",
+        key="mastery_reason",
+        placeholder="e.g. I found a common denominator of 12, then added the tops",
     )
     st.button("Check my answer", type="primary", on_click=check_answer,
               disabled=st.session_state.get("mastery_choice") is None)

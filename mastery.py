@@ -132,7 +132,7 @@ def _generated_probe(session: MasterySession) -> dict | None:
         try:
             data = json.loads(m.group())
             opts = data["options"]
-            if data["correct"] in opts and len(opts) >= 3:
+            if data["correct"] in opts and len(opts) >= 3 and _self_check(session, data):
                 probe = {
                     "source": "generated",
                     "id": f"GEN-{session.attempts + 1}",
@@ -149,25 +149,123 @@ def _generated_probe(session: MasterySession) -> dict | None:
     return None
 
 
-# ------------------------------------------------------------ EVALUATE + ADAPT
-def submit_answer(session: MasterySession, probe: dict, chosen_label: str) -> dict:
-    """Grade the probe answer, then decide what happens next (plain code only).
+def _self_check(session: MasterySession, data: dict) -> bool:
+    """Before a generated question is shown, Gemma must solve it BLIND (without
+    seeing which option it marked correct) and agree with its own answer key.
+    A question that fails its own audit is discarded — we caught the small
+    model marking wrong keys, and this check turns that failure mode into a
+    silent retry instead of a student-facing bug."""
+    if session.gemma_calls >= MAX_GEMMA_CALLS:
+        return False
+    opts = "\n".join(f"{k}) {v}" for k, v in sorted(data["options"].items()))
+    session.gemma_calls += 1
+    verdict = ask_gemma(
+        f"TASK: solve\n"
+        f"Solve this and reply with ONLY the letter of the correct option.\n"
+        f"{data['question']}\n{opts}"
+    )
+    m = re.search(r"\b([A-F])\b", verdict.upper())
+    ok = bool(m) and m.group(1) == data["correct"]
+    session.history.append({"kind": "self_check", "passed": ok})
+    return ok
 
-    Returns {"correct": bool, "state": ..., "strategy_changed": bool}."""
+
+# ------------------------------------------------------------ EVALUATE + ADAPT
+def _grade_reasoning(session: MasterySession, probe: dict, chosen_label: str,
+                     explanation: str) -> str:
+    """Gemma as a CONSTRAINED grader: classify the student's typed reasoning
+    into a closed label set. It compares against the known answer — it never
+    recomputes the math open-endedly. Fail-open: any parse problem returns
+    RESOLVED so a model hiccup can never hurt the student."""
+    correct_opt = next(o["text"] for o in probe["options"] if o["is_correct"])
+    session.gemma_calls += 1
+    raw = ask_gemma(
+        f"TASK: grade\n"
+        f"MISCONCEPTION: {session.misconception_name}\n"
+        f"A Grade 9 student answered this question: {probe['question']}\n"
+        f"The correct answer is: {correct_opt}. The student chose "
+        f"'{chosen_label}' and explained their thinking: \"{explanation}\"\n"
+        f"Classify ONLY the quality of their reasoning. Reply with exactly one "
+        f"word from this list and nothing else:\n"
+        f"RESOLVED  (their reasoning shows the concept is genuinely understood)\n"
+        f"SHALLOW   (right answer but the reasoning is missing, circular, or lucky)\n"
+        f"SAME_ERROR (their reasoning still shows the misconception: "
+        f"{session.misconception_name})"
+    )
+    m = re.search(r"\b(RESOLVED|SHALLOW|SAME_ERROR)\b", raw.upper())
+    label = m.group(1) if m else "RESOLVED"
+    session.history.append({"kind": "reasoning_grade", "label": label,
+                            "explanation": explanation})
+    return label
+
+
+def _choose_strategy(session: MasterySession, explanation: str) -> str:
+    """Gemma DECIDES the next teaching move: given the student's own words, it
+    picks the most promising remaining strategy and says why. Deterministic
+    fallback (next rung of the ladder) if the reply doesn't parse."""
+    remaining = STRATEGY_LADDER[session.strategy_index + 1:]
+    fallback_reason = "moving to the next approach on the ladder"
+    if not remaining:
+        return fallback_reason
+    if len(remaining) > 1 and explanation:
+        names = ", ".join(name for name, _ in remaining)
+        session.gemma_calls += 1
+        raw = ask_gemma(
+            f"TASK: choose\n"
+            f"MISCONCEPTION: {session.misconception_name}\n"
+            f"A student still has this misconception after a lesson. Their own "
+            f"words about their thinking: \"{explanation}\"\n"
+            f"Which teaching approach should be tried next? Reply with ONLY JSON: "
+            f'{{"strategy": "<one of: {names}>", "why": "<one short sentence>"}}'
+        )
+        m = re.search(r"\{.*\}", raw, re.DOTALL)
+        if m:
+            try:
+                data = json.loads(m.group())
+                for offset, (name, _) in enumerate(remaining):
+                    if name.lower() in str(data.get("strategy", "")).lower():
+                        session.strategy_index += 1 + offset
+                        return data.get("why", fallback_reason)
+            except json.JSONDecodeError:
+                pass
+    session.strategy_index += 1
+    return fallback_reason
+
+
+def submit_answer(session: MasterySession, probe: dict, chosen_label: str,
+                  explanation: str = "") -> dict:
+    """Grade the probe answer, judge the reasoning, decide what happens next.
+
+    Multiple-choice correctness is deterministic (bank ground truth). Gemma
+    grades the typed reasoning and chooses the next strategy; hard caps and
+    final state transitions stay in plain code so the loop always terminates.
+
+    Returns {"correct", "label", "state", "strategy_changed", "strategy_why"}."""
     correct = chosen_label == probe["correct"]
     session.attempts += 1
     session.history.append({"kind": "answer", "probe_id": probe.get("id"),
                             "chosen": chosen_label, "correct": correct})
 
+    label = ""
     strategy_changed = False
+    strategy_why = ""
     if correct:
-        session.consecutive_correct += 1
+        label = (_grade_reasoning(session, probe, chosen_label, explanation)
+                 if explanation.strip() else "RESOLVED")
+        if label == "SHALLOW":
+            # right answer, shaky reasoning: mastery is not demonstrated,
+            # but the streak isn't punished either
+            pass
+        elif label == "SAME_ERROR":
+            session.consecutive_correct = 0
+        else:
+            session.consecutive_correct += 1
         if session.consecutive_correct >= MASTERY_BAR:
             session.state = MASTERED
     else:
         session.consecutive_correct = 0
         if session.strategy_index + 1 < len(STRATEGY_LADDER):
-            session.strategy_index += 1
+            strategy_why = _choose_strategy(session, explanation)
             strategy_changed = True
         else:
             session.state = ESCALATED
@@ -180,8 +278,8 @@ def submit_answer(session: MasterySession, probe: dict, chosen_label: str) -> di
         session.state = ESCALATED
         session.escalation_reason = "model call budget reached"
 
-    return {"correct": correct, "state": session.state,
-            "strategy_changed": strategy_changed}
+    return {"correct": correct, "label": label, "state": session.state,
+            "strategy_changed": strategy_changed, "strategy_why": strategy_why}
 
 
 # ------------------------------------------------------------------ REPORTS
