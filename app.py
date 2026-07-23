@@ -117,6 +117,7 @@ def start_mastery(result, analysis):
         misconception_name=analysis["priority"]["name"],
         strand=seed["item"]["strand"],
         seed_question=seed["item"]["question"],
+        seed_solution=seed["item"].get("solution", ""),
         used_item_ids=[q["id"] for q in st.session_state.quiz],
     )
     st.session_state.msession = s

@@ -52,6 +52,7 @@ class MasterySession:
     misconception_name: str
     strand: str
     seed_question: str            # the quiz question the student originally missed
+    seed_solution: str = ""       # its VERIFIED worked solution (grounds every lesson)
     used_item_ids: list = field(default_factory=list)
     strategy_index: int = 0
     attempts: int = 0
@@ -71,15 +72,20 @@ def teach(session: MasterySession) -> str:
     """One strategy-specific lesson from Gemma."""
     name, recipe = STRATEGY_LADDER[session.strategy_index]
     session.gemma_calls += 1
+    grounding = (f"The verified solution to that question is: {session.seed_solution}\n"
+                 if session.seed_solution else "")
     lesson = ask_gemma(
         f"TASK: explain\n"
         f"MISCONCEPTION: {session.misconception_name}\n"
         f"You are tutoring a Grade 9 student who keeps making this mistake: "
         f"{session.misconception_name}. They originally missed this question: "
         f"{session.seed_question}\n"
+        f"{grounding}"
         f"Teaching approach for THIS attempt — {name}: {recipe}\n"
-        f"Keep it under 150 words, encouraging, plain language. Do not give them a "
-        f"new question to answer; just teach."
+        f"Keep it under 150 words, encouraging, plain language. Any numbers you "
+        f"mention must come from the verified solution above — do NOT invent new "
+        f"calculations or results. Do not give them a new question to answer; "
+        f"just teach."
     )
     session.history.append({"kind": "lesson", "strategy": name, "text": lesson})
     return lesson
