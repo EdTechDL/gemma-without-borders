@@ -269,19 +269,19 @@ def intro():
 # design language — it's a different world.
 MONSTERS = {
     "Number": {
-        "monster": "Fractis", "color": "#ff8a5c", "shape": "shard",
+        "monster": "Fractis", "color": "#ff8a5c", "shape": "shard", "model": "/app/static/monsters/alien.glb",
         "lore": "Feeds on fractions added straight across. Weak to common denominators."},
     "Algebra": {
-        "monster": "Equazor", "color": "#ff6b9d", "shape": "knot",
+        "monster": "Equazor", "color": "#ff6b9d", "shape": "knot", "model": "/app/static/monsters/dragon.glb",
         "lore": "Twists equations until the signs flip wrong. Weak to balanced moves."},
     "Data": {
-        "monster": "Statiq", "color": "#35d0c0", "shape": "blob",
+        "monster": "Statiq", "color": "#35d0c0", "shape": "blob", "model": "/app/static/monsters/fish.glb",
         "lore": "Blurs means and medians into noise. Weak to ordered data."},
     "Geometry & Measurement": {
-        "monster": "Polygor", "color": "#a78bfa", "shape": "poly",
+        "monster": "Polygor", "color": "#a78bfa", "shape": "poly", "model": "/app/static/monsters/frog.glb",
         "lore": "Hoards angles and stolen area formulas. Weak to a true diagram."},
     "Financial Literacy": {
-        "monster": "Ledgerling", "color": "#ffd166", "shape": "coin",
+        "monster": "Ledgerling", "color": "#ffd166", "shape": "coin", "model": "/app/static/monsters/demon.glb",
         "lore": "Skims your interest while you sleep. Weak to a sharp budget."},
 }
 STATIONS = MONSTERS  # router alias: ?station= keys
@@ -388,15 +388,17 @@ _HUB_TEMPLATE = r"""
   </div>
   <footer>Click a monster to inspect its card &middot; drag nothing &mdash; the platform turns on its own</footer>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
 <script>
+(function(){
+  let o='';
+  try{ o = window.parent.location.origin; }
+  catch(e){ try{ o = new URL(document.referrer).origin; }catch(_){} }
+  window.__ORIGIN = o;
+})();
+</script>
+__VENDOR__
+<script>
+window.addEventListener('load', function(){
 const UNITS = __UNITS__;
 const NAMES = Object.keys(UNITS);
 let base='/';
@@ -414,7 +416,8 @@ function go(url){
 document.getElementById('exitlink').addEventListener('click',function(ev){ev.preventDefault();go(base+'?exit=1');});
 
 let scene,camera,renderer,composer,selected=null;
-const monsters=[],groups=[],ray=new THREE.Raycaster(),mouse=new THREE.Vector2();
+const monsters=[],groups=[],mixers=[],ray=new THREE.Raycaster(),mouse=new THREE.Vector2();
+let prevT=0;
 const CAM={x:0,y:20,z:34},look={x:0,y:0,z:0};
 
 init(); animate();
@@ -441,8 +444,8 @@ function init(){
   const cl=new THREE.PointLight(0xe08d6d,2.6,22); cl.position.y=3; scene.add(cl);
   gsap.to(core.rotation,{y:Math.PI*2,duration:22,repeat:-1,ease:"none"});
 
-  // stations
-  const R=15;
+  // stations with REAL monster models (Quaternius, CC0); procedural fallback
+  const R=15, loader=(typeof THREE.GLTFLoader!=='undefined')?new THREE.GLTFLoader():null;
   NAMES.forEach((name,i)=>{
     const u=UNITS[name], col=new THREE.Color(u.color);
     const ang=(i/NAMES.length)*Math.PI*2, x=Math.cos(ang)*R, z=Math.sin(ang)*R;
@@ -453,9 +456,28 @@ function init(){
     const ringG=new THREE.TorusGeometry(3.1,.06,16,6); ringG.rotateX(Math.PI/2);
     const ring=new THREE.Mesh(ringG,new THREE.MeshBasicMaterial({color:col}));
     ring.position.y=.35; g.add(ring);
-    const monster=makeMonster(u.shape,col); monster.position.y=3.4;
-    monster.userData={i,baseY:3.4}; g.add(monster); monsters.push(monster);
-    const lt=new THREE.PointLight(col,1.3,12); lt.position.y=3.4; g.add(lt);
+    const holder=new THREE.Group(); holder.position.y=1.1;
+    holder.userData={i,baseY:1.1}; g.add(holder); monsters.push(holder);
+    const fallback=()=>{ const m=makeMonster(u.shape,col); m.position.y=2.3; holder.add(m); };
+    if(loader && u.model){
+      loader.load((window.__ORIGIN||'')+u.model, (gltf)=>{
+        const obj=gltf.scene;
+        const box=new THREE.Box3().setFromObject(obj);
+        const size=box.getSize(new THREE.Vector3());
+        const scale=3.4/Math.max(size.x,size.y,size.z,0.001);
+        obj.scale.setScalar(scale);
+        const box2=new THREE.Box3().setFromObject(obj);
+        const c=box2.getCenter(new THREE.Vector3());
+        obj.position.x-=c.x; obj.position.z-=c.z; obj.position.y-=box2.min.y;
+        holder.add(obj);
+        if(gltf.animations && gltf.animations.length){
+          const mix=new THREE.AnimationMixer(obj);
+          const idle=gltf.animations.find(a=>/idle|fly|swim/i.test(a.name))||gltf.animations[0];
+          mix.clipAction(idle).play(); mixers.push(mix);
+        }
+      }, undefined, fallback);
+    } else fallback();
+    const lt=new THREE.PointLight(col,1.5,14); lt.position.y=3.2; g.add(lt);
     scene.add(g);
   });
 
@@ -546,10 +568,11 @@ function resetCamera(){
 
 function animate(time){
   requestAnimationFrame(animate);
-  const t=(time||0)*0.001;
+  const t=(time||0)*0.001, dt=Math.min(0.05, t-prevT); prevT=t;
+  mixers.forEach(m=>m.update(dt));
   monsters.forEach((m,i)=>{
-    m.rotation.y+=(selected===i?0.045:0.006);
-    m.position.y=m.userData.baseY+Math.sin(t*2+i)*(selected===i?.12:.3);
+    m.rotation.y+=(selected===i?0.03:0.005);
+    m.position.y=m.userData.baseY+Math.sin(t*2+i)*(selected===i?.08:.2);
   });
   // slow nexus orbit while nothing selected
   if(selected===null){
@@ -559,14 +582,37 @@ function animate(time){
   }
   composer.render();
 }
+window.resetCamera = resetCamera;
+});
 </script>
 """
 
 
+_VENDOR_FILES = ["three.min.js", "gsap.min.js", "EffectComposer.js", "RenderPass.js",
+                 "ShaderPass.js", "CopyShader.js", "LuminosityHighPassShader.js",
+                 "UnrealBloomPass.js", "GLTFLoader.js"]
+_vendor_cache = None
+
+
+def _vendor_js() -> str:
+    global _vendor_cache
+    if _vendor_cache is None:
+        parts = []
+        vdir = Path(__file__).parent / "static" / "vendor"
+        for f in _VENDOR_FILES:
+            p = vdir / f
+            if p.exists():
+                parts.append("<script>\n" + p.read_text() + "\n</script>")
+        _vendor_cache = "\n".join(parts)
+    return _vendor_cache
+
+
 def _hub_html():
     data = {n: {"monster": m["monster"], "color": m["color"], "shape": m["shape"],
-                "lore": m["lore"]} for n, m in MONSTERS.items()}
-    return _HUB_TEMPLATE.replace("__UNITS__", json.dumps(data))
+                "lore": m["lore"], "model": m.get("model", "")} for n, m in MONSTERS.items()}
+    return (_HUB_TEMPLATE
+            .replace("__VENDOR__", _vendor_js())
+            .replace("__UNITS__", json.dumps(data)))
 
 
 def to_dashboard():
@@ -591,20 +637,7 @@ def map_stage():
       [data-testid="stAppViewContainer"]{background:#0b0710}
       [data-testid="stElementContainer"]:has(iframe){width:100% !important}
     </style>""", unsafe_allow_html=True)
-    components.html(_hub_html(), height=720, scrolling=False)
-    st.markdown(
-        '<div style="text-align:center;letter-spacing:.18em;font-size:.72rem;'
-        'color:#e08d6d;font-weight:700;margin:2px 0 6px">PORTAL KEYS — JUMP STRAIGHT INTO A CHALLENGE</div>',
-        unsafe_allow_html=True)
-    cols = st.columns(len(MONSTERS) + 2)
-    for i, (sname, mon) in enumerate(MONSTERS.items()):
-        if cols[i + 1].button(mon["monster"], key=f"portal_{i}", use_container_width=True):
-            st.session_state.quiz = pick_quiz(sname, 5)
-            st.session_state.answers = {}
-            st.session_state.stage = "quiz"
-            st.rerun()
-    mid = st.columns([2, 1, 2])
-    mid[1].button("Open the simple dashboard", key="leave_game", on_click=to_dashboard, use_container_width=True)
+    components.html(_hub_html(), height=800, scrolling=False)
 
 
 # ---------------- QUIZ ----------------

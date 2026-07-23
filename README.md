@@ -67,7 +67,7 @@ GEMMA_MODEL=gemma3:12b streamlit run app.py
 ## Credits
 
 - Built with Google's Gemma, running locally via Ollama.
-- "Ninja by BRUNO 365 (Sketchfab), CC Attribution" — reserved for the upcoming player character.
+- Monster models (Alien, Demon, Dragon Evolved, Fish, Frog) by Quaternius (quaternius.com), CC0 public domain — thank you Quaternius.
 
 ---
 *Built for the GDG Windsor · Build with AI — Gemma Hackathon. Edge / On-Device track.*

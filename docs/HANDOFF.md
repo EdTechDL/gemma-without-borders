@@ -139,3 +139,14 @@ Teammates can also clone + run locally (README has steps; 1B model is an 815MB p
   student-facing or in README - monsters "make you forget your math", each has a
   "trick"; README is game-voice; docs/ARCHITECTURE.md is the professional judge doc.
 - Team tunnel: cloudflared quick tunnel on :8501 (URL in /tmp/gwb_tunnel.log).
+
+## Addendum (July 25): real monster models
+- Monsters are now real animated GLB models in static/monsters/ (Quaternius, CC0):
+  Alien, Demon, Dragon Evolved, Fish, Frog. Served via Streamlit static serving
+  (server.enableStaticServing=true in .streamlit/config.toml).
+- Loaded with GLTFLoader; each model is bbox-normalized to a consistent size, and
+  its idle animation plays via AnimationMixer. The old procedural geometry is kept
+  as an automatic fallback if a model fails to load.
+- Portal keys row removed — the game card's Begin button (opens a new tab) is the
+  door into the challenge.
+- three.js is vendored under static/vendor so everything works offline.
