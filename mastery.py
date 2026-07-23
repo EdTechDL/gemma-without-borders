@@ -356,10 +356,8 @@ def escalation_report(session: MasterySession) -> str:
         "different from the tutoring approaches that already failed above.",
         max_new_tokens=400))
 
-    return (
-        "TEACHER REPORT - Gemma Without Borders\n"
-        f"Stuck on: {session.misconception_name}.\n"
-        f"Tutor tried: {', '.join(tried) or 'none'}. "
-        f"Follow-up questions: {right}/{len(answers)} correct.\n\n"
-        + narrative
-    )
+    from gemma_client import format_teacher_report
+    header = (f"**Teacher report** — student is stuck on **{session.misconception_name}**. "
+              f"Tutoring approaches tried: {', '.join(tried) or 'none'}. "
+              f"Follow-up questions: {right} of {len(answers)} correct.")
+    return format_teacher_report(header, narrative)

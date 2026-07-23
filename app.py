@@ -254,7 +254,10 @@ def results():
             if "teacher_report" not in st.session_state:
                 with st.spinner("Writing a report the teacher can act on..."):
                     st.session_state.teacher_report = agent.teacher_report(result, analysis)
-            st.code(st.session_state.teacher_report)
+            with st.container(border=True):
+                st.markdown(st.session_state.teacher_report)
+            st.download_button("Download report", st.session_state.teacher_report,
+                               file_name="teacher_report.md", key="dl_teacher")
 
     # --- a study-guide card per missed question ---
     st.subheader("Your study guide")
@@ -268,10 +271,10 @@ def results():
             st.markdown(f"You picked **{esc(guide['chosen'])}** — the correct answer is **{esc(guide['correct'])}**")
             if guide["misconception"].get("name"):
                 st.caption(f"Misconception: {guide['misconception']['name']}")
-            st.markdown("**Why:** " + guide["explanation"])
+            st.markdown("**Why:** " + esc(guide["explanation"]))
             if guide["worked_solution"]:
                 with st.expander("See the worked solution"):
-                    st.markdown(plainify(guide["worked_solution"]))
+                    st.markdown(esc(plainify(guide["worked_solution"])))
 
             # --- interactive "Now you try" ---
             p = guide["practice"]
@@ -370,7 +373,10 @@ def mastery_stage():
         if "escal_report" not in st.session_state:
             with st.spinner("Writing a report the teacher can act on..."):
                 st.session_state.escal_report = m.escalation_report(s)
-        st.code(st.session_state.escal_report)
+        with st.container(border=True):
+            st.markdown(st.session_state.escal_report)
+        st.download_button("Download report", st.session_state.escal_report,
+                           file_name="teacher_report.md", key="dl_escal")
         st.button("Back to my results", key="back_escalated",
                   on_click=lambda: st.session_state.update(stage="results"))
         st.button("Take another quiz", key="again_escalated", on_click=reset)
@@ -393,7 +399,7 @@ def mastery_stage():
         st.caption(f"Lesson — {s.strategy_name}")
         st.markdown(esc(st.session_state.mlesson))
         if st.session_state.get("mlesson_why"):
-            st.caption("Why this approach: " + st.session_state.mlesson_why)
+            st.caption("Why this approach: " + esc(st.session_state.mlesson_why))
 
     # the probe
     probe = st.session_state.mprobe

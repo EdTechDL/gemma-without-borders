@@ -102,6 +102,38 @@ def _ollama(prompt: str, max_new_tokens: int) -> str:
     return r.json()["response"].strip()
 
 
+_PREAMBLE = re.compile(
+    r"(?i)(here.?s a report|here is a report|please be aware|^okay[,!]|^sure[,!]|"
+    r"as requested|based (only )?on the provided facts|this response|i will|below is)")
+
+
+def format_teacher_report(header_md: str, narrative: str) -> str:
+    """Turn a raw Gemma report into clean, wrapping markdown: a header line, the
+    prose, and a bulleted 'Try in class' section. Strips model preamble and
+    splits interventions even when the model numbers them inline."""
+    # 1) drop leading preamble paragraphs ("Okay, here's a report...")
+    paras = [p.strip() for p in re.split(r"\n\s*\n", narrative) if p.strip()]
+    while len(paras) > 1 and _PREAMBLE.search(paras[0]):
+        paras.pop(0)
+    narrative = "\n\n".join(paras)
+
+    # 2) split off the interventions
+    low = narrative.lower()
+    if "try in class" in low:
+        i = low.index("try in class")
+        prose = narrative[:i].strip()
+        after = narrative[i:].split(":", 1)[1] if ":" in narrative[i:] else ""
+        # split on bullet/number markers wherever they appear (incl. inline)
+        items = [t.strip() for t in re.split(r"\s*(?:\d+[.)]|[-–*•])\s+", after) if t.strip()]
+    else:
+        prose, items = narrative.strip(), []
+
+    md = header_md.strip() + "\n\n" + prose
+    if items:
+        md += "\n\n**Try in class**\n\n" + "\n".join(f"- {it}" for it in items)
+    return md
+
+
 def vision_available() -> bool:
     """True if a multimodal Gemma is installed locally."""
     try:

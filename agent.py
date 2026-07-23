@@ -69,7 +69,7 @@ def teacher_report(result: dict, analysis: dict) -> str:
     """A report a teacher can act on. The FACTS (score, misconceptions) are
     deterministic; Gemma writes the interpretation and concrete interventions,
     grounded in those facts."""
-    from gemma_client import ask_gemma, plainify
+    from gemma_client import ask_gemma, plainify, format_teacher_report
 
     patterns = "; ".join(f"{p['name']} (missed {p['count']})"
                          for p in analysis["patterns"]) or "none identified"
@@ -90,9 +90,6 @@ def teacher_report(result: dict, analysis: dict) -> str:
         "misconception. Be concrete — name the strategy, not generic advice.",
         max_new_tokens=380))
 
-    return (
-        "TEACHER REPORT - Gemma Without Borders\n"
-        f"Snapshot: scored {result['correct']}/{result['total']} "
-        f"({result['score_pct']}%). Priority gap: {focus}.\n\n"
-        + narrative
-    )
+    header = (f"**Teacher report** — scored {result['correct']} of {result['total']} "
+              f"({result['score_pct']}%). Priority gap: **{focus}**.")
+    return format_teacher_report(header, narrative)
