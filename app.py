@@ -212,7 +212,7 @@ def results():
     # --- a study-guide card per missed question ---
     st.subheader("Your study guide")
     with st.spinner("The agent is studying your mistakes and writing your guide..."):
-        guides = agent.build_study_guides(result)
+        guides = agent.build_study_guides(result, QUESTIONS)
     for guide in guides:
         with st.container(border=True):
             st.markdown(f"**{guide['question']}**")

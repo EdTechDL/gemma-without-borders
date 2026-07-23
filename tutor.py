@@ -25,24 +25,50 @@ def diagnose(item: dict, chosen_label: str) -> dict | None:
     return None
 
 
-def study_guide(item: dict, chosen_label: str, strategy: str = "explanation") -> dict:
+def pick_practice(item: dict, misc: dict, questions: list, used_ids: set) -> str:
+    """The 'Now you try' question. Bank-first (verified), generation last:
+    a small model can produce a garbled or wrong question, a bank item cannot."""
+    for q in questions or []:
+        if q["id"] in used_ids:
+            continue
+        if any(o.get("misconception_id") == misc.get("id") for o in q["options"]):
+            used_ids.add(q["id"])
+            return q["question"]
+    for q in questions or []:
+        if q["id"] not in used_ids and q["strand"] == item["strand"]:
+            used_ids.add(q["id"])
+            return q["question"]
+    return ask_gemma(
+        f"TASK: practice\n"
+        f"MISCONCEPTION: {misc['name']}\n"
+        f"Write ONE fresh Grade 9 practice question, in English, that tests the "
+        f"same skill as: {item['question']}\n"
+        f"Use different numbers. Output ONLY the question itself - no answer, "
+        f"no solution, no extra commentary."
+    )
+
+
+def study_guide(item: dict, chosen_label: str, strategy: str = "explanation",
+                questions: list = None, used_ids: set = None) -> dict:
     """Build the full study-guide card for one missed question."""
     misc = diagnose(item, chosen_label) or {"id": None, "name": "an unclear error"}
     correct = next(o for o in item["options"] if o["is_correct"])
+    used_ids = used_ids if used_ids is not None else set()
 
+    # Grounding rule: Gemma never recomputes the math. It receives the verified
+    # answer and worked solution and explains WHY the student's method fails —
+    # we caught the small model inventing wrong arithmetic when asked to redo it.
     explain_prompt = (
         f"TASK: {'visual' if strategy == 'visual' else 'explain'}\n"
         f"MISCONCEPTION: {misc['name']}\n"
         f"The student was asked: {item['question']}\n"
-        f"They chose '{_text(item, chosen_label)}' but the answer is '{correct['text']}'.\n"
-        f"Using a {strategy} approach, explain the mistake and the correct method for a "
-        f"14-year-old. Use plain, encouraging language."
-    )
-    practice_prompt = (
-        f"TASK: practice\n"
-        f"MISCONCEPTION: {misc['name']}\n"
-        f"Write ONE fresh Grade 9 practice question (with its answer) that targets the same "
-        f"misconception as: {item['question']}"
+        f"They chose '{_text(item, chosen_label)}'. The correct answer is "
+        f"'{correct['text']}', and the verified solution is: {item.get('solution', '')}\n"
+        f"In under 120 words, for a 14-year-old, explain WHY the student's method "
+        f"('{misc['name']}') gives the wrong result and what the right way of "
+        f"thinking is. Do NOT redo the calculation and do NOT state any new "
+        f"numeric results — the verified solution above is the only math. "
+        f"Plain, encouraging language."
     )
 
     return {
@@ -55,7 +81,7 @@ def study_guide(item: dict, chosen_label: str, strategy: str = "explanation") ->
         "strategy": strategy,
         "explanation": ask_gemma(explain_prompt),      # Gemma (stub for now)
         "worked_solution": item.get("solution", ""),    # real, from the bank
-        "practice": ask_gemma(practice_prompt),         # Gemma (stub for now)
+        "practice": pick_practice(item, misc, questions, used_ids),
     }
 
 
