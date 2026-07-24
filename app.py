@@ -231,19 +231,19 @@ def intro():
 # design language — it's a different world.
 MONSTERS = {
     "Number": {
-        "monster": "Fractis", "taunt": "Ready to watch you crumble like a bad fraction.", "lines": ["So... {name}. You found my shard field.", "Braver visitors than you have left here counting on their fingers, {name}.", "Show me your fractions - or become part of my collection.", "And {name}... fail too often in the training grounds, and HE notices. Even I go quiet when the Collector passes."], "clip_ambient": "CharacterArmature|Idle", "clip_fight": "CharacterArmature|Bite_Front", "sp_ambient": 0.8, "sp_fight": 0.65, "color": "#ff8a5c", "shape": "shard", "model": "/app/static/monsters/alien.glb",
+        "monster": "Fractis", "taunt": "Ready to watch you crumble like a bad fraction.", "lines": ["So... {name}. You found my shard field.", "Braver visitors than you have left here counting on their fingers, {name}.", "Show me your fractions - or become part of my collection.", "And {name}... fail too often in the training grounds, and HE notices. Even I go quiet when the Collector passes."], "clip_ambient": "CharacterArmature|Idle", "clip_fight": "CharacterArmature|Bite_Front", "sp_ambient": 0.8, "sp_fight": 0.65, "ns": 0.78, "color": "#ff8a5c", "shape": "shard", "model": "/app/static/monsters/alien.glb",
         "lore": "Feeds on fractions added straight across. Weak to common denominators."},
     "Algebra": {
-        "monster": "Equazor", "taunt": "I am ready to watch you lose this battle. Your signs will slip.", "lines": ["Well, well. {name} dares to balance equations with ME watching.", "One slipped sign, {name}, and your answers belong to me.", "I hope you brought more than luck, kid.", "A warning, free of charge: keep failing, and the Collector comes. I don't share my prey with him willingly."], "clip_ambient": "CharacterArmature|Flying_Idle", "clip_fight": "CharacterArmature|Punch", "sp_ambient": 0.9, "sp_fight": 0.7, "color": "#ff6b9d", "shape": "knot", "model": "/app/static/monsters/dragon.glb",
+        "monster": "Equazor", "taunt": "I am ready to watch you lose this battle. Your signs will slip.", "lines": ["Well, well. {name} dares to balance equations with ME watching.", "One slipped sign, {name}, and your answers belong to me.", "I hope you brought more than luck, kid.", "A warning, free of charge: keep failing, and the Collector comes. I don't share my prey with him willingly."], "clip_ambient": "CharacterArmature|Flying_Idle", "clip_fight": "CharacterArmature|Punch", "sp_ambient": 0.9, "sp_fight": 0.7, "ns": 1.18, "color": "#ff6b9d", "shape": "knot", "model": "/app/static/monsters/dragon.glb",
         "lore": "Twists equations until the signs flip wrong. Weak to balanced moves."},
     "Data": {
-        "monster": "Statiq", "taunt": "Your answers will drown in my noise.", "lines": ["Splash... {name}, was it? The data here gets... murky.", "Means, medians - it all blurs together down here, {name}.", "Let's see if you can keep your numbers in order. I doubt it.", "Psst... {name}. Lose too often and the water goes cold. That means HE is near. The Collector."], "clip_ambient": "CharacterArmature|Idle", "clip_fight": "CharacterArmature|Punch", "sp_ambient": 0.8, "sp_fight": 0.7, "color": "#35d0c0", "shape": "blob", "model": "/app/static/monsters/fish.glb",
+        "monster": "Statiq", "taunt": "Your answers will drown in my noise.", "lines": ["Splash... {name}, was it? The data here gets... murky.", "Means, medians - it all blurs together down here, {name}.", "Let's see if you can keep your numbers in order. I doubt it.", "Psst... {name}. Lose too often and the water goes cold. That means HE is near. The Collector."], "clip_ambient": "CharacterArmature|Idle", "clip_fight": "CharacterArmature|Punch", "sp_ambient": 0.8, "sp_fight": 0.7, "ns": 1.0, "color": "#35d0c0", "shape": "blob", "model": "/app/static/monsters/fish.glb",
         "lore": "Blurs means and medians into noise. Weak to ordered data."},
     "Geometry & Measurement": {
-        "monster": "Polygor", "taunt": "Every angle you pick will be the wrong one, little hero.", "lines": ["Hop hop, {name}. Welcome to my angle hoard.", "Every formula in here is ALMOST right. That's how I catch clever ones like you.", "Draw your diagrams carefully, kid. I feast on sloppy sketches.", "Careful, though. Fail too much and you'll meet something older than me. We call him the Collector. We don't joke about him."], "clip_ambient": "CharacterArmature|Idle", "clip_fight": "CharacterArmature|Punch", "sp_ambient": 0.8, "sp_fight": 0.7, "color": "#a78bfa", "shape": "poly", "model": "/app/static/monsters/frog.glb",
+        "monster": "Polygor", "taunt": "Every angle you pick will be the wrong one, little hero.", "lines": ["Hop hop, {name}. Welcome to my angle hoard.", "Every formula in here is ALMOST right. That's how I catch clever ones like you.", "Draw your diagrams carefully, kid. I feast on sloppy sketches.", "Careful, though. Fail too much and you'll meet something older than me. We call him the Collector. We don't joke about him."], "clip_ambient": "CharacterArmature|Idle", "clip_fight": "CharacterArmature|Punch", "sp_ambient": 0.8, "sp_fight": 0.7, "ns": 1.0, "color": "#a78bfa", "shape": "poly", "model": "/app/static/monsters/frog.glb",
         "lore": "Hoards angles and stolen area formulas. Weak to a true diagram."},
     "Financial Literacy": {
-        "monster": "Ledgerling", "taunt": "I collect mistakes - and I charge interest.", "lines": ["Ah, a new account. Name: {name}. Balance: doubtful.", "I skim a little interest off every mistake, {name}. Business is booming.", "Check the math or sign it all away. Your move, kid.", "Oh - and if your debts pile too high, my boss collects them personally. You do NOT want that meeting, {name}."], "clip_ambient": "CharacterArmature|Flying_Idle", "clip_fight": "CharacterArmature|Headbutt", "sp_ambient": 0.9, "sp_fight": 0.7, "color": "#ffd166", "shape": "coin", "model": "/app/static/monsters/demon.glb",
+        "monster": "Ledgerling", "taunt": "I collect mistakes - and I charge interest.", "lines": ["Ah, a new account. Name: {name}. Balance: doubtful.", "I skim a little interest off every mistake, {name}. Business is booming.", "Check the math or sign it all away. Your move, kid.", "Oh - and if your debts pile too high, my boss collects them personally. You do NOT want that meeting, {name}."], "clip_ambient": "CharacterArmature|Flying_Idle", "clip_fight": "CharacterArmature|Headbutt", "sp_ambient": 0.9, "sp_fight": 0.7, "ns": 1.28, "color": "#ffd166", "shape": "coin", "model": "/app/static/monsters/demon.glb",
         "lore": "Skims your interest while you sleep. Weak to a sharp budget."},
 }
 STATIONS = MONSTERS  # router alias: ?station= keys
@@ -691,7 +691,7 @@ function init(){
         const obj=gltf.scene;
         const box=new THREE.Box3().setFromObject(obj);
         const size=box.getSize(new THREE.Vector3());
-        const scale=4.4/Math.max(size.x,size.y,size.z,0.001);
+        const scale=(3.6*(u.ns||1))/Math.max(size.y,0.001);  // height-normalized, per-beast weight
         obj.scale.setScalar(scale);
         const box2=new THREE.Box3().setFromObject(obj);
         const c=box2.getCenter(new THREE.Vector3());
@@ -1024,7 +1024,8 @@ def _vendor_js(files=None) -> str:
 def _hub_html():
     data = {n: {"monster": m["monster"], "color": m["color"], "shape": m["shape"],
                 "lore": m["lore"], "model": m.get("model", ""),
-                "clipA": m.get("clip_ambient", ""), "spA": m.get("sp_ambient", 0.8)}
+                "clipA": m.get("clip_ambient", ""), "spA": m.get("sp_ambient", 0.8),
+                "ns": m.get("ns", 1.0)}
             for n, m in MONSTERS.items()}
     return (_HUB_TEMPLATE
             .replace("__VENDOR__", _vendor_js())
