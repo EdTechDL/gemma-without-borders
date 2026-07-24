@@ -9,6 +9,9 @@ v1 implements the parts that don't need the model yet (analyze + prioritise +
 escalation decision). The teach -> follow-up -> evaluate -> adapt loop is scaffolded
 here and gets fleshed out once real Gemma is connected (see the Blueprint doc).
 """
+from __future__ import annotations   # 'dict | None' hints on Python 3.9
+import json
+import re
 from collections import Counter
 from tutor import diagnose, study_guide
 
@@ -63,6 +66,69 @@ def build_study_guides(result: dict, questions: list = None, seen_ids=None) -> l
     used = set(seen_ids or ()) | {w["item"]["id"] for w in result["wrong"]}
     return [study_guide(w["item"], w["chosen"], questions=questions, used_ids=used)
             for w in result["wrong"]]
+
+
+def direct_next(candidates: list, evidence: list, situation: str) -> dict | None:
+    """THE DIRECTOR: Gemma decides where the student goes next, and says why.
+
+    Everywhere else in this app Gemma reacts to one question. Here it shapes the
+    session: given what the run has actually shown, it picks the next fight.
+
+    The split that makes this safe is the same one used throughout: plain code
+    owns the truth, the model owns the judgment. Code supplies the candidate
+    list (only real, still-open fights) and refuses any answer that does not
+    name one of them, so the director can never invent a destination or send a
+    student somewhere already cleared. If the model is unavailable or its reply
+    does not parse, code picks and the reason says plainly why.
+
+    candidates: [{"key", "name", "focus"}] - key is what the caller routes on
+    evidence:   short factual lines about the run so far
+    situation:  one line telling the model what kind of choice this is
+    Returns the chosen candidate plus "why", or None when nothing is left.
+    """
+    from gemma_client import ask_gemma, plainify
+
+    if not candidates:
+        return None
+    if len(candidates) == 1:
+        c = candidates[0]
+        return {**c, "why": f"{c['name']} is the only one left standing."}
+
+    roster = "\n".join(f"- {c['name']}: {c['focus']}" for c in candidates)
+    try:
+        raw = ask_gemma(
+            "TASK: choose\n"
+            "You are the director of a monster citadel, where every monster is one "
+            "math trick a Grade 9 student falls for.\n"
+            f"{situation}\n"
+            f"The choices:\n{roster}\n"
+            "THE COMPLETE RECORD of this student's run - there is nothing else, "
+            "and anything not listed here has NOT happened:\n"
+            + "\n".join(f"- {e}" for e in evidence if e) + "\n"
+            "Choose the one this record says is most worth facing now. Your "
+            "sentence may ONLY refer to facts in the record above: do not claim "
+            "the student has mastered, practised, missed or struggled with "
+            "anything that is not listed. If the record is thin, say so plainly "
+            "rather than inventing a history.\n"
+            "Reply with ONLY JSON, no other text:\n"
+            '{"choice": "<exact name from the list>", "why": "<one short sentence '
+            'to the student, in the voice of the citadel, naming the evidence>"}',
+            max_new_tokens=160)
+        m = re.search(r"\{.*\}", raw, re.DOTALL)
+        if m:
+            data = json.loads(m.group())
+            said = str(data.get("choice", "")).lower().strip()
+            for c in candidates:
+                if said and (c["name"].lower() in said or said in c["name"].lower()):
+                    why = plainify(str(data.get("why", ""))).strip().strip('"')
+                    return {**c, "why": why or f"{c['name']} is next: {c['focus']}."}
+    except (json.JSONDecodeError, TypeError, KeyError, OSError):
+        pass
+    except Exception:          # a model hiccup must never block the session
+        pass
+
+    c = candidates[0]
+    return {**c, "why": f"{c['name']} is next: {c['focus']}."}
 
 
 def teacher_report(result: dict, analysis: dict) -> str:

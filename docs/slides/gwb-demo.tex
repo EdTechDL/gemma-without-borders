@@ -137,7 +137,7 @@
     \node[box, right=of battle] (report) {Battle report\\ \scriptsize the trick named +\\ \scriptsize grounded study guide};
     \node[accent, right=of report] (train) {Training\\ \scriptsize the autonomous\\ \scriptsize mastery loop};
     \node[box, above right=0.55cm and 0.42cm of train.east, anchor=west] (win) {\color{okg}Mastery\\ \tiny Gemma forges a relic};
-    \node[box, below right=0.55cm and 0.42cm of train.east, anchor=west] (esc) {Escalation\\ \tiny the Collector + teacher report};
+    \node[box, below right=0.55cm and 0.42cm of train.east, anchor=west] (esc) {Escalation\\ \tiny the Collector + a report for mum and dad};
     \draw[arr] (enc) -- (battle);
     \draw[arr] (battle) -- (report);
     \draw[arr] (report) -- (train);
@@ -163,11 +163,11 @@
           gbox/.style={draw=clay, thick, fill=card, rounded corners=2pt, inner sep=6pt, align=center, font=\small, minimum width=2.6cm},
           arr/.style={-{Stealth[length=2mm]}, thick, color=clayd}]
         \node[gbox] (teach) at (0,2.4) {TEACH\\ \scriptsize Gemma writes the lesson};
-        \node[box] (probe) at (3.4,0.8) {PROBE\\ \scriptsize fresh verified question};
+        \node[box] (check) at (3.4,0.8) {CHECK\\ \scriptsize a fresh verified question};
         \node[gbox] (eval) at (0,-0.8) {EVALUATE\\ \scriptsize answer + typed reasoning};
         \node[gbox] (adapt) at (-3.4,0.8) {ADAPT\\ \scriptsize Gemma picks the next\\ \scriptsize strategy, and says why};
-        \draw[arr] (teach.east) to[bend left=20] (probe.north);
-        \draw[arr] (probe.south) to[bend left=20] (eval.east);
+        \draw[arr] (teach.east) to[bend left=20] (check.north);
+        \draw[arr] (check.south) to[bend left=20] (eval.east);
         \draw[arr] (eval.west) to[bend left=20] (adapt.south);
         \draw[arr] (adapt.north) to[bend left=20] (teach.west);
       \end{tikzpicture}}
@@ -196,10 +196,10 @@
     Write the lesson \& study guide & grounded in the verified solution; explains \emph{why}, never recomputes \\
     Grade typed reasoning & closed labels; fail-open --- never punishes the student \\
     Choose the next strategy & limited to the remaining ladder; states its rationale; code fallback \\
-    Author fresh probe questions & bank-first; must pass a blind self-solve audit or is discarded \\
+    Author fresh check questions & bank-first; must pass a blind self-solve audit or is discarded \\
     Monster memory lines & one line, from real battle history; scripted fallback \\
     Forge the mastery relic & flavour only --- the facts are injected by code \\
-    Write the teacher report & narrative only; every number comes from the session log \\
+    Write the mum-and-dad report & narrative only; every number comes from the session log \\
     Coach the speed trials & reads miss + latency telemetry; names the pattern; sets a 3-question drill \\
     \bottomrule
   \end{tabular}}
@@ -216,7 +216,7 @@
   \color{ivory}
   \begin{columns}[T]
     \begin{column}{0.5\textwidth}
-      \textbf{\textcolor{gold}{THE COLLECTOR}} --- {\small a giant skull boss, summoned when the mastery loop escalates: a mental-math speed trial, 3 lives, he attacks on every miss. Gemma writes the teacher report alongside --- the agent knows its limits.}\par
+      \textbf{\textcolor{gold}{THE COLLECTOR}} --- {\small a giant skull boss, summoned when the mastery loop escalates: a mental-math speed trial, 3 lives, he attacks on every miss. Gemma writes the report for mum and dad alongside --- the agent knows its limits.}\par
       \vspace{0.2em}
       \textbf{Three lieutenants}, one mental-math lane each:
       \begin{itemize}\setlength\itemsep{0.2em}
@@ -250,8 +250,8 @@
     \toprule
     \textbf{Caught in testing} & \textbf{Architectural fix} \\
     \midrule
-    Generated a question with a \textbf{wrong answer key} & blind self-solve audit; bank-first probes \\
-    Wrote a probe \textbf{in Spanish} & constrained generation prompts \\
+    Generated a question with a \textbf{wrong answer key} & blind self-solve audit; bank-first check questions \\
+    Wrote a check question \textbf{in Spanish} & constrained generation prompts \\
     \textbf{Invented wrong arithmetic} in an explanation ($\tfrac{2}{3}+\tfrac{1}{4}=\tfrac{17}{12}$) & grounding rule: explain \emph{why}, never recompute; numbers only from the verified solution \\
     Rambled when reconstructing multi-step errors & diagnosis by ground-truth tag lookup, not model reasoning \\
     Emitted \texttt{2\^{}3} and \texttt{2/3} as raw markup & notation layer: real exponents and stacked fractions on screen \\
@@ -310,9 +310,9 @@
 % ---------------------------------------------------------------- 11 ROADMAP
 \begin{frame}{What's next \hfill {\normalsize\color{muted}same architecture, deeper world}}
   \begin{itemize}\setlength\itemsep{0.6em}
-    \item \textbf{Local tool use} --- Gemma emits constrained JSON tool calls; a local SymPy verifier proves every check deterministically. \mutedtext{\small (tool use for a model that doesn't natively support it)}
+    \item \textbf{Local tool use} --- Gemma emits constrained JSON tool calls; a local SymPy verifier proves every answer deterministically. \mutedtext{\small (tool use for a model that doesn't natively support it)}
     \item \textbf{Beyond the golden gate} --- the rescue arc continues: new keeps, new boss lanes, harder relics --- same agent brain underneath.
-    \item \textbf{Classroom mode} --- teacher reports aggregate across a class, still local-first: the school's data stays in the school.
+    \item \textbf{Classroom mode} --- session records roll up across a whole class, still local-first: the school's data stays in the school.
   \end{itemize}
   \vspace{0.7em}
   {\color{line}\hrule height 1pt}

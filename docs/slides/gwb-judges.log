@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.3.8)  24 JUL 2026 03:51
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.3.8)  24 JUL 2026 04:10
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1120,16 +1120,16 @@ Overfull \vbox (0.17519pt too high) detected at line 117
 
 ]
 LaTeX Font Info:    Font shape `T1/phv/b/n' will be
-(Font)              scaled to size 10.20004pt on input line 144.
+(Font)              scaled to size 10.20004pt on input line 148.
 LaTeX Font Info:    Font shape `T1/phv/b/n' will be
-(Font)              scaled to size 12.24005pt on input line 144.
+(Font)              scaled to size 12.24005pt on input line 148.
 
 
 [4
 
 ]
 LaTeX Font Info:    Font shape `T1/phv/b/n' will be
-(Font)              scaled to size 11.16904pt on input line 173.
+(Font)              scaled to size 11.16904pt on input line 177.
 
 
 [5
@@ -1151,7 +1151,7 @@ LaTeX Font Info:    Font shape `T1/phv/b/n' will be
 [9
 
 ]
-Overfull \vbox (0.84897pt too high) detected at line 366
+Overfull \vbox (0.84897pt too high) detected at line 370
  []
 
 
@@ -1159,18 +1159,22 @@ Overfull \vbox (0.84897pt too high) detected at line 366
 [10
 
 ]
+Overfull \vbox (40.58698pt too high) detected at line 417
+ []
+
+
 
 [11
 
 ]
 LaTeX Font Info:    Font shape `T1/phv/m/n' will be
-(Font)              scaled to size 27.54012pt on input line 428.
+(Font)              scaled to size 27.54012pt on input line 434.
 LaTeX Font Info:    Font shape `T1/phv/b/n' will be
-(Font)              scaled to size 27.54012pt on input line 428.
+(Font)              scaled to size 27.54012pt on input line 434.
 LaTeX Font Info:    Font shape `T1/phv/m/it' in size <12> not available
-(Font)              Font shape `T1/phv/m/sl' tried instead on input line 428.
+(Font)              Font shape `T1/phv/m/sl' tried instead on input line 434.
 LaTeX Font Info:    Font shape `T1/phv/m/sl' will be
-(Font)              scaled to size 12.24005pt on input line 428.
+(Font)              scaled to size 12.24005pt on input line 434.
 
 
 [12
@@ -1200,8 +1204,8 @@ Package rerunfilecheck Info: File `gwb-judges.out' has not changed.
  ) 
 Here is how much of TeX's memory you used:
  25852 strings out of 473190
- 510930 string characters out of 5715801
- 895721 words of memory out of 5000000
+ 510937 string characters out of 5715801
+ 895784 words of memory out of 5000000
  48537 multiletter control sequences out of 15000+600000
  653256 words of font info for 140 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -1214,7 +1218,7 @@ r/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sftt0900.pfb></usr/
 local/texlive/2025/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/local/t
 exlive/2025/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/
 2025/texmf-dist/fonts/type1/urw/helvetic/uhvro8a.pfb>
-Output written on gwb-judges.pdf (12 pages, 125238 bytes).
+Output written on gwb-judges.pdf (12 pages, 125735 bytes).
 PDF statistics:
  127 PDF objects out of 1000 (max. 8388607)
  90 compressed objects within 1 object stream

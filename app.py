@@ -110,6 +110,14 @@ code, pre{background:#1c1119 !important;color:#ffd9b8 !important}
 [data-baseweb="popover"] [role="option"]:hover, [data-baseweb="popover"] li:hover,
 [data-baseweb="menu"] li:hover, [data-baseweb="popover"] li[aria-selected="true"]{
   background:#2a1a26 !important;color:#ffefdd !important}
+/* the letters-home button: reachable from every screen, including the
+   full-bleed game stages, without reloading the page and losing the session */
+.st-key-letters_float{position:fixed;left:18px;bottom:18px;z-index:1000;width:auto}
+.st-key-letters_float button{background:rgba(20,12,22,.86) !important;
+  border:1px solid #3a2a35 !important;border-radius:20px !important;
+  color:#cbbfd6 !important;font-size:.72rem !important;letter-spacing:.1em !important;
+  padding:8px 14px !important;box-shadow:0 6px 18px rgba(0,0,0,.55) !important}
+.st-key-letters_float button:hover{color:#ffefdd !important;border-color:#e08d6d !important}
 .gwb-taunt{position:fixed;bottom:20px;right:20px;z-index:999;display:flex;
   align-items:flex-end;gap:10px;animation:gwbBob 3.2s ease-in-out infinite}
 .gwb-bubble{background:#1c1119;border:1px solid #e08d6d;
@@ -2132,13 +2140,13 @@ def _skirmish_html(name, lane, monster_model, color):
 
 
 _LIEUTENANTS = {
-    "doubles": {"monster": "Twinfang", "model": "/app/static/monsters/frog.glb",
+    "doubles": {"drills": "doubling and halving", "monster": "Twinfang", "model": "/app/static/monsters/frog.glb",
                 "color": "#4ade80",
                 "whisper": "doubling: to double, add the number to itself; to multiply by 4, double twice. Halving undoes it."},
-    "nines": {"monster": "The Niner", "model": "/app/static/monsters/alien.glb",
+    "nines": {"drills": "nines, fast", "monster": "The Niner", "model": "/app/static/monsters/alien.glb",
               "color": "#ffd166",
               "whisper": "nines: multiply by 10, then subtract the number once. Adding 9 is adding 10 then stepping back one."},
-    "split": {"monster": "Splitjaw", "model": "/app/static/monsters/fish.glb",
+    "split": {"drills": "making tens", "monster": "Splitjaw", "model": "/app/static/monsters/fish.glb",
               "color": "#35d0c0",
               "whisper": "make a ten: split the smaller number to complete a ten first. 47+38 is 47+3, then +35."},
 }
@@ -2182,6 +2190,12 @@ def coach_stage():
     st.title("Gemma reads your battle")
     misses = [m for m in d.get("misses", []) if m]
     ck = f"coach_{lane}_{d.get('score')}_{len(misses)}"
+    if ck not in st.session_state.get("skirmish_seen", set()):
+        st.session_state.setdefault("skirmish_seen", set()).add(ck)
+        st.session_state.setdefault("skirmish_log", []).append(
+            {"lane": lane, "score": d.get("score"), "streak": d.get("streak"),
+             "misses": misses})
+        st.session_state.pop("lt_pick", None)   # new evidence, fresh decision
     if ck not in st.session_state:
         try:
             from gemma_client import ask_gemma, plainify
@@ -2346,15 +2360,51 @@ def boss_stage():
         padding:0 0 1rem 0 !important; max-width:100% !important}
       [data-testid="stElementContainer"]:has(iframe){width:100% !important}
     </style>""", unsafe_allow_html=True)
-    components.html(_boss_html(st.session_state.get("player_name", "Challenger")),
-                    height=620, scrolling=False)
+    run = st.session_state.get("boss_run", 0)
+    components.html(_boss_html(st.session_state.get("player_name", "Challenger"))
+                    + f"<!-- run {run} -->", height=620, scrolling=False)
+    note("What this fight is",
+         "The Collector does not test new ideas - he tests the arithmetic you are "
+         "supposed to already own, and he tests it against a clock. Ten questions, "
+         "ninety seconds, three lives. <strong>Nothing here counts against your "
+         "quiz record</strong>: this is speed, not curriculum. Beat his timer and "
+         "he gives your basics back. Lose, and his lieutenants below are how you "
+         "buy them back - each one drills a single mental shortcut until it is "
+         "automatic, then Gemma reads your misses and coaches you before the rematch.")
     st.markdown('<div style="text-align:center;letter-spacing:.14em;font-size:.72rem;'
                 'color:#8a86a8;font-weight:700;margin-top:6px">'
-                'BEAT HIS TIMER, OR SHARPEN YOUR SPEED ON HIS LIEUTENANTS FIRST</div>',
+                'HIS TIMER PUNISHES SLOW ARITHMETIC. HIS LIEUTENANTS ARE WHERE YOU GET FAST</div>',
                 unsafe_allow_html=True)
+
+    # Gemma directs the training: which drill is worth the student's time,
+    # judged on the skirmishes they have actually fought.
+    if "lt_pick" not in st.session_state:
+        log = st.session_state.get("skirmish_log", [])
+        evidence = [f"{r['lane']} drill: {r['score']} correct, best streak {r['streak']}"
+                    + (f", missed {', '.join(r['misses'][:4])}" if r.get("misses") else "")
+                    for r in log[-4:]]
+        never = [_LIEUTENANTS[l]["monster"] for l in _LIEUTENANTS
+                 if not any(r["lane"] == l for r in log)]
+        if never:
+            evidence.append("has never drilled against: " + ", ".join(never))
+        if not log:
+            evidence.insert(0, "has fought no speed drills at all yet")
+        with st.spinner("The Collector's lieutenants are being weighed..."):
+            st.session_state.lt_pick = agent.direct_next(
+                [{"key": k, "name": v["monster"], "focus": v["drills"]}
+                 for k, v in _LIEUTENANTS.items()],
+                evidence,
+                "The student is standing before the Collector, whose trial is timed. "
+                "Pick the ONE lieutenant whose speed drill will help them most.")
+    pick = st.session_state.get("lt_pick") or {}
+    if pick.get("why"):
+        note(f"Gemma sends you to {pick['name']}", esc_note(pick["why"]))
+
     lc = st.columns(3)
     for _i, (_lane, _lt) in enumerate(_LIEUTENANTS.items()):
-        lc[_i].button(f"Train against {_lt['monster']}", key=f"lt_{_lane}",
+        chosen = pick.get("key") == _lane
+        lc[_i].button(f"{_lt['monster']} — {_lt['drills']}", key=f"lt_{_lane}",
+                      type="primary" if chosen else "secondary",
                       on_click=lambda l=_lane: st.session_state.update(stage="skirmish", skirmish_lane=l),
                       use_container_width=True)
     mid = st.columns([2, 2, 2])
@@ -2362,9 +2412,11 @@ def boss_stage():
         mid[1].button("Back to training", key="boss_train", type="primary",
                       on_click=lambda: st.session_state.update(stage="mastery"),
                       use_container_width=True)
-    mid[1].button("For mum and dad", key="boss_letters", on_click=to_parents,
+    mid[1].button("Face him again", key="boss_again", type="primary",
+                  on_click=lambda: st.session_state.update(
+                      boss_run=st.session_state.get("boss_run", 0) + 1),
                   use_container_width=True,
-                  help="The notes the agent wrote for your parents, all in one place")
+                  help="Restart the speed trial from the top")
     mid[1].button("Retreat to the nexus", key="boss_flee", on_click=back_to_map,
                   use_container_width=True)
     st.caption("Retreating is safe — nothing you have earned is lost, and the notes "
@@ -2666,6 +2718,34 @@ def results():
                         with st.expander("See this one worked out"):
                             st.markdown(steps_md(p["solution"]))
 
+    # Gemma directs the hunt: which monster is worth facing next, and why
+    if st.session_state.get("adventure"):
+        cleared = st.session_state.get("defeated_strands", set())
+        open_hunts = [{"key": s, "name": mo["monster"],
+                       "focus": f"{s} - {mo['taunt'].rstrip('.')}"}
+                      for s, mo in MONSTERS.items() if s not in cleared]
+        if "hunt_pick" not in st.session_state and len(open_hunts) > 1:
+            faced = st.session_state.get("faced_strands", set())
+            with st.spinner("The citadel decides where you go next..."):
+                st.session_state.hunt_pick = agent.direct_next(
+                    open_hunts,
+                    [f"just scored {result['correct']} of {result['total']}",
+                     "tricks already beaten: " + (", ".join(
+                         st.session_state.get("mastered_names", [])) or "none yet"),
+                     "strands already cleared: " + (", ".join(cleared) or "none yet"),
+                     "never attempted: " + (", ".join(
+                         s for s in MONSTERS if s not in faced) or "none"),
+                     f"the trick that caught them most today: {priority['name']}"
+                     if priority else ""],
+                    "The student has just finished a battle. Pick the ONE monster "
+                    "they should hunt next.")
+        hp = st.session_state.get("hunt_pick") or {}
+        if hp.get("why"):
+            note(f"The citadel sends you to {hp['name']}", esc_note(hp["why"]))
+            st.button(f"Hunt {hp['name']}", key="go_hunt", type="primary",
+                      on_click=lambda k=hp["key"]: st.session_state.update(
+                          stage="encounter", enc_strand=k))
+
     if st.session_state.get("adventure"):
         st.button("Back to the nexus", key="tomap_bottom", on_click=back_to_map)
     st.button("Take another quiz", key="again_bottom", on_click=reset)
@@ -2850,6 +2930,7 @@ if _station in STATIONS:
         st.session_state.player_name = hero[:24][:1].upper() + hero[:24][1:]
     # the monster confronts you before its trial begins
     st.session_state.enc_strand = _station
+    st.session_state.setdefault("faced_strands", set()).add(_station)
     st.session_state.stage = "encounter"
     st.query_params.clear()
 
@@ -2895,3 +2976,13 @@ stage = st.session_state.get("stage", "intro")
  "results": results, "mastery": mastery_stage, "boss": boss_stage,
  "skirmish": skirmish_stage, "coach": coach_stage, "finale": finale_stage,
  "parents": parents_stage}[stage]()
+
+# One way back to the letters home from anywhere in the citadel. A real button,
+# not a link: a link would reload the page and take the session - and the
+# letters with it - down with it.
+if stage != "parents":
+    _n = len(st.session_state.get("letters", []))
+    with st.container(key="letters_float"):
+        st.button(f"For mum and dad ({_n})" if _n else "For mum and dad",
+                  key="letters_fab", on_click=to_parents,
+                  help="Everything the agent has written for your parents this session")

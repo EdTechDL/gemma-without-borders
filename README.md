@@ -42,8 +42,8 @@ And above them all: **THE COLLECTOR**, a giant skull who runs mental-math speed 
 2. Enter the Citadel. Drag to orbit the castle, then click a monster on its platform.
 3. The encounter takes over the screen. The monster taunts you by name; come back after a loss and it gloats about last time.
 4. Face its quiz. The battle report shows exactly which tricks got you, then a Gemma-grounded study guide explains each one — with real fraction and exponent notation, never recomputed math.
-5. Now the agent steps in: it teaches, probes you with a fresh question, and reads both your answer and your typed reasoning. A right answer with wobbly reasoning does not count. When a lesson doesn't land, Gemma switches teaching strategies and tells you why.
-6. Master the trick and Gemma forges you a relic — a trophy written from your actual battle. Struggle too long and the Collector is summoned instead, along with a Gemma-written note for your teacher.
+5. Now the agent steps in: it teaches, then puts a fresh check question to you and reads both your answer and your typed reasoning. A right answer with wobbly reasoning does not count. When a lesson doesn't land, Gemma switches teaching strategies and tells you why.
+6. Master the trick and Gemma forges you a relic — a trophy written from your actual battle. Struggle too long and the Collector is summoned instead, along with a Gemma-written note for mum and dad.
 7. Between battles, hit the training grounds: 90-second war-clock skirmishes against the lieutenants, with streaks that raise the stakes. Gemma whispers each lane's mental strategy before the fight, and afterward **GET COACHED BY GEMMA** names your miss pattern, teaches the fix, and sets a three-question drill.
 8. Defeat all five monsters to break the seal on the golden gate and free whoever is locked in the keep.
 
@@ -63,7 +63,7 @@ Gemma runs locally on your machine and does the actual thinking, one job per lin
 | Relic forging | Names and inscribes the relic you earn from the trick you beat. |
 | Skirmish coaching | Reads your misses and hesitations, names the pattern, and sets your drill. |
 | Strategy whispers | Teaches you each lieutenant's lane — doubles, nines, make-a-ten — before the fight. |
-| Teacher note | Writes your teacher a note they can actually use. |
+| Note for mum and dad | Writes your parents a note they can actually use at the kitchen table. |
 
 One plain fact: the math answers always come from a bank of verified questions, never from the model guessing.
 

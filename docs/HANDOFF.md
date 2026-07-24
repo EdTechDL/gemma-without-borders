@@ -11,11 +11,11 @@ Naimah (testing/validation/writing), Amarah (coordination, integration, GitHub, 
 Core flow: student takes a short quiz → agent diagnoses WHICH trick caused each
 wrong answer (ground-truth lookup from a verified tagged question bank — never model
 guessing) → Gemma writes a personalized study guide (explanation grounded in the verified
-solution + fresh practice + hints) → "Practice until mastery": an autonomous loop that
-teaches, probes with fresh questions, grades typed reasoning, SWITCHES teaching strategy
-when one fails (Gemma picks the next one and says why), and stops at mastery (2 fresh
-correct in a row with sound reasoning) or hands off to a teacher with an actionable
-Gemma-written report. Every agent decision shows an evidence-based "why" (explainable AI).
+solution + fresh practice + hints) → "Practice until mastery": an autonomous loop
+(TEACH → CHECK → EVALUATE → ADAPT) that teaches, poses fresh check questions, grades
+typed reasoning, SWITCHES teaching strategy when one fails (Gemma picks the next one
+and says why), and stops at mastery (2 fresh correct in a row with sound reasoning) or
+hands off to mum and dad with an actionable Gemma-written report. Every agent decision shows an evidence-based "why" (explainable AI).
 
 Game layer (in progress): "GEMMA MONSTERS" — each unit is guarded by a monster that
 personifies the trick (Fractis/Number, Equazor/Algebra, Statiq/Data,
@@ -35,11 +35,11 @@ professional app is untouched without it.
 
 ## File map (repo root)
 - app.py           — Streamlit UI: intro / quiz / results / mastery / map (game hub) stages + router
-- agent.py         — grade_quiz, analyze (priority trick, escalation), build_study_guides, Gemma teacher_report
-- mastery.py       — the autonomous loop: MasterySession, teach, next_probe (bank-first), submit_answer (deterministic grading + Gemma reasoning-grader RESOLVED/SHALLOW/SAME_ERROR + Gemma strategy choice + hard caps), rationale (explainable AI), escalation_report
+- agent.py         — grade_quiz, analyze (priority trick, escalation), build_study_guides, the Gemma-written report for mum and dad (teacher_report)
+- mastery.py       — the autonomous loop: MasterySession, teach, next_check (bank-first), submit_answer (deterministic grading + Gemma reasoning-grader RESOLVED/SHALLOW/SAME_ERROR + Gemma strategy choice + hard caps), rationale (explainable AI), escalation_report
 - tutor.py         — study_guide cards: grounded explanation, bank-first practice picker, hint ladder
 - gemma_client.py  — THE ONE DOOR to the model: ask_gemma (Ollama HTTP), plainify (LaTeX stripper), transcribe_image (12B vision, on-device photo of written work), format_teacher_report, availability checks, stub fallback
-- data/questions.json — 36 verified EQAO-style questions, every wrong option tagged with its trick (this is the ground truth; multi-agent verified twice)
+- data/questions.json — 55 verified EQAO-style questions, every one mapped to a published MTH1W expectation, every wrong option tagged with its trick (this is the ground truth; multi-agent verified twice)
 - .streamlit/config.toml — theme + runOnSave=true
 - docs/            — slides, notebook walkthrough, HANDOFF.md
 
@@ -72,11 +72,11 @@ Teammates can also clone + run locally (README has steps; 1B model is an 815MB p
   (works on 12B; under-detects on 1B — documented finding)
 - Strategy ladder: Direct correction → Visual walkthrough → Side-by-side contrast →
   Real-world analogy; Gemma chooses the next rung from the student's own words + why
-- Hard caps: 4 attempts, 12 Gemma calls, strategy exhaustion → teacher hand-off. Cannot loop forever.
+- Hard caps: 4 check attempts, 12 Gemma calls, strategy exhaustion → hand-off to mum and dad. Cannot loop forever.
 - Explainable AI: every decision (priority choice, count/not-count, strategy switch,
   mastery, hand-off) shows an evidence-based reason
-- Teacher reports (both paths): Gemma-written narrative + 3 concrete "Try in class"
-  interventions, informed by which tutoring strategies already failed; clean wrapping
+- Reports for mum and dad (both paths): Gemma-written narrative + 3 concrete "Try at
+  home:" activities, informed by which tutoring strategies already failed; clean wrapping
   layout + Download button (preamble stripped, inline numbering split into bullets)
 - Vision: upload/photo of handwritten work → 12B transcribes on-device (transcribe-only,
   bank judges correctness); "What Gemma read from your photo" shown; live-tested at 3.1s
@@ -114,7 +114,7 @@ Teammates can also clone + run locally (README has steps; 1B model is an 815MB p
   Functionality 20% (does it actually work?), Presentation & Writeup 20%
 - Edge track wants: Gemma core, local/minimal cloud, useful UX, creativity + impact
 - Our Gemma-core argument: 8 call sites (lessons, explanations, reasoning grading,
-  strategy choice, question generation w/ self-audit, hints, teacher reports, vision
+  strategy choice, question generation w/ self-audit, hints, parent reports, vision
   transcription) — all guardrailed; model never the source of math truth. README table.
 
 ## Models on this machine
@@ -135,9 +135,12 @@ Teammates can also clone + run locally (README has steps; 1B model is an 815MB p
   and the reliable single-tab path is the five PORTAL KEY buttons under the canvas.
 - Adventure mode has a full dark game skin (looks only); quiz page = "Face <Monster>",
   results = "The Battle Report", practice = "TRAINING GROUNDS". Classic mode unchanged.
-- Vocabulary rule (user): never the words "trick" or "confusion" anywhere
-  student-facing or in README - monsters "make you forget your math", each has a
-  "trick"; README is game-voice; docs/ARCHITECTURE.md is the professional judge doc.
+- Vocabulary rule (user): the wrong idea that feels right is always a "trick" - never
+  a clinical synonym for it, and never a word that says the student is muddled. The
+  mastery loop stage is CHECK (TEACH -> CHECK -> EVALUATE -> ADAPT) and a single item
+  the agent poses is a "check question". Reports go to mum and dad, never to teachers.
+  Monsters "make you forget your math"; README is game-voice; docs/ARCHITECTURE.md is
+  the professional judge doc.
 - Team tunnel: cloudflared quick tunnel on :8501 (URL in /tmp/gwb_tunnel.log).
 
 ## Addendum - July 24 (late-3)
@@ -148,7 +151,7 @@ Teammates can also clone + run locally (README has steps; 1B model is an 815MB p
   3 life pips, taunts on hit/miss (missed answer revealed), win/lose end cards.
   Deterministic JS math - no model in the loop. Reached from the training grounds
   when attempts run out (adventure mode): "THE AIR GOES COLD" note + challenge
-  button; teacher hand-off unchanged beneath it. Each monster's encounter now ends
+  button; the hand-off to mum and dad is unchanged beneath it. Each monster's encounter ends
   with a whispered warning about him (foreshadowing).
 - Curated animation system: exact clip names read from the GLBs; per-monster
   clip_ambient/clip_fight + speeds in MONSTERS; calm idle everywhere, aggression
