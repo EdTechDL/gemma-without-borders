@@ -112,6 +112,17 @@ def next_check(session: MasterySession, questions: list) -> dict | None:
         session.history.append({"kind": "check", "source": why, "id": q["id"]})
         return {"source": why, **q}
 
+    # Modelled on the question that started this session, so a check can never
+    # wander to another topic that merely shares the same wrong idea.
+    from practice_sheet import similar_to
+    made = similar_to(session.seed_question, session.trick_name, session.strand,
+                      chosen_text=session.seed_chosen,
+                      correct_text=session.seed_correct,
+                      solution=session.seed_solution)
+    if made:
+        session.history.append({"kind": "check", "source": "similar"})
+        return {**made, "id": f"GEN-{session.attempts + 1}"}
+
     q = next_on_idea(questions, session.trick_id, session.used_item_ids, session.trick_name)
     if q:
         return take(q, "bank")

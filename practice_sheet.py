@@ -121,6 +121,90 @@ def _generated_items(trick_name: str, strand: str, seed: str, need: int,
     return made
 
 
+def similar_to(seed_question: str, snare_name: str, strand: str = "",
+               chosen_text: str = "", correct_text: str = "",
+               solution: str = "", calls: int = 8) -> dict | None:
+    """A follow-up modelled on the QUESTION the student actually got wrong.
+
+    Matching on the name of the wrong idea is not enough to keep a follow-up on
+    topic, and the bank shows why: "Balancing / Inverse Operation Error" is
+    carried both by "solve 5x - 3 = 2x + 9" and by "a line has slope 3 through
+    (2, 5), find the y-intercept". The tag is right on both - you can slip a
+    sign in either - but a student who could not solve the equation is not
+    helped by being handed coordinate geometry.
+
+    So the seed question comes into the prompt and defines the topic. The model
+    is asked for the same question with different numbers, not for another
+    question about the same idea, which removes the room it had to wander.
+    Audited exactly like every other written question: it must re-solve its own
+    question blind and agree before a student ever sees it.
+    """
+    budget = _Budget(calls)
+    picked = (f"Facing that question the student answered '{chosen_text}', "
+              f"when the answer was '{correct_text}'.\n"
+              if chosen_text else "")
+    worked = f"The verified solution to it: {solution}\n" if solution else ""
+    for _ in range(ATTEMPTS_PER_ITEM + 1):
+        if not budget.spend():
+            return None
+        raw = ask_gemma(
+            f"TASK: practice\n"
+            f"TRICK: {snare_name}\n"
+            f"A Grade 9 student just got this question wrong:\n"
+            f"  {seed_question}\n"
+            f"{worked}{picked}"
+            f"The wrong idea behind their answer: {snare_name}\n\n"
+            f"Write ONE more question of THE SAME KIND, so they get another go "
+            f"at exactly this.\n"
+            f"RULES:\n"
+            f"1. Same kind of question as the one above: the same task, asked "
+            f"the same way, with different numbers. If the original asks the "
+            f"student to solve an equation for x, yours asks them to solve an "
+            f"equation for x. Do NOT move to a different kind of question even "
+            f"if the same wrong idea could appear there - a student who could "
+            f"not solve an equation is not helped by a question about "
+            f"coordinates, graphs or averages.\n"
+            f"2. Introduce no new concept, formula or skill.\n"
+            f"3. One wrong option must be exactly what a student applying "
+            f"'{snare_name}' would get.\n"
+            f"4. Keep the numbers small and clean, and make sure the correct "
+            f"answer is one of the options.\n"
+            f"Plain text math only - fractions as 3/4, powers as 2^3, real "
+            f"dollar signs for money, no LaTeX.\n"
+            f"Return ONLY JSON, no other text, exactly this shape:\n"
+            f'{{"question": "...", "options": {{"A": "...", "B": "...", '
+            f'"C": "...", "D": "..."}}, "correct": "A"}}',
+            max_new_tokens=GEN_TOKENS,
+        )
+        m = re.search(r"\{.*\}", raw, re.DOTALL)
+        if not m:
+            continue
+        try:
+            data = json.loads(m.group())
+            opts = {str(k).strip().upper(): str(v) for k, v in data["options"].items()}
+            key = str(data["correct"]).strip().upper()[:1]
+            question = plainify(str(data["question"])).strip()
+        except (json.JSONDecodeError, KeyError, TypeError, AttributeError):
+            continue
+        if key not in opts or len(opts) < 3 or not question:
+            continue
+        if question.lower().strip() == str(seed_question).lower().strip():
+            continue
+        if not _blind_solve_agrees(question, opts, key, budget):
+            continue
+        return {
+            "source": "generated",
+            "id": "GEN-SIMILAR",
+            "question": question,
+            "options": [{"label": k, "text": plainify(v).strip(), "is_correct": k == key}
+                        for k, v in sorted(opts.items())],
+            "correct": key,
+            "answer": plainify(opts[key]).strip(),
+            "solution": "",
+        }
+    return None
+
+
 def generate_audited(trick_name: str, strand: str, seed: str,
                      avoid: list = None, calls: int = 6) -> dict | None:
     """One question on ONE idea, with options and a key it has re-solved blind.

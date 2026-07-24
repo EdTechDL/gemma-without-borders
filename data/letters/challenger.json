@@ -61,5 +61,23 @@
   "trick_id": "NUM-1",
   "trick_name": "Multiplying exponents when multiplying like bases",
   "strand": "Number"
+ },
+ {
+  "n": 8,
+  "title": "After the quiz \u2014 Balancing / Inverse Operation Error",
+  "body": "**Parent report** \u2014 scored 3 of 5 (60%). The trick that caught them most: **Balancing / Inverse Operation Error**.\n\nDear Parents,\n\nWe've noticed your child is demonstrating a persistent misunderstanding when solving equations \u2013 they sometimes do the opposite of what\u2019s needed to isolate the variable, which suggests they are focusing on individual steps rather than the overall balance of the equation. This can indicate a tendency to think about each operation in isolation instead of how it affects the entire expression.\n\n**Try at home**\n\n- Use a set of scales and some blocks; add and remove blocks from both sides to show keeping them balanced.\n- Write simple equations like 2 + x = 5 on paper, then physically cross out what you\u2019re removing from both sides.\n- Pretend you're baking \u2013 if you double the flour, you need to double the sugar too, to keep the recipe right!",
+  "kind": "quiz",
+  "trick_id": "ALG-4",
+  "trick_name": "Balancing / Inverse Operation Error",
+  "strand": "Algebra"
+ },
+ {
+  "n": 9,
+  "title": "After the quiz \u2014 Changing the base when operating on powers",
+  "body": "**Parent report** \u2014 scored 0 of 5 (0%). The trick that caught them most: **Changing the base when operating on powers**.\n\nDear Parents,\n\nWe've noticed your child is having some difficulty with simplifying expressions involving exponents. It seems they are sometimes incorrectly assuming you can change the base of a power when performing calculations, which suggests they might be focusing on superficial similarities rather than understanding the underlying rules \u2013 essentially, looking for patterns without fully grasping the 'why'. This kind of thinking can also lead to errors in other areas of math.\n\n**Try at home**\n\n- Rewrite 2\u00b3 x 2\u00b2 as a single power of 2, then explain why you did what you did.\n- Look at 3\u2074 / 3\u00b3. What does it equal? Explain your steps and why changing the base wouldn\u2019t work.\n- Take two different numbers (like 4 and 5) and each raise them to the power of 2 and 3, then compare the results \u2013 what do you notice about how the bases affect the answer?",
+  "kind": "quiz",
+  "trick_id": "NUM-2",
+  "trick_name": "Changing the base when operating on powers",
+  "strand": "Number"
  }
 ]

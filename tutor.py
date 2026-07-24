@@ -30,6 +30,17 @@ def pick_practice(item: dict, misc: dict, questions: list, used_ids: set) -> dic
     """The 'Now you try' question, as a full interactive item. Bank-first
     (verified answer key + worked solution), generation last: a small model can
     produce a garbled or wrong question, a bank item cannot."""
+    # Modelled on the question they actually missed, so the topic cannot drift.
+    # A verified bank item is better evidence when one genuinely fits, but the
+    # tag alone does not prove a fit: the same wrong idea is tagged on questions
+    # about solving equations AND about y-intercepts.
+    from practice_sheet import similar_to
+    correct = next((o["text"] for o in item["options"] if o.get("is_correct")), "")
+    made = similar_to(item["question"], misc.get("name", ""), item.get("strand", ""),
+                      correct_text=correct, solution=item.get("solution", ""))
+    if made:
+        return {**made, "id": f"GEN-{item['id']}"}
+
     q = next_on_idea(questions, misc.get("id"), used_ids, misc.get("name"))
     if q:
         used_ids.add(q["id"])
