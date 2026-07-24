@@ -20,7 +20,7 @@
 
 ## The story
 
-The Citadel is locked from the outside. Someone is trapped in the keep behind a golden gate, and five monsters hold the seal — each one perched on a floating platform, guarding one strand of Grade 9 math. Every monster plants a trick in your head: a wrong idea that feels right, which is exactly why it works. You cannot beat a monster by luck. You beat it by proving its trick doesn't fool you anymore: two fresh questions in a row, with reasoning that holds up.
+The Citadel is locked from the outside. Someone is trapped in the keep behind a golden gate, and five monsters hold the seal — each one perched on a floating platform, guarding one strand of Grade 9 math. Every monster is out to make you slip, and each has its own favourite way of doing it: a wrong idea that feels right, which is exactly why it works. You cannot beat a monster by luck. You beat it by proving its trick doesn't fool you anymore: two fresh questions in a row, with reasoning that holds up.
 
 Defeat all five and the seal breaks, the gate opens, and the rescue is yours. Fail too often, though, and the monsters' boss takes an interest. They call him the Collector. They do not joke about him.
 
