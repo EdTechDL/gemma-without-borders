@@ -7,22 +7,22 @@
 <!-- drop the four PNGs into docs/screens/ to light these up -->
 
 <img width="1912" height="901" alt="citadel" src="https://github.com/user-attachments/assets/c1089e4b-5246-43e4-9464-6fb4e47b033d" />
-**The Citadel: drag to orbit the castle; five monsters wait on their floating platforms.**
+<b>The Citadel: drag to orbit the castle; five monsters wait on their floating platforms.</b?
 <br>
 <br>
 <br>
 <img width="1157" height="782" alt="taha" src="https://github.com/user-attachments/assets/e37f082b-d0f8-49d5-b08b-69f19226e177" />
-**An encounter: the monster calls you by name, and Gemma writes what it remembers about you.**
+<b>An encounter: the monster calls you by name, and Gemma writes what it remembers about you.</b>
 <br>
 <br>
 <br>
 <img width="977" height="907" alt="sg" src="https://github.com/user-attachments/assets/443aa3a4-8b96-4cf5-a2e5-7e0ad8ff2cbb" />
-**The battle report: what got you, why it felt right, and the study guide that fixes it.**
+<b>The battle report: what got you, why it felt right, and the study guide that fixes it.</b>
 <br>
 <br>
 <br>
 <img width="1917" height="917" alt="col" src="https://github.com/user-attachments/assets/5b035bed-e4bb-4eb2-9ae2-1fc8389e625f" />
-**The Collector: three lives, a speed trial, and no patience for slow arithmetic.**
+<b>The Collector: three lives, a speed trial, and no patience for slow arithmetic.</b>
 <br>
 <br>
 <br>
