@@ -203,10 +203,14 @@ Five monsters guard the citadel, one for each strand EQAO assesses.
 \end{center}
 \vspace{0.4em}
 
-Pick a monster and you drop into a torch-lit hall for five questions from the
-game's vault. Every wrong option on every one of those questions already has a
-snare written beside it. When you pick one, the game does not guess what went
-wrong in your head. It reads the label.
+Pick a monster and the camera flies in to its torch-lit hall, where it taunts
+you and then puts five questions to you --- real EQAO-style questions, pulled
+from the game's vault of verified ones. This first battle is a diagnosis
+dressed up as a fight: the game is not trying to teach you yet, it is watching
+which snares catch you. Every wrong option on every question already has a snare
+written beside it, put there when the question was written. So when you pick a
+wrong answer, the game does not have to guess what went wrong inside your head.
+It reads the label.
 
 \vspace{0.5em}
 \begin{center}
@@ -287,8 +291,16 @@ been asked anything yet.
 % =====================================================================
 \section{How you beat a snare}
 
-One lucky answer proves nothing, so one lucky answer is not the bar. The loop
-runs like this, and it keeps running until you clear the bar or a cap stops it.
+Now the game switches from testing to teaching, and it works one snare at a
+time --- the one that caught you most. A \emph{check question} is just a fresh
+question of the same kind you got wrong: one you have not seen, so you cannot
+have memorised the answer. But getting it right is only half of what the game
+wants. Under every check question is a single line where you type, in your own
+words, \emph{how} you got there. That line is the whole point. Anyone can
+stumble onto the right letter; the game is trying to find out whether you
+actually understand, and the only way to tell the difference is to hear you
+explain it. One lucky answer proves nothing, so one lucky answer is not the bar.
+The loop below runs until you clear the bar or a safety cap stops it.
 
 \vspace{0.5em}
 \begin{center}
@@ -646,18 +658,32 @@ judgement. Nothing it says is the source of what is mathematically true.
 % =====================================================================
 \section{When the snare holds}
 
-Some nights you do not beat it. The game does not keep grinding. It says the
-battle is ending, why it is ending, and that a person is probably more use than
-another question right now. A note goes home naming the approaches already
-tried, so nobody starts from scratch.
+Some nights you do not beat it. The game has a rule for this, and it is
+deliberately not \themodel's to bend: after four fresh questions, or after all
+four ways of explaining have been tried, or once the model has been called as
+many times as its budget allows, the training stops. It does not keep drilling
+you into the ground. It tells you the battle is ending, and \emph{why} it is
+ending, and it says plainly that a real person is probably more use to you now
+than one more question from a computer. A note goes home naming every approach
+that was already tried, so whoever helps you next does not start from scratch.
 
-That is also when the Collector notices you. He is the giant skull above the
-citadel, and the five monsters are afraid of him. He does not test new ideas.
-He tests the arithmetic you are supposed to already own, and he tests it
-against a clock: \textbf{ten questions, eight seconds each, three lives}.
-Nothing in his arena counts against your quiz record.
+That is also the moment the Collector notices you. He is the giant skull that
+hangs above the whole citadel, and the five monsters are afraid of him --- from
+your very first battle they whisper warnings that something older is watching.
+He is what those warnings meant. He does not set new snares or teach anything.
+He goes after the arithmetic you are supposed to already own --- the quick
+sums a snare can hide behind when you are slow with them --- and he goes after
+it against a clock: \textbf{ten questions, eight seconds each, three lives}.
+This is speed, not curriculum, so nothing that happens in his arena counts
+against your quiz record. You cannot make things worse by facing him. You can
+only get faster.
 
-Lose to him and you go down to his lieutenants, one mental shortcut each.
+Lose to him --- and most people will, the first time --- and he sends you down
+to one of his three lieutenants. Each lieutenant is a smaller, faster fight
+built around a single mental shortcut: not a topic from the course, but a trick
+of arithmetic that makes the whole thing quicker once it is automatic. The
+Collector is fast because these shortcuts are second nature to him. The
+lieutenants are where you make them second nature too.
 
 \vspace{0.4em}
 \begin{center}
@@ -674,11 +700,20 @@ Splitjaw & Making tens. $47+38$ becomes $47+3$, then $+35$.\\
 \end{center}
 \vspace{0.4em}
 
-Each drill is ninety seconds on three lives. \themodel\ whispers the shortcut
-before you go in, reads the exact questions you missed afterwards, and picks
-the one trick worth drilling next. Then it chooses which lieutenant is worth
-your time --- from the list of the ones you have actually fought, with the
-scores you actually got, and it names that evidence out loud when it sends you.
+Each drill is a burst: ninety seconds, three lives, a stream of quick sums of
+that one kind. Before you step in, \themodel\ leans over and whispers the
+shortcut in a sentence or two --- not the full lesson, just the move --- so you
+go in armed rather than guessing. When the ninety seconds are up it reads the
+exact questions you got wrong, names the one pattern running through them, and
+gives you a few more of that precise kind to try. It is the same teach-and-check
+idea as the main battles, shrunk down to raw speed.
+
+And it decides where you go next the same way it decides everything else ---
+from evidence, not a guess. It looks at which lieutenants you have actually
+fought and how you scored against each, and points you at the one that will
+help most, saying out loud why it chose that one. Beat the lieutenants, get
+faster, and go back up to try the Collector again. You keep everything you have
+already won; a bad run against him takes nothing away.
 
 Retreating from any fight is free. The monsters remember it, and they will
 mention it when you come back.
