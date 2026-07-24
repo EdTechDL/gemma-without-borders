@@ -683,7 +683,7 @@ function init(){
         const obj=gltf.scene;
         const box=new THREE.Box3().setFromObject(obj);
         const size=box.getSize(new THREE.Vector3());
-        const scale=8.8/Math.max(size.x,size.y,size.z,0.001);
+        const scale=4.4/Math.max(size.x,size.y,size.z,0.001);
         obj.scale.setScalar(scale);
         const box2=new THREE.Box3().setFromObject(obj);
         const c=box2.getCenter(new THREE.Vector3());
