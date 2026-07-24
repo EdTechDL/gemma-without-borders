@@ -16,6 +16,7 @@ import streamlit.components.v1 as components
 import agent
 import mastery as m
 import tutor
+import rewards
 from gemma_client import vision_available, transcribe_image, plainify
 
 QUESTIONS = json.loads((Path(__file__).parent / "data" / "questions.json").read_text())
@@ -370,136 +371,314 @@ const NAMES = Object.keys(UNITS);
 let base='/';
 try{ base = window.parent.location.pathname || '/'; }
 catch(e){ try{ base = new URL(document.referrer).pathname || '/'; }catch(_){} }
-function go(url){
-  // Streamlit sandboxes this iframe without ancestor-navigation permission,
-  // so open the challenge in a fresh tab (explicitly allowed to escape the sandbox).
-  const w = window.open(url, '_blank');
-  if(!w){
-    const el = document.getElementById('obj');
-    el.textContent = 'POP-UP BLOCKED — USE ITS PORTAL KEY BELOW THE NEXUS';
-  }
-}
 (function(){var x=document.getElementById('exitlink');
   x.href=base+'?exit=1'; x.target='_blank';})();
 
-let scene,camera,renderer,composer,selected=null;
-const monsters=[],groups=[],mixers=[],rings=[],beams=[],debris=[],ray=new THREE.Raycaster(),mouse=new THREE.Vector2();
-let prevT=0;
+let scene,camera,renderer,controls,selected=null;
+const monsters=[],groups=[],stations=[],mixers=[],torchLights=[],animatedPlants=[],
+      ray=new THREE.Raycaster(),mouse=new THREE.Vector2();
 let miniR=null,miniScene=null,miniCam=null,miniMix=null,miniObj=null;
 let loader=null;
-const CAM={x:0,y:20,z:34},look={x:0,y:0,z:0};
+let sealRing=null,sealLight=null;
+let particleGeo=null;
+const PARTICLE_COUNT=250;
+const RING_R=21;
+const HOME={x:0,y:22,z:48},HOME_T={x:0,y:6,z:0};
+const clock=new THREE.Clock();
 
 init(); animate();
 
+function createStoneTexture(){
+  const canvas=document.createElement('canvas');
+  canvas.width=512; canvas.height=512;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#2a2d36'; ctx.fillRect(0,0,512,512);
+  ctx.strokeStyle='#14161c'; ctx.lineWidth=4;
+  const rows=16,cols=8,rh=512/rows,cw=512/cols;
+  for(let i=0;i<rows;i++){
+    const y=i*rh;
+    ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(512,y); ctx.stroke();
+    const offset=(i%2===0)?0:cw/2;
+    for(let j=0;j<cols+1;j++){
+      const x=j*cw+offset;
+      ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x,y+rh); ctx.stroke();
+    }
+  }
+  for(let i=0;i<15000;i++){
+    const x=Math.random()*512,y=Math.random()*512;
+    const shade=Math.floor(Math.random()*40);
+    ctx.fillStyle='rgba('+shade+','+shade+','+shade+',0.15)';
+    ctx.fillRect(x,y,2,2);
+  }
+  const texture=new THREE.CanvasTexture(canvas);
+  texture.wrapS=THREE.RepeatWrapping; texture.wrapT=THREE.RepeatWrapping;
+  return texture;
+}
+
 function init(){
   const el=document.getElementById('canvas-container');
-  scene=new THREE.Scene(); scene.fog=new THREE.FogExp2(0x070510,0.026);
-  camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,0.1,1000);
-  camera.position.set(CAM.x,CAM.y,CAM.z); camera.lookAt(0,0,0);
-  renderer=new THREE.WebGLRenderer({antialias:true});
+  scene=new THREE.Scene();
+  scene.background=new THREE.Color(0x0a0f1d);
+  scene.fog=new THREE.FogExp2(0x0d1424,0.012);
+
+  camera=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,0.1,1000);
+  camera.position.set(HOME.x,HOME.y,HOME.z);
+
+  renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
   renderer.setSize(innerWidth,innerHeight);
   renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  renderer.shadowMap.enabled=true;
+  renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  renderer.toneMapping=THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure=1.25;
   renderer.outputEncoding=THREE.sRGBEncoding;
   el.appendChild(renderer.domElement);
-  scene.add(new THREE.AmbientLight(0x241a28,0.7));
-  const warm=new THREE.PointLight(0xffd9b8,1.0,60); warm.position.set(0,12,0); scene.add(warm);
 
-  // nexus core
-  const plat=new THREE.Mesh(new THREE.CylinderGeometry(6,6.5,1,6),
-    new THREE.MeshStandardMaterial({color:0x1a1016,roughness:.55,metalness:.85,flatShading:true}));
-  plat.position.y=-0.5; scene.add(plat);
-  const core=new THREE.Mesh(new THREE.IcosahedronGeometry(1.8,1),
-    new THREE.MeshBasicMaterial({color:0xffe9d6,wireframe:true,transparent:true,opacity:.65}));
-  core.position.y=3; scene.add(core);
-  const cl=new THREE.PointLight(0xe08d6d,1.6,20); cl.position.y=3; scene.add(cl);
-  gsap.to(core.rotation,{y:Math.PI*2,duration:22,repeat:-1,ease:"none"});
+  controls=new THREE.OrbitControls(camera,renderer.domElement);
+  controls.enableDamping=true;
+  controls.dampingFactor=0.04;
+  controls.maxPolarAngle=Math.PI/2-0.01;
+  controls.minDistance=8;
+  controls.maxDistance=85;
+  controls.autoRotate=true;
+  controls.autoRotateSpeed=0.4;
+  controls.target.set(HOME_T.x,HOME_T.y,HOME_T.z);
+  renderer.domElement.addEventListener('pointerdown',function(){ controls.autoRotate=false; });
 
-  // --- environment: nebula dome (canvas gradient, back side) ---
+  // ---- lighting: shadows live on the moonlight only ----
+  scene.add(new THREE.AmbientLight(0x1a243a,1.4));
+  const moonLight=new THREE.DirectionalLight(0xb0ccff,2.0);
+  moonLight.position.set(-35,55,-20);
+  moonLight.castShadow=true;
+  moonLight.shadow.mapSize.width=2048;
+  moonLight.shadow.mapSize.height=2048;
+  moonLight.shadow.camera.near=10;
+  moonLight.shadow.camera.far=120;
+  const d=45;
+  moonLight.shadow.camera.left=-d; moonLight.shadow.camera.right=d;
+  moonLight.shadow.camera.top=d; moonLight.shadow.camera.bottom=-d;
+  scene.add(moonLight);
+  const fillLight=new THREE.DirectionalLight(0x406080,0.6);
+  fillLight.position.set(30,20,30);
+  scene.add(fillLight);
+
+  // ---- materials ----
+  const stoneTex=createStoneTexture(); stoneTex.repeat.set(3,3);
+  const stoneMat=new THREE.MeshStandardMaterial({map:stoneTex,roughness:0.7,metalness:0.2});
+  const darkGroundMat=new THREE.MeshStandardMaterial({color:0x121722,roughness:0.9});
+  const cobblestoneMat=new THREE.MeshStandardMaterial({color:0x1e2433,roughness:0.8});
+  const slateRoofMat=new THREE.MeshStandardMaterial({color:0x182030,roughness:0.5,metalness:0.3});
+  const darkWoodMat=new THREE.MeshStandardMaterial({color:0x2b1e16,roughness:0.8});
+  const darkPineMat=new THREE.MeshStandardMaterial({color:0x122218,roughness:0.8});
+
+  // ---- terrain and courtyard ----
+  const ground=new THREE.Mesh(new THREE.PlaneGeometry(160,160,32,32),darkGroundMat);
+  ground.rotation.x=-Math.PI/2; ground.receiveShadow=true; scene.add(ground);
+  const courtyard=new THREE.Mesh(new THREE.CylinderGeometry(15,16,0.15,24),cobblestoneMat);
+  courtyard.position.set(0,0.08,0); courtyard.receiveShadow=true; scene.add(courtyard);
+
+  // ---- castle: the sealed citadel ----
+  const castleGroup=new THREE.Group();
+  const mainKeep=new THREE.Mesh(new THREE.BoxGeometry(11,15,11),stoneMat);
+  mainKeep.position.set(0,7.5,-2); mainKeep.castShadow=true; mainKeep.receiveShadow=true;
+  castleGroup.add(mainKeep);
+  const mainRoof=new THREE.Mesh(new THREE.ConeGeometry(8.5,6,4),slateRoofMat);
+  mainRoof.position.set(0,18,-2); mainRoof.rotation.y=Math.PI/4; mainRoof.castShadow=true;
+  castleGroup.add(mainRoof);
+  const gateFrame=new THREE.Mesh(new THREE.BoxGeometry(4.5,5.5,0.8),stoneMat);
+  gateFrame.position.set(0,2.75,3.6); gateFrame.castShadow=true; castleGroup.add(gateFrame);
+  const woodenDoor=new THREE.Mesh(new THREE.BoxGeometry(3.2,4.5,0.3),darkWoodMat);
+  woodenDoor.position.set(0,2.25,3.8); woodenDoor.castShadow=true; castleGroup.add(woodenDoor);
+  const towerPos=[{x:-11,z:-11},{x:11,z:-11},{x:-11,z:9},{x:11,z:9}];
+  towerPos.forEach(p=>{
+    const tower=new THREE.Mesh(new THREE.CylinderGeometry(2.8,3.2,14,16),stoneMat);
+    tower.position.set(p.x,7,p.z); tower.castShadow=true; tower.receiveShadow=true;
+    castleGroup.add(tower);
+    const roof=new THREE.Mesh(new THREE.ConeGeometry(3.6,5.5,16),slateRoofMat);
+    roof.position.set(p.x,16.75,p.z); roof.castShadow=true; castleGroup.add(roof);
+  });
+  const wall1=new THREE.Mesh(new THREE.BoxGeometry(18,9,2.2),stoneMat);
+  wall1.position.set(0,4.5,-11); wall1.castShadow=true; castleGroup.add(wall1);
+  const wall2=new THREE.Mesh(new THREE.BoxGeometry(2.2,9,18),stoneMat);
+  wall2.position.set(-11,4.5,-1); wall2.castShadow=true; castleGroup.add(wall2);
+  const wall3=new THREE.Mesh(new THREE.BoxGeometry(2.2,9,18),stoneMat);
+  wall3.position.set(11,4.5,-1); wall3.castShadow=true; castleGroup.add(wall3);
+  scene.add(castleGroup);
+
+  // story beat: a faint golden seal across the gate. Someone is locked inside.
+  sealRing=new THREE.Mesh(new THREE.TorusGeometry(1.7,0.08,10,48),
+    new THREE.MeshBasicMaterial({color:0xffd87a,transparent:true,opacity:0.55,
+      depthWrite:false,blending:THREE.AdditiveBlending}));
+  sealRing.position.set(0,2.4,4.05); scene.add(sealRing);
+  const sealBar1=new THREE.Mesh(new THREE.BoxGeometry(3.0,0.09,0.04),
+    new THREE.MeshBasicMaterial({color:0xffd87a,transparent:true,opacity:0.4,
+      depthWrite:false,blending:THREE.AdditiveBlending}));
+  sealBar1.position.set(0,2.4,4.03); sealBar1.rotation.z=Math.PI/4; scene.add(sealBar1);
+  const sealBar2=sealBar1.clone(); sealBar2.rotation.z=-Math.PI/4; scene.add(sealBar2);
+  sealLight=new THREE.PointLight(0xffd87a,1.4,10);
+  sealLight.position.set(0,2.6,5.0); scene.add(sealLight);
+
+  // gate torches
+  function createGateTorch(x,y,z){
+    const torchLight=new THREE.PointLight(0xff8800,2.2,12);
+    torchLight.position.set(x,y,z);
+    scene.add(torchLight);
+    torchLights.push({light:torchLight,baseIntensity:2.2});
+  }
+  createGateTorch(-2.2,3.5,4.2);
+  createGateTorch(2.2,3.5,4.2);
+
+  // ---- star / nebula dome, very dark blue ----
   (function(){
     const c=document.createElement('canvas'); c.width=1024; c.height=512;
     const g2=c.getContext('2d');
     const gr=g2.createLinearGradient(0,0,0,512);
-    gr.addColorStop(0,'#100a16'); gr.addColorStop(0.45,'#0a0610');
-    gr.addColorStop(1,'#07070d');
+    gr.addColorStop(0,'#0b1226'); gr.addColorStop(0.5,'#080d1c');
+    gr.addColorStop(1,'#060a14');
     g2.fillStyle=gr; g2.fillRect(0,0,1024,512);
-    for(let i=0;i<420;i++){
-      const x=Math.random()*1024, y=Math.random()*430, r2=Math.random()*1.3+0.2;
-      g2.fillStyle='rgba(255,'+(200+Math.random()*55|0)+','+(180+Math.random()*60|0)+','
-        +(Math.random()*0.4+0.08)+')';
+    for(let i=0;i<20;i++){
+      const x=Math.random()*1024,y=Math.random()*300,r2=40+Math.random()*90;
+      const ng=g2.createRadialGradient(x,y,4,x,y,r2);
+      ng.addColorStop(0,'rgba(60,90,160,0.08)');
+      ng.addColorStop(1,'rgba(0,0,0,0)');
+      g2.fillStyle=ng; g2.beginPath(); g2.arc(x,y,r2,0,7); g2.fill();
+    }
+    for(let i=0;i<520;i++){
+      const x=Math.random()*1024,y=Math.random()*400,r2=Math.random()*1.2+0.2;
+      g2.fillStyle='rgba('+(190+Math.random()*65|0)+','+(200+Math.random()*55|0)+',255,'
+        +(Math.random()*0.5+0.1)+')';
       g2.beginPath(); g2.arc(x,y,r2,0,7); g2.fill();
     }
     const tex=new THREE.CanvasTexture(c);
-    const dome=new THREE.Mesh(new THREE.SphereGeometry(90,32,20),
+    const dome=new THREE.Mesh(new THREE.SphereGeometry(140,32,20),
       new THREE.MeshBasicMaterial({map:tex,side:THREE.BackSide,fog:false}));
     scene.add(dome);
-    gsap.to(dome.rotation,{y:Math.PI*2,duration:400,repeat:-1,ease:"none"});
+    gsap.to(dome.rotation,{y:Math.PI*2,duration:600,repeat:-1,ease:'none'});
   })();
 
-  // --- environment: floating debris (parallax depth) ---
-  (function(){
-    const dmat=new THREE.MeshStandardMaterial({color:0x141019,metalness:.5,roughness:.7,flatShading:true});
-    for(let i2=0;i2<26;i2++){
-      const d=new THREE.Mesh(new THREE.TetrahedronGeometry(Math.random()*0.5+0.15,0),dmat);
-      const a2=Math.random()*Math.PI*2, rr=20+Math.random()*26;
-      d.position.set(Math.cos(a2)*rr, 1+Math.random()*10, Math.sin(a2)*rr);
-      d.rotation.set(Math.random()*3,Math.random()*3,0);
-      d.userData={sp:0.1+Math.random()*0.25,ph:Math.random()*6};
-      scene.add(d); debris.push(d);
+  // ---- dense dark pine forest ring ----
+  const forestGroup=new THREE.Group();
+  function createDarkPine(x,z,scale){
+    const tree=new THREE.Group();
+    const trunk=new THREE.Mesh(new THREE.CylinderGeometry(0.3*scale,0.5*scale,3*scale,8),darkWoodMat);
+    trunk.position.y=1.5*scale; trunk.castShadow=true; tree.add(trunk);
+    for(let i=0;i<4;i++){
+      const foliage=new THREE.Mesh(
+        new THREE.ConeGeometry((2.8-i*0.5)*scale,(3.2-i*0.4)*scale,8),darkPineMat);
+      foliage.position.y=(2.8+i*1.6)*scale;
+      foliage.castShadow=true;
+      tree.add(foliage);
     }
-  })();
+    tree.position.set(x,0,z);
+    return tree;
+  }
+  const treeCoords=[
+    [-33,25],[-36,-12],[-28,-29],[33,25],[37,-8],[30,-28],
+    [-41,30],[36,36],[-22,39],[22,41],[-43,-5],[41,-20],
+    [-30,-39],[30,-39],[0,-43],[-14,-42],[14,-44],[44,8],[-45,12],
+    [8,46],[-8,45],[46,-32],[-46,-30],[40,40],[-40,42]
+  ];
+  treeCoords.forEach(c=>{
+    forestGroup.add(createDarkPine(c[0],c[1],0.9+Math.random()*0.6));
+  });
+  scene.add(forestGroup);
 
-  // --- environment: glowing ground disc under the nexus ---
-  (function(){
-    const c=document.createElement('canvas'); c.width=512; c.height=512;
-    const g2=c.getContext('2d');
-    const gr=g2.createRadialGradient(256,256,10,256,256,256);
-    gr.addColorStop(0,'rgba(224,141,109,0.16)');
-    gr.addColorStop(0.35,'rgba(120,60,80,0.12)');
-    gr.addColorStop(1,'rgba(0,0,0,0)');
-    g2.fillStyle=gr; g2.fillRect(0,0,512,512);
-    const disc=new THREE.Mesh(new THREE.CircleGeometry(26,48),
-      new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c),transparent:true,
-        depthWrite:false,blending:THREE.AdditiveBlending}));
-    disc.rotation.x=-Math.PI/2; disc.position.y=0.03; scene.add(disc);
-  })();
-
-  // stations with REAL monster models (Quaternius, CC0); procedural fallback
-  const R=15; loader=(typeof THREE.GLTFLoader!=='undefined')?new THREE.GLTFLoader():null;
+  // ---- 5 elemental floating platforms, one per unit, ring radius RING_R ----
+  loader=(typeof THREE.GLTFLoader!=='undefined')?new THREE.GLTFLoader():null;
   NAMES.forEach((name,i)=>{
     const u=UNITS[name], col=new THREE.Color(u.color);
-    const ang=(i/NAMES.length)*Math.PI*2, x=Math.cos(ang)*R, z=Math.sin(ang)*R;
-    const g=new THREE.Group(); g.position.set(x,0,z); g.userData={gi:i}; groups.push(g);
-    const yoff=(i%2?0.55:0)+(i===2?0.9:0);
-    g.position.y=yoff;
-    const base=new THREE.Mesh(new THREE.CylinderGeometry(3.6,4.1,.5,6),
-      new THREE.MeshStandardMaterial({color:0x0d0810,metalness:.6,roughness:.8}));
-    base.position.y=-.42; base.rotation.y=0.26; g.add(base);
-    const p=new THREE.Mesh(new THREE.CylinderGeometry(3,3.2,.6,6),
-      new THREE.MeshStandardMaterial({color:0x180f16,metalness:.8}));
-    g.add(p);
-    const rimL=new THREE.PointLight(col,1.1,10); rimL.position.set(0,2.6,-2.6); g.add(rimL);
-    g.userData.bobPhase=i*1.7; g.userData.baseY=yoff;
-    const ringG=new THREE.TorusGeometry(3.1,.06,16,6); ringG.rotateX(Math.PI/2);
-    const ring=new THREE.Mesh(ringG,new THREE.MeshBasicMaterial({color:col,transparent:true}));
-    ring.position.y=.35; g.add(ring); rings.push(ring);
-    // beacon column of light rising from the platform
-    const beam=new THREE.Mesh(new THREE.CylinderGeometry(0.8,1.7,11,24,1,true),
-      new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:0.028,
-        side:THREE.DoubleSide,depthWrite:false,blending:THREE.AdditiveBlending}));
-    beam.position.y=8; g.add(beam); beams.push(beam);
-    const holder=new THREE.Group(); holder.position.y=1.1;
-    holder.userData={i,baseY:1.1}; g.add(holder); monsters.push(holder);
-    const fallback=()=>{ const m=makeMonster(u.shape,col); m.position.y=2.3; holder.add(m); };
+    const ang=(i/NAMES.length)*Math.PI*2;
+    const x=Math.cos(ang)*RING_R, z=Math.sin(ang)*RING_R;
+
+    const platformGroup=new THREE.Group();
+    platformGroup.userData={gi:i};
+    groups.push(platformGroup);
+
+    // tiered floating stone base
+    const base1=new THREE.Mesh(new THREE.CylinderGeometry(3.2,2.6,0.7,12),stoneMat);
+    base1.position.y=0; base1.castShadow=true; base1.receiveShadow=true;
+    platformGroup.add(base1);
+    const base2=new THREE.Mesh(new THREE.CylinderGeometry(2.6,2.8,0.4,12),cobblestoneMat);
+    base2.position.y=0.55; base2.castShadow=true; base2.receiveShadow=true;
+    platformGroup.add(base2);
+
+    // glowing rune ring in the unit's color
+    const runeMat=new THREE.MeshBasicMaterial({color:col,side:THREE.DoubleSide,
+      transparent:true,opacity:0.85});
+    const ring=new THREE.Mesh(new THREE.RingGeometry(2.0,2.25,32),runeMat);
+    ring.rotation.x=-Math.PI/2; ring.position.y=0.76;
+    platformGroup.add(ring);
+
+    // torch pillar with a small flame in the unit's color
+    const torchPillar=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.25,1.8,8),darkWoodMat);
+    torchPillar.position.set(2.2,1.3,0); torchPillar.castShadow=true;
+    platformGroup.add(torchPillar);
+    const flame=new THREE.Mesh(new THREE.ConeGeometry(0.22,0.55,8),
+      new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:0.9}));
+    flame.position.set(2.2,2.45,0); platformGroup.add(flame);
+    const torchLight=new THREE.PointLight(col,2.2,12);
+    torchLight.position.set(2.2,2.3,0);
+    platformGroup.add(torchLight);
+    torchLights.push({light:torchLight,baseIntensity:2.2});
+
+    // pulsing underglow light and core disk
+    const underLight=new THREE.PointLight(col,3.5,14);
+    underLight.position.set(0,-0.4,0);
+    platformGroup.add(underLight);
+    const glowDiskMat=new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:0.85});
+    const glowDisk=new THREE.Mesh(new THREE.CylinderGeometry(2.2,0.5,0.2,16),glowDiskMat);
+    glowDisk.position.y=-0.45; platformGroup.add(glowDisk);
+
+    const baseY=2.0;
+    platformGroup.position.set(x,baseY,z);
+    scene.add(platformGroup);
+
+    // bioluminescent plant cluster on the ground beneath, same color
+    const plantGroup=new THREE.Group();
+    plantGroup.position.set(x,0,z);
+    const plantMat=new THREE.MeshStandardMaterial({color:col,roughness:0.3,
+      emissive:col,emissiveIntensity:0.6});
+    for(let k=0;k<9;k++){
+      const pang=(k/9)*Math.PI*2+Math.random()*0.5;
+      const dist=1.2+Math.random()*2.2;
+      const px=Math.cos(pang)*dist, pz=Math.sin(pang)*dist;
+      const plantHeight=0.8+Math.random()*1.2;
+      const stem=new THREE.Mesh(new THREE.ConeGeometry(0.18,plantHeight,5),plantMat);
+      stem.position.set(px,plantHeight/2,pz);
+      stem.rotation.x=(Math.random()-0.5)*0.4;
+      stem.rotation.z=(Math.random()-0.5)*0.4;
+      stem.castShadow=true;
+      plantGroup.add(stem);
+      const tip=new THREE.Mesh(new THREE.SphereGeometry(0.12,8,8),
+        new THREE.MeshBasicMaterial({color:col}));
+      tip.position.set(px,plantHeight,pz);
+      plantGroup.add(tip);
+      animatedPlants.push({mesh:stem,baseRotZ:stem.rotation.z,offset:k+i});
+    }
+    scene.add(plantGroup);
+
+    // the monster standing on top
+    const holder=new THREE.Group();
+    holder.position.y=0.95;
+    holder.userData={i:i};
+    platformGroup.add(holder);
+    monsters.push(holder);
+    const fallback=()=>{
+      const m=makeMonster(u.shape,col); m.position.y=1.5;
+      m.traverse(o=>{ if(o.isMesh) o.castShadow=true; });
+      holder.add(m);
+    };
     if(loader && u.model){
-      loader.load((window.__ORIGIN||'')+u.model, (gltf)=>{
+      loader.load((window.__ORIGIN||'')+u.model,(gltf)=>{
         const obj=gltf.scene;
         const box=new THREE.Box3().setFromObject(obj);
         const size=box.getSize(new THREE.Vector3());
-        const scale=4.7/Math.max(size.x,size.y,size.z,0.001);
+        const scale=2.6/Math.max(size.x,size.y,size.z,0.001);
         obj.scale.setScalar(scale);
         const box2=new THREE.Box3().setFromObject(obj);
         const c=box2.getCenter(new THREE.Vector3());
         obj.position.x-=c.x; obj.position.z-=c.z; obj.position.y-=box2.min.y;
+        obj.traverse(o=>{ if(o.isMesh) o.castShadow=true; });
         holder.add(obj);
         if(gltf.animations && gltf.animations.length){
           const mix=new THREE.AnimationMixer(obj);
@@ -508,28 +687,33 @@ function init(){
           const act=mix.clipAction(idle); act.timeScale=(u.spA||0.8); act.play();
           mixers.push(mix);
         }
-      }, undefined, fallback);
+      },undefined,fallback);
     } else fallback();
-    const lt=new THREE.PointLight(col,1.5,14); lt.position.y=3.2; g.add(lt);
-    // a soft warm spotlight straight above the monster so it reads against the dark
-    const spot=new THREE.SpotLight(0xfff3e0, 3.6, 24, Math.PI/4, 0.5, 1);
-    spot.position.set(0,8.5,0.6); spot.target=holder; g.add(spot); g.add(spot.target);
-    scene.add(g);
+
+    stations.push({group:platformGroup,holder:holder,ring:ring,underLight:underLight,
+      glowDiskMat:glowDiskMat,baseY:baseY,phaseOffset:i*1.25,ang:ang,x:x,z:z});
   });
 
-  // dust
-  const n=900,geo=new THREE.BufferGeometry(),pos=new Float32Array(n*3);
-  for(let i=0;i<n*3;i+=3){pos[i]=(Math.random()-.5)*100;pos[i+1]=Math.random()*38-4;pos[i+2]=(Math.random()-.5)*100;}
-  geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
-  scene.add(new THREE.Points(geo,new THREE.PointsMaterial({size:.1,color:0xe0a888,transparent:true,opacity:.35})));
+  // ---- rising embers ----
+  particleGeo=new THREE.BufferGeometry();
+  const particlePos=new Float32Array(PARTICLE_COUNT*3);
+  for(let i=0;i<PARTICLE_COUNT;i++){
+    particlePos[i*3]=(Math.random()-0.5)*60;
+    particlePos[i*3+1]=Math.random()*20;
+    particlePos[i*3+2]=(Math.random()-0.5)*60;
+  }
+  particleGeo.setAttribute('position',new THREE.BufferAttribute(particlePos,3));
+  const embers=new THREE.Points(particleGeo,new THREE.PointsMaterial({
+    color:0xffcc55,size:0.2,transparent:true,opacity:0.75,
+    blending:THREE.AdditiveBlending,depthWrite:false}));
+  scene.add(embers);
 
-  composer=new THREE.EffectComposer(renderer);
-  composer.addPass(new THREE.RenderPass(scene,camera));
-  composer.addPass(new THREE.UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),0.75,.3,.32));
-
-  addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();
-    renderer.setSize(innerWidth,innerHeight);composer.setSize(innerWidth,innerHeight);});
-  addEventListener('click',onClick);
+  addEventListener('resize',()=>{
+    camera.aspect=innerWidth/innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth,innerHeight);
+  });
+  renderer.domElement.addEventListener('click',onClick);
 }
 
 function makeMonster(shape,col){
@@ -622,13 +806,17 @@ function onClick(e){
 function focus(i){
   if(selected===i) return; selected=i;
   const name=NAMES[i], u=UNITS[name];
-  const R=15, ang=(i/NAMES.length)*Math.PI*2;
-  const sx=Math.cos(ang)*R, sz=Math.sin(ang)*R;
-  gsap.to(camera.position,{x:Math.cos(ang)*(R+11),y:4.6,z:Math.sin(ang)*(R+11),duration:1.8,ease:"power3.inOut"});
-  monsters.forEach((m,j)=>{ gsap.to(m.scale,{x:j===i?1.6:1,y:j===i?1.6:1,z:j===i?1.6:1,duration:0.9,ease:"power2.out"}); });
-  gsap.to(monsters[i].rotation,{y:Math.PI/2-ang,duration:0.9,ease:'power2.out'});
-  gsap.to(look,{x:sx,y:3.4,z:sz,duration:1.8,ease:"power3.inOut",
-    onUpdate:()=>camera.lookAt(look.x,look.y,look.z)});
+  const st=stations[i], ang=st.ang;
+  controls.autoRotate=false;
+  // vantage: outside the ring, slightly above, looking at the monster
+  gsap.to(camera.position,{
+    x:Math.cos(ang)*(RING_R+12), y:8.5, z:Math.sin(ang)*(RING_R+12),
+    duration:1.8, ease:'power3.inOut'});
+  gsap.to(controls.target,{
+    x:st.x, y:st.baseY+2.0, z:st.z,
+    duration:1.8, ease:'power3.inOut'});
+  // turn the monster to face the camera
+  gsap.to(st.holder.rotation,{y:Math.PI/2-ang,duration:0.9,ease:'power2.out'});
   const card=document.getElementById('card');
   card.style.setProperty('--mc',u.color);
   document.getElementById('c-unit').textContent=name.toUpperCase()+' UNIT';
@@ -646,22 +834,58 @@ function focus(i){
 
 function resetCamera(){
   selected=null; document.getElementById('card').classList.remove('active');
-  gsap.to(camera.position,{x:CAM.x,y:CAM.y,z:CAM.z,duration:1.8,ease:"power2.inOut"});
-  monsters.forEach(m=>gsap.to(m.scale,{x:1,y:1,z:1,duration:0.7}));
-  gsap.to(look,{x:0,y:0,z:0,duration:1.8,ease:"power2.inOut",
-    onUpdate:()=>camera.lookAt(look.x,look.y,look.z)});
+  gsap.to(camera.position,{x:HOME.x,y:HOME.y,z:HOME.z,duration:1.8,ease:'power2.inOut'});
+  gsap.to(controls.target,{x:HOME_T.x,y:HOME_T.y,z:HOME_T.z,duration:1.8,ease:'power2.inOut',
+    onComplete:()=>{ controls.autoRotate=true; }});
 }
 
-function animate(time){
+function animate(){
   requestAnimationFrame(animate);
-  const t=(time||0)*0.001, dt=Math.min(0.05, t-prevT); prevT=t;
+  const dt=Math.min(0.05,clock.getDelta());
+  const time=clock.getElapsedTime();
+
   mixers.forEach(m=>m.update(dt));
-  rings.forEach((r2,ri)=>{ r2.material.opacity=0.75+Math.sin(t*1.6+ri)*0.25; });
-  groups.forEach((gg)=>{ gg.position.y=gg.userData.baseY+Math.sin(t*0.55+gg.userData.bobPhase)*0.22; });
-  debris.forEach((d)=>{ d.rotation.y+=dt*d.userData.sp; d.rotation.x+=dt*d.userData.sp*0.6;
-    d.position.y+=Math.sin(t*0.4+d.userData.ph)*0.004; });
-  beams.forEach((b,bi)=>{ b.material.opacity=0.022+Math.sin(t*0.9+bi*1.3)*0.01;
-    b.rotation.y+=dt*0.15; });
+
+  // torch flicker (gate torches + platform torches)
+  torchLights.forEach((t,i)=>{
+    t.light.intensity=t.baseIntensity+Math.sin(time*12+i)*0.4+(Math.random()-0.5)*0.3;
+  });
+
+  // hover bob, pulsing underglow, spinning rune rings
+  stations.forEach((p)=>{
+    const hoverOffset=Math.sin(time*2.0+p.phaseOffset)*0.35;
+    p.group.position.y=p.baseY+hoverOffset;
+    const pulse=Math.sin(time*4.0+p.phaseOffset)*0.5+0.5;
+    p.underLight.intensity=2.0+pulse*2.5;
+    p.glowDiskMat.opacity=0.5+pulse*0.45;
+    p.ring.rotation.z=time*0.4+p.phaseOffset;
+  });
+
+  // sway bioluminescent plants
+  animatedPlants.forEach((plant)=>{
+    plant.mesh.rotation.z=plant.baseRotZ+Math.sin(time*2.5+plant.offset)*0.08;
+  });
+
+  // gate seal breathes: the citadel is locked from the outside
+  if(sealRing){
+    const sp=Math.sin(time*1.4)*0.5+0.5;
+    sealRing.material.opacity=0.35+sp*0.35;
+    sealRing.rotation.z=time*0.25;
+    sealLight.intensity=1.0+sp*0.9;
+  }
+
+  // rising embers
+  const pArr=particleGeo.attributes.position.array;
+  for(let i=0;i<PARTICLE_COUNT;i++){
+    pArr[i*3+1]+=0.015;
+    if(pArr[i*3+1]>20) pArr[i*3+1]=0;
+  }
+  particleGeo.attributes.position.needsUpdate=true;
+
+  // idle spin for unselected monsters
+  monsters.forEach((m,i)=>{
+    if(selected!==i) m.rotation.y+=0.0035;
+  });
 
   if(miniMix) miniMix.update(dt);
   if(miniObj){
@@ -670,19 +894,11 @@ function animate(time){
   }
   if(miniR && document.getElementById('card').classList.contains('active'))
     miniR.render(miniScene,miniCam);
-  monsters.forEach((m,i)=>{
-    if(selected===null) m.rotation.y+=0.0035;           // slow spin, nexus view only
-    if(selected!==i) m.position.y=m.userData.baseY+Math.sin(t*2+i)*.2;
-  });
-  // slow nexus orbit while nothing selected
-  if(selected===null){
-    const a=t*0.015;
-    camera.position.x=Math.sin(a)*34; camera.position.z=Math.cos(a)*34;
-    camera.lookAt(0,0,0);
-  }
-  composer.render();
+
+  controls.update();
+  renderer.render(scene,camera);
 }
-window.resetCamera = resetCamera;
+
 // hero name: ask once, remember forever
 (function(){
   const box=document.getElementById('herobox'), tag=document.getElementById('herotag');
@@ -694,13 +910,15 @@ window.resetCamera = resetCamera;
     const n=document.getElementById('heroname').value.trim();
     if(n){ localStorage.setItem('gwb_hero', n); show(n); } };
 })();
+window.resetCamera = resetCamera;
 window.__focus = focus;
+
 });
 </script>
 """
 
 
-_VENDOR_FILES = ["three.min.js", "gsap.min.js", "EffectComposer.js", "RenderPass.js",
+_VENDOR_FILES = ["three.min.js", "gsap.min.js", "OrbitControls.js", "EffectComposer.js", "RenderPass.js",
                  "ShaderPass.js", "CopyShader.js", "LuminosityHighPassShader.js",
                  "UnrealBloomPass.js", "GLTFLoader.js"]
 _vendor_cache = None  # dict of tuple(files)->joined script tags
@@ -1180,7 +1398,26 @@ def encounter_stage():
         padding:0 0 1rem 0 !important; max-width:100% !important}
       [data-testid="stElementContainer"]:has(iframe){width:100% !important}
     </style>""", unsafe_allow_html=True)
-    components.html(_encounter_html(mon, st.session_state.get("player_name", "challenger")),
+    mem_key = f"enc_line_{strand}"
+    if mem_key not in st.session_state:
+        facts = {
+            "mastered_tricks": st.session_state.get("mastered_names", []),
+            "defeated_monsters": [r.get("monster", "") for r in st.session_state.get("relics", [])],
+            "last_score": st.session_state.get("last_score", ""),
+            "attempts_here": st.session_state.get(f"visits_{strand}", 0),
+        }
+        st.session_state[f"visits_{strand}"] = facts["attempts_here"] + 1
+        if any([facts["mastered_tricks"], facts["defeated_monsters"], facts["last_score"]]):
+            with st.spinner("It recognizes you..."):
+                st.session_state[mem_key] = rewards.battle_memory_line(
+                    st.session_state.get("player_name", "challenger"),
+                    mon["monster"], facts)
+        else:
+            st.session_state[mem_key] = ""
+    mon_l = dict(mon)
+    if st.session_state.get(mem_key):
+        mon_l["lines"] = [st.session_state[mem_key]] + list(mon.get("lines", []))
+    components.html(_encounter_html(mon_l, st.session_state.get("player_name", "challenger")),
                     height=520, scrolling=False)
     mid = st.columns([2, 2, 2])
     if mid[1].button(f"FACE {mon['monster'].upper()}", type="primary",
@@ -1276,6 +1513,7 @@ def results():
         st.title("The Battle Report")
     else:
         st.title("Results")
+    st.session_state.last_score = f"{result['correct']} of {result['total']}"
     st.metric("Score", f"{result['correct']} / {result['total']}", f"{result['score_pct']}%")
 
     if not result["wrong"]:
@@ -1483,6 +1721,21 @@ def mastery_stage():
     if s.state == m.MASTERED:
         # remember it: the results page now shows this gap as closed
         st.session_state.setdefault("mastered", set()).add(s.trick_id)
+        st.session_state.setdefault("mastered_names", []).append(s.trick_name)
+        relic_key = f"relic_{s.trick_id}"
+        if relic_key not in st.session_state:
+            gmon = monster_for(s.strand) or {}
+            tried = [h["strategy"] for h in s.history if h["kind"] == "lesson"]
+            with st.spinner("The monster drops something..."):
+                st.session_state[relic_key] = rewards.forge_relic(
+                    st.session_state.get("player_name", "challenger"),
+                    gmon.get("monster", "the monster"), s.trick_name,
+                    s.attempts, tried)
+            st.session_state.setdefault("relics", []).append(
+                {**st.session_state[relic_key], "monster": gmon.get("monster", "")})
+        _relic = st.session_state[relic_key]
+        note("IT DROPS A RELIC",
+             f"<strong>{_relic['name']}</strong> — {_relic['power']}")
         note("Why the agent declared mastery",
              "Two fresh questions in a row, answered correctly — and your reasoning showed "
              "real understanding, not a lucky guess. That's the evidence bar for mastery.")
