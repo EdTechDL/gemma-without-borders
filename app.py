@@ -1612,6 +1612,11 @@ html,body{margin:0;background:#050308;overflow:hidden;font-family:'Trebuchet MS'
   letter-spacing:.2em;color:#cfd4ff;text-shadow:0 0 18px #6672ff}
 #bsub{position:absolute;top:52px;left:19px;font-size:.7rem;letter-spacing:.16em;color:#8a86a8}
 #lives{position:absolute;top:16px;right:18px;display:flex;gap:7px}
+#bmute{position:absolute;top:44px;right:18px;pointer-events:auto;cursor:pointer;
+  background:rgba(20,12,22,.72);border:1px solid #3a2a35;border-radius:14px;
+  color:#cbbfd6;font:700 .58rem/1 'Trebuchet MS',sans-serif;letter-spacing:.14em;
+  padding:6px 10px}
+#bmute:hover{color:#ffefdd;border-color:#e08d6d}
 .pip{width:20px;height:20px;background:linear-gradient(135deg,#ff6b6b,#a8434f);
   border-radius:4px;transform:rotate(45deg);box-shadow:0 0 10px #ff6b6b88}
 .pip.gone{background:#241a22;box-shadow:none}
@@ -1639,6 +1644,7 @@ html,body{margin:0;background:#050308;overflow:hidden;font-family:'Trebuchet MS'
     <div id="btitle">THE COLLECTOR</div>
     <div id="bsub">HE TESTS WHAT SHOULD ALREADY BE YOURS</div>
     <div id="lives"><div class="pip"></div><div class="pip"></div><div class="pip"></div></div>
+    <button id="bmute">SOUND: ON</button>
     <div id="bline">So. __HERO__. The one the little ones whisper about. Answer fast - I have no patience for slow minds.</div>
     <div id="qbox">
       <div id="qq"></div>
@@ -1675,6 +1681,47 @@ window.addEventListener('load', function(){
       g.gain.setValueAtTime(0.12,c.currentTime+i*0.12);
       g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+i*0.12+(won?0.9:1.4));
       o.stop(c.currentTime+i*0.12+1.5); });}catch(e){} }
+
+  // ---- the Collector's theme: loops for as long as he holds the room ----
+  // Fetched as a blob because Streamlit serves .mp3 with a text content type
+  // that the browser refuses to play directly. Same mute switch as the citadel.
+  (function(){
+    const VOL=0.26;
+    let theme=null, started=false;
+    function begin(){
+      if(started || __gmMuted()) return;
+      started=true;
+      fetch((window.__ORIGIN||'')+'/app/static/audio/collector-theme.mp3')
+        .then(r=>r.blob())
+        .then(b=>{
+          theme=new Audio(URL.createObjectURL(new Blob([b],{type:'audio/mpeg'})));
+          theme.loop=true; theme.volume=0;
+          theme.play().catch(function(){});
+          let fade=0;
+          const t=setInterval(function(){
+            fade=Math.min(1,fade+0.05);
+            if(theme) theme.volume=VOL*fade;
+            if(fade>=1) clearInterval(t);
+          },110);
+        }).catch(function(){ started=false; });
+    }
+    // autoplay may need a gesture in this frame: try now, else on first input
+    begin();
+    addEventListener('pointerdown',begin);
+    addEventListener('keydown',begin);
+
+    const mb=document.getElementById('bmute');
+    function paint(){ if(mb) mb.textContent=__gmMuted()?'SOUND: OFF':'SOUND: ON'; }
+    paint();
+    if(mb) mb.addEventListener('click',function(){
+      const muting=!__gmMuted();
+      try{ localStorage.setItem('gm_mute',muting?'1':'0'); }catch(e){}
+      if(muting){ if(theme) theme.pause(); }
+      else if(theme){ theme.play().catch(function(){}); }
+      else { begin(); }
+      paint();
+    });
+  })();
 
   const W=innerWidth,H=innerHeight;
   const r=new THREE.WebGLRenderer({antialias:true});
