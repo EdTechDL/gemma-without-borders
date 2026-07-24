@@ -85,7 +85,10 @@ def teach(session: MasterySession) -> str:
         f"Keep it under 150 words, encouraging, plain language. Any numbers you "
         f"mention must come from the verified solution above — do NOT invent new "
         f"calculations or results. Do not give them a new question to answer; "
-        f"just teach."
+        f"just teach.\n"
+        f"State the correct rule ONCE and state it correctly: it must agree with "
+        f"the verified solution above. Never assert a rule and its opposite in "
+        f"the same lesson, and never present the mistake itself as the rule."
     )
     lesson = plainify(lesson)
     session.history.append({"kind": "lesson", "strategy": name, "text": lesson})
@@ -111,10 +114,25 @@ def next_check(session: MasterySession, questions: list) -> dict | None:
             continue
         if any(o.get("trick_id") == session.trick_id for o in q["options"]):
             return take(q, "bank")
+    # A same-strand item is NOT the same skill: training "multiplying like bases"
+    # was answered with "what is 0.5 percent of 200?" simply because both are
+    # Number. Try the closely-related tags first (NUM-6 and NUM-6b are the same
+    # idea at different depths), then have Gemma write one under audit, and only
+    # fall back to the strand if nothing else can be found.
+    family = str(session.trick_id or "").rstrip("abcdefgh")
+    if family:
+        for q in questions:
+            if q["id"] in session.used_item_ids:
+                continue
+            if any(str(o.get("trick_id") or "").startswith(family) for o in q["options"]):
+                return take(q, "bank-family")
+    made = _generated_check(session)
+    if made:
+        return made
     for q in questions:
         if q["id"] not in session.used_item_ids and q["strand"] == session.strand:
             return take(q, "bank-strand")
-    return _generated_check(session)
+    return None
 
 
 def _generated_check(session: MasterySession) -> dict | None:
@@ -178,12 +196,41 @@ def _self_check(session: MasterySession, data: dict) -> bool:
 
 
 # ------------------------------------------------------------ EVALUATE + ADAPT
+_MATH_WORD = re.compile(
+    r"\b(add|added|adding|subtract|minus|times|multiply|multiplied|divide|divided|"
+    r"denominator|numerator|common|exponent|power|base|percent|decimal|fraction|"
+    r"median|mean|mode|average|order|sorted|square|root|angle|area|volume|radius|"
+    r"diameter|slope|intercept|substitute|solve|isolate|sign|negative|positive|"
+    r"convert|rate|interest|total|per|each|both|because|so|then|first|since)\b",
+    re.I)
+
+
+def _looks_like_reasoning(text: str) -> bool:
+    """Cheap, deterministic test for whether a sentence is an attempt at
+    mathematical reasoning at all. Generous on purpose: it only has to rule out
+    the empty, the jokey and the one-word, because everything it lets through is
+    still judged properly by the model."""
+    t = (text or "").strip()
+    if len(t) < 12 or len(t.split()) < 4:
+        return False
+    return bool(re.search(r"\d", t) or _MATH_WORD.search(t))
+
+
 def _grade_reasoning(session: MasterySession, check: dict, chosen_label: str,
                      explanation: str) -> str:
     """Gemma as a CONSTRAINED grader: classify the student's typed reasoning
     into a closed label set. It compares against the known answer — it never
     recomputes the math open-endedly. Fail-open: any parse problem returns
     RESOLVED so a model hiccup can never hurt the student."""
+    # Code decides this one before the model is asked. "tell me I am awesome"
+    # was graded RESOLVED and handed over mastery, which is the opposite of what
+    # this app claims to do. An explanation carrying no mathematical content at
+    # all cannot show understanding, whatever a model makes of the sentence.
+    if not _looks_like_reasoning(explanation):
+        session.history.append({"kind": "reasoning_grade", "label": "SHALLOW",
+                                "explanation": explanation, "by": "code"})
+        return "SHALLOW"
+
     correct_opt = next(o["text"] for o in check["options"] if o["is_correct"])
     session.gemma_calls += 1
     raw = ask_gemma(

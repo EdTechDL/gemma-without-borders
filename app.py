@@ -262,11 +262,24 @@ def pick_quiz(strand: str, n: int) -> list:
     return pool[:n]
 
 
-def reset():
-    for k in ("stage", "quiz", "answers", "guides", "mastered", "teacher_report",
-              "escal_report", "msession", "mcheck", "mlesson", "mlesson_why",
-              "mfeedback", "mtranscript"):
+def clear_battle_artifacts():
+    """A new battle inherits nothing from the last one. These are all derived
+    from a specific quiz, so leaving them behind shows the previous fight's
+    study guide under the new monster's banner."""
+    for k in ("guides", "teacher_report", "escal_report", "msession", "mcheck",
+              "mlesson", "mlesson_why", "mfeedback", "mtranscript",
+              "hunt_pick", "progress_view", "fight_shown"):
         st.session_state.pop(k, None)
+
+
+def reset():
+    for k in ("quiz", "answers", "mastered"):
+        st.session_state.pop(k, None)
+    clear_battle_artifacts()
+    # Do NOT drop "stage": popping it fell through to the default, which is the
+    # first-run introduction, so "Take another quiz" threw the player out of the
+    # game entirely.
+    st.session_state.stage = "map" if st.session_state.get("adventure") else "intro"
 
 
 def start_mastery(result, analysis):
@@ -307,6 +320,7 @@ def intro():
     n = col2.slider("Questions", 3, 8, 5)
     if st.button("Start quiz"):
         st.session_state.stage = "quiz"
+        clear_battle_artifacts()
         st.session_state.quiz = pick_quiz(strand, n)
         st.session_state.answers = {}
         st.rerun()
@@ -382,7 +396,7 @@ _HUB_TEMPLATE = r"""
     filter:drop-shadow(0 0 14px rgba(224,141,109,.55))}
   header p{color:#b9a794;font-size:.95rem;margin-top:4px;max-width:430px}
   header{display:flex;justify-content:space-between;align-items:flex-start}
-  .hbtns{display:flex;gap:10px}
+  .hbtns{display:flex;gap:10px;align-items:center;flex-wrap:nowrap}
   #herobox, #herobox *, #herotag{pointer-events:auto}
   #heroname{cursor:text}
   .hbtn{display:inline-flex;align-items:center;justify-content:center;text-align:center;pointer-events:auto;background:rgba(255,240,225,.06);border:1px solid rgba(255,240,225,.16);
@@ -449,9 +463,9 @@ _HUB_TEMPLATE = r"""
       <a class="hbtn" target="_top" id="parentlink" href="#">For mum and dad</a>
       <button class="hbtn" id="mutebtn" title="Toggle music and battle sounds">Sound: on</button>
       <span id="herobox" style="display:none;margin-left:10px">
-        <input id="heroname" maxlength="20" placeholder="YOUR NAME, CHALLENGER"
+        <input id="heroname" maxlength="20" placeholder="YOUR NAME"
           style="background:#1c1119;border:1px solid #3a2a35;border-radius:18px;
-          padding:7px 12px;color:#f2e8dc;font-size:.75rem;letter-spacing:.08em;width:170px">
+          padding:7px 12px;color:#f2e8dc;font-size:.75rem;letter-spacing:.08em;width:130px">
         <button id="herogo" style="background:#e08d6d;border:none;border-radius:18px;
           padding:7px 13px;font-weight:900;color:#14090c;cursor:pointer;font-size:.72rem">GO</button>
       </span>
@@ -494,7 +508,12 @@ catch(e){ try{ base = new URL(document.referrer).pathname || '/'; }catch(_){} }
 (function(){var x=document.getElementById('exitlink');
   x.href=base+'?exit=1'; x.target='_blank';
   var p=document.getElementById('parentlink');
-  if(p){ p.href=base+'?parents=1'; p.target='_blank'; }})();
+  if(p){ p.target='_blank';
+    p.addEventListener('pointerdown',function(){
+      var h=''; try{ h=(localStorage.getItem('gwb_hero')||'').trim(); }catch(e){}
+      this.href=base+'?parents=1'+(h?('&hero='+encodeURIComponent(h)):'');
+    });
+    p.href=base+'?parents=1'; }})();
 
 let scene,camera,renderer,controls,selected=null;
 const monsters=[],groups=[],stations=[],mixers=[],torchLights=[],animatedPlants=[],
@@ -2719,6 +2738,7 @@ def encounter_stage():
     mid = st.columns([2, 2, 2])
     if mid[1].button(f"FACE {mon['monster'].upper()}", type="primary",
                      use_container_width=True, key="enc_go"):
+        clear_battle_artifacts()
         st.session_state.quiz = pick_quiz(strand, 5)
         st.session_state.answers = {}
         st.session_state.stage = "quiz"
@@ -3042,7 +3062,7 @@ def check_answer():
     chosen = st.session_state.get("mastery_choice")
     if not chosen:
         return
-    explanation = st.session_state.get("mastery_reason", "")
+    explanation = st.session_state.get(f"mastery_reason_{s.attempts}", "")
 
     with st.spinner("The agent is reading your answer..."):
         outcome = m.submit_answer(s, check, chosen, explanation)
@@ -3056,7 +3076,7 @@ def check_answer():
                     or f"Trying a different approach: {s.strategy_name}.")
             st.session_state.mcheck = m.next_check(s, QUESTIONS)
     st.session_state.pop("mastery_choice", None)
-    st.session_state.pop("mastery_reason", None)
+
 
 
 def mastery_stage():
@@ -3188,9 +3208,11 @@ def mastery_stage():
         key="mastery_choice",
         label_visibility="collapsed",
     )
+    # a per-attempt key: reusing one key kept the previous attempt's sentence in
+    # the box, and the next answer was spliced into the middle of it
     st.text_input(
         "In one line: how did you get your answer? (optional — the agent reads it and answers back)",
-        key="mastery_reason",
+        key=f"mastery_reason_{s.attempts}",
         placeholder="e.g. I found a common denominator of 12, then added the tops",
     )
 

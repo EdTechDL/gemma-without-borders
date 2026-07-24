@@ -104,7 +104,8 @@ ONBOARDING_TEMPLATE = r"""
     background:linear-gradient(135deg,#e08d6d,#b8604a);
     box-shadow:0 8px 22px rgba(224,141,109,.4)}
   .prime:hover{transform:translateY(-2px)}
-  #enter{display:none;background:linear-gradient(135deg,#ffd87a,#e08d6d);
+  .hint{display:none;color:#cbb8a4;font-size:.78rem;letter-spacing:.04em}
+  #enterOLD{display:none;background:linear-gradient(135deg,#ffd87a,#e08d6d);
     box-shadow:0 10px 28px rgba(255,216,122,.45)}
   #dots{display:flex;gap:9px}
   .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,240,225,.2);
@@ -157,10 +158,10 @@ ONBOARDING_TEMPLATE = r"""
     </div>
     <div id="labels"></div>
     <div id="bar">
-      <span class="ghost" id="skip" style="visibility:hidden">Skip intro</span>
+      <span id="skip" style="display:none"></span>
       <div id="dots"></div>
       <button class="prime" id="next">Next</button>
-      <span class="prime" id="enter">Scroll down to enter</span>
+      <span id="enter" class="hint">The buttons below this scene take you in</span>
     </div>
   </div>
 </div>
@@ -648,7 +649,7 @@ window.addEventListener('load', function(){
     // explicit values both ways: an empty string would fall back to the
     // stylesheet, and the stylesheet keeps the final control hidden
     nextBtn.style.display=(step>=STEPS)?'none':'inline-flex';
-    enterA.style.display=(step>=STEPS)?'inline-flex':'none';
+    enterA.style.display=(step>=STEPS)?'inline-block':'none';
 
     layout();
   }
