@@ -1,0 +1,11 @@
+[
+ {
+  "n": 1,
+  "title": "After the quiz \u2014 Percent\u2013decimal conversion error",
+  "body": "**Parent report** \u2014 scored 3 of 5 (60%). The trick that caught them most: **Percent\u2013decimal conversion error**.\n\nDear Parents,\n\nWe've noticed your child is sometimes mixing up percentages and decimals when solving problems. This suggests they might be thinking of a percentage as representing something different than its actual decimal equivalent, which can lead to calculation errors.\n\n**Try at home**\n\n- Find the price of three items in your pantry (e.g., cereal, bread, milk). Calculate 10% of each price and write it down as both a percentage and a decimal.\n- Look for sales advertised with percentages (like \"20% off\"). Convert those percentages to decimals and calculate what the discounted price would be on an item costing $5.\n- Have your child explain, out loud, how to change 75% into a decimal and why that conversion is important when figuring out discounts or proportions.",
+  "kind": "quiz",
+  "trick_id": "FIN-9",
+  "trick_name": "Percent\u2013decimal conversion error",
+  "strand": "Financial Literacy"
+ }
+]

@@ -274,13 +274,21 @@ def scroll_to_top(token: str):
     if st.session_state.get("_scrolled") == token:
         return
     st.session_state._scrolled = token
-    components.html(
-        "<script>(function(){try{var d=window.parent.document;"
-        "window.parent.scrollTo({top:0,behavior:'instant'});"
-        "['section.main','[data-testid=\"stAppViewContainer\"]',"
-        "'[data-testid=\"stMain\"]','.main'].forEach(function(s){"
-        "var el=d.querySelector(s); if(el&&el.scrollTo) el.scrollTo(0,0);});"
-        "}catch(e){}})();</script>", height=0)
+    # Streamlit reserves a block for every component, so even a zero-height one
+    # leaves a dark band at the top of the page until something repaints it.
+    # Collapsed to nothing here, and still allowed to run its script.
+    st.markdown('<style>[class*="st-key-scrollfix"]{position:absolute;'
+                'height:0;min-height:0;margin:0;padding:0;overflow:hidden;'
+                'opacity:0;pointer-events:none}</style>',
+                unsafe_allow_html=True)
+    with st.container(key=f"scrollfix_{abs(hash(token)) % 100000}"):
+        components.html(
+            "<script>(function(){try{var d=window.parent.document;"
+            "window.parent.scrollTo({top:0,behavior:'instant'});"
+            "['section.main','[data-testid=\"stAppViewContainer\"]',"
+            "'[data-testid=\"stMain\"]','.main'].forEach(function(s){"
+            "var el=d.querySelector(s); if(el&&el.scrollTo) el.scrollTo(0,0);});"
+            "}catch(e){}})();</script>", height=0)
 
 
 def clear_battle_artifacts():

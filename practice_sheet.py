@@ -72,6 +72,41 @@ def build_sheet(trick_id: str, trick_name: str, strand: str, questions: list,
     }
 
 
+# --------------------------------------------------------------- FORMATTING
+# Bank working arrives as one dense sentence: "Subtract 2x from both sides:
+# 3x-3=9. Add 3 to both sides: 3x=12." A parent checking their child's page
+# should be able to run a finger down the steps, and an expression should not
+# be tighter than the prose around it.
+# No whitespace allowed around the sign: only a sign already written tight
+# gets opened up. That keeps 3x-3 and leaves "is -4" alone, where the minus
+# belongs to the number rather than joining two terms.
+_SP_DIGIT = re.compile(r"(?<=[0-9a-zA-Z\)])([+\-])(?=[0-9])")
+_SP_TERM = re.compile(r"(?<=[0-9\)])([+\-])(?=[a-zA-Z\(])")
+_SP_EQ = re.compile(r"\s*=\s*")
+_STEP = re.compile(r"(?<=[.;])\s+(?=[A-Z(√\d])")
+
+
+def _space_math(text: str) -> str:
+    """Breathe out the arithmetic without touching the words around it.
+
+    The lookarounds require a digit on one side of the sign, so 3x-3 opens up
+    and y-intercept does not.
+    """
+    t = str(text or "")
+    t = _SP_DIGIT.sub(r" \1 ", t)
+    t = _SP_TERM.sub(r" \1 ", t)
+    t = _SP_EQ.sub(" = ", t)
+    return re.sub(r"[ \t]{2,}", " ", t).strip()
+
+
+def _working_steps(text: str) -> list:
+    """One step per line, so the working reads as a method rather than a
+    paragraph."""
+    t = _space_math(text)
+    parts = [s.strip() for s in _STEP.split(t) if s.strip()]
+    return parts or ([t] if t else [])
+
+
 # ------------------------------------------------------------------- BANK
 def _bank_items(trick_id: str, trick_name: str, strand: str, questions: list,
                 want: int, exclude: set, topic: str = "") -> list:
@@ -322,6 +357,9 @@ ul.options li { margin: .15rem 0; }
 .answer { margin: 0; }
 .answer .label { letter-spacing: .04em; }
 .solution { margin: .2rem 0 0; font-size: .95rem; }
+ol.working { margin: .3rem 0 0; padding-left: 1.4rem; font-size: .95rem; }
+ol.working > li { margin: .1rem 0; }
+.src { font-size: .8rem; color: #6b645c; margin-left: .5rem; font-style: italic; }
 .key { page-break-before: always; break-before: page; }
 .key-note { font-size: .92rem; margin: 0 0 1.1rem; }
 .origin { font-size: .88rem; }
@@ -365,11 +403,12 @@ def _render(trick_name: str, strand: str, items: list) -> str:
     body = ['<ol class="sheet">']
     for item in items:
         body.append("<li>")
-        body.append(f'<p class="q">{_esc(item["question"])}</p>')
+        body.append(f'<p class="q">{_esc(_space_math(item["question"]))}</p>')
         if item.get("options"):
             body.append('<ul class="options">')
             for o in item["options"]:
-                body.append(f'<li>{_esc(o["label"])}) {_esc(o["text"])}</li>')
+                body.append(f'<li>{_esc(o["label"])}) '
+                            f'{_esc(_space_math(o["text"]))}</li>')
             body.append("</ul>")
         body.append('<div class="work"></div>')
         body.append("</li>")
@@ -384,13 +423,16 @@ def _render(trick_name: str, strand: str, items: list) -> str:
     for item in items:
         key.append("<li>")
         label = f'{_esc(item["correct"])}) ' if item.get("correct") else ""
+        tag = (' <span class="src">written by Gemma, self-checked</span>'
+               if item.get("source") == "generated" else "")
         key.append(f'<p class="answer"><span class="label">Answer:</span> '
-                   f'{label}{_esc(item.get("answer", ""))}</p>')
-        if item.get("solution"):
-            key.append(f'<p class="solution">Working: {_esc(item["solution"])}</p>')
-        elif item.get("source") == "generated":
-            key.append('<p class="solution origin">Written fresh by Gemma and '
-                       'checked by solving it again without the key.</p>')
+                   f'{label}{_esc(_space_math(item.get("answer", "")))}{tag}</p>')
+        steps = _working_steps(item.get("solution", ""))
+        if steps:
+            key.append('<ol class="working">')
+            for s in steps:
+                key.append(f"<li>{_esc(s)}</li>")
+            key.append("</ol>")
         key.append("</li>")
     key += ["</ol>", "</section>"]
 

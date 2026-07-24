@@ -160,5 +160,23 @@
   "trick_id": "ALG-2",
   "trick_name": "Negative-Sign Handling Error",
   "strand": "Algebra"
+ },
+ {
+  "n": 19,
+  "title": "After the quiz \u2014 Always Add in the Pythagorean Theorem",
+  "body": "**Parent report** \u2014 scored 4 of 5 (80%). The trick that caught them most: **Always Add in the Pythagorean Theorem**.\n\nDear Parents,\n\nWe've noticed your child is showing a consistent pattern when solving problems involving the Pythagorean Theorem \u2013 they seem to be automatically adding the numbers together instead of using the correct formula. This suggests they might be relying on a shortcut or familiar process without fully understanding the underlying mathematical relationship being applied.\n\n**Try at home**\n\n- Find three different rectangles around your house and measure their sides; then, write down the lengths and talk about how you'd find the diagonal if needed.\n- Draw several triangles (some right, some not) on a piece of paper and have your child identify which ones *could* use the Pythagorean Theorem.\n- Pick three numbers \u2013 one small, one medium, and one large \u2013 and ask your child to explain why adding them together wouldn't make sense in a geometry problem.",
+  "kind": "quiz",
+  "trick_id": "GEO-3",
+  "trick_name": "Always Add in the Pythagorean Theorem",
+  "strand": "Geometry & Measurement"
+ },
+ {
+  "n": 20,
+  "title": "After the quiz \u2014 Negative-Sign Handling Error",
+  "body": "**Parent report** \u2014 scored 1 of 5 (20%). The trick that caught them most: **Negative-Sign Handling Error**.\n\nDear Parents,\n\nWe've noticed your child is sometimes making a common mistake when working through math problems \u2013 they\u2019re having trouble keeping track of negative signs, which suggests they might be rushing or not fully thinking through each step before applying an operation. This often indicates that while they understand the general concepts, they need to slow down and double-check their work more carefully.\n\n**Try at home**\n\n- Use playing cards (remove face cards) \u2013 deal out a few, some positive and some negative, then have them combine pairs like \"+2 + (-3)\".\n- Write simple equations on paper using only numbers and signs (+,-,x,/): Have your child explain each step aloud before solving.\n- Pretend you're baking: Use ingredients as positives (flour + 2 cups) and taking away ingredients as negatives (subtract 1/2 cup sugar).",
+  "kind": "quiz",
+  "trick_id": "ALG-2",
+  "trick_name": "Negative-Sign Handling Error",
+  "strand": "Algebra"
  }
 ]
