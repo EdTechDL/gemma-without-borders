@@ -2,6 +2,7 @@
   {
     "id": "NUM-ITEM-01",
     "strand": "Number",
+    "topic": "powers and exponent laws",
     "difficulty": "Easy",
     "question": "Simplify 2 to the power 3 × 2 to the power 4.",
     "options": [
@@ -39,6 +40,7 @@
   {
     "id": "NUM-ITEM-02",
     "strand": "Number",
+    "topic": "powers and exponent laws",
     "difficulty": "Easy",
     "question": "Evaluate 2 to the power 3, all raised to the power 2.",
     "options": [
@@ -76,6 +78,7 @@
   {
     "id": "NUM-ITEM-03",
     "strand": "Number",
+    "topic": "powers and exponent laws",
     "difficulty": "Medium",
     "question": "Evaluate 3 to the power 0 + 2 to the power negative 2.",
     "options": [
@@ -113,6 +116,7 @@
   {
     "id": "NUM-ITEM-04",
     "strand": "Number",
+    "topic": "operations with rational numbers",
     "difficulty": "Medium",
     "question": "Calculate 2/3 + 1/4.",
     "options": [
@@ -150,6 +154,7 @@
   {
     "id": "NUM-ITEM-05",
     "strand": "Number",
+    "topic": "operations with rational numbers",
     "difficulty": "Easy",
     "question": "Evaluate (-3) - (-5).",
     "options": [
@@ -187,6 +192,7 @@
   {
     "id": "NUM-ITEM-06",
     "strand": "Number",
+    "topic": "percents and rates",
     "difficulty": "Medium",
     "question": "What is 0.5 percent of 200?",
     "options": [
@@ -224,6 +230,7 @@
   {
     "id": "NUM-ITEM-07",
     "strand": "Number",
+    "topic": "percents and rates",
     "difficulty": "Medium",
     "question": "15 is what percent of 60?",
     "options": [
@@ -261,6 +268,7 @@
   {
     "id": "NUM-ITEM-08",
     "strand": "Number",
+    "topic": "percents and rates",
     "difficulty": "Medium",
     "question": "3 apples cost $1.20. At the same rate, how much do 7 apples cost?",
     "options": [
@@ -298,6 +306,7 @@
   {
     "id": "ALG-ITEM-1",
     "strand": "Algebra",
+    "topic": "algebraic expressions",
     "difficulty": "Easy",
     "question": "Simplify the expression: 3(2x - 4) - 5x.",
     "options": [
@@ -335,6 +344,7 @@
   {
     "id": "ALG-ITEM-2",
     "strand": "Algebra",
+    "topic": "algebraic expressions",
     "difficulty": "Easy",
     "question": "Expand and simplify: -2(3x - 5).",
     "options": [
@@ -372,6 +382,7 @@
   {
     "id": "ALG-ITEM-3",
     "strand": "Algebra",
+    "topic": "solving equations",
     "difficulty": "Medium",
     "question": "Solve for x: 5x - 3 = 2x + 9.",
     "options": [
@@ -409,6 +420,7 @@
   {
     "id": "ALG-ITEM-4",
     "strand": "Algebra",
+    "topic": "slope and intercept",
     "difficulty": "Medium",
     "question": "A line passes through the points (2, 3) and (6, 11). What is its slope?",
     "options": [
@@ -446,6 +458,7 @@
   {
     "id": "ALG-ITEM-5",
     "strand": "Algebra",
+    "topic": "slope and intercept",
     "difficulty": "Easy",
     "question": "The equation of a line is y = -4x + 7. Which statement is true?",
     "options": [
@@ -483,6 +496,7 @@
   {
     "id": "ALG-ITEM-6",
     "strand": "Algebra",
+    "topic": "slope and intercept",
     "difficulty": "Medium",
     "question": "A line has slope 3 and passes through the point (2, 5). What is its y-intercept?",
     "options": [
@@ -520,6 +534,7 @@
   {
     "id": "ALG-ITEM-8",
     "strand": "Algebra",
+    "topic": "patterns and modelling",
     "difficulty": "Hard",
     "question": "In a growing pattern, Figure 1 uses 4 tiles, Figure 2 uses 7 tiles, and Figure 3 uses 10 tiles. Which rule gives the number of tiles in Figure n?",
     "options": [
@@ -557,6 +572,7 @@
   {
     "id": "DAT-Q1",
     "strand": "Data",
+    "topic": "collecting and sampling",
     "difficulty": "Easy",
     "question": "A school has 1000 students. Priya wants to find out how students feel about the new cafeteria menu. Which survey plan will give the MOST representative results?",
     "options": [
@@ -598,6 +614,7 @@
   {
     "id": "DAT-Q2",
     "strand": "Data",
+    "topic": "measures of centre",
     "difficulty": "Easy",
     "question": "What is the median of this data set? 14, 3, 20, 8, 11",
     "options": [
@@ -639,6 +656,7 @@
   {
     "id": "DAT-Q3",
     "strand": "Data",
+    "topic": "measures of centre",
     "difficulty": "Medium",
     "question": "A bar graph shows how many pets students own: 0 pets - 7 students; 1 pet - 9 students; 2 pets - 5 students; 3 pets - 4 students. What is the mode number of pets?",
     "options": [
@@ -680,6 +698,7 @@
   {
     "id": "DAT-Q4",
     "strand": "Data",
+    "topic": "scatter plots and correlation",
     "difficulty": "Medium",
     "question": "For 40 fires last year, a city plotted the number of firefighters sent against the damage cost. The scatter plot shows a strong positive correlation. Which conclusion is BEST supported by the data?",
     "options": [
@@ -721,6 +740,7 @@
   {
     "id": "DAT-Q5",
     "strand": "Data",
+    "topic": "measures of centre",
     "difficulty": "Hard",
     "question": "A cafe records its daily customers for five days: 30, 26, 102, 28, 29. (Day 3 was a festival.) The owner wants one number that describes a TYPICAL day. Which statement is true?",
     "options": [
@@ -762,6 +782,7 @@
   {
     "id": "GM-01",
     "strand": "Geometry & Measurement",
+    "topic": "area and changing dimensions",
     "difficulty": "Easy",
     "question": "A circular garden in a Hamilton park has a radius of 3 m. The city enlarges the garden by doubling the radius to 6 m. Which value is closest to the area of the enlarged garden?",
     "options": [
@@ -803,6 +824,7 @@
   {
     "id": "GM-02",
     "strand": "Geometry & Measurement",
+    "topic": "pythagorean theorem",
     "difficulty": "Easy",
     "question": "A ramp covers a horizontal distance of 8 m along the ground and rises a vertical height of 6 m. What is the length of the sloped surface of the ramp?",
     "options": [
@@ -844,6 +866,7 @@
   {
     "id": "GM-03",
     "strand": "Geometry & Measurement",
+    "topic": "pythagorean theorem",
     "difficulty": "Medium",
     "question": "A 13 m ladder leans against a vertical wall. The foot of the ladder is 5 m from the base of the wall. How far up the wall does the ladder reach?",
     "options": [
@@ -885,6 +908,7 @@
   {
     "id": "GM-04",
     "strand": "Geometry & Measurement",
+    "topic": "angle properties",
     "difficulty": "Medium",
     "question": "In the design of a wooden gate, a diagonal brace meets the straight top rail of the gate. On one side of the brace, the angle between the brace and the rail measures 68 degrees. Angle × is the angle between the brace and the rail on the other side of the brace. What is the measure of x?",
     "options": [
@@ -926,6 +950,7 @@
   {
     "id": "GM-06",
     "strand": "Geometry & Measurement",
+    "topic": "surface area and volume",
     "difficulty": "Medium",
     "question": "A cylindrical can has a diameter of 10 cm and a height of 12 cm. Which value is closest to the volume of the can?",
     "options": [
@@ -967,6 +992,7 @@
   {
     "id": "GM-07",
     "strand": "Geometry & Measurement",
+    "topic": "surface area and volume",
     "difficulty": "Hard",
     "question": "A cone-shaped paper cup has a diameter of 6 cm and a vertical height of 4 cm. Which value is closest to the volume of the cup?",
     "options": [
@@ -1008,6 +1034,7 @@
   {
     "id": "GM-08",
     "strand": "Geometry & Measurement",
+    "topic": "area and changing dimensions",
     "difficulty": "Hard",
     "question": "A rectangular photo measures 10 cm by 15 cm. It is enlarged so that its length and its width are each tripled. The area of the enlarged photo is how many times the area of the original photo?",
     "options": [
@@ -1049,6 +1076,7 @@
   {
     "id": "GM-10",
     "strand": "Geometry & Measurement",
+    "topic": "surface area and volume",
     "difficulty": "Easy",
     "question": "A gift box is a rectangular prism measuring 5 cm by 4 cm by 3 cm. A chocolate inside the box has the shape of a pyramid with the same rectangular base and the same height as the box. What is the volume of the chocolate?",
     "options": [
@@ -1090,6 +1118,7 @@
   {
     "id": "FIN-Q1",
     "strand": "Financial Literacy",
+    "topic": "budgeting and saving",
     "difficulty": "Easy",
     "question": "Priya has a part-time job in Barrie and earns $800 each month. She saves 3% of her earnings every month. How much money will she have saved in total after 6 months?",
     "options": [
@@ -1131,6 +1160,7 @@
   {
     "id": "FIN-Q2",
     "strand": "Financial Literacy",
+    "topic": "appreciation and depreciation",
     "difficulty": "Medium",
     "question": "A graph shows the value of Dario's investment, which grows by 4% of its current value each year. The graph shows these values: $1,000.00 at year 0, $1,040.00 at year 1, and $1,081.60 at year 2. What value will the graph show at year 3?",
     "options": [
@@ -1172,6 +1202,7 @@
   {
     "id": "FIN-Q3",
     "strand": "Financial Literacy",
+    "topic": "appreciation and depreciation",
     "difficulty": "Medium",
     "question": "A graph shows the value of a used car bought in Sudbury for $24,000. The car loses 15% of its current value each year, and the graph shows its value is $20,400 after 1 year. What value will the graph show after 2 years?",
     "options": [
@@ -1213,6 +1244,7 @@
   {
     "id": "FIN-Q4",
     "strand": "Financial Literacy",
+    "topic": "comparing costs and payment plans",
     "difficulty": "Easy",
     "question": "A store sells juice in two sizes: 1.5 L for $3.60 and 2 L for $5.00. Which bottle is the better buy, and why?",
     "options": [
@@ -1254,6 +1286,7 @@
   {
     "id": "FIN-Q5",
     "strand": "Financial Literacy",
+    "topic": "budgeting and saving",
     "difficulty": "Medium",
     "question": "Zainab's net income is $1,480 per month. Her fixed expenses are rent $450, phone $65, and a transit pass $128. Her variable expenses last month were food $310 and entertainment $150. She also wants to put $300 into savings each month. If next month looks the same, how much money will she have left after all expenses and savings?",
     "options": [
@@ -1295,6 +1328,7 @@
   {
     "id": "FIN-Q6",
     "strand": "Financial Literacy",
+    "topic": "simple and compound interest",
     "difficulty": "Hard",
     "question": "Ken wants to deposit $2,000 for 2 years and uses an online calculator to compare two savings accounts. For Account 1, which pays 6% per year simple interest, the calculator shows a final value of $2,240.00. For Account 2, which pays 6% per year compounded annually, the calculator shows $2,120.00 after 1 year and $2,247.20 after 2 years. How much MORE money does Account 2 give than Account 1 at the end of the 2 years?",
     "options": [
@@ -1336,6 +1370,7 @@
   {
     "id": "FIN-Q8",
     "strand": "Financial Literacy",
+    "topic": "appreciation and depreciation",
     "difficulty": "Easy",
     "question": "A graph on a collector's website shows the value of a limited-edition sneaker bought in Toronto for $150. The sneaker's value grows by 10% of its current value each year, and the graph shows its value is $165.00 after 1 year. What value will the graph show after 2 years?",
     "options": [
@@ -1377,6 +1412,7 @@
   {
     "id": "FIN-Q9",
     "strand": "Financial Literacy",
+    "topic": "comparing costs and payment plans",
     "difficulty": "Hard",
     "question": "A phone costs $600 if you pay up front. A payment plan instead charges $55 per month for 12 months. How much MORE does the payment plan cost in total than paying up front?",
     "options": [
@@ -1418,6 +1454,7 @@
   {
     "id": "EQAO-2025-NUM-03",
     "strand": "Number",
+    "topic": "powers and exponent laws",
     "difficulty": "Easy",
     "question": "Simplify (-36a⁴b⁶) / (-4ab²).",
     "options": [
@@ -1455,6 +1492,7 @@
   {
     "id": "EQAO-2025-NUM-04",
     "strand": "Number",
+    "topic": "powers and exponent laws",
     "difficulty": "Medium",
     "question": "Write the value of (5⁴ times 5⁴ times 5^(-2)) divided by (5³ times 5^(-6)) in scientific notation.",
     "options": [
@@ -1492,6 +1530,7 @@
   {
     "id": "EQAO-2025-ALG-07",
     "strand": "Algebra",
+    "topic": "patterns and modelling",
     "difficulty": "Easy",
     "question": "Mia's pay, P, in dollars for making n birdhouses is P = 24.50n + 15. What is her pay for making 8 birdhouses?",
     "options": [
@@ -1529,6 +1568,7 @@
   {
     "id": "EQAO-2025-COD-10",
     "strand": "Algebra",
+    "topic": "coding and pseudocode",
     "difficulty": "Medium",
     "question": "In pseudocode, itemPrice is the original price and percentDiscount is the discount percent. Which line correctly calculates subtotal, the sale price before tax?",
     "options": [
@@ -1566,6 +1606,7 @@
   {
     "id": "EQAO-2025-ALG-14",
     "strand": "Algebra",
+    "topic": "slope and intercept",
     "difficulty": "Medium",
     "question": "A line is represented by y = 6x. Its slope doubles and its y-intercept decreases by 5. What is the equation of the new line?",
     "options": [
@@ -1603,6 +1644,7 @@
   {
     "id": "EQAO-2025-GEO-20",
     "strand": "Geometry & Measurement",
+    "topic": "unit conversion",
     "difficulty": "Medium",
     "question": "One city block is 1/8 mile. Use 1 mile = 1609.3 m. Approximately how far, in metres, does a person walk in 5 blocks?",
     "options": [
@@ -1640,6 +1682,7 @@
   {
     "id": "EQAO-2025-FIN-23",
     "strand": "Financial Literacy",
+    "topic": "comparing costs and payment plans",
     "difficulty": "Hard",
     "question": "A laptop costs $500. Option A requires a 10% down payment and $20.63 per month for 2 years. Option B requires no down payment and $15.56 per month for 3 years. Which statement is correct?",
     "options": [
@@ -1677,6 +1720,7 @@
   {
     "id": "EQAO-2024-NUM-01",
     "strand": "Number",
+    "topic": "number sets and multiples",
     "difficulty": "Easy",
     "question": "Which number is irrational?",
     "options": [
@@ -1714,6 +1758,7 @@
   {
     "id": "EQAO-2024-NUM-02",
     "strand": "Number",
+    "topic": "number sets and multiples",
     "difficulty": "Medium",
     "question": "Set F = {2, 4, 6, 8, 10, 12, ...}. Set G is the set of whole-number multiples of 3. Which statement describes all numbers common to both sets?",
     "options": [
@@ -1751,6 +1796,7 @@
   {
     "id": "EQAO-2024-NUM-03",
     "strand": "Number",
+    "topic": "scientific notation",
     "difficulty": "Easy",
     "question": "Which value is equivalent to 1.2 x 10⁴?",
     "options": [
@@ -1788,6 +1834,7 @@
   {
     "id": "EQAO-2024-ALG-07",
     "strand": "Algebra",
+    "topic": "algebraic expressions",
     "difficulty": "Medium",
     "question": "Simplify 2x(x² - 3x + 2).",
     "options": [
@@ -1825,6 +1872,7 @@
   {
     "id": "EQAO-2024-ALG-08",
     "strand": "Algebra",
+    "topic": "patterns and modelling",
     "difficulty": "Easy",
     "question": "A game awards 100 points for each blue box, b, and subtracts 50 points for each yellow box, y. Which expression represents the total score?",
     "options": [
@@ -1862,6 +1910,7 @@
   {
     "id": "EQAO-2024-COD-10",
     "strand": "Algebra",
+    "topic": "coding and pseudocode",
     "difficulty": "Medium",
     "question": "Which pseudocode line correctly calculates the hypotenuse from sideA and sideB?",
     "options": [
@@ -1899,6 +1948,7 @@
   {
     "id": "EQAO-2023-NUM-01",
     "strand": "Number",
+    "topic": "number sets and multiples",
     "difficulty": "Easy",
     "question": "How many real numbers are between 0 and 10?",
     "options": [
@@ -1936,6 +1986,7 @@
   {
     "id": "EQAO-2023-NUM-02",
     "strand": "Number",
+    "topic": "number sets and multiples",
     "difficulty": "Easy",
     "question": "Which statement about rational numbers is correct?",
     "options": [
@@ -1973,6 +2024,7 @@
   {
     "id": "EQAO-2023-NUM-03",
     "strand": "Number",
+    "topic": "number sets and multiples",
     "difficulty": "Medium",
     "question": "Set C = {3, 6, 9, 12, ...}. Set D is the set of integer multiples of 5. Which statement describes all numbers common to both sets?",
     "options": [
@@ -2010,6 +2062,7 @@
   {
     "id": "EQAO-2023-NUM-04",
     "strand": "Number",
+    "topic": "scientific notation",
     "difficulty": "Easy",
     "question": "Which value is equivalent to 3.5 x 10⁵?",
     "options": [
@@ -2047,6 +2100,7 @@
   {
     "id": "EQAO-2023-FIN-31",
     "strand": "Financial Literacy",
+    "topic": "budgeting and saving",
     "difficulty": "Medium",
     "question": "A monthly income is $2800. Monthly expenses are rent $1500, utilities $350, food $400, and other expenses $345. Which statement is true?",
     "options": [
@@ -2088,6 +2142,7 @@
   {
     "id": "EQAO-2023-FIN-33",
     "strand": "Financial Literacy",
+    "topic": "comparing costs and payment plans",
     "difficulty": "Hard",
     "question": "A person borrows money for a $3000 purchase at 0% interest. Which plan pays off the loan in the least time?",
     "options": [
