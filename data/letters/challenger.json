@@ -88,5 +88,68 @@
   "trick_id": "ALG-1",
   "trick_name": "Incomplete Distribution",
   "strand": "Algebra"
+ },
+ {
+  "n": 11,
+  "title": "After the quiz \u2014 Wrong quantity reported",
+  "body": "**Parent report** \u2014 scored 2 of 5 (40%). The trick that caught them most: **Wrong quantity reported**.\n\nDear Parents,\n\nWe've noticed your child is having a little trouble accurately representing amounts when solving problems. It seems they sometimes focus on one aspect of the problem and miss other important details, which suggests they\u2019re still developing their ability to fully grasp all the information presented.\n\n**Try at home**\n\n- Count out a pile of pennies and ask them to give you exactly 7, then count how many are left.\n- Have them help measure ingredients for a simple recipe \u2013 focusing on precise amounts like \u201c1/2 cup\u201d or \"3 tablespoons.\"\n- Ask them to sort a mixed bag of buttons by color and then tell you *exactly* how many of each color there are.",
+  "kind": "quiz",
+  "trick_id": "FIN-2",
+  "trick_name": "Wrong quantity reported",
+  "strand": "Financial Literacy"
+ },
+ {
+  "n": 12,
+  "title": "After the quiz \u2014 Radius\u2013Diameter Mix-Up",
+  "body": "**Parent report** \u2014 scored 0 of 5 (0%). The trick that caught them most: **Radius\u2013Diameter Mix-Up**.\n\nDear Parents,\n\nWe've noticed your child is having a little trouble distinguishing between the radius and diameter of circles \u2013 they seem to be using them interchangeably. This suggests they might be focusing on the visual size of the circle rather than understanding the specific measurements involved in calculating area or circumference.\n\n**Try at home**\n\n- Draw several circles of different sizes on paper, then measure across the middle (diameter) and from the center to the edge (radius) for each one.\n- Find circular objects around your house like plates or lids; have your child identify and measure both the radius and diameter of each.\n- Using playdough, roll out several circles, then ask them to mark and label the radius and diameter on each circle.",
+  "kind": "quiz",
+  "trick_id": "GEO-7",
+  "trick_name": "Radius\u2013Diameter Mix-Up",
+  "strand": "Geometry & Measurement"
+ },
+ {
+  "n": 13,
+  "title": "After the quiz \u2014 Multiplying exponents when multiplying like bases",
+  "body": "**Parent report** \u2014 scored 0 of 5 (0%). The trick that caught them most: **Multiplying exponents when multiplying like bases**.\n\nDear Parents,\n\nWe've noticed your child is having some difficulty with simplifying expressions involving exponents. It seems they\u2019re sometimes assuming that when you multiply things with the same base, you simply multiply the exponents as well \u2013 this suggests they might be focusing on the numbers involved and not fully grasping how the bases interact in multiplication. This kind of misunderstanding often shows up when students are still building a solid foundation for more complex algebraic concepts.\n\n**Try at home**\n\n- Take two identical Lego towers (say, 3 bricks high). Build another tower on top of each one, making them 2 bricks high. How many bricks total in each combined tower? Now write that as multiplication and then as an exponent.\n- Write out several pairs of numbers to multiply \u2013 like 2 x 4, 5 x 3, 7 x 1. Then, next to *each* pair, write the same numbers but with exponents (e.g., 2\u00b9 x 4\u00b9). Discuss how the bases stay separate and only get multiplied.\n- Find a few simple multiplication problems that involve variables (like 'a' or 'b') \u2013 for example, a x a\u00b2, b x b\u00b3. Work through them together, emphasizing that you\u2019re multiplying *both* the numbers and the exponents when the bases are the same.",
+  "kind": "quiz",
+  "trick_id": "NUM-1",
+  "trick_name": "Multiplying exponents when multiplying like bases",
+  "strand": "Number"
+ },
+ {
+  "n": 14,
+  "title": "After the quiz \u2014 Multiplying exponents when multiplying like bases",
+  "body": "**Parent report** \u2014 scored 0 of 5 (0%). The trick that caught them most: **Multiplying exponents when multiplying like bases**.\n\nDear Parents,\n\nWe've noticed your child is having some difficulty with simplifying expressions involving exponents. It seems they are sometimes incorrectly assuming that when multiplying numbers with the same base, you simply add their exponents \u2013 this suggests they\u2019re focusing on the bases themselves rather than how multiplication affects the overall expression. This kind of error often points to a need for extra focus on understanding the fundamental rules governing exponents.\n\n**Try at home**\n\n- Take two Lego towers - one with 3 bricks and another with 4 bricks. Combine them into one tower, then build another identical combined tower. How many bricks are in the final, larger tower? (This illustrates multiplying like bases)\n- Write out \"2 x 2 x 2\" twice. Then write it as \"4 x 4\". What do you notice about how many times '2' or '4' is multiplied?\n- Pick two numbers, say 5 and 7. Multiply them together (35). Now, each number has a little exponent of 1 attached to it: 5\u00b9 x 7\u00b9. How does this relate to the multiplication you just did?",
+  "kind": "quiz",
+  "trick_id": "NUM-1",
+  "trick_name": "Multiplying exponents when multiplying like bases",
+  "strand": "Number"
+ },
+ {
+  "n": 15,
+  "title": "After the quiz \u2014 Changing the base when operating on powers",
+  "body": "**Parent report** \u2014 scored 0 of 5 (0%). The trick that caught them most: **Changing the base when operating on powers**.\n\nDear Parents,\n\nWe've noticed your child is having a bit of trouble with some exponents in math. It seems they\u2019re sometimes mixing up different bases when simplifying expressions, which suggests they might be focusing on one part of the problem and not seeing the whole picture needed to solve it correctly. This kind of error often shows that we need to reinforce understanding of the underlying principles rather than just memorizing steps.\n\n**Try at home**\n\n- Rewrite 2\u00b3 as 2 x 2 x 2, then rewrite 3\u00b3 as 3 x 3 x 3 and compare them \u2013 what\u2019s different?\n- Look at a few simple multiplication problems (like 4 x 5) and then write them using exponents (like 2\u00b2 x 5). Discuss how the base changes things.\n- Take two numbers, like 6 and 2, and each of you raise them to the power of 3 \u2013 then compare your answers and explain where they come from.",
+  "kind": "quiz",
+  "trick_id": "NUM-2",
+  "trick_name": "Changing the base when operating on powers",
+  "strand": "Number"
+ },
+ {
+  "n": 16,
+  "title": "After the quiz \u2014 Changing the base when operating on powers",
+  "body": "**Parent report** \u2014 scored 0 of 5 (0%). The trick that caught them most: **Changing the base when operating on powers**.\n\nDear Parents,\n\nWe've noticed your child is having some difficulty with certain math concepts related to exponents and fractions. It seems they sometimes get mixed up about how to simplify expressions involving powers, often incorrectly changing the base when trying to combine them \u2013 this suggests they\u2019re looking for patterns but not quite grasping the underlying rules. We also saw a few errors in fraction work and with negative numbers that are likely connected to similar misunderstandings about applying procedures without fully understanding why they work.\n\n**Try at home**\n\n- Rewrite 2\u00b3 x 2\u00b2 as two separate multiplication problems, then combine them.\n- Have your child explain aloud *why* (2\u00b2)\u00b2 equals 2\u2074, not 4\u2074.\n- Give your child a few fractions like 1/2 + 1/3 and ask them to show their work, explaining each step.",
+  "kind": "quiz",
+  "trick_id": "NUM-2",
+  "trick_name": "Changing the base when operating on powers",
+  "strand": "Number"
+ },
+ {
+  "n": 17,
+  "title": "After the quiz \u2014 Convenience/Volunteer Samples Are Fair",
+  "body": "**Parent report** \u2014 scored 2 of 5 (40%). The trick that caught them most: **Convenience/Volunteer Samples Are Fair**.\n\nDear Parents,\n\nWe've noticed your child is having a little trouble understanding how we gather information to draw conclusions. They seem to be assuming that if something is easy to collect or people volunteer for it, then it represents everyone \u2013 which can lead to inaccurate results and incorrect thinking about what\u2019s really happening in a group. This suggests they are looking for quick answers but needs help seeing the potential biases involved.\n\n**Try at home**\n\n- Ask them to pick their favorite ice cream flavor, then have five family members quickly state theirs. Discuss if that small group represents everyone's preferences.\n- Have them survey only people wearing blue shirts about their favorite color. Talk about why those results wouldn\u2019t be representative of the whole school.\n- Gather a few toys and ask them to choose which one is \"best\" based on just what they can see in a short time, then discuss how more information might change their opinion.",
+  "kind": "quiz",
+  "trick_id": "DAT-2",
+  "trick_name": "Convenience/Volunteer Samples Are Fair",
+  "strand": "Data"
  }
 ]

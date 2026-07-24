@@ -78,7 +78,9 @@ def plainify(text: str) -> str:
         return s.translate(_SUP) if all(c in "0123456789+-=()n" for c in s) else "^" + s
     t = re.sub(r"\^\{([^{}]*)\}", _sup, t)             # ^{...}
     t = re.sub(r"\^\(([^()]*)\)", _sup, t)             # ^(3+2) -> ⁽³⁺²⁾
-    t = re.sub(r"\^([0-9n])", lambda m: m.group(1).translate(_SUP), t)  # ^2
+    # The whole exponent, not its first digit: matching one character turned
+    # 5^12 into 5 with a superscript one, followed by a plain 2.
+    t = re.sub(r"\^(-?\d+|n)", lambda m: m.group(1).translate(_SUP), t)  # ^12
     t = re.sub(r"_\{([^{}]*)\}", r"_\1", t)            # _{...}
     t = t.replace("\\\\", " ")                          # LaTeX line breaks
     t = t.replace("\\ ", " ")                           # backslash-space artifacts
