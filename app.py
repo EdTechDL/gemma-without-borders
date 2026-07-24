@@ -683,7 +683,7 @@ function init(){
         const obj=gltf.scene;
         const box=new THREE.Box3().setFromObject(obj);
         const size=box.getSize(new THREE.Vector3());
-        const scale=4.4/Math.max(size.x,size.y,size.z,0.001);
+        const scale=8.8/Math.max(size.x,size.y,size.z,0.001);
         obj.scale.setScalar(scale);
         const box2=new THREE.Box3().setFromObject(obj);
         const c=box2.getCenter(new THREE.Vector3());
@@ -921,6 +921,35 @@ function animate(){
     if(n){ localStorage.setItem('gwb_hero', n); show(n); } };
 })();
 window.resetCamera = resetCamera;
+
+// --- procedural soundscape: calm drone + sparse bells (WebAudio, no files) ---
+(function(){
+  let ctx=null,master=null,started=false;
+  function startAmbient(){ if(started) return; started=true;
+    ctx=new (window.AudioContext||window.webkitAudioContext)();
+    master=ctx.createGain(); master.gain.value=0.05; master.connect(ctx.destination);
+    [65.4,98.0,130.8].forEach(function(f,i){
+      const o=ctx.createOscillator(), g=ctx.createGain();
+      o.type='sine'; o.frequency.value=f; g.gain.value=0;
+      o.connect(g); g.connect(master); o.start();
+      g.gain.linearRampToValueAtTime(0.16/(i+1), ctx.currentTime+4);
+      const lfo=ctx.createOscillator(), lg=ctx.createGain();
+      lfo.frequency.value=0.05+i*0.02; lg.gain.value=0.05;
+      lfo.connect(lg); lg.connect(g.gain); lfo.start();
+    });
+    (function bell(){
+      if(!ctx) return;
+      const o=ctx.createOscillator(), g=ctx.createGain();
+      o.type='triangle'; o.frequency.value=[523.25,659.25,783.99][Math.floor(Math.random()*3)];
+      g.gain.value=0; o.connect(g); g.connect(master); o.start();
+      g.gain.linearRampToValueAtTime(0.09, ctx.currentTime+0.05);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+3.5);
+      setTimeout(function(){o.stop();}, 4000);
+      setTimeout(bell, 9000+Math.random()*14000);
+    })();
+  }
+  addEventListener('pointerdown', startAmbient, {once:true});
+})();
 window.__focus = focus;
 
 });
@@ -1247,6 +1276,24 @@ html,body{margin:0;background:#050308;overflow:hidden;font-family:'Trebuchet MS'
 __VENDOR__
 <script>
 window.addEventListener('load', function(){
+  // procedural battle audio (no files): thud on hit, resolution chord at the end
+  let __actx=null;
+  function __a(){ if(!__actx) __actx=new (window.AudioContext||window.webkitAudioContext)(); return __actx; }
+  function sndThud(){ try{ const c=__a(),o=c.createOscillator(),g=c.createGain();
+    o.type='sine'; o.frequency.setValueAtTime(110,c.currentTime);
+    o.frequency.exponentialRampToValueAtTime(38,c.currentTime+0.25);
+    g.gain.setValueAtTime(0.5,c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.3);
+    o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime+0.32);}catch(e){} }
+  function sndEnd(won){ try{ const c=__a();
+    const freqs=won?[523.25,659.25,783.99,1046.5]:[220,207.65,196,185];
+    freqs.forEach((f,i)=>{ const o=c.createOscillator(),g=c.createGain();
+      o.type=won?'triangle':'sawtooth'; o.frequency.value=f; g.gain.value=0.0;
+      o.connect(g); g.connect(c.destination); o.start(c.currentTime+i*0.12);
+      g.gain.setValueAtTime(0.12,c.currentTime+i*0.12);
+      g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+i*0.12+(won?0.9:1.4));
+      o.stop(c.currentTime+i*0.12+1.5); });}catch(e){} }
+
   const W=innerWidth,H=innerHeight;
   const r=new THREE.WebGLRenderer({antialias:true});
   r.setSize(W,H); r.outputEncoding=THREE.sRGBEncoding; r.setClearColor(0x050308);
@@ -1278,100 +1325,10 @@ window.addEventListener('load', function(){
     entrance=1;
   });
   
-  // procedural battle audio (no files): thud on hit, resolution chord at the end
-  let __actx=null;
-  function __a(){ if(!__actx) __actx=new (window.AudioContext||window.webkitAudioContext)(); return __actx; }
-  function sndThud(){ try{ const c=__a(),o=c.createOscillator(),g=c.createGain();
-    o.type='sine'; o.frequency.setValueAtTime(110,c.currentTime);
-    o.frequency.exponentialRampToValueAtTime(38,c.currentTime+0.25);
-    g.gain.setValueAtTime(0.5,c.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.3);
-    o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime+0.32);}catch(e){} }
-  function sndEnd(won){ try{ const c=__a();
-    const freqs=won?[523.25,659.25,783.99,1046.5]:[220,207.65,196,185];
-    freqs.forEach((f,i)=>{ const o=c.createOscillator(),g=c.createGain();
-      o.type=won?'triangle':'sawtooth'; o.frequency.value=f; g.gain.value=0.0;
-      o.connect(g); g.connect(c.destination); o.start(c.currentTime+i*0.12);
-      g.gain.setValueAtTime(0.12,c.currentTime+i*0.12);
-      g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+i*0.12+(won?0.9:1.4));
-      o.stop(c.currentTime+i*0.12+1.5); });}catch(e){} }
-
   
-  // procedural battle audio (no files): thud on hit, resolution chord at the end
-  let __actx=null;
-  function __a(){ if(!__actx) __actx=new (window.AudioContext||window.webkitAudioContext)(); return __actx; }
-  function sndThud(){ try{ const c=__a(),o=c.createOscillator(),g=c.createGain();
-    o.type='sine'; o.frequency.setValueAtTime(110,c.currentTime);
-    o.frequency.exponentialRampToValueAtTime(38,c.currentTime+0.25);
-    g.gain.setValueAtTime(0.5,c.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.3);
-    o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime+0.32);}catch(e){} }
-  function sndEnd(won){ try{ const c=__a();
-    const freqs=won?[523.25,659.25,783.99,1046.5]:[220,207.65,196,185];
-    freqs.forEach((f,i)=>{ const o=c.createOscillator(),g=c.createGain();
-      o.type=won?'triangle':'sawtooth'; o.frequency.value=f; g.gain.value=0.0;
-      o.connect(g); g.connect(c.destination); o.start(c.currentTime+i*0.12);
-      g.gain.setValueAtTime(0.12,c.currentTime+i*0.12);
-      g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+i*0.12+(won?0.9:1.4));
-      o.stop(c.currentTime+i*0.12+1.5); });}catch(e){} }
-
   
-  // procedural battle audio (no files): thud on hit, resolution chord at the end
-  let __actx=null;
-  function __a(){ if(!__actx) __actx=new (window.AudioContext||window.webkitAudioContext)(); return __actx; }
-  function sndThud(){ try{ const c=__a(),o=c.createOscillator(),g=c.createGain();
-    o.type='sine'; o.frequency.setValueAtTime(110,c.currentTime);
-    o.frequency.exponentialRampToValueAtTime(38,c.currentTime+0.25);
-    g.gain.setValueAtTime(0.5,c.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.3);
-    o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime+0.32);}catch(e){} }
-  function sndEnd(won){ try{ const c=__a();
-    const freqs=won?[523.25,659.25,783.99,1046.5]:[220,207.65,196,185];
-    freqs.forEach((f,i)=>{ const o=c.createOscillator(),g=c.createGain();
-      o.type=won?'triangle':'sawtooth'; o.frequency.value=f; g.gain.value=0.0;
-      o.connect(g); g.connect(c.destination); o.start(c.currentTime+i*0.12);
-      g.gain.setValueAtTime(0.12,c.currentTime+i*0.12);
-      g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+i*0.12+(won?0.9:1.4));
-      o.stop(c.currentTime+i*0.12+1.5); });}catch(e){} }
-
   
-  // procedural battle audio (no files): thud on hit, resolution chord at the end
-  let __actx=null;
-  function __a(){ if(!__actx) __actx=new (window.AudioContext||window.webkitAudioContext)(); return __actx; }
-  function sndThud(){ try{ const c=__a(),o=c.createOscillator(),g=c.createGain();
-    o.type='sine'; o.frequency.setValueAtTime(110,c.currentTime);
-    o.frequency.exponentialRampToValueAtTime(38,c.currentTime+0.25);
-    g.gain.setValueAtTime(0.5,c.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.3);
-    o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime+0.32);}catch(e){} }
-  function sndEnd(won){ try{ const c=__a();
-    const freqs=won?[523.25,659.25,783.99,1046.5]:[220,207.65,196,185];
-    freqs.forEach((f,i)=>{ const o=c.createOscillator(),g=c.createGain();
-      o.type=won?'triangle':'sawtooth'; o.frequency.value=f; g.gain.value=0.0;
-      o.connect(g); g.connect(c.destination); o.start(c.currentTime+i*0.12);
-      g.gain.setValueAtTime(0.12,c.currentTime+i*0.12);
-      g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+i*0.12+(won?0.9:1.4));
-      o.stop(c.currentTime+i*0.12+1.5); });}catch(e){} }
-
   
-  // procedural battle audio (no files): thud on hit, resolution chord at the end
-  let __actx=null;
-  function __a(){ if(!__actx) __actx=new (window.AudioContext||window.webkitAudioContext)(); return __actx; }
-  function sndThud(){ try{ const c=__a(),o=c.createOscillator(),g=c.createGain();
-    o.type='sine'; o.frequency.setValueAtTime(110,c.currentTime);
-    o.frequency.exponentialRampToValueAtTime(38,c.currentTime+0.25);
-    g.gain.setValueAtTime(0.5,c.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.3);
-    o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime+0.32);}catch(e){} }
-  function sndEnd(won){ try{ const c=__a();
-    const freqs=won?[523.25,659.25,783.99,1046.5]:[220,207.65,196,185];
-    freqs.forEach((f,i)=>{ const o=c.createOscillator(),g=c.createGain();
-      o.type=won?'triangle':'sawtooth'; o.frequency.value=f; g.gain.value=0.0;
-      o.connect(g); g.connect(c.destination); o.start(c.currentTime+i*0.12);
-      g.gain.setValueAtTime(0.12,c.currentTime+i*0.12);
-      g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+i*0.12+(won?0.9:1.4));
-      o.stop(c.currentTime+i*0.12+1.5); });}catch(e){} }
-
   function attack(){
     sndThud();
     document.getElementById('stage').classList.add('shake');
@@ -1531,6 +1488,24 @@ html,body{margin:0;background:#050308;overflow:hidden;font-family:'Trebuchet MS'
 __VENDOR__
 <script>
 window.addEventListener('load', function(){
+  // procedural battle audio (no files): thud on hit, resolution chord at the end
+  let __actx=null;
+  function __a(){ if(!__actx) __actx=new (window.AudioContext||window.webkitAudioContext)(); return __actx; }
+  function sndThud(){ try{ const c=__a(),o=c.createOscillator(),g=c.createGain();
+    o.type='sine'; o.frequency.setValueAtTime(110,c.currentTime);
+    o.frequency.exponentialRampToValueAtTime(38,c.currentTime+0.25);
+    g.gain.setValueAtTime(0.5,c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.3);
+    o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime+0.32);}catch(e){} }
+  function sndEnd(won){ try{ const c=__a();
+    const freqs=won?[523.25,659.25,783.99,1046.5]:[220,207.65,196,185];
+    freqs.forEach((f,i)=>{ const o=c.createOscillator(),g=c.createGain();
+      o.type=won?'triangle':'sawtooth'; o.frequency.value=f; g.gain.value=0.0;
+      o.connect(g); g.connect(c.destination); o.start(c.currentTime+i*0.12);
+      g.gain.setValueAtTime(0.12,c.currentTime+i*0.12);
+      g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+i*0.12+(won?0.9:1.4));
+      o.stop(c.currentTime+i*0.12+1.5); });}catch(e){} }
+
   const W=innerWidth,H=innerHeight;
   const r=new THREE.WebGLRenderer({antialias:true});
   r.setSize(W,H); r.outputEncoding=THREE.sRGBEncoding; r.setClearColor(0x050308);
