@@ -9,6 +9,8 @@
 <img width="1912" height="901" alt="citadel" src="https://github.com/user-attachments/assets/c1089e4b-5246-43e4-9464-6fb4e47b033d" />
 *The Citadel: drag to orbit the castle; five monsters wait on their floating platforms.*
 
+
+
 <img width="1157" height="782" alt="taha" src="https://github.com/user-attachments/assets/e37f082b-d0f8-49d5-b08b-69f19226e177" />
 *An encounter: the monster calls you by name, and Gemma writes what it remembers about you.*
 
