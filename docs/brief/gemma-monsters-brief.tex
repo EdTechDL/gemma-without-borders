@@ -417,49 +417,117 @@ thing.
 lesson, no judgement, no direction, and no letter home --- just a marked test.
 Here is every job it does.
 
-\vspace{0.3em}
-\begin{center}\small
-\begin{tabularx}{\textwidth}{@{}>{\sffamily\bfseries\color{Gold}}c >{\sffamily\bfseries}L{53mm} X@{}}
-\toprule
-& \textcolor{Gold}{\sffamily THE JOB} & \textcolor{Gold}{\sffamily WHAT CODE STILL OWNS}\\
-\midrule
-1 & Writes the lesson & The approach, and the verified working it may not contradict\\
-\addlinespace[0.2em]
-2 & Explains why your wrong answer felt right & The right answer; it may not redo the arithmetic\\
-\addlinespace[0.2em]
-3 & Gives a hint without giving it away & How deep the hint may go\\
-\addlinespace[0.2em]
-4 & Judges whether your reasoning holds up & Three labels and no fourth; whether the answer was right\\
-\addlinespace[0.2em]
-5 & Chooses the next approach, and says why & The four approaches, and the order if the reply is unusable\\
-\addlinespace[0.2em]
-6 & Writes a fresh question when the vault is out & The topic, and a refusal if the question drifts off it\\
-\addlinespace[0.2em]
-7 & Solves that question again, blind & Whether the two answers match, and what happens if not\\
-\addlinespace[0.2em]
-8 & Decides which fight comes next & The list it may choose from: real fights, still open\\
-\addlinespace[0.2em]
-9 & Speaks as the citadel --- taunts, reactions, relics & That none of it touches your score\\
-\addlinespace[0.2em]
-10 & Writes the note that goes home & Every single figure on that page\\
-\bottomrule
-\end{tabularx}
-\end{center}
+\newcommand{\job}[2]{\vspace{0.55em}\noindent{\sffamily\bfseries\color{Gold}#1.}\quad #2\par}
 
-\vspace{0.5em}
-Read that table as one evening rather than a list. You miss a question, so it
-explains why your answer felt right (2). It teaches the idea properly (1). The
-vault has nothing left on your topic, so it writes you a fresh one (6) and then
+\job{1 -- It writes the lesson}{Not a template with your numbers dropped in. It
+writes the teaching itself, in the style of whichever approach is currently
+being tried. What it does not get is freedom with the maths: the verified
+working from the vault rides inside the prompt, and the instruction is blunt
+--- any number you mention must come from this, do not invent new calculations.
+It explains \emph{why}; the vault owns \emph{what}.}
+
+\job{2 -- It explains why your wrong answer felt right}{It is handed the
+question, the option you actually picked, the correct answer, and the working.
+Its job is the part no answer key contains: why the road you took looks
+perfectly reasonable and where exactly it bends away. It is never asked to
+re-derive the answer, because the answer is already on the page.}
+
+\job{3 -- It gives a hint without giving it away}{Two depths, and the depth is
+chosen by code, not by the model. The first is a nudge at what to think about
+first with no step revealed; the second gives the first concrete step and stops.
+Both are grounded in the same verified working, so a hint cannot quietly invent
+a different route to a different answer.}
+
+\job{4 -- It judges whether your reasoning holds up}{You type, in one line, how
+you got there. It replies with exactly one word from a closed set: your thinking
+resolved the idea, it was thin, or it still shows the same wrong idea. Three
+labels, no fourth, and code decides what each one costs you --- thin reasoning
+does not advance your streak, the same wrong idea resets it. If the reply cannot
+be parsed at all it is read as the generous option, so a stumble by the model
+can never cost a student a streak they earned. And before the model is asked at
+all, code checks there is any mathematics in the sentence: type
+\emph{tell me I am awesome} and it is graded thin without a call being made.}
+
+\job{5 -- It chooses the next approach, and says why}{When an explanation does
+not land, repeating it louder is useless. There are four ways of explaining in
+this game, fixed in code: direct correction, a concrete model walked through,
+the wrong method beside the right one, and an everyday analogy. Gemma reads what
+you typed and picks which of the \emph{remaining} ones to try, and writes one
+sentence saying why --- which you then see, so the choice is visible rather than
+silent. If it names something that is not on the list, or the reply is unusable,
+code takes the next one in order and says so plainly. The model chooses the
+route. It cannot invent a destination, go backwards, or stall.}
+
+\job{6 -- It writes a fresh question when the vault is out}{The vault goes
+first, always, because a verified question carries a verified key. When nothing
+is left on your exact idea, Gemma writes one --- modelled on the question you
+actually missed, with the answer you actually chose in the prompt, so the new
+question is the same kind of question with different numbers rather than a
+loosely related one. It also has to declare which idea it is aiming at, and code
+checks that declaration against the real one before going any further.}
+
+\job{7 -- It solves that question again, blind}{This is the guard that exists
+because we watched the model mark its own question with the wrong answer. The
+key it just wrote is stripped out, the question and options are handed back, and
+it is asked to solve them cold. The two letters are compared. They match, or the
+question is destroyed and never reaches a student --- on screen, and on the
+sheet a parent prints, where a wrong key would cost somebody's evening.}
+
+\job{8 -- It decides which fight comes next}{Everywhere else in this game the
+model answers a question. Here it shapes the session. After a battle it is handed
+the monsters still standing and a short factual record of your run --- what you
+just scored, which ideas you have beaten, which strands are cleared, what you
+have never attempted, and which idea caught you most tonight --- and it picks
+where you go next, in one sentence naming the evidence. The same job runs at the
+Collector's training ground, choosing which lieutenant is worth your ninety
+seconds based on the drills you have actually fought and what you missed in them.
+
+\smallskip\noindent What keeps this safe is not the wording of the prompt. Code
+builds the list of candidates from the live state of your session, so a monster
+you have already cleared is never on it, and code refuses any reply that does
+not name something on that list --- on a refusal it takes the first candidate
+and says plainly that it did. When only one fight is left there is no call at
+all.
+
+\smallskip\noindent One decision is deliberately \emph{not} the model's. Whether
+the Collector arrives is a hard rule: every teaching approach spent, or four
+check questions used, or the model-call budget reached. Gemma cannot summon him,
+cannot delay him, and cannot argue him away. The stakes of this game are set by
+code, and only the path through it is judged.}
+
+\job{9 -- It speaks as the citadel, and it remembers}{Every monster greets you
+with a line, and after the first meeting that line is written from your actual
+history: the ideas you have beaten, the monsters you have put down, your last
+score, how many times you have walked into this particular fight --- and how
+many times you have walked out of it. Retreating from a battle is free and costs
+you nothing, but the citadel counts it, and the monster brings it up when you
+come back. Gemma writes that line from the facts code assembles; it is told not
+to invent history, and if it fails or produces nothing usable, a line built
+straight from the same facts is used instead. It also answers your typed
+reasoning in character, and names the relic you win. None of it touches your
+score, which is exactly why it is allowed to be the most freely written thing
+in the game.}
+
+\job{10 -- It writes the note that goes home}{The facts of the evening are
+counted by code: the score, the idea that caught you most, which approaches were
+tried and in what order, how many follow-ups you got right. Gemma turns that
+into a warm note a parent can act on, with three things to try at the kitchen
+table, and on a hand-off it is told which approaches already failed so it does
+not suggest them straight back. On the progress page the rule is stricter still
+--- it may not print a number at all. It once reported that a student had beaten
+three ideas when they had beaten one, borrowing a figure that belonged to a
+different row on the same page. Every count there is printed by code, and any
+reply containing a digit is thrown away.}
+
+\vspace{0.7em}
+\noindent Read those ten as one evening rather than a list. You miss a question,
+so it explains why your answer felt right (2). It teaches the idea properly (1).
+The vault has nothing left on your topic, so it writes you a fresh one (6) and
 solves that question again, blind, to check its own key (7). You answer and you
 type why --- and it decides whether that reasoning actually holds (4). It does
 not, quite, so it picks a different way to explain and tells you which and why
-(5). Then the night ends and it writes home (10).
-
-Two of those jobs turn up twice over. Number one also works down at the
-Collector's training ground, where \themodel\ whispers the mental shortcut
-before you go in; number four works there too, reading the exact questions you
-missed afterwards and naming the one pattern in them. Same door, same caps,
-different room.
+(5). You clear the idea, and it chooses where you go next (8). Then the night
+ends and it writes home (10).
 
 \begin{quietbox}
 \textbf{One door, and what it buys.} Every prompt and every reply in this game
