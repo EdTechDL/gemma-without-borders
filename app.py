@@ -1000,9 +1000,18 @@ window.resetCamera = resetCamera;
       .then(b=>{
         const a=new Audio(URL.createObjectURL(new Blob([b],{type:'audio/mpeg'})));
         a.loop=true; a.volume=0.0; a.play().catch(function(){});
-        // gentle fade in
-        let v=0; const t2=setInterval(function(){ v+=0.02;
-          a.volume=Math.min(0.32,v); if(v>=0.32) clearInterval(t2); },120);
+        // gentle fade in, plus a duck near the end of each loop (the track swells)
+        const BASE=0.30, DUCK_S=6;
+        let fade=0; const t2=setInterval(function(){ fade=Math.min(1,fade+0.06);
+          if(fade>=1) clearInterval(t2); },120);
+        a.addEventListener('timeupdate',function(){
+          let duck=1;
+          if(isFinite(a.duration)){
+            const left=a.duration-a.currentTime;
+            if(left<DUCK_S) duck=Math.max(0.55, left/DUCK_S);
+          }
+          a.volume=BASE*fade*duck;
+        });
         window.__theme=a;
       }).catch(function(){});
   }, {once:true});
