@@ -162,17 +162,33 @@ def esc_note(text) -> str:
 
 
 _STEP_SPLIT = re.compile(r"(?<=[.;])\s+(?=[A-Z(√\d])")
+# the trailing "(A does this... B does that...)" wrong-answer commentary
+_TRAP_SPLIT = re.compile(r"\s*\((?=[A-F][ ,)])(.*)\)\s*$", re.S)
+_TRAP_ITEM = re.compile(r"(?<=[.)])\s+(?=[A-F]\s)")
 
 
 def steps_md(text) -> str:
     """Render a worked solution as numbered steps instead of one dense
     paragraph. Splits on sentence boundaries (decimals are safe: a digit
-    after '. ' only splits when it starts a new sentence-like chunk)."""
+    after '. ' only splits when it starts a new sentence-like chunk).
+
+    Bank solutions end with a parenthetical explaining each wrong option;
+    that is a different kind of reading, so it gets its own bulleted block
+    instead of being chopped into steps with a dangling bracket."""
     t = esc(plainify(str(text)))
+    traps = ""
+    m = _TRAP_SPLIT.search(t)
+    if m:
+        traps, t = m.group(1).strip(), t[:m.start()].strip()
+
     parts = [p.strip() for p in _STEP_SPLIT.split(t) if p.strip()]
-    if len(parts) <= 1:
-        return t
-    return "\n".join(f"{i}. {p}" for i, p in enumerate(parts, 1))
+    out = t if len(parts) <= 1 else "\n".join(f"{i}. {p}" for i, p in enumerate(parts, 1))
+
+    if traps:
+        items = [i.strip() for i in _TRAP_ITEM.split(traps) if i.strip()]
+        out += ("\n\n**Why the other answers are traps**\n\n"
+                + "\n".join(f"- {i}" for i in items))
+    return out
 
 
 def esc(text) -> str:
@@ -2501,7 +2517,8 @@ if _station in STATIONS:
     st.session_state.adventure = True
     hero = (st.query_params.get("hero") or "").strip()
     if hero:
-        st.session_state.player_name = hero[:24]
+        # names are proper nouns: "sarah" reads as a typo mid-sentence
+        st.session_state.player_name = hero[:24][:1].upper() + hero[:24][1:]
     # the monster confronts you before its trial begins
     st.session_state.enc_strand = _station
     st.session_state.stage = "encounter"
@@ -2520,7 +2537,8 @@ if _skl in ("doubles", "nines", "split"):
     st.session_state.adventure = True
     hero = (st.query_params.get("hero") or "").strip()
     if hero:
-        st.session_state.player_name = hero[:24]
+        # names are proper nouns: "sarah" reads as a typo mid-sentence
+        st.session_state.player_name = hero[:24][:1].upper() + hero[:24][1:]
     st.session_state.skirmish_lane = _skl
     st.session_state.stage = "skirmish"
     st.query_params.clear()
@@ -2535,7 +2553,8 @@ if _cl in ("doubles", "nines", "split"):
     }
     hero = (st.query_params.get("hero") or "").strip()
     if hero:
-        st.session_state.player_name = hero[:24]
+        # names are proper nouns: "sarah" reads as a typo mid-sentence
+        st.session_state.player_name = hero[:24][:1].upper() + hero[:24][1:]
     st.session_state.stage = "coach"
     st.query_params.clear()
 

@@ -1,0 +1,431 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[scaled=1.02]{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{tikz}
+\usepackage{array}
+\usetikzlibrary{arrows.meta,positioning,calc,fit,shapes.misc}
+
+% ---- the game palette ----
+\definecolor{gmbg}{HTML}{0B0710}     % background
+\definecolor{gmpanel}{HTML}{1C1119}  % panel
+\definecolor{coral}{HTML}{E08D6D}    % accent coral
+\definecolor{cream}{HTML}{F2E8DC}    % text cream
+\definecolor{gold}{HTML}{FFD87A}     % gold
+\definecolor{teal}{HTML}{7FE9D6}     % teal
+
+\setbeamercolor{background canvas}{bg=gmbg}
+\setbeamercolor{normal text}{fg=cream}
+\setbeamercolor{structure}{fg=coral}
+\setbeamercolor{frametitle}{fg=cream,bg=gmbg}
+\setbeamercolor{title}{fg=cream}
+\setbeamercolor{itemize/enumerate body}{fg=cream}
+\setbeamercolor{itemize/enumerate subbody}{fg=cream}
+\setbeamerfont{frametitle}{size=\LARGE,series=\bfseries}
+\setbeamerfont{title}{size=\Huge,series=\bfseries}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize item}{\textcolor{coral}{\rule[0.42ex]{0.72ex}{0.72ex}}}
+\setbeamertemplate{itemize subitem}{\textcolor{gold}{--}}
+\setbeamertemplate{frametitle}{%
+  \vspace*{0.8em}\usebeamerfont{frametitle}\insertframetitle\par
+  \vspace{0.28em}{\color{coral}\hrule height 1.4pt}\vspace{0.35em}}
+\setbeamertemplate{footline}{\hfill{\color{cream!45!gmbg}\scriptsize\insertframenumber\hspace{2em}}\vspace{0.6em}}
+\setbeamersize{text margin left=1.0cm,text margin right=1.0cm}
+
+\newcommand{\kicker}[1]{{\color{coral}\scriptsize\bfseries\MakeUppercase{#1}}\\[0.3em]}
+\newcommand{\dimt}[1]{{\color{cream!62!gmbg}#1}}
+\newcommand{\goldb}[1]{{\color{gold}\textbf{#1}}}
+\newcommand{\tealb}[1]{{\color{teal}\textbf{#1}}}
+
+% shared tikz styles
+\tikzset{
+  panelbox/.style={draw=cream!22!gmbg, fill=gmpanel, rounded corners=3pt,
+                   inner sep=7pt, align=center, text=cream, font=\small},
+  gembox/.style={draw=coral, line width=1.3pt, fill=gmpanel, rounded corners=3pt,
+                 inner sep=7pt, align=center, text=cream, font=\small},
+  codebox/.style={draw=teal, line width=1.3pt, fill=gmpanel, rounded corners=3pt,
+                  inner sep=7pt, align=center, text=cream, font=\small},
+  goldbox/.style={draw=gold, line width=1.3pt, fill=gmpanel, rounded corners=3pt,
+                  inner sep=7pt, align=center, text=cream, font=\small},
+  arr/.style={-{Stealth[length=2.8mm]}, line width=1.2pt, color=coral},
+  tarr/.style={-{Stealth[length=2.8mm]}, line width=1.2pt, color=teal},
+  garr/.style={-{Stealth[length=2.8mm]}, line width=1.2pt, color=gold}}
+
+\title{Gemma Monsters}
+\author{}
+\date{}
+
+\begin{document}
+
+% ================================================================ 1 · TITLE
+\begin{frame}
+  \begin{center}
+    \vspace{1.1em}
+    \kicker{Kaggle · Build with AI --- Gemma Hackathon · GDG Windsor · Edge / On-Device track}
+    {\fontsize{40}{44}\selectfont\bfseries\color{cream} GEMMA \textcolor{coral}{MONSTERS}\par}
+    \vspace{0.55em}
+    {\Large A monster-battling castle with a real tutoring agent inside.\par}
+    \vspace{0.55em}
+    {\color{gold}\large Five monsters guard the Citadel. Each one is a trick --- a wrong idea that feels right.\par}
+    \vspace{0.35em}
+    \dimt{Powered by Gemma, running entirely on one laptop. Nothing a student does ever leaves it.}\par
+    \vspace{1.5em}
+    {\small Gokulakrishnan \,\textcolor{coral}{·}\, Padmanabha \,\textcolor{coral}{·}\, Taha \,\textcolor{coral}{·}\, Naimah \,\textcolor{coral}{·}\, Amarah}
+  \end{center}
+\end{frame}
+
+% ================================================================ 2 · PROBLEM
+\begin{frame}{Wrong answers are not random}
+  \begin{center}
+    \vspace{0.3em}
+    {\fontsize{34}{40}\selectfont
+      $\dfrac{2}{3}+\dfrac{1}{4}\;=\;$\textcolor{coral}{$\dfrac{3}{7}$}\par}
+    \vspace{0.5em}
+    {\large Tops with tops, bottoms with bottoms. Feels tidy. Completely wrong.\par}
+    \vspace{0.9em}
+    {\color{gold}\Large\bfseries That is a trick: the wrong idea that feels right.\par}
+    \vspace{0.9em}
+    \begin{minipage}{0.86\textwidth}\centering
+      \dimt{\large This student does not need more practice --- they need that one idea found and removed.
+      Practice apps mark the answer wrong and move on. Cloud tutors need the internet, ship a child's
+      work to a server, and sometimes invent mathematics.}
+    \end{minipage}
+  \end{center}
+\end{frame}
+
+% ================================================================ 3 · MONSTERS
+\begin{frame}{So we turned every trick into a monster}
+  A gothic castle built in three.js. Five monsters on floating platforms, each one \emph{being} a trick.\par
+  \vspace{0.35em}
+  \renewcommand{\arraystretch}{1.28}
+  {\small
+  \begin{tabular}{@{}p{2.1cm}p{3.7cm}>{\raggedright\arraybackslash}p{7.0cm}@{}}
+    {\color{gold}\bfseries Monster} & {\color{gold}\bfseries Guards the strand} & {\color{gold}\bfseries The trick it plants in your head} \\
+    \multicolumn{3}{@{}c@{}}{{\color{coral}\rule[0.6ex]{13.2cm}{1.2pt}}} \\
+    \textbf{Fractis}    & Number & ``just add fractions straight across'' \\
+    \textbf{Equazor}    & Algebra & signs that flip the wrong way across the equals sign \\
+    \textbf{Statiq}     & Data & mean and median blurred into one fuzzy word \\
+    \textbf{Polygor}    & Geometry \& Measurement & stolen formulas that \emph{almost} fit \\
+    \textbf{Ledgerling} & Financial Literacy & interest quietly skimmed off a sloppy budget \\
+  \end{tabular}}
+  \vspace{0.4em}
+
+  {\color{gold} You cannot beat a monster by luck. You beat it by proving its trick no longer fools you.}\par
+  \vspace{0.15em}
+  \dimt{Beat all five and the sealed golden gate opens --- someone is locked in the keep. That is the rescue finale.}
+\end{frame}
+
+% ================================================================ 4 · EQAO
+\begin{frame}{Built on the real Grade 9 curriculum}
+  {\large Ontario \goldb{MTH1W} --- the course behind the Grade 9 EQAO assessment. All five strands, one monster each.\par}
+  \vspace{0.55em}
+  \begin{center}
+  \resizebox{0.98\textwidth}{!}{%
+  \begin{tikzpicture}[strand/.style={panelbox, minimum width=2.9cm, minimum height=1.7cm, font=\small}]
+    \node[strand, draw=coral] (s1) at (0,0)    {\textbf{Number}\\[1pt]\scriptsize\color{coral} Fractis};
+    \node[strand, draw=coral] (s2) at (3.2,0)  {\textbf{Algebra}\\[1pt]\scriptsize\color{coral} Equazor};
+    \node[strand, draw=coral] (s3) at (6.4,0)  {\textbf{Data}\\[1pt]\scriptsize\color{coral} Statiq};
+    \node[strand, draw=coral] (s4) at (9.6,0)  {\textbf{Geometry \&}\\ \textbf{Measurement}\\[1pt]\scriptsize\color{coral} Polygor};
+    \node[strand, draw=coral] (s5) at (12.8,0) {\textbf{Financial}\\ \textbf{Literacy}\\[1pt]\scriptsize\color{coral} Ledgerling};
+    \node[codebox, minimum width=15.7cm, font=\small] (bank) at (6.4,-2.1)
+      {\tealb{THE VERIFIED BANK --- 55 EQAO-style questions}\\[2pt]
+       every question carries a worked solution \;\textcolor{teal}{·}\;
+       every wrong option is tagged with the trick it reveals};
+    \draw[tarr] (bank.north -| s1) -- (s1.south);
+    \draw[tarr] (bank.north -| s2) -- (s2.south);
+    \draw[tarr] (bank.north -| s3) -- (s3.south);
+    \draw[tarr] (bank.north -| s4) -- (s4.south);
+    \draw[tarr] (bank.north -| s5) -- (s5.south);
+  \end{tikzpicture}}
+  \end{center}
+  \vspace{0.35em}
+  {\large So when a student picks a wrong answer, \goldb{the wrong answer itself is the diagnosis} --- a table lookup, not a model guess.}
+\end{frame}
+
+% ================================================================ 5 · JOURNEY
+\begin{frame}{One session, start to finish}
+  \begin{center}
+  \resizebox{0.98\textwidth}{!}{%
+  \begin{tikzpicture}[node distance=0.5cm and 0.55cm]
+    \node[panelbox, minimum height=1.75cm, text width=2.5cm] (quiz)
+      {\textbf{Battle}\\[2pt]\scriptsize the monster's quiz,\\ \scriptsize from the verified bank};
+    \node[codebox, minimum height=1.75cm, text width=2.6cm, right=of quiz] (diag)
+      {\textbf{Diagnosis}\\[2pt]\scriptsize the agent names the\\ \scriptsize priority trick};
+    \node[gembox, minimum height=1.75cm, text width=2.9cm, right=of diag] (loop)
+      {\textbf{Mastery training}\\[2pt]\scriptsize the autonomous\\ \scriptsize agent loop};
+    \node[goldbox, text width=3.3cm, above right=0.35cm and 0.7cm of loop.east, anchor=west] (relic)
+      {\textbf{\textcolor{gold}{Relic forged}}\\[2pt]\scriptsize trick defeated ---\\ \scriptsize one gate seal breaks};
+    \node[panelbox, text width=3.3cm, below right=0.35cm and 0.7cm of loop.east, anchor=west] (coll)
+      {\textbf{The Collector}\\[2pt]\scriptsize plus a warm report\\ \scriptsize for mum and dad};
+    \draw[arr] (quiz) -- (diag);
+    \draw[arr] (diag) -- (loop);
+    \draw[garr] (loop.east) -- (relic.west);
+    \draw[arr] (loop.east) -- (coll.west);
+  \end{tikzpicture}}
+  \end{center}
+  \vspace{0.55em}
+  \begin{itemize}\setlength\itemsep{0.5em}
+    \item {\large The monster meets you \textbf{by name} --- and it \goldb{remembers}: Gemma writes its greeting from your real battle history.}
+    \item {\large Between battles: \textbf{90-second mental-math skirmishes} against the Collector's lieutenants, and his three-life \textbf{boss speed trial}.}
+    \item {\large Defeat all five monsters \,$\rightarrow$\, the golden gate opens \,$\rightarrow$\, \goldb{the rescue finale}.}
+  \end{itemize}
+\end{frame}
+
+% ================================================================ 6 · AGENT LOOP (TikZ 1)
+\begin{frame}{The agent: it keeps teaching until the trick is gone}
+  \begin{columns}[T]
+    \begin{column}{0.56\textwidth}
+      \begin{center}
+      \resizebox{\columnwidth}{!}{%
+      \begin{tikzpicture}
+        \node[gembox, minimum width=3.1cm]  (teach) at (0,2.3)
+          {\textbf{TEACH}\\ \scriptsize Gemma writes the lesson\\ \scriptsize for the current rung};
+        \node[codebox, minimum width=3.1cm] (probe) at (3.7,0)
+          {\textbf{PROBE}\\ \scriptsize a fresh question the\\ \scriptsize student has never seen};
+        \node[gembox, minimum width=3.1cm]  (eval) at (0,-2.3)
+          {\textbf{EVALUATE}\\ \scriptsize answer by ground-truth key;\\ \scriptsize typed reasoning by Gemma};
+        \node[codebox, minimum width=3.1cm] (adapt) at (-3.7,0)
+          {\textbf{ADAPT}\\ \scriptsize climb the ladder ---\\ \scriptsize Gemma says why};
+        \draw[arr] (teach.east) to[bend left=22] (probe.north);
+        \draw[arr] (probe.south) to[bend left=22] (eval.east);
+        \draw[arr] (eval.west) to[bend left=22] (adapt.south);
+        \draw[arr] (adapt.north) to[bend left=22] (teach.west);
+        % the strategy ladder
+        \node[panelbox, align=left, text width=3.6cm, font=\scriptsize] (l4) at (8.6,2.4)
+          {\textbf{4 · Real-world analogy}};
+        \node[panelbox, align=left, text width=3.6cm, font=\scriptsize] (l3) at (8.6,1.3)
+          {\textbf{3 · Side-by-side contrast}};
+        \node[panelbox, align=left, text width=3.6cm, font=\scriptsize] (l2) at (8.6,0.2)
+          {\textbf{2 · Visual walkthrough}};
+        \node[panelbox, align=left, text width=3.6cm, font=\scriptsize] (l1) at (8.6,-0.9)
+          {\textbf{1 · Direct correction}};
+        \node[font=\scriptsize\bfseries, text=gold] at (8.6,3.3) {THE STRATEGY LADDER};
+        \node[font=\scriptsize, text=cream!62!gmbg, align=center, text width=3.9cm] at (8.6,-2.0)
+          {fixed in code --- each retry\\ is a genuinely different\\ way to teach};
+        \draw[garr] (l1.west) to[bend left=12] ($(teach.east)+(0.1,-0.15)$);
+      \end{tikzpicture}}
+      \end{center}
+    \end{column}
+    \begin{column}{0.42\textwidth}
+      \vspace{0.3em}
+      {\footnotesize \tealb{Teal = code decides.} \textcolor{coral}{\textbf{Coral = Gemma judges.}}\par
+      \vspace{0.55em}
+      \textbf{Deterministic spine:} plain code runs the loop; Gemma is called only at the judgment points.\par
+      \vspace{0.55em}
+      \textbf{Two exits, no third:} two fresh correct answers with solid reasoning \goldb{forges a relic}; a spent ladder means a \textbf{warm report for mum and dad}. The agent never gives up silently.\par
+      \vspace{0.55em}
+      \dimt{Every switch of strategy is announced on screen, with its reason.}\par}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================ 7 · REASONING GATE
+\begin{frame}{A right answer is not enough}
+  After every probe, the student must \goldb{type why} --- and Gemma grades those words.\par
+  \vspace{0.35em}
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      \begin{center}
+      \begin{tikzpicture}
+        \node[panelbox, align=left, text width=5.6cm, font=\small] {
+          {\scriptsize\color{cream!62!gmbg} THE PROBE}\\[1pt]
+          Calculate $\tfrac{1}{2}+\tfrac{1}{3}$ \; --- \; picks \textbf{$\tfrac{5}{6}$} \textcolor{teal}{\scriptsize (correct)}\\[6pt]
+          {\scriptsize\color{cream!62!gmbg} THE STUDENT TYPES}\\[1pt]
+          \emph{``I just guessed the biggest fraction, that usually works''}\\[6pt]
+          {\scriptsize\color{cream!62!gmbg} GEMMA'S GRADE}\\[1pt]
+          {\color{coral}\textbf{SHALLOW}} --- does \textbf{not} count toward mastery};
+      \end{tikzpicture}
+      \end{center}
+    \end{column}
+    \begin{column}{0.47\textwidth}
+      \begin{itemize}\setlength\itemsep{0.55em}
+        \item Three labels only --- \textbf{RESOLVED / SHALLOW / SAME\_ERROR}. A closed set, nothing open-ended.
+        \item The monster \goldb{answers the student's own words back, in character} --- it read what you wrote.
+        \item \tealb{Fail-open:} if the grader hiccups, the student is never punished for it.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+  \vspace{0.3em}
+  {\color{gold} A lucky bubble cannot fake understanding past this gate.}
+\end{frame}
+
+% ================================================================ 8 · ARCHITECTURE (TikZ 2)
+\begin{frame}{Everything on one laptop}
+  \begin{center}
+  \resizebox{0.82\textwidth}{!}{%
+  \begin{tikzpicture}
+    \node[goldbox, minimum width=9.4cm, text width=8.8cm] (game) at (0,2.5)
+      {\textbf{GAME SHELL}\\[2pt]\scriptsize three.js Citadel + Streamlit --- monsters, battles, WebAudio soundscape\\
+       \scriptsize all libraries and 3D models vendored: no CDN, works in airplane mode};
+    \node[gembox, minimum width=9.4cm, text width=8.8cm] (agent) at (0,0.55)
+      {\textbf{AGENT CONTROLLER}\\[2pt]\scriptsize deterministic loop + 55-item verified bank + hard caps\\
+       \scriptsize decides \emph{when} to call the model, and what it is allowed to say};
+    \node[codebox, minimum width=9.4cm, text width=8.8cm] (gemma) at (0,-1.4)
+      {\textbf{OLLAMA + GEMMA}\\[2pt]\scriptsize \texttt{gemma3:12b} the primary brain --- \texttt{gemma3:1b} for modest hardware\\
+       \scriptsize one environment variable switches every call site};
+    \draw[arr] ($(game.south)+(-0.9,0)$) -- ($(agent.north)+(-0.9,0)$);
+    \draw[arr] ($(agent.north)+(0.9,0)$) -- ($(game.south)+(0.9,0)$);
+    \draw[arr] ($(agent.south)+(-0.9,0)$) -- ($(gemma.north)+(-0.9,0)$);
+    \draw[arr] ($(gemma.north)+(0.9,0)$) -- ($(agent.south)+(0.9,0)$);
+    % the boundary
+    \node[draw=teal, line width=1.6pt, rounded corners=8pt, inner sep=12pt,
+          fit=(game)(gemma)] (laptop) {};
+    \node[font=\small\bfseries, text=teal, fill=gmbg, inner sep=3pt]
+      at (laptop.north) {THE STUDENT'S LAPTOP};
+    \node[font=\footnotesize\bfseries, text=teal, fill=gmbg, inner sep=3pt]
+      at (laptop.south) {NOTHING LEAVES THE LAPTOP};
+    % the internet, unreachable
+    \node[panelbox, draw=cream!30!gmbg, minimum width=2.3cm, text=cream!62!gmbg] (net) at (9.0,0.55)
+      {the internet\\[1pt]\scriptsize never contacted};
+    \draw[line width=1.2pt, color=cream!40!gmbg, dashed] (laptop.east) -- (net.west);
+    \node[cross out, draw=coral, line width=1.8pt, minimum size=0.42cm]
+      at ($(laptop.east)!0.5!(net.west)$) {};
+    \node[font=\scriptsize, text=cream!62!gmbg, align=center] at ($(laptop.east)!0.5!(net.west)+(0,-0.75)$)
+      {no accounts\\ no data collection};
+  \end{tikzpicture}}
+  \end{center}
+  \vspace{0.05em}
+  The Edge / On-Device promise, kept literally: \goldb{a student's struggles stay on their own machine.}
+\end{frame}
+
+% ================================================================ 9 · TRUST SPLIT (TikZ 3)
+\begin{frame}{Gemma judges. Code guarantees.}
+  \begin{center}
+  \resizebox{0.86\textwidth}{!}{%
+  \begin{tikzpicture}
+    \node[gembox, align=left, text width=6.6cm, minimum height=4.1cm, font=\small] (gem) at (0,0) {
+      {\normalsize\textbf{\textcolor{coral}{WHAT GEMMA DECIDES}}}\\[1pt]
+      {\scriptsize\color{cream!62!gmbg} the judgment calls}\\[5pt]
+      writes every lesson and study guide\\[2pt]
+      grades the student's typed reasoning\\[2pt]
+      picks the next ladder rung --- and says why\\[2pt]
+      authors fresh probes when the bank runs dry\\[2pt]
+      speaks as the monsters; forges the relics\\[2pt]
+      phrases the warm report for mum and dad};
+    \node[codebox, align=left, text width=6.6cm, minimum height=4.1cm, font=\small] (cod) at (8.0,0) {
+      {\normalsize\textbf{\textcolor{teal}{WHAT CODE GUARANTEES}}}\\[1pt]
+      {\scriptsize\color{cream!62!gmbg} the ground truth}\\[5pt]
+      every math fact comes from the verified bank\\[2pt]
+      answers graded against the ground-truth key\\[2pt]
+      the trick is diagnosed by tag lookup\\[2pt]
+      the ladder's order is fixed\\[2pt]
+      hard caps end every session\\[2pt]
+      scores and history computed, then injected};
+    \node[goldbox, minimum width=14.7cm, font=\small] (bank) at (4.0,-3.35)
+      {\goldb{THE GROUNDING RULE} --- the verified worked solution rides inside every prompt:\\[1pt]
+       \scriptsize Gemma explains \emph{why}; it never recomputes the math and never states new numbers.};
+    \draw[garr] (bank.north -| gem) -- (gem.south);
+    \draw[garr] (bank.north -| cod) -- (cod.south);
+  \end{tikzpicture}}
+  \end{center}
+  \vspace{0.1em}
+  The model does the thinking --- \goldb{it is never the source of mathematical truth.}
+\end{frame}
+
+% ================================================================ 10 · SAFETY NET
+\begin{frame}{We assumed the model would fail --- and built for it}
+  Every guardrail exists because live testing broke something first.\par
+  \vspace{0.35em}
+  \begin{columns}[T]
+    \begin{column}{0.49\textwidth}
+      \begin{tikzpicture}
+        \node[panelbox, draw=coral, align=left, text width=6.3cm, font=\small] {
+          {\textbf{\textcolor{coral}{Self-checked fresh probes}}}\\[3pt]
+          \scriptsize The small model once generated a question with a wrong
+          answer key. Now: bank first; a generated probe is used only if Gemma
+          can \textbf{solve it blind} and agree with its own key. Failures are discarded.};
+      \end{tikzpicture}\\[0.35em]
+      \begin{tikzpicture}
+        \node[panelbox, draw=coral, align=left, text width=6.3cm, font=\small] {
+          {\textbf{\textcolor{coral}{No invented arithmetic}}}\\[3pt]
+          \scriptsize The 1B once produced wrong math mid-explanation. Now the model
+          never computes at all: the verified solution is the \textbf{only math it may state}.};
+      \end{tikzpicture}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \begin{tikzpicture}
+        \node[panelbox, draw=teal, align=left, text width=6.3cm, font=\small] {
+          {\textbf{\textcolor{teal}{Hard caps --- it always ends}}}\\[3pt]
+          \scriptsize 4 probe cycles, a 12-model-call budget, and ladder exhaustion
+          each force a clean hand-off. \textbf{The loop terminates no matter what the model does.}};
+      \end{tikzpicture}\\[0.35em]
+      \begin{tikzpicture}
+        \node[panelbox, draw=gold, align=left, text width=6.3cm, font=\small] {
+          {\textbf{\textcolor{gold}{The warm hand-off}}}\\[3pt]
+          \scriptsize When teaching stalls, mum and dad get a \textbf{warm report}:
+          what the trick is, what was tried, and kitchen-table activities to try together.
+          The agent hands the student to a human --- never gives up silently.};
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+  \vspace{0.3em}
+  {\color{gold} The guardrails carry correctness; model size only dials quality.}
+\end{frame}
+
+% ================================================================ 11 · RUBRIC
+\begin{frame}{Scored against the rubric}
+  \vspace{0.2em}
+  \begin{columns}[T]
+    \begin{column}{0.24\textwidth}
+      {\color{coral}\textbf{USE OF GEMMA}\quad{\large\bfseries 30}}\par
+      \vspace{0.4em}{\color{coral}\hrule height 1.2pt}\vspace{0.5em}
+      {\footnotesize
+      Ten call sites, one auditable door --- lessons, reasoning grades, strategy
+      picks, probes, coaching, relics, reports.\\[3pt]
+      Every site guardrailed; grounded in the verified bank.\\[3pt]
+      Fully local via Ollama: \texttt{gemma3:12b}, with \texttt{1b} one flag away.}
+    \end{column}
+    \begin{column}{0.24\textwidth}
+      {\color{gold}\textbf{INNOVATION}\quad{\large\bfseries 30}}\par
+      \vspace{0.4em}{\color{gold}\hrule height 1.2pt}\vspace{0.5em}
+      {\footnotesize
+      A tutoring agent you can \emph{fight}: each trick embodied as a monster.\\[3pt]
+      Mastery gated on the student's own typed reasoning --- and the monster
+      answers those words back.\\[3pt]
+      A game world that runs on judgment, with a deterministic spine.}
+    \end{column}
+    \begin{column}{0.24\textwidth}
+      {\color{teal}\textbf{FUNCTIONALITY}\quad{\large\bfseries 20}}\par
+      \vspace{0.4em}{\color{teal}\hrule height 1.2pt}\vspace{0.5em}
+      {\footnotesize
+      Runs live, end to end, Wi-Fi off: Citadel, battles, agent loop,
+      skirmishes, boss speed trial, rescue finale.\\[3pt]
+      Hard caps mean no session can hang or loop forever.\\[3pt]
+      Fail-open grading: a model hiccup never hurts the student.}
+    \end{column}
+    \begin{column}{0.24\textwidth}
+      {\color{cream}\textbf{WRITEUP}\quad{\large\bfseries 20}}\par
+      \vspace{0.4em}{\color{cream!45!gmbg}\hrule height 1.2pt}\vspace{0.5em}
+      {\footnotesize
+      An honest engineering story: what the model broke in testing, and the
+      structural fix for each failure.\\[3pt]
+      Architecture doc, per-call-site guardrail table, and a companion Kaggle
+      notebook that reproduces the agent loop.}
+    \end{column}
+  \end{columns}
+  \vspace{0.5em}
+  \begin{center}
+    \dimt{One sentence for the scorecard:}\ \goldb{an autonomous, explainable, fully on-device
+    tutoring agent --- wearing a monster suit.}
+  \end{center}
+\end{frame}
+
+% ================================================================ 12 · CLOSE
+\begin{frame}
+  \begin{center}
+    \vspace{1.6em}
+    {\fontsize{27}{33}\selectfont\bfseries\color{cream} Every monster is a trick ---\\ a wrong idea that feels right.\par}
+    \vspace{0.9em}
+    {\Large\color{gold} Defeat the idea, and the gate opens.\par}
+    \vspace{1.1em}
+    \dimt{\large A student walks in adding fractions straight across. Twenty minutes later they have
+    \emph{proven} the trick is gone --- and nothing about them ever left their laptop.}\par
+    \vspace{1.5em}
+    {\small\color{teal} github.com/EdTechDL/gemma-without-borders \,·\, live demo, Wi-Fi off \,·\, companion Kaggle notebook}\par
+    \vspace{0.5em}
+    {\small Gokulakrishnan \,\textcolor{coral}{·}\, Padmanabha \,\textcolor{coral}{·}\, Taha \,\textcolor{coral}{·}\, Naimah \,\textcolor{coral}{·}\, Amarah}
+  \end{center}
+\end{frame}
+
+\end{document}

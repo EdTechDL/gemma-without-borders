@@ -50,10 +50,14 @@ def plainify(text: str) -> str:
     t = text
     for pat, rep in _VOCAB:
         t = pat.sub(rep, t)
-    t = t.replace("\\$", "\x00")                       # protect currency (\$ in LaTeX)
-    if "\\" in t or "$$" in t:                         # only LaTeX-looking text uses $
-        t = t.replace("$$", "").replace("$", "")       # ...as math delimiters; keep
-    t = t.replace("{,}", ",")                          # real $450 in plain solutions
+    # Dollar signs: '$450' is money and must survive; every other '$' is a
+    # LaTeX math delimiter and must go, or the UI shows raw '$-3 ... = 2$'.
+    # The test is what follows the sign: a digit means currency, anything
+    # else (letter, minus, space, punctuation, end of string) means delimiter.
+    t = t.replace("\\$", "\x00")                       # \$ in LaTeX is always money
+    t = t.replace("$$", "")
+    t = re.sub(r"\$(?!\d)", "", t)                     # drop math delimiters only
+    t = t.replace("{,}", ",")                          # LaTeX thousands separator
     t = re.sub(r"\\[\(\)\[\]]", "", t)                 # \( \) \[ \]
     t = re.sub(r"\\begin\{[^}]*\}|\\end\{[^}]*\}", "", t)
     t = re.sub(r"\\[dt]?frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}", r"\1/\2", t)  # fractions
