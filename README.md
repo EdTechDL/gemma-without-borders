@@ -23,6 +23,11 @@
 <br>
 <img width="1917" height="917" alt="col" src="https://github.com/user-attachments/assets/5b035bed-e4bb-4eb2-9ae2-1fc8389e625f" />
 *The Collector: three lives, a speed trial, and no patience for slow arithmetic.*
+<br>
+<br>
+<br>
+<img width="1002" height="902" alt="md" src="https://github.com/user-attachments/assets/d6139b3a-d72b-4b83-ad94-f54528997a0d" />
+Parent Digest: automated student progress report.
 
 ## The story
 
