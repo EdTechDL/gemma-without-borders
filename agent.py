@@ -66,7 +66,7 @@ def build_study_guides(result: dict, questions: list = None, seen_ids=None) -> l
 
 
 def teacher_report(result: dict, analysis: dict) -> str:
-    """A report a teacher can act on. The FACTS (score, tricks) are
+    """A report the PARENTS can act on. The FACTS (score, tricks) are
     deterministic; Gemma writes the interpretation and concrete interventions,
     grounded in those facts."""
     from gemma_client import ask_gemma, plainify, format_teacher_report
@@ -76,20 +76,21 @@ def teacher_report(result: dict, analysis: dict) -> str:
     focus = analysis["priority"]["name"] if analysis["priority"] else "n/a"
 
     narrative = plainify(ask_gemma(
-        "TASK: teacher\n"
-        "You are writing a brief report for a Grade 9 math teacher about ONE student, "
+        "TASK: parent\n"
+        "You are writing a brief, warm report for the PARENTS of a Grade 9 student, "
         "using ONLY the facts below. Do not invent numbers or facts.\n"
         f"Diagnostic-quiz score: {result['correct']} of {result['total']}.\n"
         f"Tricks the student showed: {patterns}.\n"
         f"Highest-priority gap: {focus}.\n\n"
-        "Write, in plain text (no LaTeX, no dollar signs), addressed to the teacher:\n"
-        "First, TWO sentences naming the underlying misunderstanding in teaching terms "
+        "Write, in plain text (no LaTeX, no dollar signs), addressed to the parents "
+        "in plain everyday language, no teaching jargon:\n"
+        "First, TWO sentences explaining, in everyday words, the wrong idea their child keeps applying "
         "and what it reveals about how the student is thinking.\n"
-        "Then a line exactly 'Try in class:' followed by THREE specific, classroom-ready "
-        "interventions (each on its own line starting with '- ') that target THIS "
-        "trick. Be concrete — name the strategy, not generic advice.",
+        "Then a line exactly 'Try at home:' followed by THREE specific, classroom-ready "
+        "activities (each on its own line starting with '- ') that target THIS "
+        "trick. Be concrete and doable at the kitchen table in 10 minutes - no teaching jargon.",
         max_new_tokens=380))
 
-    header = (f"**Teacher report** — scored {result['correct']} of {result['total']} "
+    header = (f"**Parent report** — scored {result['correct']} of {result['total']} "
               f"({result['score_pct']}%). Priority gap: **{focus}**.")
     return format_teacher_report(header, narrative)

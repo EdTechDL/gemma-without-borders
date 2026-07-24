@@ -52,6 +52,7 @@ def plainify(text: str) -> str:
     t = re.sub(r"\^([0-9n])", lambda m: m.group(1).translate(_SUP), t)  # ^2
     t = re.sub(r"_\{([^{}]*)\}", r"_\1", t)            # _{...}
     t = t.replace("\\\\", " ")                          # LaTeX line breaks
+    t = t.replace("\\ ", " ")                           # backslash-space artifacts
     t = re.sub(r"\\([a-zA-Z]+)", r"\1", t)             # drop any leftover \command
     t = re.sub(r"[ \t]{2,}", " ", t)
     return t.strip()
@@ -119,8 +120,9 @@ def format_teacher_report(header_md: str, narrative: str) -> str:
 
     # 2) split off the interventions
     low = narrative.lower()
-    if "try in class" in low:
-        i = low.index("try in class")
+    marker = "try at home" if "try at home" in low else ("try in class" if "try in class" in low else None)
+    if marker:
+        i = low.index(marker)
         prose = narrative[:i].strip()
         after = narrative[i:].split(":", 1)[1] if ":" in narrative[i:] else ""
         # split on bullet/number markers wherever they appear (incl. inline)
@@ -130,7 +132,7 @@ def format_teacher_report(header_md: str, narrative: str) -> str:
 
     md = header_md.strip() + "\n\n" + prose
     if items:
-        md += "\n\n**Try in class**\n\n" + "\n".join(f"- {it}" for it in items)
+        md += "\n\n**Try at home**\n\n" + "\n".join(f"- {it}" for it in items)
     return md
 
 

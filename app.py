@@ -5,7 +5,7 @@ Run it:   streamlit run app.py
 
 Flow:  take a short quiz  ->  submit  ->  score + a personalized study guide the
 AGENT builds from your wrong answers (explanation + fresh practice per mistake),
-plus the agent's read on your #1 trick and a teacher hand-off if needed.
+plus the agent's read on your #1 trick and a parent hand-off if needed.
 """
 import json
 import re
@@ -146,6 +146,20 @@ _SUPD = str.maketrans("0123456789", "\u2070\u00b9\u00b2\u00b3\u2074\u2075\u2076\
 _POW = re.compile(r"\b(\d+|[a-wyzA-Z])\s+to\s+the\s+power\s+(?:of\s+)?(negative\s+)?(\d+)\b", re.I)
 _SQ = re.compile(r"\b(\d+|[a-wyzA-Z])\s+squared\b", re.I)
 _CU = re.compile(r"\b(\d+|[a-wyzA-Z])\s+cubed\b", re.I)
+
+
+_STEP_SPLIT = re.compile(r"(?<=[.;])\s+(?=[A-Z(√\d])")
+
+
+def steps_md(text) -> str:
+    """Render a worked solution as numbered steps instead of one dense
+    paragraph. Splits on sentence boundaries (decimals are safe: a digit
+    after '. ' only splits when it starts a new sentence-like chunk)."""
+    t = esc(plainify(str(text)))
+    parts = [p.strip() for p in _STEP_SPLIT.split(t) if p.strip()]
+    if len(parts) <= 1:
+        return t
+    return "\n".join(f"{i}. {p}" for i, p in enumerate(parts, 1))
 
 
 def esc(text) -> str:
@@ -2199,21 +2213,21 @@ def results():
             help="The agent keeps teaching and checking, switching approaches "
                  "when one doesn't land, until you get two in a row right.",
         )
-    # only nudge the teacher when the main gap is still open
+    # only nudge the parents when the main gap is still open
     if analysis["escalate"] and not (priority and priority["id"] in mastered):
         note(
-            "Teacher hand-off",
-            "Several questions were missed. The agent writes the teacher a report they "
+            "Parent hand-off",
+            "Several questions were missed. The agent writes your parents a report they "
             "can act on — not just a score.",
         )
-        with st.expander("See the teacher report", expanded=True):
+        with st.expander("See the parent report", expanded=True):
             if "teacher_report" not in st.session_state:
-                with st.spinner("Writing a report the teacher can act on..."):
+                with st.spinner("Writing a note your parents can act on..."):
                     st.session_state.teacher_report = agent.teacher_report(result, analysis)
             with st.container(border=True):
                 st.markdown(st.session_state.teacher_report)
             st.download_button("Download report", st.session_state.teacher_report,
-                               file_name="teacher_report.md", key="dl_teacher")
+                               file_name="parent_report.md", key="dl_teacher")
 
     # --- a study-guide card per missed question ---
     st.subheader("Your study guide")
@@ -2251,7 +2265,7 @@ def results():
             st.markdown("**Why:** " + esc(guide["explanation"]))
             if guide["worked_solution"]:
                 with st.expander("See the worked solution"):
-                    st.markdown(esc(plainify(guide["worked_solution"])))
+                    st.markdown(steps_md(guide["worked_solution"]))
 
             # --- interactive "Now you try" ---
             p = guide["practice"]
@@ -2286,7 +2300,7 @@ def results():
                              "Take another look, or open a hint.")
                     if p.get("solution"):
                         with st.expander("See this one worked out"):
-                            st.markdown(esc(plainify(p["solution"])))
+                            st.markdown(steps_md(p["solution"]))
 
     if st.session_state.get("adventure"):
         st.button("Back to the monster nexus", key="tomap_bottom", on_click=back_to_map)
@@ -2381,16 +2395,16 @@ def mastery_stage():
             st.button("FACE THE COLLECTOR — the speed trial", type="primary",
                       key="boss_go",
                       on_click=lambda: st.session_state.update(stage="boss"))
-        note("Teacher hand-off",
+        note("Parent hand-off",
              "The agent tried every approach it has. Time for a human — here is a report "
-             "the teacher can act on, informed by what already didn't work.")
+             "your parents can act on, informed by what already didn't work.")
         if "escal_report" not in st.session_state:
-            with st.spinner("Writing a report the teacher can act on..."):
+            with st.spinner("Writing a note your parents can act on..."):
                 st.session_state.escal_report = m.escalation_report(s)
         with st.container(border=True):
             st.markdown(st.session_state.escal_report)
         st.download_button("Download report", st.session_state.escal_report,
-                           file_name="teacher_report.md", key="dl_escal")
+                           file_name="parent_report.md", key="dl_escal")
         st.button("Back to my results", key="back_escalated",
                   on_click=lambda: st.session_state.update(stage="results"))
         st.button("Take another quiz", key="again_escalated", on_click=reset)

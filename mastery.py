@@ -7,7 +7,7 @@ problem until the student demonstrates understanding or a safety cap trips:
     TEACH (Gemma, strategy-specific lesson)
       -> PROBE (a fresh question on the same trick)
       -> EVALUATE (deterministic when the probe comes from the bank)
-      -> ADAPT (plain code: mastery, next strategy, or teacher hand-off)
+      -> ADAPT (plain code: mastery, next strategy, or parent hand-off)
 
 Design rules (from the project blueprint):
   * Adaptation = advancing through a FIXED strategy ladder — each retry is a
@@ -298,7 +298,7 @@ def _rationale(session, correct, label, strategy_changed, strategy_why) -> str:
         return ("Two fresh questions correct in a row, and your reasoning showed real "
                 "understanding — that is the bar for mastery, so we can stop.")
     if session.state == ESCALATED:
-        return (f"Handing off to a teacher because {session.escalation_reason} — drilling "
+        return (f"Handing off to your parents because {session.escalation_reason} — drilling "
                 "further is unlikely to help more than a person can.")
     if correct and label == "SHALLOW":
         return ("You got it right, but your explanation was thin, so it does not count "
@@ -329,7 +329,7 @@ def mastery_recap(session: MasterySession) -> str:
 
 
 def escalation_report(session: MasterySession) -> str:
-    """A teacher-actionable hand-off. Facts are deterministic; Gemma interprets
+    """A parent-actionable hand-off. Facts are deterministic; Gemma interprets
     the session (what worked, where the student is stuck) and proposes concrete
     interventions informed by which tutoring approaches already failed."""
     tried = list(dict.fromkeys(h["strategy"] for h in session.history if h["kind"] == "lesson"))
@@ -338,8 +338,8 @@ def escalation_report(session: MasterySession) -> str:
     reasoning = [h["label"] for h in session.history if h["kind"] == "reasoning_grade"]
 
     narrative = plainify(ask_gemma(
-        "TASK: teacher\n"
-        "Write a brief report for a Grade 9 math teacher about ONE student whom an AI "
+        "TASK: parent\n"
+        "Write a brief, warm report for the PARENTS of a Grade 9 student whom an AI "
         "tutor worked with but could not bring to mastery. Use ONLY these facts; do not "
         "invent numbers.\n"
         f"Trick: {session.trick_name}.\n"
@@ -348,16 +348,16 @@ def escalation_report(session: MasterySession) -> str:
         f"Across {len(answers)} follow-up questions the student got {right} correct.\n"
         f"Reasoning quality when correct: {', '.join(reasoning) or 'not assessed'}.\n"
         f"The tutor stopped because: {session.escalation_reason}.\n\n"
-        "Write, in plain text (no LaTeX, no dollar signs), addressed to the teacher:\n"
+        "Write, in plain text (no LaTeX, no dollar signs), addressed to the parents in everyday language:\n"
         "First, TWO sentences: the underlying misunderstanding, and what the session "
         "showed about where the student improved and where they are still stuck.\n"
-        "Then a line exactly 'Try in class:' followed by THREE specific interventions "
+        "Then a line exactly 'Try at home:' followed by THREE specific interventions "
         "(each on its own line starting with '- ') targeting this trick - and "
         "different from the tutoring approaches that already failed above.",
         max_new_tokens=400))
 
     from gemma_client import format_teacher_report
-    header = (f"**Teacher report** — student is stuck on **{session.trick_name}**. "
+    header = (f"**Parent report** — student is stuck on **{session.trick_name}**. "
               f"Tutoring approaches tried: {', '.join(tried) or 'none'}. "
               f"Follow-up questions: {right} of {len(answers)} correct.")
     return format_teacher_report(header, narrative)
