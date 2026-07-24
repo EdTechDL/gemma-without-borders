@@ -16,6 +16,10 @@
 \definecolor{line}{HTML}{E4E1D7}
 \definecolor{card}{HTML}{FFFFFF}
 \definecolor{okg}{HTML}{0B6B3A}
+% ---- game-world dark variant ----
+\definecolor{night}{HTML}{15131C}
+\definecolor{plight}{HTML}{B7B3A8}
+\definecolor{gold}{HTML}{E0B45C}
 
 \setbeamercolor{background canvas}{bg=ivory}
 \setbeamercolor{normal text}{fg=ink}
@@ -32,27 +36,37 @@
 
 \newcommand{\kicker}[1]{{\color{clay}\scriptsize\bfseries\MakeUppercase{#1}}\\[0.3em]}
 \newcommand{\mutedtext}[1]{{\color{muted}#1}}
+\newcommand{\dmuted}[1]{{\color{plight}#1}}
+% wrap dark game frames in \begin{darkslides}...\end{darkslides}
+\newenvironment{darkslides}{%
+  \setbeamercolor{background canvas}{bg=night}%
+  \setbeamercolor{normal text}{fg=ivory}%
+  \setbeamercolor{frametitle}{fg=ivory,bg=night}%
+  \setbeamercolor{title}{fg=ivory}%
+}{}
 
-\title{Gemma Without Borders}
+\title{Gemma Monsters}
 \author{}
 \date{}
 
 \begin{document}
 
-% ---------------------------------------------------------------- 1 TITLE
+% ---------------------------------------------------------------- 1 TITLE (dark)
+\begin{darkslides}
 \begin{frame}
   \begin{center}
     \vspace{1.2em}
     \kicker{GDG Windsor · Build with AI · Edge / On-Device Track}
-    {\rmfamily\fontsize{34}{38}\selectfont Gemma Without Borders\par}
+    {\rmfamily\fontsize{34}{38}\selectfont\color{ivory} Gemma Monsters\par}
     \vspace{0.6em}
-    {\large An autonomous study agent for the Grade 9 EQAO math assessment.\par}
+    {\large An on-device math adventure for the Grade 9 EQAO.\par}
     \vspace{0.4em}
-    \mutedtext{Runs entirely on the student's device. A child's mistakes never leave their machine.}\par
+    \dmuted{Five monsters guard the Citadel. Each one is a trick --- a wrong idea that feels right.\\ Defeat the idea, and the golden gate opens. Nothing ever leaves the laptop.}\par
     \vspace{1.6em}
     {\small Gokulakrishnan \,·\, Padmanabha \,·\, Taha \,·\, Naimah \,·\, Amarah}
   \end{center}
 \end{frame}
+\end{darkslides}
 
 % ---------------------------------------------------------------- 2 PROBLEM
 \begin{frame}{The problem: wrong answers are symptoms, not causes}
@@ -61,10 +75,10 @@
       \begin{itemize}\setlength\itemsep{0.7em}
         \item Every Ontario Grade 9 student writes the EQAO math assessment. Many arrive with \textbf{specific, well-documented tricks} --- wrong ideas that feel right, not general weakness.
         \item A student who answers $\tfrac{2}{3}+\tfrac{1}{4}=\tfrac{3}{7}$ doesn't need more practice. They need someone to notice they \textbf{add tops and bottoms straight across} --- and fix exactly that.
-        \item Teachers can't do this per-student, per-trick. Generic review apps don't even try.
+        \item Teachers can't do this per-student, per-trick. \textbf{So we turned each trick into a monster you can fight.}
       \end{itemize}
     \end{column}
-    \begin{column}{0.41\textwidth}
+    \begin{column}{0.42\textwidth}
       \begin{tikzpicture}[scale=0.9]
         \node[draw=line, fill=card, rounded corners=2pt, inner sep=8pt, text width=5.2cm, align=left] at (0,0) {
           {\small Calculate $\tfrac{2}{3}+\tfrac{1}{4}$}\\[3pt]
@@ -79,36 +93,62 @@
   \end{columns}
 \end{frame}
 
-% ---------------------------------------------------------------- 3 WHAT WE BUILT
-\begin{frame}{What we built}
+% ---------------------------------------------------------------- 3 GAME WORLD (dark)
+\begin{darkslides}
+\begin{frame}{The game world: the Citadel}
+  {\small A gothic castle nexus in three.js --- drag to orbit. Five monsters idle on floating platforms, each guarding one curriculum strand and a sealed \textcolor{gold}{golden gate}. Someone is locked in the keep; defeat all five and the finale opens the gate.}\par
+  \vspace{0.5em}
+  \renewcommand{\arraystretch}{1.22}
+  {\footnotesize
+  \begin{tabular}{@{}p{2.1cm}p{3.6cm}p{7.2cm}@{}}
+    \toprule
+    \textbf{Monster} & \textbf{Strand (MTH1W)} & \textbf{The trick it feeds on} \\
+    \midrule
+    Fractis    & Number                  & adding fractions straight across, tops and bottoms \\
+    Equazor    & Algebra                 & signs that slip when balancing an equation \\
+    Statiq     & Data                    & mean and median blurred into the same idea \\
+    Polygor    & Geometry \& Measurement & formulas that are \emph{almost} right \\
+    Ledgerling & Financial Literacy      & interest skimmed off a sloppy budget \\
+    \bottomrule
+  \end{tabular}}
+  \vspace{0.5em}
+  \begin{itemize}\setlength\itemsep{0.25em}
+    \item {\small The game captures your \textbf{hero name}; monsters address you by it in full-screen encounter cinematics.}
+    \item {\small And they \textbf{remember}: Gemma writes each monster's greeting from your actual battle history.}
+  \end{itemize}
+\end{frame}
+\end{darkslides}
+
+% ---------------------------------------------------------------- 4 PLAYER JOURNEY
+\begin{frame}{The player journey}
   \begin{center}
   \resizebox{\textwidth}{!}{%
   \begin{tikzpicture}[
       node distance=0.45cm and 0.42cm,
-      box/.style={draw=line, fill=card, rounded corners=2pt, inner sep=5pt, align=center, font=\scriptsize},
-      accent/.style={draw=clay, thick, fill=card, rounded corners=2pt, inner sep=5pt, align=center, font=\scriptsize},
+      box/.style={draw=line, fill=card, rounded corners=2pt, inner sep=5pt, align=center, font=\scriptsize, text=ink},
+      accent/.style={draw=clay, thick, fill=card, rounded corners=2pt, inner sep=5pt, align=center, font=\scriptsize, text=ink},
       arr/.style={-{Stealth[length=2mm]}, thick, color=clayd}]
-    \node[box] (quiz) {Short quiz\\ \scriptsize verified EQAO-style items};
-    \node[box, right=of quiz] (diag) {Diagnose\\ \scriptsize trick behind each mistake};
-    \node[box, right=of diag] (guide) {Study guide\\ \scriptsize why it's wrong + practice};
-    \node[accent, right=of guide] (loop) {Mastery loop\\ \scriptsize the autonomous agent};
-    \node[box, above right=0.3cm and 0.42cm of loop.east, anchor=west] (win) {\color{okg}Mastery\\ \tiny 2 fresh correct in a row};
-    \node[box, below right=0.3cm and 0.42cm of loop.east, anchor=west] (esc) {Teacher hand-off\\ \tiny stuck-point report};
-    \draw[arr] (quiz) -- (diag);
-    \draw[arr] (diag) -- (guide);
-    \draw[arr] (guide) -- (loop);
-    \draw[arr] (loop.east) -- (win.west);
-    \draw[arr] (loop.east) -- (esc.west);
+    \node[box] (enc) {Encounter\\ \scriptsize cinematic; the monster\\ \scriptsize knows your name \& history};
+    \node[box, right=of enc] (battle) {Battle\\ \scriptsize 5 verified EQAO-style\\ \scriptsize questions};
+    \node[box, right=of battle] (report) {Battle report\\ \scriptsize the trick named +\\ \scriptsize grounded study guide};
+    \node[accent, right=of report] (train) {Training\\ \scriptsize the autonomous\\ \scriptsize mastery loop};
+    \node[box, above right=0.3cm and 0.42cm of train.east, anchor=west] (win) {\color{okg}Mastery\\ \tiny Gemma forges a relic;\\ \tiny the strand falls};
+    \node[box, below right=0.3cm and 0.42cm of train.east, anchor=west] (esc) {Escalation\\ \tiny the Collector is summoned\\ \tiny + teacher report};
+    \draw[arr] (enc) -- (battle);
+    \draw[arr] (battle) -- (report);
+    \draw[arr] (report) -- (train);
+    \draw[arr] (train.east) -- (win.west);
+    \draw[arr] (train.east) -- (esc.west);
   \end{tikzpicture}}
   \end{center}
   \vspace{0.4em}
   \begin{itemize}\setlength\itemsep{0.4em}
-    \item Student takes a 5-question quiz. On submit, the agent reads \textbf{all} the mistakes, finds the pattern, and picks the \textbf{priority trick to untangle}.
-    \item Then it \textbf{pursues a goal}: keep teaching --- with different strategies --- until the student \emph{demonstrates} understanding, or a human should take over.
+    \item Miss a question and the agent reads the wrong option's tag, names the \textbf{exact trick}, and builds a study guide grounded in the verified solution --- with real exponent and fraction notation on screen.
+    \item Then it \textbf{pursues a goal}: keep teaching, with different strategies, until you \emph{demonstrate} the trick is gone --- or the Collector comes for you.
   \end{itemize}
 \end{frame}
 
-% ---------------------------------------------------------------- 4 AGENT LOOP
+% ---------------------------------------------------------------- 5 AGENT LOOP
 \begin{frame}{An agent, not a chatbot}
   \begin{columns}[T]
     \begin{column}{0.56\textwidth}
@@ -121,7 +161,7 @@
         \node[gbox] (teach) at (0,2.4) {TEACH\\ \scriptsize Gemma writes the lesson};
         \node[box] (probe) at (3.4,0.8) {PROBE\\ \scriptsize fresh verified question};
         \node[gbox] (eval) at (0,-0.8) {EVALUATE\\ \scriptsize answer + typed reasoning};
-        \node[box] (adapt) at (-3.4,0.8) {ADAPT\\ \scriptsize plain code decides};
+        \node[gbox] (adapt) at (-3.4,0.8) {ADAPT\\ \scriptsize Gemma picks the next\\ \scriptsize strategy, and says why};
         \draw[arr] (teach.east) to[bend left=20] (probe.north);
         \draw[arr] (probe.south) to[bend left=20] (eval.east);
         \draw[arr] (eval.west) to[bend left=20] (adapt.south);
@@ -130,109 +170,89 @@
       \end{center}
     \end{column}
     \begin{column}{0.42\textwidth}
-      \textbf{A chatbot responds once.}\\
-      \textbf{An agent pursues a goal:}\par
-      \vspace{0.3em}
-      \mutedtext{\small ``Two consecutive fresh questions answered correctly, with reasoning that shows the trick is gone.''}\par
-      \vspace{0.8em}
-      \textbf{It cannot run away:}
-      \begin{itemize}
-        \item {\small 4-attempt cap}
-        \item {\small 12-model-call budget}
-        \item {\small strategy exhaustion $\rightarrow$ clean teacher hand-off}
-      \end{itemize}
+      \textbf{The reasoning gate:} a right answer with shaky typed reasoning \textbf{does not count toward mastery} --- Gemma grades the explanation (closed labels), not just the bubble.\par
+      \vspace{0.6em}
+      \textbf{Explainable everywhere:} every agent decision is shown with its why --- \mutedtext{\small ``Trying a visual walkthrough --- you said you can't see why the denominators matter.''}\par
+      \vspace{0.6em}
+      \textbf{It cannot run away:} 4-attempt cap, 12-model-call budget, strategy exhaustion $\rightarrow$ clean hand-off.\par
       \vspace{0.3em}
       {\scriptsize\color{muted}Orange boxes = Gemma. Every session provably terminates.}
     \end{column}
   \end{columns}
 \end{frame}
 
-% ---------------------------------------------------------------- 5 STRATEGY LADDER
-\begin{frame}{When a lesson fails, the agent changes how it teaches}
-  \begin{center}
-  \begin{tikzpicture}[
-      rung/.style={draw=line, fill=card, rounded corners=2pt, inner sep=7pt, align=left, text width=2.55cm, font=\small},
-      arr/.style={-{Stealth[length=2mm]}, thick, color=clayd}]
-    \node[rung] (s0) at (0,0) {\textbf{Direct correction}\\ \scriptsize state the error, show the rule};
-    \node[rung] (s1) at (3.3,0.55) {\textbf{Visual walkthrough}\\ \scriptsize number lines, area models};
-    \node[rung] (s2) at (6.6,1.1) {\textbf{Side-by-side contrast}\\ \scriptsize wrong vs right, line by line};
-    \node[rung] (s3) at (9.9,1.65) {\textbf{Real-world analogy}\\ \scriptsize money, pizza, game scores};
-    \draw[arr] (s0.east) -- (s1.west);
-    \draw[arr] (s1.east) -- (s2.west);
-    \draw[arr] (s2.east) -- (s3.west);
-  \end{tikzpicture}
-  \end{center}
-  \vspace{0.5em}
-  \begin{itemize}\setlength\itemsep{0.5em}
-    \item Adaptation is a \textbf{fixed ladder} --- every retry is a provably different pedagogy, never an open-ended improvisation.
-    \item \textbf{Gemma chooses which rung comes next}, by reading the student's own typed reasoning --- and tells the student why: \mutedtext{\small``Trying a visual walkthrough --- you said you can't see why the denominators matter.''}
-    \item Right answer but shaky reasoning? \textbf{Doesn't count toward mastery.} Gemma grades the explanation, not just the bubble.
-  \end{itemize}
-\end{frame}
-
-% ---------------------------------------------------------------- 6 GEMMA INTEGRATION
+% ---------------------------------------------------------------- 6 GEMMA ROLES
 \begin{frame}{Where Gemma does the thinking \hfill {\normalsize\color{muted}rubric: Gemma Integration, 30\%}}
-  \begin{center}
-  \renewcommand{\arraystretch}{1.25}
-  {\footnotesize
-  \begin{tabular}{@{}p{3.2cm}p{4.4cm}p{5.2cm}@{}}
+  \renewcommand{\arraystretch}{1.15}
+  {\scriptsize
+  \begin{tabular}{@{}p{4.0cm}p{9.3cm}@{}}
     \toprule
-    \textbf{Gemma's job} & \textbf{Capability shown} & \textbf{Guardrail} \\
+    \textbf{Gemma's job (8 call sites)} & \textbf{Guardrail} \\
     \midrule
-    Write the lesson \& explanation & generation, pedagogy & grounded in the verified solution --- may not invent numbers \\
-    Grade typed reasoning & reasoning, structured output & closed labels; fail-open; never punishes the student \\
-    Choose the next strategy & decision-making & restricted to the remaining ladder; deterministic fallback \\
-    Author new questions & structured output (JSON) & must pass its own blind re-solve, else discarded \\
+    Write the lesson \& study guide & grounded in the verified solution; explains \emph{why}, never recomputes \\
+    Grade typed reasoning & closed labels; fail-open --- never punishes the student \\
+    Choose the next strategy & limited to the remaining ladder; states its rationale; code fallback \\
+    Author fresh probe questions & bank-first; must pass a blind self-solve audit or is discarded \\
+    Monster memory lines & one line, from real battle history; scripted fallback \\
+    Forge the mastery relic & flavour only --- the facts are injected by code \\
+    Write the teacher report & narrative only; every number comes from the session log \\
+    Coach the speed trials & reads miss + latency telemetry; names the pattern; sets a 3-question drill \\
     \bottomrule
   \end{tabular}}
-  \end{center}
-  \vspace{0.3em}
-  \begin{itemize}\setlength\itemsep{0.25em}
-    \item {\small Remove Gemma and there is no tutor. \textbf{But the math truth never depends on it.}}
-    \item {\small One auditable door (\texttt{gemma\_client.py}); model size is a dial: \texttt{GEMMA\_MODEL=gemma3:12b}.}
+  \vspace{0.25em}
+  \begin{itemize}\setlength\itemsep{0.15em}
+    \item {\small Remove Gemma and there is no game. \textbf{But the math truth never depends on it.}}
+    \item {\small One auditable door (\texttt{gemma\_client.py}); model size is a dial: \texttt{gemma3:12b} primary, \texttt{gemma3:1b} light.}
   \end{itemize}
 \end{frame}
 
-% ---------------------------------------------------------------- 7 VERIFIED BANK
-\begin{frame}{The data Gemma stands on \hfill {\normalsize\color{muted}rubric: Functionality, 20\%}}
+% ---------------------------------------------------------------- 7 COLLECTOR (dark)
+\begin{darkslides}
+\begin{frame}{The Collector, his lieutenants, and the Gemma coach}
   \begin{columns}[T]
     \begin{column}{0.5\textwidth}
-      \textbf{A verified diagnostic bank:}
-      \begin{itemize}\setlength\itemsep{0.45em}
-        \item {\small 36 original EQAO-style questions across all 5 strands of the Ontario MTH1W curriculum}
-        \item {\small a taxonomy of 48 tricks, each with the flawed thinking spelled out}
-        \item {\small every wrong option tagged with the trick that produces it}
-        \item {\small independently re-solved and adversarially checked; 10 tags corrected in review}
+      \textbf{\textcolor{gold}{THE COLLECTOR}} --- {\small a giant skull boss, summoned when the mastery loop escalates. A client-side mental-math speed trial: 3 lives, he attacks on every miss. Alongside him, Gemma writes the teacher report --- the agent knows its limits.}\par
+      \vspace{0.6em}
+      \textbf{Three lieutenants}, one mental-math lane each:
+      \begin{itemize}\setlength\itemsep{0.25em}
+        \item {\small \textbf{Twinfang} --- doubles and halves}
+        \item {\small \textbf{The Niner} --- the nines shortcut}
+        \item {\small \textbf{Splitjaw} --- make-a-ten}
       \end{itemize}
+      {\small 90-second war-clock skirmishes with streak escalation; every miss and its latency is logged.}
     \end{column}
     \begin{column}{0.47\textwidth}
-      \textbf{So the agent can be trusted:}
-      \begin{itemize}\setlength\itemsep{0.45em}
-        \item {\small \textbf{Diagnosis} = table lookup on the tags. No model call, no hallucination, 100\% reproducible.}
-        \item {\small \textbf{Probes} are served bank-first --- a generated question is a last resort, and must audit itself.}
-        \item {\small \textbf{Every number a student sees} traces to a verified solution.}
+      \textbf{GET COACHED BY GEMMA}
+      \begin{itemize}\setlength\itemsep{0.4em}
+        \item {\small Before the fight, Gemma \textbf{whispers the lane's mental strategy} in its own words.}
+        \item {\small After it, Gemma reads the miss + latency telemetry, \textbf{names your miss pattern}, teaches the fix, and sets a \textbf{3-question drill}.}
+        \item {\small The battle is pure client-side speed; \textbf{the coaching is where the model earns its keep}.}
       \end{itemize}
+      \vspace{0.3em}
+      \dmuted{\scriptsize The whole wing runs to a procedural WebAudio soundscape --- no audio files shipped.}
     \end{column}
   \end{columns}
 \end{frame}
+\end{darkslides}
 
-% ---------------------------------------------------------------- 8 PROOF OF WORK
+% ---------------------------------------------------------------- 8 RELIABILITY
 \begin{frame}{We caught our model failing --- and engineered around it}
   \mutedtext{Every guardrail exists because live testing broke something. The commit history is the proof of work.}\par
-  \vspace{0.6em}
-  \renewcommand{\arraystretch}{1.3}
+  \vspace{0.4em}
+  \renewcommand{\arraystretch}{1.15}
   {\small
   \begin{tabular}{@{}p{5.6cm}p{6.6cm}@{}}
     \toprule
-    \textbf{Caught in testing (Gemma 1B)} & \textbf{Architectural fix} \\
+    \textbf{Caught in testing} & \textbf{Architectural fix} \\
     \midrule
     Generated a question with a \textbf{wrong answer key} & blind self-solve audit; bank-first probes \\
     Wrote a probe \textbf{in Spanish} & constrained generation prompts \\
-    \textbf{Invented wrong arithmetic} in an explanation ($\tfrac{2}{3}+\tfrac{1}{4}=\tfrac{17}{12}$) & grounding rule: explain \emph{why}, never recompute --- all numbers must come from the verified solution \\
-    Rambled when reconstructing multi-step errors & diagnosis by ground-truth lookup, not model reasoning \\
+    \textbf{Invented wrong arithmetic} in an explanation ($\tfrac{2}{3}+\tfrac{1}{4}=\tfrac{17}{12}$) & grounding rule: explain \emph{why}, never recompute --- all numbers come from the verified solution \\
+    Rambled when reconstructing multi-step errors & diagnosis by ground-truth tag lookup, not model reasoning \\
+    Emitted \texttt{2\^{}3} and \texttt{2/3} as raw markup & notation layer: real exponents and stacked fractions on screen \\
     \bottomrule
   \end{tabular}}
-  \vspace{0.6em}
+  \vspace{0.4em}
   \begin{itemize}
     \item {\small The result: \textbf{the model is never the source of truth for math} anywhere a student can see it.}
   \end{itemize}
@@ -242,22 +262,24 @@
 \begin{frame}{Fully on-device \hfill {\normalsize\color{muted}the Edge track promise, kept literally}}
   \begin{columns}[T]
     \begin{column}{0.55\textwidth}
-      \begin{itemize}\setlength\itemsep{0.6em}
-        \item Gemma runs locally via \textbf{Ollama} --- the demo works in airplane mode.
-        \item Tutoring data is a protected student record. Here, \textbf{what a student struggles with stays on their machine} --- no vendor agreement, no cloud log.
-        \item Runs on a normal laptop: 1B for instant responses, 12B for richer teaching. Same code, one environment variable.
-        \item No accounts, no API keys, no network calls in the loop --- by construction.
+      \begin{itemize}\setlength\itemsep{0.45em}
+        \item Gemma runs locally via \textbf{Ollama}: \texttt{gemma3:12b} primary, \texttt{gemma3:1b} light --- one environment variable. The demo works in airplane mode.
+        \item The 3D world is local too: \textbf{three.js and the CC0 Quaternius monsters are vendored} --- no CDN, no asset fetches.
+        \item The soundscape is \textbf{synthesized procedurally in WebAudio} --- zero audio files.
+        \item Tutoring data is a protected student record --- \textbf{what a student struggles with stays on their machine.}
       \end{itemize}
+      \vspace{0.15em}
+      {\scriptsize\color{muted}Companion Kaggle notebook runs Gemma 4 12b-it on a cloud GPU --- the app itself never leaves the laptop.}
     \end{column}
     \begin{column}{0.42\textwidth}
       \begin{tikzpicture}
         \node[draw=line, fill=card, rounded corners=3pt, inner sep=10pt, text width=4.6cm, align=center] {
           {\small\bfseries The student's laptop}\\[4pt]
-          {\small Streamlit app}\\
-          {\scriptsize\color{muted}quiz · agent loop · reports}\\[3pt]
+          {\small three.js Citadel + Streamlit}\\
+          {\scriptsize\color{muted}battles · agent loop · coach · reports}\\[3pt]
           {\color{clay}$\updownarrow$}\\[2pt]
           {\small Ollama + Gemma}\\
-          {\scriptsize\color{muted}1B installed · 12B one flag away}\\[6pt]
+          {\scriptsize\color{muted}12B primary · 1B one flag away}\\[6pt]
           {\color{line}\rule{3.8cm}{0.6pt}}\\[3pt]
           {\scriptsize\color{okg}\bfseries nothing crosses this line}\\[1pt]
           {\scriptsize\color{muted}(the internet)}
@@ -269,24 +291,24 @@
 
 % ---------------------------------------------------------------- 10 DEMO
 \begin{frame}{The 90-second live demo}
-  \begin{enumerate}\setlength\itemsep{0.55em}
-    \item {\small \textbf{Quiz} --- five questions, we miss the fraction item with the classic straight-across error.}
-    \item {\small \textbf{Results} --- the agent finds the pattern, names the trick, builds the study guide.}
-    \item {\small \textbf{``Practice until I've mastered it''} --- lesson appears; we answer wrong \emph{and type our flawed reasoning}.}
-    \item {\small \textbf{The moment}: the agent reads our words, \textbf{switches teaching strategy, and explains why} --- attempt counter, approach, and streak all visible.}
-    \item {\small We answer two fresh questions correctly $\rightarrow$ \textbf{Mastery demonstrated}, with a recap of which approaches it took.}
-    \item {\small (And if we kept failing: a teacher hand-off report --- the agent knows its limits.)}
+  \begin{enumerate}\setlength\itemsep{0.4em}
+    \item {\small \textbf{The Citadel} --- drag the castle; five monsters idle on their platforms; the keep is sealed.}
+    \item {\small \textbf{Encounter} --- Fractis addresses us by our hero name and \emph{remembers our last visit}.}
+    \item {\small \textbf{The miss} --- we add $\tfrac{2}{3}+\tfrac{1}{4}$ straight across; the battle report names the exact trick.}
+    \item {\small \textbf{The agent adapts} --- we answer wrong \emph{and type our flawed reasoning}; the agent switches strategy \textbf{and explains why}, live on screen.}
+    \item {\small \textbf{The relic} --- two fresh correct answers with solid reasoning $\rightarrow$ Gemma forges our trophy.}
+    \item {\small \textbf{The Collector's wing} --- a 90-second lieutenant skirmish, then \textbf{GET COACHED BY GEMMA}: it reads our misses, names the pattern, and drills the fix.}
   \end{enumerate}
-  \vspace{0.4em}
+  \vspace{0.25em}
   \mutedtext{\small Everything shown runs live on this laptop. Wi-Fi can be off.}
 \end{frame}
 
 % ---------------------------------------------------------------- 11 ROADMAP
-\begin{frame}{What's next \hfill {\normalsize\color{muted}same architecture, deeper Gemma}}
-  \begin{itemize}\setlength\itemsep{0.7em}
-    \item \textbf{Photograph your written work} --- Gemma 12B reads handwriting on-device; it transcribes, the verified bank judges. \mutedtext{\small (vision is in the model we already ship --- still zero cloud)}
-    \item \textbf{Local tool use} --- Gemma emits structured tool calls; a local SymPy verifier proves every check deterministically. \mutedtext{\small (tool use for a model that doesn't natively support it --- via constrained JSON)}
-    \item \textbf{Game mode} --- a three.js world where students move station to station; same agent brain underneath.
+\begin{frame}{What's next \hfill {\normalsize\color{muted}same architecture, deeper world}}
+  \begin{itemize}\setlength\itemsep{0.6em}
+    \item \textbf{Local tool use} --- Gemma emits constrained JSON tool calls; a local SymPy verifier proves every check deterministically. \mutedtext{\small (tool use for a model that doesn't natively support it)}
+    \item \textbf{Beyond the golden gate} --- the rescue arc continues: new keeps, new boss lanes, harder relics --- same agent brain underneath.
+    \item \textbf{Classroom mode} --- teacher reports aggregate across a class, still local-first: the school's data stays in the school.
   \end{itemize}
   \vspace{0.7em}
   {\color{line}\hrule height 1pt}
@@ -295,22 +317,26 @@
   {\small
   \begin{tabular}{@{}llll@{}}
     \textbf{Gemma Integration 30\%} & \textbf{Innovation 30\%} & \textbf{Functionality 20\%} & \textbf{Writeup 20\%} \\
-    \mutedtext{\scriptsize 4 roles, all guardrailed} & \mutedtext{\scriptsize goal-seeking tutor agent} & \mutedtext{\scriptsize live, tested, terminates} & \mutedtext{\scriptsize honest engineering story} \\
+    \mutedtext{\scriptsize 8 roles, all guardrailed} & \mutedtext{\scriptsize a tutor agent you can fight} & \mutedtext{\scriptsize live, on-device, terminates} & \mutedtext{\scriptsize honest engineering story} \\
   \end{tabular}}
 \end{frame}
 
-% ---------------------------------------------------------------- 12 CLOSE
+% ---------------------------------------------------------------- 12 CLOSE (dark)
+\begin{darkslides}
 \begin{frame}
   \begin{center}
     \vspace{1.5em}
-    {\rmfamily\fontsize{26}{32}\selectfont Build something people will remember ---\\ not because it's AI, but because it's genuinely useful.\par}
+    {\rmfamily\fontsize{26}{32}\selectfont\color{ivory} Every monster is a trick ---\\ a wrong idea that feels right.\par}
+    \vspace{1.0em}
+    {\rmfamily\large\color{gold} Defeat the idea, and the gate opens.\par}
+    \vspace{1.2em}
+    \dmuted{\small A student walks in adding fractions straight across. Twenty minutes later they've \emph{proven} the trick is gone --- and nothing about them ever left their laptop.}\par
     \vspace{1.4em}
-    {\small A student walks in confused about fractions.\\ Twenty minutes later they've \emph{proven} they understand --- and nothing about them ever left their laptop.}\par
-    \vspace{1.6em}
-    {\small\color{muted} github.com/EdTechDL/gemma-without-borders \,·\, live demo + clonable notebook}\par
-    \vspace{0.6em}
+    \dmuted{\small github.com/EdTechDL/gemma-without-borders \,·\, live demo + clonable notebook}\par
+    \vspace{0.5em}
     {\small Gokulakrishnan \,·\, Padmanabha \,·\, Taha \,·\, Naimah \,·\, Amarah}
   \end{center}
 \end{frame}
+\end{darkslides}
 
 \end{document}

@@ -2,13 +2,31 @@
 
 *An on-device math adventure powered by Gemma — built for the GDG Windsor Build with AI hackathon, Edge/On-Device track.*
 
+## Screenshots
+
+<!-- drop the four PNGs into docs/screens/ to light these up -->
+
+![The Citadel — five monsters guard their strands beneath the sealed golden gate](docs/screens/citadel.png)
+*The Citadel: drag to orbit the castle; five monsters wait on their floating platforms.*
+
+![A full-screen encounter — the monster addresses you by name and remembers your last battle](docs/screens/encounter.png)
+*An encounter: the monster calls you by name, and Gemma writes what it remembers about you.*
+
+![The battle report — exactly which tricks got you, with a Gemma-grounded study guide](docs/screens/battle-report.png)
+*The battle report: what got you, why it felt right, and the study guide that fixes it.*
+
+![The Collector — a giant skull boss running a mental-math speed trial](docs/screens/collector.png)
+*The Collector: three lives, a speed trial, and no patience for slow arithmetic.*
+
 ## The story
 
-Deep in the Nexus live five monsters. They are here to make you forget your math — each one plants a trick in your head, a wrong idea that feels right, which is exactly why it works. You cannot beat a monster by luck. You beat it by proving its trick doesn't fool you anymore: two fresh questions in a row, with reasoning that holds up.
+The Citadel is locked from the outside. Someone is trapped in the keep behind a golden gate, and five monsters hold the seal — each one perched on a floating platform, guarding one strand of Grade 9 math. Every monster plants a trick in your head: a wrong idea that feels right, which is exactly why it works. You cannot beat a monster by luck. You beat it by proving its trick doesn't fool you anymore: two fresh questions in a row, with reasoning that holds up.
+
+Defeat all five and the seal breaks, the gate opens, and the rescue is yours. Fail too often, though, and the monsters' boss takes an interest. They call him the Collector. They do not joke about him.
 
 ## The monsters
 
-| Monster | Unit | Its trick |
+| Monster | Strand | Its trick |
 |---|---|---|
 | **Fractis** | Number | Whispers "just add fractions straight across." Tops with tops, bottoms with bottoms. Feels tidy. Totally wrong. It fears a common denominator. |
 | **Equazor** | Algebra | Twists your equations so signs flip the wrong way when you move things across the equals sign. Hates when you balance both sides. |
@@ -16,15 +34,20 @@ Deep in the Nexus live five monsters. They are here to make you forget your math
 | **Polygor** | Geometry & Measurement | Hoards angles and hands you stolen area formulas that almost fit. One honest diagram and it crumbles. |
 | **Ledgerling** | Financial Literacy | Skims your interest while you sleep and hopes you never check the math. A sharp budget cuts it down. |
 
+And above them all: **THE COLLECTOR**, a giant skull who runs mental-math speed trials — three lives, incoming attacks — with three lieutenants softening you up in the training grounds: **Twinfang** (doubles), **The Niner** (nines), and **Splitjaw** (make-a-ten).
+
 ## How to play
 
-1. From the intro page, hit **Play GEMMA Monsters** to enter the Nexus.
-2. Click a monster. Read its card. Press **Begin challenge** to face its quiz.
-3. Miss questions and the monster **gets you** — its trick was in your head all along.
-4. Now the agent steps in. It teaches you, checks if the lesson landed, and switches to a different teaching style when one doesn't work — until you defeat the monster.
-5. Defeat = two fresh questions right in a row, with reasoning that holds up. No fluke wins.
+1. Enter your hero name. The monsters will use it — and they will remember you.
+2. Enter the Citadel. Drag to orbit the castle, then click a monster on its platform.
+3. The encounter takes over the screen. The monster taunts you by name; come back after a loss and it gloats about last time.
+4. Face its quiz. The battle report shows exactly which tricks got you, then a Gemma-grounded study guide explains each one — with real fraction and exponent notation, never recomputed math.
+5. Now the agent steps in: it teaches, probes you with a fresh question, and reads both your answer and your typed reasoning. A right answer with wobbly reasoning does not count. When a lesson doesn't land, Gemma switches teaching strategies and tells you why.
+6. Master the trick and Gemma forges you a relic — a trophy written from your actual battle. Struggle too long and the Collector is summoned instead, along with a Gemma-written note for your teacher.
+7. Between battles, hit the training grounds: 90-second war-clock skirmishes against the lieutenants, with streaks that raise the stakes. Gemma whispers each lane's mental strategy before the fight, and afterward **GET COACHED BY GEMMA** names your miss pattern, teaches the fix, and sets a three-question drill.
+8. Defeat all five monsters to break the seal on the golden gate and free whoever is locked in the keep.
 
-Not in the mood for monsters? Classic mode (no game, same brain) is still right there on the intro page.
+Not in the mood for monsters? Classic mode (no game, same brain) is one click away.
 
 ## What GEMMA does behind the curtain
 
@@ -36,8 +59,10 @@ Gemma runs locally on your machine and does the actual thinking, one job per lin
 | Reasoning check | Reads HOW you got your answer — a right answer with wobbly reasoning does not count. |
 | Next move | Picks its next teaching move and tells you why. |
 | Fresh questions | Forges brand-new questions, then secretly re-solves them to check its own answer key. |
-| Hints | Gives hints that nudge but never spoil. |
-| Photo vision | Reads a photo of your paper work, right on your device. |
+| Battle memory | Writes each monster's opening line from what it remembers about you. |
+| Relic forging | Names and inscribes the relic you earn from the trick you beat. |
+| Skirmish coaching | Reads your misses and hesitations, names the pattern, and sets your drill. |
+| Strategy whispers | Teaches you each lieutenant's lane — doubles, nines, make-a-ten — before the fight. |
 | Teacher note | Writes your teacher a note they can actually use. |
 
 One plain fact: the math answers always come from a bank of verified questions, never from the model guessing.
@@ -55,7 +80,7 @@ Optional, for the live brain: install [Ollama](https://ollama.com) and pull a mo
 
 ```bash
 ollama pull gemma3:1b     # small and fast
-ollama pull gemma3:12b    # bigger brain, plus photo vision
+ollama pull gemma3:12b    # bigger brain
 ```
 
 Without Ollama the app still runs, just with placeholder text instead of Gemma. Switch models any time with the `GEMMA_MODEL` environment variable:
