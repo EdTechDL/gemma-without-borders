@@ -440,7 +440,7 @@ function init(){
   renderer.shadowMap.enabled=true;
   renderer.shadowMap.type=THREE.PCFSoftShadowMap;
   renderer.toneMapping=THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure=1.25;
+  renderer.toneMappingExposure=0.85;
   renderer.outputEncoding=THREE.sRGBEncoding;
   el.appendChild(renderer.domElement);
 
@@ -456,8 +456,8 @@ function init(){
   renderer.domElement.addEventListener('pointerdown',function(){ controls.autoRotate=false; });
 
   // ---- lighting: shadows live on the moonlight only ----
-  scene.add(new THREE.AmbientLight(0x1a243a,1.4));
-  const moonLight=new THREE.DirectionalLight(0xb0ccff,2.0);
+  scene.add(new THREE.AmbientLight(0x141c30,0.95));
+  const moonLight=new THREE.DirectionalLight(0x9fb6e8,1.25);
   moonLight.position.set(-35,55,-20);
   moonLight.castShadow=true;
   moonLight.shadow.mapSize.width=2048;
@@ -1367,6 +1367,347 @@ def _boss_html(name):
     return html.replace("__HERO__", name)
 
 
+_SKIRMISH_TEMPLATE = r"""
+<style>
+html,body{margin:0;background:#050308;overflow:hidden;font-family:'Trebuchet MS',sans-serif}
+#stage{position:relative;width:100%;height:100vh}
+#stage.shake{animation:sh .35s}
+@keyframes sh{0%,100%{transform:none}20%{transform:translate(-9px,4px)}40%{transform:translate(8px,-5px)}60%{transform:translate(-6px,-3px)}80%{transform:translate(5px,3px)}}
+#vig2{position:absolute;inset:0;pointer-events:none;z-index:3;
+  background:radial-gradient(ellipse 70% 60% at 50% 40%,transparent 50%,rgba(2,1,4,.75) 85%,#020104 100%)}
+#hud2{position:absolute;inset:0;z-index:5;pointer-events:none;color:#e8dfd2}
+#btitle{position:absolute;top:14px;left:18px;font-size:1.5rem;font-weight:900;
+  letter-spacing:.2em;color:#fff;text-shadow:0 0 18px __COLOR__}
+#bsub{position:absolute;top:52px;left:19px;font-size:.7rem;letter-spacing:.16em;color:#8a86a8}
+#lives{position:absolute;top:16px;right:18px;display:flex;gap:7px}
+.pip{width:20px;height:20px;background:linear-gradient(135deg,#ff6b6b,#a8434f);
+  border-radius:4px;transform:rotate(45deg);box-shadow:0 0 10px #ff6b6b88}
+.pip.gone{background:#241a22;box-shadow:none}
+#streakbox{position:absolute;top:52px;right:18px;font-size:.75rem;letter-spacing:.14em;
+  color:__COLOR__;text-shadow:0 0 10px __COLOR__66;text-align:right}
+#qbox{position:absolute;left:50%;bottom:30px;transform:translateX(-50%);
+  width:min(480px,88%);text-align:center;pointer-events:auto}
+#qq{font-size:2rem;font-weight:900;color:#fff;text-shadow:0 0 16px __COLOR__;margin-bottom:8px}
+#timer{height:7px;background:#181226;border-radius:4px;overflow:hidden;margin:0 0 12px}
+#tfill{height:100%;width:100%;background:linear-gradient(90deg,__COLOR__,#fff);transition:width .1s linear}
+#ans{background:#120d1c;border:2px solid __COLOR__;border-radius:10px;color:#fff;
+  font-size:1.4rem;text-align:center;width:150px;padding:9px;outline:none}
+#go2{background:__COLOR__;border:none;border-radius:10px;color:#0a0714;font-weight:900;
+  font-size:1rem;padding:12px 22px;margin-left:10px;cursor:pointer;letter-spacing:.1em}
+#bline{position:absolute;left:50%;top:70px;transform:translateX(-50%);max-width:80%;
+  background:rgba(10,7,18,.85);border:1px solid __COLOR__;border-radius:12px;
+  padding:9px 15px;font-size:.95rem;color:#efe9ff;text-align:center;
+  box-shadow:0 0 20px __COLOR__44}
+#endcard{display:none;position:absolute;inset:0;z-index:6;align-items:center;justify-content:center;
+  flex-direction:column;background:rgba(3,2,7,.72);text-align:center;padding:0 8%}
+#endtitle{font-size:2.2rem;font-weight:900;letter-spacing:.16em;color:#fff;text-shadow:0 0 24px __COLOR__}
+#endsub{margin-top:10px;color:#b9b4d6;font-size:1rem}
+#coachlink{display:inline-block;margin-top:22px;pointer-events:auto;text-decoration:none;
+  background:__COLOR__;color:#0a0714;font-weight:900;letter-spacing:.12em;
+  border-radius:10px;padding:13px 26px;font-size:1rem;box-shadow:0 0 24px __COLOR__66}
+</style>
+<div id="stage">
+  <div id="v"></div><div id="vig2"></div>
+  <div id="hud2">
+    <div id="btitle">__MONSTER__</div>
+    <div id="bsub">LIEUTENANT OF THE COLLECTOR - WAR CLOCK 90s</div>
+    <div id="lives"><div class="pip"></div><div class="pip"></div><div class="pip"></div></div>
+    <div id="streakbox">STREAK 0 &middot; SCORE 0</div>
+    <div id="bline">Ninety seconds, __HERO__. The Collector sent me to soften you up. Keep the numbers moving or lose them.</div>
+    <div id="qbox">
+      <div id="qq"></div>
+      <div id="timer"><div id="tfill"></div></div>
+      <input id="ans" inputmode="numeric" autocomplete="off">
+      <button id="go2">STRIKE</button>
+    </div>
+  </div>
+  <div id="endcard">
+    <div id="endtitle"></div>
+    <div id="endsub"></div>
+    <a id="coachlink" target="_blank" rel="opener">GET COACHED BY GEMMA</a>
+  </div>
+</div>
+<script>
+(function(){ let o='';
+  try{ o=window.parent.location.origin; }catch(e){ try{ o=new URL(document.referrer).origin; }catch(_){} }
+  window.__ORIGIN=o; })();
+</script>
+__VENDOR__
+<script>
+window.addEventListener('load', function(){
+  const W=innerWidth,H=innerHeight;
+  const r=new THREE.WebGLRenderer({antialias:true});
+  r.setSize(W,H); r.outputEncoding=THREE.sRGBEncoding; r.setClearColor(0x050308);
+  document.getElementById('v').appendChild(r.domElement);
+  const sc=new THREE.Scene(); sc.fog=new THREE.FogExp2(0x050308,0.05);
+  const cam=new THREE.PerspectiveCamera(42,W/H,0.1,80);
+  cam.position.set(0,2.6,7.5); cam.lookAt(0,2.4,0);
+  const tint=new THREE.Color("__COLOR__");
+  sc.add(new THREE.AmbientLight(0x9aa0ff,0.5));
+  const key=new THREE.SpotLight(0xcfd4ff,2.6,50,Math.PI/3,0.5); key.position.set(0,12,6); sc.add(key);
+  const under=new THREE.PointLight(tint,2.2,20); under.position.set(0,0.4,1.5); sc.add(under);
+  const floor=new THREE.Mesh(new THREE.CircleGeometry(30,48),
+    new THREE.MeshStandardMaterial({color:0x0a0712,metalness:.4,roughness:.85}));
+  floor.rotation.x=-Math.PI/2; sc.add(floor);
+  let mix=null,obj=null,entrance=0,actIdle=null,actHit=null;
+  new THREE.GLTFLoader().load((window.__ORIGIN||'')+"__MODEL__",(g)=>{
+    obj=g.scene;
+    const b=new THREE.Box3().setFromObject(obj), sz=b.getSize(new THREE.Vector3());
+    obj.scale.setScalar(0.15);
+    obj.userData.fullScale=5.2/Math.max(sz.x,sz.y,sz.z,0.001);
+    const b2=new THREE.Box3().setFromObject(obj), c=b2.getCenter(new THREE.Vector3());
+    obj.position.set(-c.x,3.2,-c.z-1); sc.add(obj);
+    if(g.animations&&g.animations.length){
+      mix=new THREE.AnimationMixer(obj);
+      const fi=g.animations.find(a=>/Flying_Idle/.test(a.name))
+             ||g.animations.find(a=>/idle/i.test(a.name))||g.animations[0];
+      const hb=g.animations.find(a=>/Headbutt|Punch/.test(a.name));
+      actIdle=mix.clipAction(fi); actIdle.timeScale=0.85; actIdle.play();
+      if(hb){ actHit=mix.clipAction(hb); actHit.setLoop(THREE.LoopOnce); actHit.timeScale=1.0; }
+    }
+    entrance=1;
+  });
+  function attack(){
+    document.getElementById('stage').classList.add('shake');
+    setTimeout(()=>document.getElementById('stage').classList.remove('shake'),380);
+    if(actHit&&actIdle){ actHit.reset().fadeIn(0.1).play(); actIdle.fadeOut(0.1);
+      setTimeout(()=>{ actHit.fadeOut(0.2); actIdle.reset().fadeIn(0.2).play(); },900); }
+  }
+  // ---- skirmish engine: 90s war clock, streaks, three lanes ----
+  const LANE="__LANE__", TOTAL=90;
+  const LINES_HIT=["Snap. That one is ours now.","Wrong. The Collector pays me per mistake.",
+    "Slower than the rumors said, __HERO__.","Feel that? That was a number leaving you."];
+  const LINES_OK=["Tch. Faster than you look.","Keep it. For now.","One trick. Anyone can do one trick.",
+    "The Collector will not be pleased with me, __HERO__."];
+  function ri(a,b){ return a+Math.floor(Math.random()*(b-a+1)); }
+  function evenIn(a,b){ let n=ri(a,b); if(n%2) n+=(n<b?1:-1); return n; }
+  function tier(s){ return s<3?0:(s<6?1:2); }
+  function genDoubles(t){
+    if(t===0){ const n=ri(6,30); return {txt:"double "+n,key:"double "+n,ans:2*n}; }
+    if(t===1){
+      if(Math.random()<0.5){ const n=ri(31,80); return {txt:"double "+n,key:"double "+n,ans:2*n}; }
+      const n=evenIn(40,160); return {txt:"half of "+n,key:"half "+n,ans:n/2};
+    }
+    const p=Math.random();
+    if(p<0.4){ const n=ri(13,26); return {txt:"4 x "+n,key:"4x"+n,ans:4*n}; }
+    if(p<0.7){ const n=evenIn(100,300); return {txt:"half of "+n,key:"half "+n,ans:n/2}; }
+    const n=ri(60,140); return {txt:"double "+n,key:"double "+n,ans:2*n};
+  }
+  function genNines(t){
+    if(t===0){
+      if(Math.random()<0.5){ const n=ri(2,6); return {txt:"9 x "+n,key:"9x"+n,ans:9*n}; }
+      const n=ri(12,40); return {txt:n+" + 9",key:n+"+9",ans:n+9};
+    }
+    if(t===1){
+      const p=Math.random();
+      if(p<0.35){ const n=ri(3,12); return {txt:"9 x "+n,key:"9x"+n,ans:9*n}; }
+      if(p<0.6){ const n=ri(20,80);
+        if(Math.random()<0.5) return {txt:n+" + 9",key:n+"+9",ans:n+9};
+        return {txt:n+" - 9",key:n+"-9",ans:n-9}; }
+      const n=ri(5,60); return {txt:"19 + "+n,key:"19+"+n,ans:19+n};
+    }
+    const p=Math.random();
+    if(p<0.4){ const n=ri(6,65); return {txt:"29 + "+n,key:"29+"+n,ans:29+n}; }
+    if(p<0.7){ const n=ri(30,95); return {txt:n+" - 9",key:n+"-9",ans:n-9}; }
+    const n=ri(7,12); return {txt:"9 x "+n,key:"9x"+n,ans:9*n};
+  }
+  function crossPair(lo,hi){
+    let a,b,i=0;
+    do{ a=ri(lo,hi); b=ri(lo,hi); i++; }
+    while(i<200&&((a%10)+(b%10)<10||a%10===0||b%10===0));
+    return [a,b];
+  }
+  function genSplit(t){
+    if(t===0){ const p=crossPair(12,48); return {txt:p[0]+" + "+p[1],key:p[0]+"+"+p[1],ans:p[0]+p[1]}; }
+    if(t===1){ const p=crossPair(25,78); return {txt:p[0]+" + "+p[1],key:p[0]+"+"+p[1],ans:p[0]+p[1]}; }
+    if(Math.random()<0.5){ const p=crossPair(35,89); return {txt:p[0]+" + "+p[1],key:p[0]+"+"+p[1],ans:p[0]+p[1]}; }
+    let a,b,i=0;
+    do{ a=ri(41,95); b=ri(13,a-12); i++; }
+    while(i<200&&((b%10)<=(a%10)||b%10===0));
+    if((b%10)<=(a%10)||b%10===0){ a=73; b=27; }
+    return {txt:a+" - "+b,key:a+"-"+b,ans:a-b};
+  }
+  function gen(){
+    const t=tier(streak);
+    if(LANE==="doubles") return genDoubles(t);
+    if(LANE==="nines") return genNines(t);
+    return genSplit(t);
+  }
+  let lives=3,score=0,streak=0,best=0,cur=null,qShown=0,over=false;
+  const misses=[],rts=[];
+  let clock=TOTAL;
+  const warId=setInterval(()=>{
+    clock-=0.1;
+    document.getElementById('tfill').style.width=Math.max(0,clock/TOTAL*100)+'%';
+    if(clock<=0) end(true);
+  },100);
+  function hud(){
+    document.getElementById('streakbox').innerHTML='STREAK '+streak+' &middot; SCORE '+score;
+  }
+  function say(msg){ document.getElementById('bline').textContent=msg; }
+  function newQ(){
+    if(over) return;
+    cur=gen();
+    document.getElementById('qq').textContent=cur.txt+" = ?";
+    const inp=document.getElementById('ans'); inp.value=''; inp.focus();
+    qShown=performance.now();
+  }
+  function clockRt(){ rts.push(Math.round((performance.now()-qShown)/100)*100); }
+  function miss(prefix){
+    if(over) return;
+    clockRt(); misses.push(cur.key);
+    lives--; streak=0; hud(); attack();
+    const pips=document.querySelectorAll('.pip:not(.gone)');
+    if(pips.length) pips[pips.length-1].classList.add('gone');
+    say((prefix||"")+LINES_HIT[Math.floor(Math.random()*LINES_HIT.length)]+"  (answer: "+cur.ans+")");
+    if(lives<=0) return end(false);
+    setTimeout(newQ,900);
+  }
+  function hit(){
+    if(over) return;
+    clockRt(); score++; streak++; if(streak>best) best=streak; hud();
+    say(LINES_OK[Math.floor(Math.random()*LINES_OK.length)]);
+    setTimeout(newQ,400);
+  }
+  function submit(){
+    if(over||!cur) return;
+    const v=parseFloat(document.getElementById('ans').value);
+    if(isNaN(v)) return miss("An empty strike. ");
+    (v===cur.ans)?hit():miss("");
+  }
+  document.getElementById('go2').onclick=submit;
+  document.getElementById('ans').addEventListener('keydown',e=>{ if(e.key==='Enter') submit(); });
+  function end(won){
+    if(over) return;
+    over=true; clearInterval(warId);
+    const ec=document.getElementById('endcard');
+    ec.style.display='flex';
+    document.getElementById('endtitle').textContent= won?"CLOCK SURVIVED":"OVERRUN";
+    document.getElementById('endsub').textContent= won
+      ? "\"The clock saved you, __HERO__. Not your speed.\"  Score: "+score+"  Best streak: "+best
+      : "\"Three cracks and you fell. The Collector thanks you for the donation.\"  Score: "+score+"  Best streak: "+best;
+    document.getElementById('qbox').style.display='none';
+    let base='/';
+    try{ base=window.parent.location.pathname||'/'; }
+    catch(e){ try{ base=new URL(document.referrer).pathname||'/'; }catch(_){} }
+    document.getElementById('coachlink').href=
+      base+'?coach='+LANE
+      +'&misses='+encodeURIComponent(misses.slice(0,8).join(','))
+      +'&score='+score
+      +'&streak='+best
+      +'&hero='+encodeURIComponent(localStorage.getItem('gwb_hero')||'');
+  }
+  let pt=0;
+  (function loop(t){ requestAnimationFrame(loop);
+    const tt=(t||0)*0.001, dt=Math.min(0.05,tt-pt); pt=tt;
+    if(mix) mix.update(dt);
+    if(obj){
+      if(entrance>0&&entrance<2){ entrance+=dt*0.55;
+        const fs=obj.userData.fullScale;
+        const e2=Math.min(1,Math.max(0,(entrance-1)*1.4+0.4));
+        obj.scale.setScalar(0.15+(fs-0.15)*e2);
+        obj.position.y=3.2-1.4*e2;
+      }
+      obj.position.x=Math.sin(tt*0.35)*0.5;
+      obj.rotation.y=Math.sin(tt*0.3)*0.2;
+    }
+    r.render(sc,cam); })(0);
+  setTimeout(newQ,2200);
+});
+</script>
+"""
+
+
+def _skirmish_html(name, lane, monster_model, color):
+    lieutenants = {"doubles": "Twinfang", "nines": "The Niner", "split": "Splitjaw"}
+    html = (_SKIRMISH_TEMPLATE
+            .replace("__VENDOR__", _vendor_js(["three.min.js", "GLTFLoader.js"]))
+            .replace("__MODEL__", monster_model)
+            .replace("__COLOR__", color)
+            .replace("__MONSTER__", lieutenants.get(lane, "Lieutenant").upper())
+            .replace("__LANE__", lane))
+    return html.replace("__HERO__", name)
+
+
+_LIEUTENANTS = {
+    "doubles": {"monster": "Twinfang", "model": "/app/static/monsters/frog.glb",
+                "color": "#4ade80",
+                "whisper": "doubling: to double, add the number to itself; to multiply by 4, double twice. Halving undoes it."},
+    "nines": {"monster": "The Niner", "model": "/app/static/monsters/alien.glb",
+              "color": "#ffd166",
+              "whisper": "nines: multiply by 10, then subtract the number once. Adding 9 is adding 10 then stepping back one."},
+    "split": {"monster": "Splitjaw", "model": "/app/static/monsters/fish.glb",
+              "color": "#35d0c0",
+              "whisper": "make a ten: split the smaller number to complete a ten first. 47+38 is 47+3, then +35."},
+}
+
+
+def skirmish_stage():
+    lane = st.session_state.get("skirmish_lane", "doubles")
+    lt = _LIEUTENANTS[lane]
+    st.markdown("""<style>
+      [data-testid="stHeader"]{display:none}
+      [data-testid="stMainBlockContainer"], .block-container{
+        padding:0 0 1rem 0 !important; max-width:100% !important}
+      [data-testid="stElementContainer"]:has(iframe){width:100% !important}
+    </style>""", unsafe_allow_html=True)
+    # Gemma whispers the mental strategy before the war (cached per lane)
+    wkey = f"whisper_{lane}"
+    if wkey not in st.session_state:
+        try:
+            from gemma_client import ask_gemma, plainify
+            st.session_state[wkey] = plainify(ask_gemma(
+                "TASK: explain\nIn TWO short sentences, teach a Grade 9 student the "
+                f"mental-math trick of {lt['whisper']} Plain text, encouraging, no examples "
+                "longer than one, address them as a warrior sharpening a blade.",
+                max_new_tokens=90))
+        except Exception:
+            st.session_state[wkey] = lt["whisper"]
+    note("GEMMA WHISPERS A WAR SECRET", esc(st.session_state[wkey]))
+    components.html(_skirmish_html(st.session_state.get("player_name", "challenger"),
+                                   lane, lt["model"], lt["color"]),
+                    height=560, scrolling=False)
+    mid = st.columns([2, 2, 2])
+    mid[1].button("Retreat to the citadel", key="sk_flee", on_click=back_to_map,
+                  use_container_width=True)
+
+
+def coach_stage():
+    d = st.session_state.get("coach_data", {})
+    lane = d.get("lane", "doubles")
+    lt = _LIEUTENANTS[lane]
+    st.markdown('<div class="gwb-kicker">After-battle debrief</div>', unsafe_allow_html=True)
+    st.title("Gemma reads your battle")
+    misses = [m for m in d.get("misses", []) if m]
+    ck = f"coach_{lane}_{d.get('score')}_{len(misses)}"
+    if ck not in st.session_state:
+        try:
+            from gemma_client import ask_gemma, plainify
+            st.session_state[ck] = plainify(ask_gemma(
+                "TASK: coach\nYou are a sharp, kind mental-math coach. A Grade 9 student "
+                f"named {st.session_state.get('player_name', 'challenger')} just fought a "
+                f"90-second speed battle on the skill: {lane}. Score {d.get('score')} correct, "
+                f"best streak {d.get('streak')}. The exact questions they MISSED: "
+                f"{', '.join(misses) if misses else 'none - a clean sweep'}.\n"
+                "In plain text (no LaTeX): (1) name the specific pattern you see in those "
+                "misses in one sentence; (2) teach the ONE mental trick that fixes it, in two "
+                "sentences; (3) give a mini drill of exactly three practice questions of that "
+                "type (questions only, no answers). If they missed nothing, congratulate them "
+                "and raise the challenge with three harder questions of the same skill.",
+                max_new_tokens=320))
+        except Exception:
+            st.session_state[ck] = ("Your speed is building. Drill the ones that got away: "
+                                    + (", ".join(misses) if misses else "raise the difficulty next run."))
+    with st.container(border=True):
+        st.markdown(esc(st.session_state[ck]))
+    c = st.columns(3)
+    c[0].button("Rematch " + lt["monster"], key="coach_rematch",
+                on_click=lambda: st.session_state.update(stage="skirmish", skirmish_lane=lane),
+                use_container_width=True)
+    c[1].button("Back to the citadel", key="coach_home", on_click=back_to_map,
+                use_container_width=True)
+
+
 def boss_stage():
     st.markdown("""<style>
       [data-testid="stHeader"]{display:none}
@@ -1379,6 +1720,14 @@ def boss_stage():
     mid = st.columns([2, 2, 2])
     mid[1].button("Retreat to the nexus", key="boss_flee", on_click=back_to_map,
                   use_container_width=True)
+    st.markdown('<div style="text-align:center;letter-spacing:.14em;font-size:.72rem;'
+                'color:#8a86a8;font-weight:700;margin-top:6px">OR SHARPEN YOUR SPEED AGAINST HIS LIEUTENANTS</div>',
+                unsafe_allow_html=True)
+    lc = st.columns(3)
+    for _i, (_lane, _lt) in enumerate(_LIEUTENANTS.items()):
+        lc[_i].button(_lt["monster"], key=f"lt_{_lane}",
+                      on_click=lambda l=_lane: st.session_state.update(stage="skirmish", skirmish_lane=l),
+                      use_container_width=True)
     if "msession" in st.session_state:
         mid[1].button("Back to training", key="boss_train",
                       on_click=lambda: st.session_state.update(stage="mastery"),
@@ -1849,7 +2198,31 @@ if st.query_params.get("boss"):
     st.session_state.adventure = True
     st.session_state.stage = "boss"
     st.query_params.clear()
+_skl = st.query_params.get("skirmish")
+if _skl in ("doubles", "nines", "split"):
+    st.session_state.adventure = True
+    hero = (st.query_params.get("hero") or "").strip()
+    if hero:
+        st.session_state.player_name = hero[:24]
+    st.session_state.skirmish_lane = _skl
+    st.session_state.stage = "skirmish"
+    st.query_params.clear()
+_cl = st.query_params.get("coach")
+if _cl in ("doubles", "nines", "split"):
+    st.session_state.adventure = True
+    st.session_state.coach_data = {
+        "lane": _cl,
+        "misses": (st.query_params.get("misses") or "").split(",")[:8],
+        "score": st.query_params.get("score") or "0",
+        "streak": st.query_params.get("streak") or "0",
+    }
+    hero = (st.query_params.get("hero") or "").strip()
+    if hero:
+        st.session_state.player_name = hero[:24]
+    st.session_state.stage = "coach"
+    st.query_params.clear()
 
 stage = st.session_state.get("stage", "intro")
 {"intro": intro, "map": map_stage, "encounter": encounter_stage, "quiz": quiz,
- "results": results, "mastery": mastery_stage, "boss": boss_stage}[stage]()
+ "results": results, "mastery": mastery_stage, "boss": boss_stage,
+ "skirmish": skirmish_stage, "coach": coach_stage}[stage]()
