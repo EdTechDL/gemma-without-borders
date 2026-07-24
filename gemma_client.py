@@ -98,9 +98,19 @@ TIMEOUT_S = int(os.environ.get("GEMMA_TIMEOUT_S", "120"))
 
 
 def ask_gemma(prompt: str, max_new_tokens: int = 600) -> str:
-    """Text in, text out. The only function that talks to the model."""
+    """Text in, text out. The only function that talks to the model.
+
+    A model that is slow, busy or gone answers the same way one that was never
+    installed does: with clearly marked placeholder text. That matters most on
+    the largest models, where a single call on modest hardware can outlast the
+    timeout - a judge running gemma3:27b should see the app degrade, not throw.
+    Raise GEMMA_TIMEOUT_S to give a big model more room.
+    """
     if gemma_available():
-        return _ollama(prompt, max_new_tokens)
+        try:
+            return _ollama(prompt, max_new_tokens)
+        except (requests.RequestException, ValueError, KeyError):
+            return _stub(prompt)
     return _stub(prompt)
 
 

@@ -97,14 +97,39 @@ Optional, for the live brain: install [Ollama](https://ollama.com) and pull a mo
 
 ```bash
 ollama pull gemma3:1b     # small and fast
-ollama pull gemma3:12b    # bigger brain
+ollama pull gemma3:12b    # what it ships on
+ollama pull gemma3:27b    # if your machine has the room
 ```
 
-Without Ollama the app still runs, just with placeholder text instead of Gemma. Switch models any time with the `GEMMA_MODEL` environment variable:
+Without Ollama the app still runs, just with placeholder text instead of Gemma.
+
+### Running it on a different Gemma
+
+One environment variable, and every call site moves with it. No code changes,
+the same prompts, and the same guardrails on every size:
 
 ```bash
-GEMMA_MODEL=gemma3:12b streamlit run app.py
+GEMMA_MODEL=gemma3:27b streamlit run app.py     # or 1b, 4b, 12b
 ```
+
+`gemma3:12b` is the default because it is what the app was built and tested
+against. Anything Ollama can serve will run.
+
+A larger model is slower, and a single call on modest hardware can outlast the
+default 120-second timeout. Nothing breaks if it does — the app falls back to
+placeholder text for that one call — but you will want more room:
+
+```bash
+GEMMA_MODEL=gemma3:27b GEMMA_TIMEOUT_S=300 streamlit run app.py
+```
+
+Two more knobs, rarely needed: `OLLAMA_URL` points at a model server somewhere
+other than `localhost:11434`, and `GEMMA_TIMEOUT_S` is in whole seconds.
+
+Where the size shows: the guardrails are the same, so what changes is the
+quality of the prose and how often a written question survives its own audit.
+The 1b under-detects thin reasoning that the 12b catches, which is why the code
+— never the model — owns the streak, the caps and every number on the page.
 
 ## Credits
 
