@@ -466,13 +466,6 @@ _HUB_TEMPLATE = r"""
       <a class="hbtn" target="_top" id="exitlink" href="#">Simple dashboard</a>
       <a class="hbtn" target="_top" id="parentlink" href="#">For mum and dad</a>
       <button class="hbtn" id="mutebtn" title="Toggle music and battle sounds">Sound: on</button>
-      <span id="herobox" style="display:none;margin-left:10px">
-        <input id="heroname" maxlength="20" placeholder="YOUR NAME"
-          style="background:#1c1119;border:1px solid #3a2a35;border-radius:18px;
-          padding:7px 12px;color:#f2e8dc;font-size:.75rem;letter-spacing:.08em;width:130px">
-        <button id="herogo" style="background:#e08d6d;border:none;border-radius:18px;
-          padding:7px 13px;font-weight:900;color:#14090c;cursor:pointer;font-size:.72rem">GO</button>
-      </span>
       <span id="herotag" style="display:none;margin-left:10px;color:#7fe9d6;
         font-size:.72rem;letter-spacing:.12em;font-weight:700"></span>
     </div>
@@ -504,7 +497,7 @@ _HUB_TEMPLATE = r"""
 __VENDOR__
 <script>
 window.addEventListener('load', function(){
-const UNITS = __UNITS__;
+const UNITS = __UNITS__, HERO = __HERO__;
 const NAMES = Object.keys(UNITS);
 let base='/';
 try{ base = window.parent.location.pathname || '/'; }
@@ -524,21 +517,6 @@ function relay(key){
   return false;
 }
 function slug(s){ return String(s).toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,''); }
-// React ignores a value assigned directly, so the name goes in through the
-// native setter and an input event, the way a keystroke would arrive.
-function relayHero(){
-  try{
-    var name=(localStorage.getItem('gwb_hero')||'').trim();
-    if(!name) return;
-    var d=window.parent.document;
-    var el=d.querySelector('.st-key-relay_hero input');
-    if(!el || el.value===name) return;
-    var set=Object.getOwnPropertyDescriptor(
-      window.parent.HTMLInputElement.prototype,'value').set;
-    set.call(el,name);
-    el.dispatchEvent(new Event('input',{bubbles:true}));
-  }catch(e){}
-}
 
 (function(){var x=document.getElementById('exitlink');
   x.href=base+'?exit=1'; x.target='_blank';
@@ -547,7 +525,7 @@ function relayHero(){
   var p=document.getElementById('parentlink');
   if(p){ p.target='_blank';
     p.addEventListener('pointerdown',function(){
-      var h=''; try{ h=(localStorage.getItem('gwb_hero')||'').trim(); }catch(e){}
+      var h=(HERO||'').trim();
       this.href=base+'?parents=1'+(h?('&hero='+encodeURIComponent(h)):'');
     });
     p.addEventListener('click',function(ev){
@@ -1040,7 +1018,7 @@ function focus(i){
   try{ showMini(name); }catch(e){ document.getElementById('c-stage').innerHTML=svgMini(u.color); }
   const fbtn=document.getElementById('c-fight');
   fbtn.onclick=null;
-  const hero=(localStorage.getItem('gwb_hero')||'').trim();
+  const hero=(HERO||'').trim();
   fbtn.href=base+'?station='+encodeURIComponent(name)
            +(hero?'&hero='+encodeURIComponent(hero):'');
   fbtn.target='_blank'; fbtn.rel='opener';
@@ -1117,33 +1095,20 @@ function animate(){
 
 // hero name: ask once, remember forever
 (function(){
-  const box=document.getElementById('herobox'), tag=document.getElementById('herotag');
-  const saved=(localStorage.getItem('gwb_hero')||'').trim();
-  function show(n){ tag.textContent='CHALLENGER: '+n.toUpperCase(); tag.style.display='inline';
-                    box.style.display='none'; }
-  if(saved){ show(saved); } else { box.style.display='inline'; }
-  // click your name tag to change it
-  tag.style.cursor='pointer';
-  tag.title='Click to change your name';
-  tag.onclick=function(){
-    const cur=(localStorage.getItem('gwb_hero')||'').trim();
-    document.getElementById('heroname').value=cur;
-    box.style.display='inline'; tag.style.display='none';
-    document.getElementById('heroname').focus();
-  };
-  function saveHero(){
-    const n=document.getElementById('heroname').value.trim();
-    if(n){ localStorage.setItem('gwb_hero', n); show(n); } }
-  document.getElementById('herogo').onclick=saveHero;
-  document.getElementById('heroname').addEventListener('keydown',function(e){
-    if(e.key==='Enter') saveHero(); });
+  // The name is given once, in the introduction, and Streamlit owns it from
+  // there. The citadel only displays it - there is no second place to set it
+  // and no second copy to disagree with the first.
+  const tag=document.getElementById('herotag');
+  const hero=(HERO||'').trim();
+  if(hero){ tag.textContent='CHALLENGER: '+hero.toUpperCase();
+            tag.style.display='inline'; }
   // the Begin link picks up the hero name at CLICK time, not card-open time
   const fb=document.getElementById('c-fight');
   fb.addEventListener('pointerdown',function(){
     try{
       if(!this.href || this.href.indexOf('?station=')<0) return;
       const u2=new URL(this.href);
-      const h=(localStorage.getItem('gwb_hero')||'').trim();
+      const h=(HERO||'').trim();
       if(h) u2.searchParams.set('hero',h); else u2.searchParams.delete('hero');
       this.href=u2.toString();
     }catch(e){}
@@ -1154,7 +1119,6 @@ function animate(){
   fb.addEventListener('click',function(ev){
     var station=this.dataset.station||'';
     if(!station) return;
-    relayHero();
     var self=this;
     setTimeout(function(){ relay('relay_station_'+slug(station)); },120);
     ev.preventDefault();
@@ -1240,7 +1204,9 @@ def _hub_html():
             for n, m in MONSTERS.items()}
     return (_HUB_TEMPLATE
             .replace("__VENDOR__", _vendor_js())
-            .replace("__UNITS__", json.dumps(data)))
+            .replace("__UNITS__", json.dumps(data))
+            .replace("__HERO__", json.dumps(
+                st.session_state.get("player_name", ""))))
 
 
 def to_dashboard():
@@ -1335,13 +1301,22 @@ def onboard_stage():
     # These two live OUTSIDE the scene on purpose. Streamlit sandboxes the
     # component frame without allow-top-navigation, so a link inside it can
     # never leave the introduction, however correct its href looks.
-    left, right = st.columns([3, 2])
-    right.button("Enter the citadel", key="enter_citadel", type="primary",
-                 use_container_width=True,
-                 on_click=lambda: st.session_state.update(onboarded=True, stage="map"))
-    left.button("Skip the introduction", key="skip_onboard",
-                use_container_width=True,
-                on_click=lambda: st.session_state.update(onboarded=True, stage="map"))
+    def _enter():
+        n = (st.session_state.get("onboard_name") or "").strip()
+        if n:
+            st.session_state.player_name = n[:24][:1].upper() + n[:24][1:]
+        st.session_state.update(onboarded=True, stage="map")
+
+    name_col, skip_col, go_col = st.columns([3, 2, 2])
+    name_col.text_input("Your name, challenger", key="onboard_name",
+                        placeholder="What should the monsters call you?",
+                        label_visibility="collapsed")
+    go_col.button("Enter the citadel", key="enter_citadel", type="primary",
+                  use_container_width=True, on_click=_enter)
+    skip_col.button("Skip the introduction", key="skip_onboard",
+                    use_container_width=True, on_click=_enter)
+    st.caption("Your name follows you through the citadel. Leave it blank and "
+               "the monsters will simply call you Challenger.")
 
 
 def parents_stage():
@@ -1371,7 +1346,14 @@ def parents_stage():
                            file_name="letters_home.md", key="dl_letters")
 
         # ---- how the run is going: code counts, Gemma interprets ----
-        if "progress_view" not in st.session_state:
+        # Keyed on the record itself: a summary cached by name alone went on
+        # showing zeros after a drill had been fought and a relic won.
+        _sig = (len(load_letters()), len(st.session_state.get("skirmish_log", [])),
+                len(st.session_state.get("relics", [])),
+                tuple(st.session_state.get("mastered_names", [])),
+                st.session_state.get("last_score", ""))
+        if st.session_state.get("progress_sig") != _sig:
+            st.session_state.progress_sig = _sig
             with st.spinner("Reading the run so far..."):
                 st.session_state.progress_view = progress.summarise(
                     load_letters(),
@@ -2203,6 +2185,25 @@ html,body{margin:0;background:#050308;overflow:hidden;font-family:'Trebuchet MS'
 __VENDOR__
 <script>
 window.addEventListener('load', function(){
+  // Press a button in the parent rather than opening a tab: this frame is
+  // sandboxed without allow-top-navigation, so a link is the only thing that
+  // could leave it, and a link means a second tab.
+  function relay(key){
+    try{ var b=window.parent.document.querySelector('.st-key-'+key+' button');
+      if(b){ b.click(); return true; } }catch(e){}
+    return false;
+  }
+  function relaySet(key, value){
+    try{
+      var el=window.parent.document.querySelector('.st-key-'+key+' input');
+      if(!el) return false;
+      var set=Object.getOwnPropertyDescriptor(
+        window.parent.HTMLInputElement.prototype,'value').set;
+      set.call(el, value);
+      el.dispatchEvent(new Event('input',{bubbles:true}));
+      return true;
+    }catch(e){ return false; }
+  }
   // procedural battle audio (no files): thud on hit, resolution chord at the end
   let __actx=null;
   function __a(){ if(!__actx) __actx=new (window.AudioContext||window.webkitAudioContext)(); return __actx; }
@@ -2410,12 +2411,22 @@ window.addEventListener('load', function(){
     let base='/';
     try{ base=window.parent.location.pathname||'/'; }
     catch(e){ try{ base=new URL(document.referrer).pathname||'/'; }catch(_){} }
-    document.getElementById('coachlink').href=
+    var cl=document.getElementById('coachlink');
+    cl.href=
       base+'?coach='+LANE
       +'&misses='+encodeURIComponent(misses.slice(0,8).join(','))
       +'&score='+score
       +'&streak='+best
       +'&hero='+encodeURIComponent(localStorage.getItem('gwb_hero')||'');
+    cl.onclick=function(ev){
+      var payload=JSON.stringify({lane:LANE, misses:misses.slice(0,8),
+        score:score, streak:best,
+        hero:(localStorage.getItem('gwb_hero')||'')});
+      if(relaySet('relay_coach', payload)){
+        setTimeout(function(){ relay('relay_coach_go'); },120);
+        ev.preventDefault();
+      }
+    };
   }
   let pt=0;
   (function loop(t){ requestAnimationFrame(loop);
@@ -2462,9 +2473,39 @@ _LIEUTENANTS = {
 }
 
 
+def _coach_relay():
+    """The coach needs the run's numbers, which live in the arena's JavaScript.
+    A hidden field carries them over as JSON so the arena does not have to open
+    a tab to hand them to a URL."""
+    with st.container(key="relay_coach"):
+        payload = st.text_input("coach relay", key="relay_coach_payload",
+                                label_visibility="collapsed")
+
+    def go():
+        try:
+            d = json.loads(st.session_state.get("relay_coach_payload") or "{}")
+        except ValueError:
+            d = {}
+        st.session_state.coach_data = {
+            "lane": d.get("lane") or st.session_state.get("skirmish_lane", "doubles"),
+            "misses": [m for m in (d.get("misses") or []) if m][:8],
+            "score": str(d.get("score", "0")),
+            "streak": str(d.get("streak", "0")),
+        }
+        if (d.get("hero") or "").strip():
+            h = d["hero"].strip()[:24]
+            st.session_state.player_name = h[:1].upper() + h[1:]
+        st.session_state.stage = "coach"
+
+    with st.container(key="relay_coach_go"):
+        st.button("Get coached", key="relay_coach_btn", on_click=go)
+    return payload
+
+
 def skirmish_stage():
     lane = st.session_state.get("skirmish_lane", "doubles")
     lt = _LIEUTENANTS[lane]
+    _coach_relay()
     st.markdown("""<style>
       [data-testid="stHeader"]{display:none}
       [data-testid="stMainBlockContainer"], .block-container{
@@ -2847,13 +2888,6 @@ def hub_relays():
         '<style>[class*="st-key-relay_"]{position:absolute;width:1px;height:1px;'
         'overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}</style>',
         unsafe_allow_html=True)
-    # the scene owns the name box, so the name arrives through here rather than
-    # through a query string - there is no navigation left to hang one on
-    with st.container(key="relay_hero"):
-        _h = st.text_input("hero relay", key="relay_hero_name",
-                           label_visibility="collapsed")
-    if _h and _h.strip():
-        st.session_state.player_name = _h.strip()[:24][:1].upper() + _h.strip()[:24][1:]
     for _s in MONSTERS:
         with st.container(key=f"relay_station_{_slug(_s)}"):
             st.button(f"Enter {_s}", key=f"relay_go_{_slug(_s)}",
