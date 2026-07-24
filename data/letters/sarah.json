@@ -7,5 +7,113 @@
   "trick_id": "DAT-3",
   "trick_name": "Mean by Default",
   "strand": "Data"
+ },
+ {
+  "n": 2,
+  "title": "After the quiz \u2014 Bigger Sample Cures Bias",
+  "body": "**Parent report** \u2014 scored 0 of 5 (0%). The trick that caught them most: **Bigger Sample Cures Bias**.\n\nDear Parents,\n\nWe've noticed your child is having a little trouble understanding how increasing the amount of information you look at can sometimes help avoid misleading conclusions \u2013 they seem to be assuming smaller groups always represent larger trends accurately. This suggests they\u2019re looking for patterns but might need more practice seeing how bigger sets of data provide a clearer picture.\n\n**Try at home**\n\n- Find three different boxes of cereal and count how many prizes are in each; which box seems most likely to have the most prizes overall?\n- Look through a pile of old magazines and note down the colors of five cars you see on each page \u2013 do the pages show similar color trends?\n- Gather some small toys and sort them by color, then try sorting them by size using just three toys versus all of them.",
+  "kind": "quiz",
+  "trick_id": "DAT-1",
+  "trick_name": "Bigger Sample Cures Bias",
+  "strand": "Data"
+ },
+ {
+  "n": 3,
+  "title": "After the quiz \u2014 Multiplying exponents when multiplying like bases",
+  "body": "**Parent report** \u2014 scored 0 of 5 (0%). The trick that caught them most: **Multiplying exponents when multiplying like bases**.\n\nDear Parents,\n\nWe've noticed your child is having some difficulty with certain algebraic concepts. It seems they\u2019re currently assuming that when multiplying numbers with the same base, you simply multiply the exponents \u2013 this suggests they might be focusing on the bases themselves rather than how the multiplication rule works. This kind of misunderstanding often shows up when students are still building a solid foundation in exponent rules.\n\n**Try at home**\n\n- Take two identical Lego towers and build them both to 3 bricks high. Then, combine them into one tower \u2013 how many bricks total? Now write that as an expression using exponents (e.g., 2 x 3).\n- Write out the full multiplication of 2 x 2 x 2, then rewrite it with an exponent. Compare the two ways of writing it and talk about what each part means.\n- Find a few simple multiplication problems involving numbers like 2, 3, and 4. Have your child explain *why* they\u2019re multiplying them in the way they are, focusing on how many times one number is being used.",
+  "kind": "quiz",
+  "trick_id": "NUM-1",
+  "trick_name": "Multiplying exponents when multiplying like bases",
+  "strand": "Number"
+ },
+ {
+  "n": 4,
+  "title": "After the quiz \u2014 Median as midpoint of extremes (midrange)",
+  "body": "**Parent report** \u2014 scored 0 of 5 (0%). The trick that caught them most: **Median as midpoint of extremes (midrange)**.\n\nDear Parents,\n\nWe've noticed your child is currently struggling with some common misunderstandings about how we find the \"middle\" of a set of numbers. They seem to be thinking that the middle value is simply the average of the highest and lowest number \u2013 which isn\u2019t always correct and shows they are trying to find a pattern, but not quite grasping the concept of the median. This suggests they're looking for shortcuts rather than fully understanding how data can be analyzed.\n\n**Try at home**\n\n- Find five different sized candies (or toys) and line them up from smallest to largest. Have your child guess what the \"middle\" one is, then measure each candy to find the actual middle value.\n- Write down the ages of five family members. Ask your child to calculate the average of the youngest and oldest age, then have them figure out the real median age.\n- Gather a handful of coins. Have your child sort them by value and identify what they think the \"middle\" coin is, then count to find the true middle coin.",
+  "kind": "quiz",
+  "trick_id": "DAT-9",
+  "trick_name": "Median as midpoint of extremes (midrange)",
+  "strand": "Data"
+ },
+ {
+  "n": 5,
+  "title": "Still stuck on Median as midpoint of extremes (midrange)",
+  "body": "**Parent report** \u2014 student is stuck on **Median as midpoint of extremes (midrange)**. Tutoring approaches tried: Direct correction, Visual walkthrough, Side-by-side contrast. Follow-up questions: 1 of 3 correct.\n\nDear Parents,\n\nWe\u2019ve noticed your child is grappling with understanding how to find the midpoint of a range of numbers \u2013 specifically, using the median as an estimate. Our sessions revealed they can sometimes grasp the concept when presented visually, but consistently struggle to apply it independently and accurately across different problem types.\n\n**Try at home**\n\n- Have them physically arrange a set of objects (like pencils or toys) in order from shortest to longest, then find the middle one.\n- Ask them to explain *in their own words* what \"median\" means, without using any mathematical terms initially.\n- Present them with several number sets and ask them to guess the median before calculating it, discussing why they made that initial guess.",
+  "kind": "escalation",
+  "trick_id": "DAT-9",
+  "trick_name": "Median as midpoint of extremes (midrange)",
+  "strand": "Data"
+ },
+ {
+  "n": 6,
+  "title": "After the quiz \u2014 Radius\u2013Diameter Mix-Up",
+  "body": "**Parent report** \u2014 scored 0 of 5 (0%). The trick that caught them most: **Radius\u2013Diameter Mix-Up**.\n\nDear Parents,\n\nWe've noticed your child is sometimes mixing up the radius and diameter of circles \u2013 they seem to be thinking of them as interchangeable, which suggests they\u2019re still solidifying their understanding of how these measurements relate to each other within a circle. This kind of misunderstanding often points to a need for extra focus on carefully reading problems and visualizing the concepts involved.\n\n**Try at home**\n\n- Draw several circles of different sizes on paper and label the radius and diameter on each one.\n- Using circular lids or plates, have your child identify which is the radius and which is the diameter.\n- Find some coins; ask them to measure across the coin (diameter) and then from the center to the edge (radius).",
+  "kind": "quiz",
+  "trick_id": "GEO-7",
+  "trick_name": "Radius\u2013Diameter Mix-Up",
+  "strand": "Geometry & Measurement"
+ },
+ {
+  "n": 7,
+  "title": "After the quiz \u2014 Multiplying exponents when multiplying like bases",
+  "body": "**Parent report** \u2014 scored 0 of 5 (0%). The trick that caught them most: **Multiplying exponents when multiplying like bases**.\n\nDear Parents,\n\nWe've noticed your child is having some trouble with simplifying expressions involving exponents. It seems they\u2019re sometimes assuming that when you multiply things with the same base, you just automatically multiply the exponents too \u2013 this suggests they might be focusing on what the numbers *look* like rather than how the underlying math rules work. This kind of misunderstanding often shows up when students are trying to apply a rule without fully understanding why it exists.\n\n**Try at home**\n\n- Take two identical Lego towers and build them slightly differently (e.g., one with 3 bricks, one with 5). Ask your child how many total bricks there are if you multiply the first tower by the second. Then relate this to multiplying expressions like 2\u00b3 * 2\u2075.\n- Write out a series of simple multiplication problems using numbers (like 2 x 4, then 8 x 2) and ask them to explain how they got their answers. Then do the same with exponents (like 2\u00b2 x 2\u00b9).\n- Find some small objects \u2013 buttons, coins, anything countable \u2013 and have your child create two groups of a certain number of items each. Ask them to multiply those numbers together and then compare it to multiplying expressions like 3\u00b2 * 3\u00b9.",
+  "kind": "quiz",
+  "trick_id": "NUM-1",
+  "trick_name": "Multiplying exponents when multiplying like bases",
+  "strand": "Number"
+ },
+ {
+  "n": 8,
+  "title": "Beat the trick: Multiplying exponents when multiplying like bases",
+  "body": "**Good news** \u2014 Sarah worked past **Multiplying exponents when multiplying like bases** (Number).\n\nMastery demonstrated: Multiplying exponents when multiplying like bases.\nCheck questions answered: 2 - final streak of 2 correct.\nTeaching approaches used: Direct correction.\n\nThe agent only calls this mastery after two fresh questions in a row are answered correctly with reasoning that holds up \u2014 not a lucky guess.",
+  "kind": "mastery",
+  "trick_id": "NUM-1",
+  "trick_name": "Multiplying exponents when multiplying like bases",
+  "strand": "Number"
+ },
+ {
+  "n": 9,
+  "title": "After the quiz \u2014 Percent\u2013decimal conversion error",
+  "body": "**Parent report** \u2014 scored 0 of 5 (0%). The trick that caught them most: **Percent\u2013decimal conversion error**.\n\nDear Parents,\n\nWe've noticed your child is sometimes mixing up percentages and decimals when solving problems \u2013 they seem to be thinking of a percentage as the whole number instead of dividing it by 100. This suggests they might benefit from some extra practice connecting how we express parts of a whole in different ways.\n\n**Try at home**\n\n- When grocery shopping, have your child calculate the sales tax on an item and then explain what the decimal represents (e.g., $0.07 sales tax means 7% of the price).\n- Look at prices with discounts listed as percentages (like clothing sales) and ask your child to figure out the actual dollar amount saved.\n- If you\u2019re splitting a bill, have your child calculate what percentage each person should pay based on their contribution.",
+  "kind": "quiz",
+  "trick_id": "FIN-9",
+  "trick_name": "Percent\u2013decimal conversion error",
+  "strand": "Financial Literacy"
+ },
+ {
+  "n": 10,
+  "title": "Still stuck on Percent\u2013decimal conversion error",
+  "body": "**Parent report** \u2014 student is stuck on **Percent\u2013decimal conversion error**. Tutoring approaches tried: Direct correction, Visual walkthrough, Side-by-side contrast, Real-world analogy. Follow-up questions: 0 of 4 correct.\n\nDear Parents,\n\nWe\u2019ve noticed your child is struggling with converting between percentages and decimals, which seems to be a core misunderstanding impacting their work. While they showed some initial understanding when presented with simpler examples, consistently applying this concept across varied problems proved challenging, indicating a need for further support in transferring that knowledge.\n\n**Try at home**\n\n- Have them physically manipulate coins \u2013 representing percentages as fractions of a dollar (e.g., 25% is one quarter).\n- Ask them to verbally explain the process aloud while converting, focusing on *why* each step is taken.\n- Create a table with various percentage values and have them independently fill in the corresponding decimal equivalents.",
+  "kind": "escalation",
+  "trick_id": "FIN-9",
+  "trick_name": "Percent\u2013decimal conversion error",
+  "strand": "Financial Literacy"
+ },
+ {
+  "n": 11,
+  "title": "After the quiz \u2014 Median as midpoint of extremes (midrange)",
+  "body": "**Parent report** \u2014 scored 0 of 5 (0%). The trick that caught them most: **Median as midpoint of extremes (midrange)**.\n\nDear Parents,\n\nWe've noticed your child is currently struggling with some common misunderstandings about how we find the \"middle\" of a set of numbers. They seem to be thinking that the middle value is simply the average of the highest and lowest number \u2013 which isn\u2019t always accurate and shows they are still developing their understanding of what \u201caverage\u201d truly means in different situations.\n\n**Try at home**\n\n- Find five different sized candies, line them up, and ask your child to find the \"middle\" one without calculating anything. Then have them calculate the average of the smallest and largest candy size and compare it to the middle candy they picked.\n- Write down the ages of everyone in your family. Ask your child to guess the \u201cmiddle\u201d age, then show them how to properly calculate the median.\n- Gather a collection of buttons or small toys. Have your child arrange them from smallest to largest and identify what they think is the \"middle\" one, then guide them through finding the actual middle value (the median).",
+  "kind": "quiz",
+  "trick_id": "DAT-9",
+  "trick_name": "Median as midpoint of extremes (midrange)",
+  "strand": "Data"
+ },
+ {
+  "n": 12,
+  "title": "After the quiz \u2014 Median as midpoint of extremes (midrange)",
+  "body": "**Parent report** \u2014 scored 0 of 5 (0%). The trick that caught them most: **Median as midpoint of extremes (midrange)**.\n\nDear Parents,\n\nWe've noticed your child is currently struggling with some common misunderstandings about how we find the \"middle\" of a set of numbers. They seem to be thinking that the middle value is simply the average of the highest and lowest number in the group \u2013 this suggests they\u2019re focusing on the extremes rather than considering all values equally. This can sometimes happen when students are first learning about statistics, but it's important to address so they develop a more accurate understanding.\n\n**Try at home**\n\n- Find five different sized candies and line them up. Ask your child what number would be in the middle if you just looked at the smallest and largest candy. Then, have them rearrange the candies and find the true middle one.\n- Write down the ages of everyone in your family. Have your child calculate the \"middle\" age by averaging the youngest and oldest person\u2019s ages. Then, help them figure out what the actual median age is.\n- Gather a handful of buttons or coins. Ask your child to arrange them from smallest to largest and tell you what they think the middle one would be if they only looked at the first and last button/coin.",
+  "kind": "quiz",
+  "trick_id": "DAT-9",
+  "trick_name": "Median as midpoint of extremes (midrange)",
+  "strand": "Data"
+ },
+ {
+  "n": 13,
+  "title": "After the quiz \u2014 Changing the base when operating on powers",
+  "body": "**Parent report** \u2014 scored 1 of 5 (20%). The trick that caught them most: **Changing the base when operating on powers**.\n\nDear Parents,\n\nWe've noticed your child is having a little trouble with some math concepts related to exponents and fractions. It seems they sometimes get mixed up about how to simplify expressions involving powers, mistakenly changing the base when it\u2019s not appropriate \u2013 this suggests they are trying to find patterns but needs more practice applying rules correctly. We also saw some difficulties with fraction manipulation and understanding negative numbers, which indicates a need for reinforcing fundamental arithmetic skills.\n\n**Try at home**\n\n- Rewrite 2 x 2 x 2 as 2\u00b3, then rewrite 3 x 3 x 3 x 3 as 3\u2074. Can you find another number that can be written in both ways?\n- Take two different numbers, like 4 and 9. Write each of them as a power of 2 and a power of 3 respectively (e.g., 4 = 2\u00b2, 9 = 3\u00b2). What do you notice about the bases and exponents?\n- Use Lego bricks or coins to represent fractions like \u00bd + \u00bc. Show how you need a common denominator before adding them, then try with more complicated examples.",
+  "kind": "quiz",
+  "trick_id": "NUM-2",
+  "trick_name": "Changing the base when operating on powers",
+  "strand": "Number"
  }
 ]

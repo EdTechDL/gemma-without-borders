@@ -1,0 +1,47 @@
+[
+ {
+  "n": 1,
+  "title": "After the quiz \u2014 Combining Unlike Terms",
+  "body": "**Parent report** \u2014 scored 0 of 5 (0%). The trick that caught them most: **Combining Unlike Terms**.\n\nDear Parents,\n\nWe've noticed your child is having a bit of trouble with some foundational algebra concepts. It seems they\u2019re sometimes mixing up different parts of expressions when solving problems, which suggests they might be focusing on individual numbers and signs without fully understanding how the pieces connect together. This can indicate a need to reinforce the idea that only like terms (terms with the same variable) can be combined.\n\n**Try at home**\n\n- Have them rearrange household items into groups (like socks or silverware), then try combining two different groups \u2013 discuss why it doesn't work.\n- Write out simple addition problems using colors for each number (e.g., red + blue = purple). Then, ask them to \u201ccombine\u201d the colors that are different.\n- Give them a set of building blocks and tell them some represent 'x'. Ask them to build something with only \u2018x\u2019 blocks, then try adding a block representing a plain number \u2013 discuss why they can't combine them directly.",
+  "kind": "quiz",
+  "trick_id": "ALG-3",
+  "trick_name": "Combining Unlike Terms",
+  "strand": "Algebra"
+ },
+ {
+  "n": 2,
+  "title": "Beat the trick: Negative-Sign Handling Error",
+  "body": "**Good news** \u2014 your child worked past **Negative-Sign Handling Error** (Algebra).\n\nMastery demonstrated: Negative-Sign Handling Error.\nCheck questions answered: 2 - final streak of 2 correct.\nTeaching approaches used: Direct correction.\n\nThe agent only calls this mastery after two fresh questions in a row are answered correctly with reasoning that holds up \u2014 not a lucky guess.",
+  "kind": "mastery",
+  "trick_id": "ALG-2",
+  "trick_name": "Negative-Sign Handling Error",
+  "strand": "Algebra"
+ },
+ {
+  "n": 3,
+  "title": "After the quiz \u2014 Incomplete budget",
+  "body": "**Parent report** \u2014 scored 4 of 8 (50%). The trick that caught them most: **Incomplete budget**.\n\nDear Parents,\n\nWe've been working through some financial reasoning exercises in class, and we\u2019ve noticed your child sometimes struggles to fully account for all aspects of a situation when planning out finances. This suggests they are still developing their ability to consider every detail needed to make accurate predictions about money \u2013 essentially, they might be overlooking important pieces of the puzzle.\n\n**Try at home**\n\n- Have them plan a simple grocery shopping trip, listing everything needed and estimating costs.\n- Together, create a list of all expenses for an upcoming family outing (gas, tickets, food).\n- Pretend you\u2019re planning a small birthday party \u2013 what are *all* the costs involved?",
+  "kind": "quiz",
+  "trick_id": "FIN-7",
+  "trick_name": "Incomplete budget",
+  "strand": "Financial Literacy"
+ },
+ {
+  "n": 4,
+  "title": "After the quiz \u2014 Incomplete Distribution",
+  "body": "**Parent report** \u2014 scored 1 of 5 (20%). The trick that caught them most: **Incomplete Distribution**.\n\nDear Parents,\n\nWe've recently completed a diagnostic quiz to get a better understanding of your child\u2019s strengths and areas for growth in math. It seems they are consistently overlooking a step when applying the distributive property \u2013 essentially, forgetting to multiply every term inside parentheses by what\u2019s outside; this suggests they might be rushing or not fully considering all parts of an expression. This often indicates a need to slow down and double-check each individual multiplication.\n\n**Try at home**\n\n- Take three small boxes (like jewelry boxes) and label them 1, 2, and 3. Put different numbers of candies in each box (e.g., 5, 8, 2). Then write \"2 x (box 1 + box 2 + box 3)\" and have your child figure out how many candies are in *each* box first, then multiply the total by 2.\n- Write a simple expression like 3(x + 2) on a piece of paper. Ask your child to explain aloud each step they take to solve it, emphasizing which number is being multiplied by what.\n- Give your child a few similar expressions (like 4(a - 1) or 2(b + 5)) and have them work through them slowly, verbally checking each multiplication as they go.",
+  "kind": "quiz",
+  "trick_id": "ALG-1",
+  "trick_name": "Incomplete Distribution",
+  "strand": "Algebra"
+ },
+ {
+  "n": 5,
+  "title": "After the quiz \u2014 Multiplying exponents when multiplying like bases",
+  "body": "**Parent report** \u2014 scored 0 of 3 (0%). The trick that caught them most: **Multiplying exponents when multiplying like bases**.\n\nDear Parents,\n\nWe've noticed your child is having a little trouble with some exponent rules. It seems they\u2019re sometimes assuming that when you multiply things with exponents, you just multiply the exponents themselves, which suggests they are focusing on the numbers and not quite seeing how the base affects the whole expression. This can indicate a need to really solidify understanding of what an exponent *means* in terms of repeated multiplication.\n\n**Try at home**\n\n- Write out 2 x 2 x 2 as 2 cubed. Then write 2 x 2 x 2 x 2 x 2 x 2 as 2 squared, and ask them to explain why the second is fewer multiplications.\n- Take two numbers like 3 and 4. Have them multiply them (3 x 4 = 12). Now have them square both numbers (3 squared = 9; 4 squared = 16) and then calculate (3 x 4) squared versus 3 squared times 4 squared.\n- Pick a simple base like 2, and write out several expressions like 2 x 2, 2 x 2 x 2, 2 x 2 x 2 x 2. Ask them to express each as powers of 2 and discuss how the number of multiplications relates to the exponent.",
+  "kind": "quiz",
+  "trick_id": "NUM-1",
+  "trick_name": "Multiplying exponents when multiplying like bases",
+  "strand": "Number"
+ }
+]

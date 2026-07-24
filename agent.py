@@ -29,7 +29,9 @@ def grade_quiz(questions: list, answers: dict) -> dict:
             correct_count += 1
         elif chosen:  # answered, but wrong
             misc = diagnose(q, chosen)
-            wrong.append({"item": q, "chosen": chosen, "trick": misc})
+            wrong.append({"item": q, "chosen": chosen, "trick": misc,
+                          "chosen_text": next((o["text"] for o in q["options"]
+                                               if o["label"] == chosen), "")})
     return {
         "total": len(questions),
         "correct": correct_count,

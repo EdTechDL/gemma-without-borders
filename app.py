@@ -293,6 +293,9 @@ def start_mastery(result, analysis):
         strand=seed["item"]["strand"],
         seed_question=seed["item"]["question"],
         seed_solution=seed["item"].get("solution", ""),
+        seed_chosen=seed.get("chosen_text") or seed.get("chosen", ""),
+        seed_correct=next((o["text"] for o in seed["item"]["options"]
+                           if o.get("is_correct")), ""),
         used_item_ids=[q["id"] for q in st.session_state.quiz],
     )
     st.session_state.msession = s

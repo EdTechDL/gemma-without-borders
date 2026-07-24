@@ -89,7 +89,7 @@ def plainify(text: str) -> str:
     return t.strip()
 
 OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434")
-MODEL = os.environ.get("GEMMA_MODEL", "gemma3:1b")
+MODEL = os.environ.get("GEMMA_MODEL", "gemma3:12b")  # 1b runs too, one env var away
 # Vision needs a multimodal Gemma (4b/12b/27b - the 1b is text-only).
 VISION_MODEL = os.environ.get("GEMMA_VISION_MODEL", "gemma3:12b")
 TIMEOUT_S = int(os.environ.get("GEMMA_TIMEOUT_S", "120"))

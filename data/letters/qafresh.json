@@ -1,0 +1,11 @@
+[
+ {
+  "n": 1,
+  "title": "After the quiz \u2014 Bigger Sample Cures Bias",
+  "body": "**Parent report** \u2014 scored 0 of 5 (0%). The trick that caught them most: **Bigger Sample Cures Bias**.\n\nDear Parents,\n\nWe've noticed your child is having a little trouble understanding how increasing the amount of information you look at can sometimes correct misleading impressions \u2013 they seem to be assuming that smaller groups always accurately represent larger populations. This suggests they\u2019re currently focusing on individual pieces of data without considering the bigger picture or potential for skewed results.\n\n**Try at home**\n\n- Collect five different types of candy from around the house and ask your child to guess which is most popular based only on what's in their hand. Then add more candies of each type and see if their guess changes.\n- Have your child survey three family members about their favorite ice cream flavor, then repeat with ten family members \u2013 does the \"favorite\" change?\n- Find a few online reviews for a product (like a toy or game) and only look at the first two; then find twenty reviews - do the overall impressions seem different?",
+  "kind": "quiz",
+  "trick_id": "DAT-1",
+  "trick_name": "Bigger Sample Cures Bias",
+  "strand": "Data"
+ }
+]

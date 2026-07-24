@@ -53,6 +53,8 @@ class MasterySession:
     strand: str
     seed_question: str            # the quiz question the student originally missed
     seed_solution: str = ""       # its VERIFIED worked solution (grounds every lesson)
+    seed_chosen: str = ""         # the wrong answer they actually picked
+    seed_correct: str = ""        # what the answer should have been
     used_item_ids: list = field(default_factory=list)
     strategy_index: int = 0
     attempts: int = 0
@@ -137,19 +139,51 @@ def next_check(session: MasterySession, questions: list) -> dict | None:
 
 def _generated_check(session: MasterySession) -> dict | None:
     """Gemma-generated multiple-choice check question, validated before use."""
-    for _ in range(2):  # one retry on a bad parse
+    # Three tries, not one retry: a question that fails its own blind re-solve is
+    # thrown away, which is right, but two attempts was often not enough to land
+    # a keeper and the loop then fell back to a question on a different idea.
+    # The call budget below still stops this from running away.
+    for _ in range(3):
         if session.gemma_calls >= MAX_GEMMA_CALLS:
             return None
         session.gemma_calls += 1
+        # Aim: the follow-up has to work the SAME idea. Naming the failure mode
+        # explicitly beats asking politely for relevance - a model told only
+        # "test the same skill" will happily wander to another topic in the
+        # same strand. The last line makes it declare its target, which gives
+        # code something to check rather than trust.
+        harder = session.consecutive_correct >= 1
+        aim = ("Make it slightly harder than the original, same idea."
+               if harder else
+               "Make it slightly easier than the original, same idea - they have "
+               "missed this more than once.")
+        picked = (f"When they met this idea they chose '{session.seed_chosen}', "
+                  f"when the answer was '{session.seed_correct}'.\n"
+                  if session.seed_chosen else "")
         raw = ask_gemma(
             f"TASK: practice\n"
             f"TRICK: {session.trick_name}\n"
-            f"Write ONE new Grade 9 multiple-choice question, in English, testing "
-            f"the same skill as: {session.seed_question}\n"
-            f"Use different numbers than the original. Exactly one option is correct.\n"
-            f"Return ONLY JSON, no other text, exactly this shape:\n"
+            f"You are writing ONE follow-up question for a Grade 9 student in a "
+            f"mastery loop. It must give them another go at ONE specific wrong "
+            f"idea, and nothing else.\n"
+            f"Strand: {session.strand}\n"
+            f"The question they missed: {session.seed_question}\n"
+            f"{picked}"
+            f"The wrong idea to target: {session.trick_name}\n"
+            f"RULES:\n"
+            f"1. Stay in the SAME strand and on the SAME idea as the question above.\n"
+            f"2. Introduce NO new concept, formula or skill. If the idea is about "
+            f"exponents, do not write a percentage question; if it is about the "
+            f"median, do not write one about probability. Sharing a strand is NOT "
+            f"the same idea, and a question on a different idea is useless here.\n"
+            f"3. The wrong options should be what a student applying this wrong "
+            f"idea would actually produce.\n"
+            f"4. {aim}\n"
+            f"5. Different numbers from the original. Exactly one option correct.\n"
+            f"Write in English. Return ONLY JSON, no other text, this shape:\n"
             f'{{"question": "...", "options": {{"A": "...", "B": "...", '
-            f'"C": "...", "D": "..."}}, "correct": "A"}}'
+            f'"C": "...", "D": "..."}}, "correct": "A", "targets": "<the wrong '
+            f'idea this question gives them another go at>"}}'
         )
         m = re.search(r"\{.*\}", raw, re.DOTALL)
         if not m:
@@ -157,7 +191,9 @@ def _generated_check(session: MasterySession) -> dict | None:
         try:
             data = json.loads(m.group())
             opts = data["options"]
-            if data["correct"] in opts and len(opts) >= 3 and _self_check(session, data):
+            if (data["correct"] in opts and len(opts) >= 3
+                    and _targets_the_snare(session, data)
+                    and _self_check(session, data)):
                 check = {
                     "source": "generated",
                     "id": f"GEN-{session.attempts + 1}",
@@ -172,6 +208,23 @@ def _generated_check(session: MasterySession) -> dict | None:
         except (json.JSONDecodeError, KeyError, TypeError):
             continue
     return None
+
+
+def _targets_the_snare(session: MasterySession, data: dict) -> bool:
+    """The model has to name the idea it is aiming at, and it has to be ours.
+    Cheap, and it catches the drift that a relevance instruction alone does not:
+    a question about something else is usually announced as being about
+    something else."""
+    said = str(data.get("targets", "")).lower()
+    if not said:
+        return True                      # older shape, leave it to the audit
+    want = {w for w in re.findall(r"[a-z]{4,}", session.trick_name.lower())}
+    if not want:
+        return True
+    hit = sum(1 for w in want if w in said)
+    ok = hit >= max(1, len(want) // 3)
+    session.history.append({"kind": "aim_check", "passed": ok, "said": said[:80]})
+    return ok
 
 
 def _self_check(session: MasterySession, data: dict) -> bool:
