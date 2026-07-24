@@ -1262,8 +1262,16 @@ def onboard_stage():
             {"name": "The Collector", "model": onboarding.COLLECTOR_MODEL,
              "clip": onboarding.COLLECTOR_CLIP}),
         height=620, scrolling=False)
-    # the scene carries its own Skip and Enter controls; a second pair of
-    # Streamlit buttons underneath only asks the player to choose twice
+    # These two live OUTSIDE the scene on purpose. Streamlit sandboxes the
+    # component frame without allow-top-navigation, so a link inside it can
+    # never leave the introduction, however correct its href looks.
+    left, right = st.columns([3, 2])
+    right.button("Enter the citadel", key="enter_citadel", type="primary",
+                 use_container_width=True,
+                 on_click=lambda: st.session_state.update(onboarded=True, stage="map"))
+    left.button("Skip the introduction", key="skip_onboard",
+                use_container_width=True,
+                on_click=lambda: st.session_state.update(onboarded=True, stage="map"))
 
 
 def parents_stage():
@@ -3266,7 +3274,7 @@ stage = st.session_state.get("stage", "intro")
 # One way back to the letters home from anywhere in the citadel. A real button,
 # not a link: a link would reload the page and take the session - and the
 # letters with it - down with it.
-if stage != "parents":
+if stage not in ("parents", "onboard"):
     _n = len(load_letters())
     # two keys, so "notes are waiting" is a CSS state and needs no scripting
     with st.container(key="letters_float_notes" if _n else "letters_float"):

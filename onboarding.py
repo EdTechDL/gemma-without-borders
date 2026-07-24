@@ -140,18 +140,27 @@ ONBOARDING_TEMPLATE = r"""
            and he takes it against a clock.</p>
       </div>
       <div class="beat" data-s="5">
-        <h2>One last thing</h2>
-        <p>No internet. No cloud. No one looking over your shoulder.
-           Every monster in here lives on this laptop - and whatever happens
-           in this castle stays in this castle.</p>
+        <h2>Two last things</h2>
+        <p>No internet. No cloud. Every monster in here lives on this laptop,
+           and whatever happens in this castle stays in this castle.</p>
+        <p class="tight"><svg viewBox="0 0 48 48" width="26" height="26" fill="none"
+           stroke="#e08d6d" stroke-width="2.8" stroke-linecap="round"
+           stroke-linejoin="round" style="vertical-align:-6px;margin-right:6px">
+           <circle cx="15" cy="12" r="5.8"/>
+           <path d="M5.5 42v-8.5C5.5 27.7 9.8 23.4 15 23.4"/>
+           <circle cx="32.5" cy="24" r="4.4"/>
+           <path d="M25 42v-5.6c0-4.1 3.4-7.5 7.5-7.5s7.5 3.4 7.5 7.5V42"/>
+           <path d="M15.5 23.6c5.6 0 9.4 3.4 12 8.2"/></svg>
+           This mark, wherever you see it, is where mum and dad can read what
+           the citadel has noticed about your maths.</p>
       </div>
     </div>
     <div id="labels"></div>
     <div id="bar">
-      <a class="ghost" id="skip" target="_top" href="#">Skip intro</a>
+      <span class="ghost" id="skip" style="visibility:hidden">Skip intro</span>
       <div id="dots"></div>
       <button class="prime" id="next">Next</button>
-      <a class="prime" id="enter" target="_top" href="#">Enter the citadel</a>
+      <span class="prime" id="enter">Scroll down to enter</span>
     </div>
   </div>
 </div>
@@ -173,14 +182,6 @@ window.addEventListener('load', function(){
     catch(e){ try{ b=new URL(document.referrer).pathname||'/'; }catch(_){} }
     return b;
   }
-  function exitHref(){ return navBase()+'?onboarded=1'; }
-  function wireExit(el){
-    if(!el) return;
-    el.href=exitHref(); el.target='_top';
-    el.addEventListener('pointerdown',function(){ this.href=exitHref(); });
-  }
-  wireExit(document.getElementById('skip'));
-  wireExit(document.getElementById('enter'));
 
   // ---- the shared mute switch, exactly as the citadel and the arenas read it ----
   function __gmMuted(){ try{ return localStorage.getItem('gm_mute')==='1'; }catch(e){ return false; } }
@@ -648,7 +649,7 @@ window.addEventListener('load', function(){
     // stylesheet, and the stylesheet keeps the final control hidden
     nextBtn.style.display=(step>=STEPS)?'none':'inline-flex';
     enterA.style.display=(step>=STEPS)?'inline-flex':'none';
-    if(step>=STEPS) enterA.href=exitHref();
+
     layout();
   }
 
@@ -656,7 +657,7 @@ window.addEventListener('load', function(){
   addEventListener('keydown',function(e){
     if(e.key==='Enter'||e.key===' '||e.code==='Space'){
       e.preventDefault();
-      if(step>=STEPS){ enterA.href=exitHref(); enterA.click(); }
+      if(step>=STEPS){ return; }
       else setStep(step+1);
     }
   });
