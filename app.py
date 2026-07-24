@@ -19,6 +19,7 @@ import mastery as m
 import tutor
 import rewards
 import practice_sheet
+import progress
 import onboarding
 from gemma_client import plainify
 
@@ -1210,6 +1211,7 @@ def save_letter(title: str, body: str, kind: str = "report", trick_id: str = "",
     letters = load_letters()
     if any(l["body"] == body for l in letters):
         return
+    st.session_state.pop("progress_view", None)   # the record changed
     letters.append({"n": len(letters) + 1, "title": title, "body": body, "kind": kind,
                     "trick_id": trick_id, "trick_name": trick_name, "strand": strand})
     try:
@@ -1289,6 +1291,28 @@ def parents_stage():
             f"## {l['title']}\n\n{l['body']}" for l in reversed(letters))
         st.download_button("Download every note as one file", bundle,
                            file_name="letters_home.md", key="dl_letters")
+
+        # ---- how the run is going: code counts, Gemma interprets ----
+        if "progress_view" not in st.session_state:
+            with st.spinner("Reading the run so far..."):
+                st.session_state.progress_view = progress.summarise(
+                    load_letters(),
+                    st.session_state.get("mastered_names", []),
+                    st.session_state.get("skirmish_log", []),
+                    st.session_state.get("relics", []),
+                    st.session_state.get("last_score", ""))
+        pv = st.session_state.progress_view
+        st.divider()
+        st.subheader("How it is going")
+        if pv.get("headline"):
+            st.markdown(f"**{esc(pv['headline'])}**")
+        if pv.get("rows"):
+            st.table(pv["rows"])
+        if pv.get("chart"):
+            st.caption("Speed drills - best against latest")
+            st.bar_chart(pv["chart"])
+        if pv.get("reading"):
+            note("What this says", esc_note(pv["reading"]))
 
         # ---- printable practice, one sheet per trick ----
         tricks, seen = [], set()
@@ -3191,6 +3215,12 @@ if st.query_params.get("onboarded"):
     st.session_state.adventure = True
     st.session_state.stage = "map"
 if st.query_params.get("parents"):
+    # a parent can come straight here with the challenger's name, so the
+    # notes written for them are one bookmark away
+    _hero = (st.query_params.get("hero") or "").strip()
+    if _hero:
+        st.session_state.player_name = _hero[:24][:1].upper() + _hero[:24][1:]
+        st.session_state.pop("letters", None)
     st.query_params.clear()
     to_parents()
 if st.query_params.get("finale"):

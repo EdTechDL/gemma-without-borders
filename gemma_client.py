@@ -41,6 +41,13 @@ _VOCAB = [
     (re.compile(r"\bconfusing\b", re.I), "mixing up"),
     (re.compile(r"\bconfused\b", re.I), "mixed up"),
     (re.compile(r"\bconfusion\b", re.I), "mix-up"),
+    (re.compile(r"\bprobing\b", re.I), "checking"),
+    (re.compile(r"\bprobes\b", re.I), "check questions"),
+    (re.compile(r"\bprobe\b", re.I), "check question"),
+    (re.compile(r"\b(?:learning|knowledge|skill)\s+gaps\b", re.I), "tricks"),
+    (re.compile(r"\b(?:learning|knowledge|skill)\s+gap\b", re.I), "trick"),
+    (re.compile(r"\bgaps\b", re.I), "tricks"),
+    (re.compile(r"\bgap\b", re.I), "trick"),
 ]
 
 

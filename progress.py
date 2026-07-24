@@ -51,16 +51,6 @@ LETTER_KINDS = {
 }
 LETTER_KIND_ORDER = ["quiz", "mastery", "escalation", "report"]
 
-# Gemma's own vocabulary sometimes drifts; plainify() already fixes the big
-# ones, and these keep the rest of the page speaking the house language.
-_HOUSE_WORDS = [
-    (re.compile(r"\bprobing\b", re.I), "checking"),
-    (re.compile(r"\bprobes?\b", re.I), "check question"),
-    (re.compile(r"\b(?:learning|knowledge|skill)\s+gaps?\b", re.I),
-     "the trick that caught them"),
-    (re.compile(r"\bgaps?\b", re.I), "the trick that caught them"),
-]
-
 # THE READING MAY NOT STATE A FIGURE AT ALL. Checking each number against the
 # record is not enough: "beaten three tricks" borrows the 3 that belongs to the
 # notes count and reads as perfectly true. Pairing a number to the right noun
@@ -418,8 +408,8 @@ def _is_grounded(text: str, names: list) -> bool:
 
 
 def _house_language(text: str) -> str:
-    for pattern, replacement in _HOUSE_WORDS:
-        text = pattern.sub(replacement, text)
+    """House vocabulary is enforced inside plainify(), the one door every
+    model string already passes through - it lives in one place, not two."""
     return text
 
 
