@@ -222,19 +222,19 @@ def intro():
 # design language — it's a different world.
 MONSTERS = {
     "Number": {
-        "monster": "Fractis", "taunt": "Ready to watch you crumble like a bad fraction.", "lines": ["So... {name}. You found my shard field.", "Braver visitors than you have left here counting on their fingers, {name}.", "Show me your fractions - or become part of my collection."], "color": "#ff8a5c", "shape": "shard", "model": "/app/static/monsters/alien.glb",
+        "monster": "Fractis", "taunt": "Ready to watch you crumble like a bad fraction.", "lines": ["So... {name}. You found my shard field.", "Braver visitors than you have left here counting on their fingers, {name}.", "Show me your fractions - or become part of my collection.", "And {name}... fail too often in the training grounds, and HE notices. Even I go quiet when the Collector passes."], "clip_ambient": "CharacterArmature|Idle", "clip_fight": "CharacterArmature|Bite_Front", "sp_ambient": 0.8, "sp_fight": 0.65, "color": "#ff8a5c", "shape": "shard", "model": "/app/static/monsters/alien.glb",
         "lore": "Feeds on fractions added straight across. Weak to common denominators."},
     "Algebra": {
-        "monster": "Equazor", "taunt": "I am ready to watch you lose this battle. Your signs will slip.", "lines": ["Well, well. {name} dares to balance equations with ME watching.", "One slipped sign, {name}, and your answers belong to me.", "I hope you brought more than luck, kid."], "color": "#ff6b9d", "shape": "knot", "model": "/app/static/monsters/dragon.glb",
+        "monster": "Equazor", "taunt": "I am ready to watch you lose this battle. Your signs will slip.", "lines": ["Well, well. {name} dares to balance equations with ME watching.", "One slipped sign, {name}, and your answers belong to me.", "I hope you brought more than luck, kid.", "A warning, free of charge: keep failing, and the Collector comes. I don't share my prey with him willingly."], "clip_ambient": "CharacterArmature|Flying_Idle", "clip_fight": "CharacterArmature|Punch", "sp_ambient": 0.9, "sp_fight": 0.7, "color": "#ff6b9d", "shape": "knot", "model": "/app/static/monsters/dragon.glb",
         "lore": "Twists equations until the signs flip wrong. Weak to balanced moves."},
     "Data": {
-        "monster": "Statiq", "taunt": "Your answers will drown in my noise.", "lines": ["Splash... {name}, was it? The data here gets... murky.", "Means, medians - it all blurs together down here, {name}.", "Let's see if you can keep your numbers in order. I doubt it."], "color": "#35d0c0", "shape": "blob", "model": "/app/static/monsters/fish.glb",
+        "monster": "Statiq", "taunt": "Your answers will drown in my noise.", "lines": ["Splash... {name}, was it? The data here gets... murky.", "Means, medians - it all blurs together down here, {name}.", "Let's see if you can keep your numbers in order. I doubt it.", "Psst... {name}. Lose too often and the water goes cold. That means HE is near. The Collector."], "clip_ambient": "CharacterArmature|Idle", "clip_fight": "CharacterArmature|Punch", "sp_ambient": 0.8, "sp_fight": 0.7, "color": "#35d0c0", "shape": "blob", "model": "/app/static/monsters/fish.glb",
         "lore": "Blurs means and medians into noise. Weak to ordered data."},
     "Geometry & Measurement": {
-        "monster": "Polygor", "taunt": "Every angle you pick will be the wrong one, little hero.", "lines": ["Hop hop, {name}. Welcome to my angle hoard.", "Every formula in here is ALMOST right. That's how I catch clever ones like you.", "Draw your diagrams carefully, kid. I feast on sloppy sketches."], "color": "#a78bfa", "shape": "poly", "model": "/app/static/monsters/frog.glb",
+        "monster": "Polygor", "taunt": "Every angle you pick will be the wrong one, little hero.", "lines": ["Hop hop, {name}. Welcome to my angle hoard.", "Every formula in here is ALMOST right. That's how I catch clever ones like you.", "Draw your diagrams carefully, kid. I feast on sloppy sketches.", "Careful, though. Fail too much and you'll meet something older than me. We call him the Collector. We don't joke about him."], "clip_ambient": "CharacterArmature|Idle", "clip_fight": "CharacterArmature|Punch", "sp_ambient": 0.8, "sp_fight": 0.7, "color": "#a78bfa", "shape": "poly", "model": "/app/static/monsters/frog.glb",
         "lore": "Hoards angles and stolen area formulas. Weak to a true diagram."},
     "Financial Literacy": {
-        "monster": "Ledgerling", "taunt": "I collect mistakes - and I charge interest.", "lines": ["Ah, a new account. Name: {name}. Balance: doubtful.", "I skim a little interest off every mistake, {name}. Business is booming.", "Check the math or sign it all away. Your move, kid."], "color": "#ffd166", "shape": "coin", "model": "/app/static/monsters/demon.glb",
+        "monster": "Ledgerling", "taunt": "I collect mistakes - and I charge interest.", "lines": ["Ah, a new account. Name: {name}. Balance: doubtful.", "I skim a little interest off every mistake, {name}. Business is booming.", "Check the math or sign it all away. Your move, kid.", "Oh - and if your debts pile too high, my boss collects them personally. You do NOT want that meeting, {name}."], "clip_ambient": "CharacterArmature|Flying_Idle", "clip_fight": "CharacterArmature|Headbutt", "sp_ambient": 0.9, "sp_fight": 0.7, "color": "#ffd166", "shape": "coin", "model": "/app/static/monsters/demon.glb",
         "lore": "Skims your interest while you sleep. Weak to a sharp budget."},
 }
 STATIONS = MONSTERS  # router alias: ?station= keys
@@ -264,6 +264,9 @@ _HUB_TEMPLATE = r"""
   html,body{margin:0;height:100%;overflow:hidden;background:#0b0710;
     font-family:'Trebuchet MS','Segoe UI',sans-serif;color:#f2e8dc;user-select:none}
   #canvas-container{position:absolute;inset:0;z-index:1}
+  #canvas-container canvas{filter:saturate(1.06) contrast(1.09) brightness(.96)}
+  #vig{position:absolute;inset:0;pointer-events:none;z-index:2;
+    background:radial-gradient(ellipse 75% 62% at 50% 42%,transparent 55%,rgba(4,3,8,.55) 82%,rgba(2,2,6,.9) 100%)}
   #ui{position:absolute;inset:0;z-index:10;pointer-events:none;display:flex;
     flex-direction:column;justify-content:space-between;padding:28px}
   header h1{font-size:2.6rem;font-weight:900;letter-spacing:-1px;text-transform:uppercase;
@@ -314,6 +317,7 @@ _HUB_TEMPLATE = r"""
   footer{color:#8d7c6b;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase}
 </style>
 <div id="canvas-container"></div>
+<div id="vig"></div>
 <div id="ui">
   <header>
     <div>
@@ -379,7 +383,7 @@ function go(url){
   x.href=base+'?exit=1'; x.target='_blank';})();
 
 let scene,camera,renderer,composer,selected=null;
-const monsters=[],groups=[],mixers=[],ray=new THREE.Raycaster(),mouse=new THREE.Vector2();
+const monsters=[],groups=[],mixers=[],rings=[],beams=[],debris=[],ray=new THREE.Raycaster(),mouse=new THREE.Vector2();
 let prevT=0;
 let miniR=null,miniScene=null,miniCam=null,miniMix=null,miniObj=null;
 let loader=null;
@@ -389,7 +393,7 @@ init(); animate();
 
 function init(){
   const el=document.getElementById('canvas-container');
-  scene=new THREE.Scene(); scene.fog=new THREE.FogExp2(0x0b0710,0.016);
+  scene=new THREE.Scene(); scene.fog=new THREE.FogExp2(0x070510,0.026);
   camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,0.1,1000);
   camera.position.set(CAM.x,CAM.y,CAM.z); camera.lookAt(0,0,0);
   renderer=new THREE.WebGLRenderer({antialias:true});
@@ -397,8 +401,8 @@ function init(){
   renderer.setPixelRatio(Math.min(devicePixelRatio,2));
   renderer.outputEncoding=THREE.sRGBEncoding;
   el.appendChild(renderer.domElement);
-  scene.add(new THREE.AmbientLight(0x2a1f22,1.1));
-  const warm=new THREE.PointLight(0xffd9b8,1.6,60); warm.position.set(0,12,0); scene.add(warm);
+  scene.add(new THREE.AmbientLight(0x241a28,0.7));
+  const warm=new THREE.PointLight(0xffd9b8,1.0,60); warm.position.set(0,12,0); scene.add(warm);
 
   // nexus core
   const plat=new THREE.Mesh(new THREE.CylinderGeometry(6,6.5,1,6),
@@ -407,8 +411,57 @@ function init(){
   const core=new THREE.Mesh(new THREE.IcosahedronGeometry(1.8,1),
     new THREE.MeshBasicMaterial({color:0xffe9d6,wireframe:true,transparent:true,opacity:.65}));
   core.position.y=3; scene.add(core);
-  const cl=new THREE.PointLight(0xe08d6d,2.6,22); cl.position.y=3; scene.add(cl);
+  const cl=new THREE.PointLight(0xe08d6d,1.6,20); cl.position.y=3; scene.add(cl);
   gsap.to(core.rotation,{y:Math.PI*2,duration:22,repeat:-1,ease:"none"});
+
+  // --- environment: nebula dome (canvas gradient, back side) ---
+  (function(){
+    const c=document.createElement('canvas'); c.width=1024; c.height=512;
+    const g2=c.getContext('2d');
+    const gr=g2.createLinearGradient(0,0,0,512);
+    gr.addColorStop(0,'#100a16'); gr.addColorStop(0.45,'#0a0610');
+    gr.addColorStop(1,'#07070d');
+    g2.fillStyle=gr; g2.fillRect(0,0,1024,512);
+    for(let i=0;i<420;i++){
+      const x=Math.random()*1024, y=Math.random()*430, r2=Math.random()*1.3+0.2;
+      g2.fillStyle='rgba(255,'+(200+Math.random()*55|0)+','+(180+Math.random()*60|0)+','
+        +(Math.random()*0.4+0.08)+')';
+      g2.beginPath(); g2.arc(x,y,r2,0,7); g2.fill();
+    }
+    const tex=new THREE.CanvasTexture(c);
+    const dome=new THREE.Mesh(new THREE.SphereGeometry(90,32,20),
+      new THREE.MeshBasicMaterial({map:tex,side:THREE.BackSide,fog:false}));
+    scene.add(dome);
+    gsap.to(dome.rotation,{y:Math.PI*2,duration:400,repeat:-1,ease:"none"});
+  })();
+
+  // --- environment: floating debris (parallax depth) ---
+  (function(){
+    const dmat=new THREE.MeshStandardMaterial({color:0x141019,metalness:.5,roughness:.7,flatShading:true});
+    for(let i2=0;i2<26;i2++){
+      const d=new THREE.Mesh(new THREE.TetrahedronGeometry(Math.random()*0.5+0.15,0),dmat);
+      const a2=Math.random()*Math.PI*2, rr=20+Math.random()*26;
+      d.position.set(Math.cos(a2)*rr, 1+Math.random()*10, Math.sin(a2)*rr);
+      d.rotation.set(Math.random()*3,Math.random()*3,0);
+      d.userData={sp:0.1+Math.random()*0.25,ph:Math.random()*6};
+      scene.add(d); debris.push(d);
+    }
+  })();
+
+  // --- environment: glowing ground disc under the nexus ---
+  (function(){
+    const c=document.createElement('canvas'); c.width=512; c.height=512;
+    const g2=c.getContext('2d');
+    const gr=g2.createRadialGradient(256,256,10,256,256,256);
+    gr.addColorStop(0,'rgba(224,141,109,0.16)');
+    gr.addColorStop(0.35,'rgba(120,60,80,0.12)');
+    gr.addColorStop(1,'rgba(0,0,0,0)');
+    g2.fillStyle=gr; g2.fillRect(0,0,512,512);
+    const disc=new THREE.Mesh(new THREE.CircleGeometry(26,48),
+      new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c),transparent:true,
+        depthWrite:false,blending:THREE.AdditiveBlending}));
+    disc.rotation.x=-Math.PI/2; disc.position.y=0.03; scene.add(disc);
+  })();
 
   // stations with REAL monster models (Quaternius, CC0); procedural fallback
   const R=15; loader=(typeof THREE.GLTFLoader!=='undefined')?new THREE.GLTFLoader():null;
@@ -416,12 +469,24 @@ function init(){
     const u=UNITS[name], col=new THREE.Color(u.color);
     const ang=(i/NAMES.length)*Math.PI*2, x=Math.cos(ang)*R, z=Math.sin(ang)*R;
     const g=new THREE.Group(); g.position.set(x,0,z); g.userData={gi:i}; groups.push(g);
+    const yoff=(i%2?0.55:0)+(i===2?0.9:0);
+    g.position.y=yoff;
+    const base=new THREE.Mesh(new THREE.CylinderGeometry(3.6,4.1,.5,6),
+      new THREE.MeshStandardMaterial({color:0x0d0810,metalness:.6,roughness:.8}));
+    base.position.y=-.42; base.rotation.y=0.26; g.add(base);
     const p=new THREE.Mesh(new THREE.CylinderGeometry(3,3.2,.6,6),
       new THREE.MeshStandardMaterial({color:0x180f16,metalness:.8}));
     g.add(p);
+    const rimL=new THREE.PointLight(col,1.1,10); rimL.position.set(0,2.6,-2.6); g.add(rimL);
+    g.userData.bobPhase=i*1.7; g.userData.baseY=yoff;
     const ringG=new THREE.TorusGeometry(3.1,.06,16,6); ringG.rotateX(Math.PI/2);
-    const ring=new THREE.Mesh(ringG,new THREE.MeshBasicMaterial({color:col}));
-    ring.position.y=.35; g.add(ring);
+    const ring=new THREE.Mesh(ringG,new THREE.MeshBasicMaterial({color:col,transparent:true}));
+    ring.position.y=.35; g.add(ring); rings.push(ring);
+    // beacon column of light rising from the platform
+    const beam=new THREE.Mesh(new THREE.CylinderGeometry(0.8,1.7,11,24,1,true),
+      new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:0.028,
+        side:THREE.DoubleSide,depthWrite:false,blending:THREE.AdditiveBlending}));
+    beam.position.y=8; g.add(beam); beams.push(beam);
     const holder=new THREE.Group(); holder.position.y=1.1;
     holder.userData={i,baseY:1.1}; g.add(holder); monsters.push(holder);
     const fallback=()=>{ const m=makeMonster(u.shape,col); m.position.y=2.3; holder.add(m); };
@@ -438,8 +503,10 @@ function init(){
         holder.add(obj);
         if(gltf.animations && gltf.animations.length){
           const mix=new THREE.AnimationMixer(obj);
-          const idle=gltf.animations.find(a=>/idle|fly|swim/i.test(a.name))||gltf.animations[0];
-          mix.clipAction(idle).play(); mixers.push(mix);
+          const idle=gltf.animations.find(a=>a.name===u.clipA)
+                   ||gltf.animations.find(a=>/idle/i.test(a.name))||gltf.animations[0];
+          const act=mix.clipAction(idle); act.timeScale=(u.spA||0.8); act.play();
+          mixers.push(mix);
         }
       }, undefined, fallback);
     } else fallback();
@@ -525,11 +592,11 @@ function showMini(name){
       miniScene.add(obj); miniObj=obj;
       if(gltf.animations&&gltf.animations.length){
         miniMix=new THREE.AnimationMixer(obj);
-        const clip=gltf.animations.find(a=>/walk/i.test(a.name))
-                 ||gltf.animations.find(a=>/idle|swim|fly/i.test(a.name))
+        const clip=gltf.animations.find(a=>a.name===u.clipA)
+                 ||gltf.animations.find(a=>/idle/i.test(a.name))
                  ||gltf.animations[0];
         const act=miniMix.clipAction(clip);
-        act.timeScale=0.55;   // calm, menacing pace - not double speed
+        act.timeScale=(u.spA||0.8)*0.85;   // calm, menacing - never frantic
         act.play();
       }
     });
@@ -589,6 +656,13 @@ function animate(time){
   requestAnimationFrame(animate);
   const t=(time||0)*0.001, dt=Math.min(0.05, t-prevT); prevT=t;
   mixers.forEach(m=>m.update(dt));
+  rings.forEach((r2,ri)=>{ r2.material.opacity=0.75+Math.sin(t*1.6+ri)*0.25; });
+  groups.forEach((gg)=>{ gg.position.y=gg.userData.baseY+Math.sin(t*0.55+gg.userData.bobPhase)*0.22; });
+  debris.forEach((d)=>{ d.rotation.y+=dt*d.userData.sp; d.rotation.x+=dt*d.userData.sp*0.6;
+    d.position.y+=Math.sin(t*0.4+d.userData.ph)*0.004; });
+  beams.forEach((b,bi)=>{ b.material.opacity=0.022+Math.sin(t*0.9+bi*1.3)*0.01;
+    b.rotation.y+=dt*0.15; });
+
   if(miniMix) miniMix.update(dt);
   if(miniObj){
     const tt=(performance.now()-miniObj.userData.t0)*0.001;
@@ -650,7 +724,9 @@ def _vendor_js(files=None) -> str:
 
 def _hub_html():
     data = {n: {"monster": m["monster"], "color": m["color"], "shape": m["shape"],
-                "lore": m["lore"], "model": m.get("model", "")} for n, m in MONSTERS.items()}
+                "lore": m["lore"], "model": m.get("model", ""),
+                "clipA": m.get("clip_ambient", ""), "spA": m.get("sp_ambient", 0.8)}
+            for n, m in MONSTERS.items()}
     return (_HUB_TEMPLATE
             .replace("__VENDOR__", _vendor_js())
             .replace("__UNITS__", json.dumps(data)))
@@ -694,9 +770,8 @@ window.addEventListener('load', function(){
     cam.lookAt(0, hh*0.5, 0);
     if(g.animations&&g.animations.length){
       mix=new THREE.AnimationMixer(obj);
-      const pref=new RegExp("__CLIPPREF__","i");
-      const clip=g.animations.find(a=>pref.test(a.name))
-               ||g.animations.find(a=>/idle|walk|swim|fly/i.test(a.name))||g.animations[0];
+      const clip=g.animations.find(a=>a.name==="__CLIPPREF__")
+               ||g.animations.find(a=>/idle/i.test(a.name))||g.animations[0];
       const act=mix.clipAction(clip); act.timeScale=__TS__; act.play();
     }
   });
@@ -764,9 +839,9 @@ window.addEventListener('load', function(){
     obj.position.set(-c.x,-b2.min.y,-c.z); sc.add(obj);
     if(g.animations&&g.animations.length){
       mix=new THREE.AnimationMixer(obj);
-      const clip=g.animations.find(a=>/attack|bite|roar|jump/i.test(a.name))
-               ||g.animations.find(a=>/walk|idle/i.test(a.name))||g.animations[0];
-      const act=mix.clipAction(clip); act.timeScale=0.7; act.play();
+      const clip=g.animations.find(a=>a.name==="__FCLIP__")
+               ||g.animations.find(a=>/idle/i.test(a.name))||g.animations[0];
+      const act=mix.clipAction(clip); act.timeScale=__FTS__; act.play();
     }
   });
   addEventListener('click',()=>{
@@ -805,6 +880,8 @@ def _fight_html(mon, score, total):
             .replace("__MODEL__", mon["model"])
             .replace("__COLOR__", mon["color"])
             .replace("__NAME__", mon["monster"])
+            .replace("__FCLIP__", mon.get("clip_fight", ""))
+            .replace("__FTS__", str(mon.get("sp_fight", 0.7)))
             .replace("__TAUNTS__", json.dumps(taunts)))
 
 
@@ -868,9 +945,9 @@ window.addEventListener('load', function(){
     obj.position.set(-c.x,-b2.min.y,-c.z); sc.add(obj);
     if(g.animations&&g.animations.length){
       mix=new THREE.AnimationMixer(obj);
-      const clip=g.animations.find(a=>/roar|attack|bite|jump/i.test(a.name))
-               ||g.animations.find(a=>/idle|walk/i.test(a.name))||g.animations[0];
-      const act=mix.clipAction(clip); act.timeScale=0.6; act.play();
+      const clip=g.animations.find(a=>a.name==="__ECLIP__")
+               ||g.animations.find(a=>/idle/i.test(a.name))||g.animations[0];
+      const act=mix.clipAction(clip); act.timeScale=__ETS__; act.play();
     }
   });
   let pt=0;
@@ -884,6 +961,201 @@ window.addEventListener('load', function(){
 """
 
 
+_BOSS_TEMPLATE = r"""
+<style>
+html,body{margin:0;background:#050308;overflow:hidden;font-family:'Trebuchet MS',sans-serif}
+#stage{position:relative;width:100%;height:100vh}
+#stage.shake{animation:sh .35s}
+@keyframes sh{0%,100%{transform:none}20%{transform:translate(-9px,4px)}40%{transform:translate(8px,-5px)}60%{transform:translate(-6px,-3px)}80%{transform:translate(5px,3px)}}
+#vig2{position:absolute;inset:0;pointer-events:none;z-index:3;
+  background:radial-gradient(ellipse 70% 60% at 50% 40%,transparent 50%,rgba(2,1,4,.75) 85%,#020104 100%)}
+#hud2{position:absolute;inset:0;z-index:5;pointer-events:none;color:#e8dfd2}
+#btitle{position:absolute;top:14px;left:18px;font-size:1.5rem;font-weight:900;
+  letter-spacing:.2em;color:#cfd4ff;text-shadow:0 0 18px #6672ff}
+#bsub{position:absolute;top:52px;left:19px;font-size:.7rem;letter-spacing:.16em;color:#8a86a8}
+#lives{position:absolute;top:16px;right:18px;display:flex;gap:7px}
+.pip{width:20px;height:20px;background:linear-gradient(135deg,#ff6b6b,#a8434f);
+  border-radius:4px;transform:rotate(45deg);box-shadow:0 0 10px #ff6b6b88}
+.pip.gone{background:#241a22;box-shadow:none}
+#qbox{position:absolute;left:50%;bottom:30px;transform:translateX(-50%);
+  width:min(480px,88%);text-align:center;pointer-events:auto}
+#qq{font-size:2rem;font-weight:900;color:#fff;text-shadow:0 0 16px #6672ff;margin-bottom:8px}
+#timer{height:7px;background:#181226;border-radius:4px;overflow:hidden;margin:0 0 12px}
+#tfill{height:100%;width:100%;background:linear-gradient(90deg,#6672ff,#cfd4ff);transition:width .1s linear}
+#ans{background:#120d1c;border:2px solid #6672ff;border-radius:10px;color:#fff;
+  font-size:1.4rem;text-align:center;width:150px;padding:9px;outline:none}
+#go2{background:#6672ff;border:none;border-radius:10px;color:#0a0714;font-weight:900;
+  font-size:1rem;padding:12px 22px;margin-left:10px;cursor:pointer;letter-spacing:.1em}
+#bline{position:absolute;left:50%;top:70px;transform:translateX(-50%);max-width:80%;
+  background:rgba(10,7,18,.85);border:1px solid #6672ff;border-radius:12px;
+  padding:9px 15px;font-size:.95rem;color:#dfe2ff;text-align:center;
+  box-shadow:0 0 20px #6672ff44}
+#endcard{display:none;position:absolute;inset:0;z-index:6;align-items:center;justify-content:center;
+  flex-direction:column;background:rgba(3,2,7,.72);text-align:center;padding:0 8%}
+#endtitle{font-size:2.2rem;font-weight:900;letter-spacing:.16em;color:#fff;text-shadow:0 0 24px #6672ff}
+#endsub{margin-top:10px;color:#b9b4d6;font-size:1rem}
+</style>
+<div id="stage">
+  <div id="v"></div><div id="vig2"></div>
+  <div id="hud2">
+    <div id="btitle">THE COLLECTOR</div>
+    <div id="bsub">HE TESTS WHAT SHOULD ALREADY BE YOURS</div>
+    <div id="lives"><div class="pip"></div><div class="pip"></div><div class="pip"></div></div>
+    <div id="bline">So. __HERO__. The one the little ones whisper about. Answer fast - I have no patience for slow minds.</div>
+    <div id="qbox">
+      <div id="qq"></div>
+      <div id="timer"><div id="tfill"></div></div>
+      <input id="ans" inputmode="numeric" autocomplete="off">
+      <button id="go2">STRIKE</button>
+    </div>
+  </div>
+  <div id="endcard"><div id="endtitle"></div><div id="endsub"></div></div>
+</div>
+<script>
+(function(){ let o='';
+  try{ o=window.parent.location.origin; }catch(e){ try{ o=new URL(document.referrer).origin; }catch(_){} }
+  window.__ORIGIN=o; })();
+</script>
+__VENDOR__
+<script>
+window.addEventListener('load', function(){
+  const W=innerWidth,H=innerHeight;
+  const r=new THREE.WebGLRenderer({antialias:true});
+  r.setSize(W,H); r.outputEncoding=THREE.sRGBEncoding; r.setClearColor(0x050308);
+  document.getElementById('v').appendChild(r.domElement);
+  const sc=new THREE.Scene(); sc.fog=new THREE.FogExp2(0x050308,0.05);
+  const cam=new THREE.PerspectiveCamera(42,W/H,0.1,80);
+  cam.position.set(0,2.6,7.5); cam.lookAt(0,2.4,0);
+  sc.add(new THREE.AmbientLight(0x9aa0ff,0.5));
+  const key=new THREE.SpotLight(0xcfd4ff,2.6,50,Math.PI/3,0.5); key.position.set(0,12,6); sc.add(key);
+  const under=new THREE.PointLight(0x6672ff,2.2,20); under.position.set(0,0.4,1.5); sc.add(under);
+  const floor=new THREE.Mesh(new THREE.CircleGeometry(30,48),
+    new THREE.MeshStandardMaterial({color:0x0a0712,metalness:.4,roughness:.85}));
+  floor.rotation.x=-Math.PI/2; sc.add(floor);
+  let mix=null,obj=null,entrance=0,actIdle=null,actHit=null;
+  new THREE.GLTFLoader().load((window.__ORIGIN||'')+"__MODEL__",(g)=>{
+    obj=g.scene;
+    const b=new THREE.Box3().setFromObject(obj), sz=b.getSize(new THREE.Vector3());
+    obj.scale.setScalar(0.15);
+    obj.userData.fullScale=5.2/Math.max(sz.x,sz.y,sz.z,0.001);
+    const b2=new THREE.Box3().setFromObject(obj), c=b2.getCenter(new THREE.Vector3());
+    obj.position.set(-c.x,3.2,-c.z-1); sc.add(obj);
+    if(g.animations&&g.animations.length){
+      mix=new THREE.AnimationMixer(obj);
+      const fi=g.animations.find(a=>/Flying_Idle/.test(a.name))||g.animations[0];
+      const hb=g.animations.find(a=>/Headbutt|Punch/.test(a.name));
+      actIdle=mix.clipAction(fi); actIdle.timeScale=0.85; actIdle.play();
+      if(hb){ actHit=mix.clipAction(hb); actHit.setLoop(THREE.LoopOnce); actHit.timeScale=1.0; }
+    }
+    entrance=1;
+  });
+  function attack(){
+    document.getElementById('stage').classList.add('shake');
+    setTimeout(()=>document.getElementById('stage').classList.remove('shake'),380);
+    if(actHit&&actIdle){ actHit.reset().fadeIn(0.1).play(); actIdle.fadeOut(0.1);
+      setTimeout(()=>{ actHit.fadeOut(0.2); actIdle.reset().fadeIn(0.2).play(); },900); }
+  }
+  // ---- quick-fire engine (all client-side, deterministic) ----
+  const LINES_HIT=["Too slow. That answer is MINE now.","Wrong. I collect those, you know.",
+    "Your teachers would weep, __HERO__.","Again you hesitate. Delicious."];
+  const LINES_OK=["Hmph. Lucky.","Fine. Keep it.","Sharp. For now.","That one escapes me. Barely."];
+  let qi=0,lives=3,score=0,cur=null,tleft=0,timerId=null;
+  const QMAX=10,TIME=8;
+  function newQ(){
+    if(qi>=QMAX){ return end(true); }
+    qi++;
+    const kind=Math.random();
+    let a2,b2,ans;
+    if(kind<0.55){ a2=2+Math.floor(Math.random()*11); b2=2+Math.floor(Math.random()*11); ans=a2*b2;
+      document.getElementById('qq').textContent=a2+" x "+b2+" = ?"; }
+    else if(kind<0.8){ a2=11+Math.floor(Math.random()*79); b2=6+Math.floor(Math.random()*79); ans=a2+b2;
+      document.getElementById('qq').textContent=a2+" + "+b2+" = ?"; }
+    else { a2=30+Math.floor(Math.random()*69); b2=6+Math.floor(Math.random()*(a2-9)); ans=a2-b2;
+      document.getElementById('qq').textContent=a2+" - "+b2+" = ?"; }
+    cur=ans; tleft=TIME;
+    const inp=document.getElementById('ans'); inp.value=''; inp.focus();
+    clearInterval(timerId);
+    timerId=setInterval(()=>{ tleft-=0.1;
+      document.getElementById('tfill').style.width=Math.max(0,tleft/TIME*100)+'%';
+      if(tleft<=0){ miss("Time's up. "); } },100);
+  }
+  function say(msg){ document.getElementById('bline').textContent=msg.replace(/__HERO__/g,"__HERO__"); }
+  function miss(prefix){
+    clearInterval(timerId); lives--; attack();
+    const pips=document.querySelectorAll('.pip:not(.gone)');
+    if(pips.length) pips[pips.length-1].classList.add('gone');
+    say((prefix||"")+LINES_HIT[Math.floor(Math.random()*LINES_HIT.length)]+"  (answer: "+cur+")");
+    if(lives<=0) return end(false);
+    setTimeout(newQ,900);
+  }
+  function hit(){
+    clearInterval(timerId); score++;
+    say(LINES_OK[Math.floor(Math.random()*LINES_OK.length)]);
+    setTimeout(newQ,500);
+  }
+  function submit(){
+    const v=parseFloat(document.getElementById('ans').value);
+    if(isNaN(v)) return;
+    (v===cur)?hit():miss("");
+  }
+  document.getElementById('go2').onclick=submit;
+  document.getElementById('ans').addEventListener('keydown',e=>{ if(e.key==='Enter') submit(); });
+  function end(won){
+    clearInterval(timerId);
+    const ec=document.getElementById('endcard');
+    ec.style.display='flex';
+    document.getElementById('endtitle').textContent= won?"HE RETREATS":"COLLECTED";
+    document.getElementById('endsub').textContent= won
+      ? "\"Adequate... for now. Your basics are still yours, __HERO__. I will be back for the rest.\"  Score: "+score+" of "+QMAX
+      : "\"Your basics belong to me now. Train with the little ones and buy them back.\"  Score: "+score+" of "+QMAX;
+    document.getElementById('qbox').style.display='none';
+  }
+  let pt=0;
+  (function loop(t){ requestAnimationFrame(loop);
+    const tt=(t||0)*0.001, dt=Math.min(0.05,tt-pt); pt=tt;
+    if(mix) mix.update(dt);
+    if(obj){
+      if(entrance>0&&entrance<2){ entrance+=dt*0.55;
+        const k=Math.min(1,entrance-1+0.55);
+        const fs=obj.userData.fullScale;
+        const e2=Math.min(1,Math.max(0,(entrance-1)*1.4+0.4));
+        obj.scale.setScalar(0.15+(fs-0.15)*e2);
+        obj.position.y=3.2-1.4*e2;
+      }
+      obj.position.x=Math.sin(tt*0.35)*0.5;
+      obj.rotation.y=Math.sin(tt*0.3)*0.2;
+    }
+    r.render(sc,cam); })(0);
+  setTimeout(newQ,2600);
+});
+</script>
+"""
+
+
+def _boss_html(name):
+    html = (_BOSS_TEMPLATE
+            .replace("__VENDOR__", _vendor_js(["three.min.js", "GLTFLoader.js"]))
+            .replace("__MODEL__", "/app/static/monsters/skull.glb"))
+    return html.replace("__HERO__", name)
+
+
+def boss_stage():
+    st.markdown("""<style>
+      [data-testid="stHeader"]{display:none}
+      [data-testid="stMainBlockContainer"], .block-container{
+        padding:0 0 1rem 0 !important; max-width:100% !important}
+      [data-testid="stElementContainer"]:has(iframe){width:100% !important}
+    </style>""", unsafe_allow_html=True)
+    components.html(_boss_html(st.session_state.get("player_name", "challenger")),
+                    height=620, scrolling=False)
+    mid = st.columns([2, 2, 2])
+    mid[1].button("Retreat to the nexus", key="boss_flee", on_click=back_to_map,
+                  use_container_width=True)
+    mid[1].button("Back to training", key="boss_train",
+                  on_click=lambda: st.session_state.update(stage="mastery"),
+                  use_container_width=True)
+
+
 def _encounter_html(mon, name):
     lines = [ln.format(name=name) for ln in mon.get("lines", [mon.get("taunt", "...")])]
     return (_ENCOUNTER_TEMPLATE
@@ -891,6 +1163,8 @@ def _encounter_html(mon, name):
             .replace("__MODEL__", mon["model"])
             .replace("__COLOR__", mon["color"])
             .replace("__NAME__", mon["monster"].upper())
+            .replace("__ECLIP__", mon.get("clip_ambient", ""))
+            .replace("__ETS__", str(mon.get("sp_ambient", 0.8)))
             .replace("__LINES__", json.dumps(lines)))
 
 
@@ -959,7 +1233,9 @@ def quiz():
                 f'{mon.get("taunt", "")}</div></div>'
             )
             st.markdown(taunt_html, unsafe_allow_html=True)
-            components.html(_taunt_html(mon["model"]), height=170)
+            components.html(_taunt_html(mon["model"],
+                                        mon.get("clip_ambient", ""),
+                                        mon.get("sp_ambient", 0.8) * 0.85), height=170)
         st.caption("Answer every question, then submit. Wrong answers feed the monster.")
         st.button("Back to the Nexus", key="quiz_to_nexus", on_click=back_to_map)
     else:
@@ -1014,8 +1290,8 @@ def results():
             bcols = st.columns([1, 3])
             with bcols[0]:
                 components.html(_taunt_html(mon["model"],
-                                            clip_pref="attack|bite|jump|roar|hit|dance|yes",
-                                            speed=0.7), height=175)
+                                            clip_pref=mon.get("clip_fight", ""),
+                                            speed=mon.get("sp_fight", 0.7)), height=175)
             with bcols[1]:
                 st.markdown(
                     f'<div style="border-left:3px solid {mon["color"]};padding:6px 0 6px 16px;'
@@ -1208,6 +1484,16 @@ def mastery_stage():
         st.button("Take another quiz", key="again_mastered", on_click=reset)
         return
     if s.state == m.ESCALATED:
+        if st.session_state.get("adventure"):
+            # the whispered warning comes true
+            note("THE AIR GOES COLD",
+                 "The little monsters have gone silent. Something older has noticed "
+                 f"how many answers you've dropped, "
+                 f"{st.session_state.get('player_name', 'challenger')}. "
+                 "<strong>The Collector is here.</strong>")
+            st.button("FACE THE COLLECTOR — the speed trial", type="primary",
+                      key="boss_go",
+                      on_click=lambda: st.session_state.update(stage="boss"))
         note("Teacher hand-off",
              "The agent tried every approach it has. Time for a human — here is a report "
              "the teacher can act on, informed by what already didn't work.")
@@ -1288,6 +1574,11 @@ if _station in STATIONS:
     st.session_state.stage = "encounter"
     st.query_params.clear()
 
+if st.query_params.get("boss"):
+    st.session_state.adventure = True
+    st.session_state.stage = "boss"
+    st.query_params.clear()
+
 stage = st.session_state.get("stage", "intro")
 {"intro": intro, "map": map_stage, "encounter": encounter_stage, "quiz": quiz,
- "results": results, "mastery": mastery_stage}[stage]()
+ "results": results, "mastery": mastery_stage, "boss": boss_stage}[stage]()

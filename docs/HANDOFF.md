@@ -139,3 +139,20 @@ Teammates can also clone + run locally (README has steps; 1B model is an 815MB p
   student-facing or in README - monsters "make you forget your math", each has a
   "trick"; README is game-voice; docs/ARCHITECTURE.md is the professional judge doc.
 - Team tunnel: cloudflared quick tunnel on :8501 (URL in /tmp/gwb_tunnel.log).
+
+## Addendum - July 24 (late-3)
+- THE COLLECTOR boss arena (stage "boss", debug entry ?boss=1): giant Quaternius CC0
+  skull (static/monsters/skull.glb) in a cold blue-violet arena, entrance animation,
+  Flying_Idle loop with Headbutt attack + screen shake on miss. Speed trial: 10
+  client-side quick-fire questions (times tables 2-12, add/subtract), 8s timer bar,
+  3 life pips, taunts on hit/miss (missed answer revealed), win/lose end cards.
+  Deterministic JS math - no model in the loop. Reached from the training grounds
+  when attempts run out (adventure mode): "THE AIR GOES COLD" note + challenge
+  button; teacher hand-off unchanged beneath it. Each monster's encounter now ends
+  with a whispered warning about him (foreshadowing).
+- Curated animation system: exact clip names read from the GLBs; per-monster
+  clip_ambient/clip_fight + speeds in MONSTERS; calm idle everywhere, aggression
+  only in the fight minigame. Statiq no longer flops frantically.
+- Nexus designer pass: vignette + color grade, denser fog, layered beveled
+  platforms at varied heights with slow bobbing, colored rim light behind each
+  monster, floating debris field, nebula dome + beacons (subtle), dimmer core.
