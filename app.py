@@ -509,14 +509,49 @@ const NAMES = Object.keys(UNITS);
 let base='/';
 try{ base = window.parent.location.pathname || '/'; }
 catch(e){ try{ base = new URL(document.referrer).pathname || '/'; }catch(_){} }
+// Click a Streamlit button in the parent instead of navigating: this frame is
+// sandboxed without allow-top-navigation, so any href here would have to open a
+// second tab, which splits the experience and leaves this scene's music playing
+// behind it. Same-origin access to the parent IS allowed, so we press its
+// buttons. Returns false if the parent is unreachable, and the caller falls
+// back to a link so the game is never a dead end.
+function relay(key){
+  try{
+    var d = window.parent.document;
+    var b = d.querySelector('.st-key-' + key + ' button');
+    if(b){ b.click(); return true; }
+  }catch(e){}
+  return false;
+}
+function slug(s){ return String(s).toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,''); }
+// React ignores a value assigned directly, so the name goes in through the
+// native setter and an input event, the way a keystroke would arrive.
+function relayHero(){
+  try{
+    var name=(localStorage.getItem('gwb_hero')||'').trim();
+    if(!name) return;
+    var d=window.parent.document;
+    var el=d.querySelector('.st-key-relay_hero input');
+    if(!el || el.value===name) return;
+    var set=Object.getOwnPropertyDescriptor(
+      window.parent.HTMLInputElement.prototype,'value').set;
+    set.call(el,name);
+    el.dispatchEvent(new Event('input',{bubbles:true}));
+  }catch(e){}
+}
+
 (function(){var x=document.getElementById('exitlink');
   x.href=base+'?exit=1'; x.target='_blank';
+  x.addEventListener('click',function(ev){
+    if(relay('relay_dashboard')){ ev.preventDefault(); } });
   var p=document.getElementById('parentlink');
   if(p){ p.target='_blank';
     p.addEventListener('pointerdown',function(){
       var h=''; try{ h=(localStorage.getItem('gwb_hero')||'').trim(); }catch(e){}
       this.href=base+'?parents=1'+(h?('&hero='+encodeURIComponent(h)):'');
     });
+    p.addEventListener('click',function(ev){
+      if(relay('relay_parents')){ ev.preventDefault(); } });
     p.href=base+'?parents=1'; }})();
 
 let scene,camera,renderer,controls,selected=null;
@@ -1009,6 +1044,7 @@ function focus(i){
   fbtn.href=base+'?station='+encodeURIComponent(name)
            +(hero?'&hero='+encodeURIComponent(hero):'');
   fbtn.target='_blank'; fbtn.rel='opener';
+  fbtn.dataset.station = name;
   card.classList.add('active');
 }
 
@@ -1111,6 +1147,17 @@ function animate(){
       if(h) u2.searchParams.set('hero',h); else u2.searchParams.delete('hero');
       this.href=u2.toString();
     }catch(e){}
+  });
+  // Entering a battle stays in this tab: hand the name over, then press the
+  // matching hidden button in the parent. The href remains as a fallback for a
+  // browser that will not let us reach it.
+  fb.addEventListener('click',function(ev){
+    var station=this.dataset.station||'';
+    if(!station) return;
+    relayHero();
+    var self=this;
+    setTimeout(function(){ relay('relay_station_'+slug(station)); },120);
+    ev.preventDefault();
   });
 })();
 window.resetCamera = resetCamera;
@@ -2783,6 +2830,42 @@ def trophy_shelf():
                 if k in _LIEUTENANTS))
 
 
+def _slug(s: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "_", str(s).lower()).strip("_")
+
+
+def hub_relays():
+    """Hidden Streamlit buttons the citadel scene clicks on the player's behalf.
+
+    The scene lives in a sandboxed frame with no allow-top-navigation, so a link
+    inside it cannot change the page - which is why entering a battle used to
+    open a second tab, leaving the citadel's music playing behind it. The frame
+    IS allowed to reach the parent document, so it clicks one of these instead.
+    Nothing navigates, the session survives, and the whole game stays in one tab.
+    """
+    st.markdown(
+        '<style>[class*="st-key-relay_"]{position:absolute;width:1px;height:1px;'
+        'overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}</style>',
+        unsafe_allow_html=True)
+    # the scene owns the name box, so the name arrives through here rather than
+    # through a query string - there is no navigation left to hang one on
+    with st.container(key="relay_hero"):
+        _h = st.text_input("hero relay", key="relay_hero_name",
+                           label_visibility="collapsed")
+    if _h and _h.strip():
+        st.session_state.player_name = _h.strip()[:24][:1].upper() + _h.strip()[:24][1:]
+    for _s in MONSTERS:
+        with st.container(key=f"relay_station_{_slug(_s)}"):
+            st.button(f"Enter {_s}", key=f"relay_go_{_slug(_s)}",
+                      on_click=lambda s=_s: st.session_state.update(
+                          stage="encounter", enc_strand=s,
+                          **{"faced_strands": st.session_state.get("faced_strands", set()) | {s}}))
+    with st.container(key="relay_dashboard"):
+        st.button("Simple dashboard", key="relay_go_dash", on_click=to_dashboard)
+    with st.container(key="relay_parents"):
+        st.button("For mum and dad", key="relay_go_parents", on_click=to_parents)
+
+
 def map_stage():
     # full-bleed: strip Streamlit chrome so the game IS the screen (this stage only)
     st.markdown("""<style>
@@ -2792,6 +2875,7 @@ def map_stage():
       [data-testid="stAppViewContainer"]{background:#0b0710}
       [data-testid="stElementContainer"]:has(iframe){width:100% !important}
     </style>""", unsafe_allow_html=True)
+    hub_relays()
     components.html(_hub_html(), height=800, scrolling=False)
     trophy_shelf()
 
