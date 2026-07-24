@@ -37,7 +37,7 @@
 <img width="1002" height="902" alt="md" src="https://github.com/user-attachments/assets/d6139b3a-d72b-4b83-ad94-f54528997a0d" />
 <br>
 <br>
-**Parent Digest: automated student progress report.**
+<b>Parent Digest: automated student progress report.</b>
 
 ## The story
 
