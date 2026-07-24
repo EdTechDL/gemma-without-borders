@@ -111,6 +111,52 @@ ONBOARDING_TEMPLATE = r"""
   .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,240,225,.2);
     transition:all .4s ease}
   .dot.on{background:#e08d6d;box-shadow:0 0 10px rgba(224,141,109,.9);transform:scale(1.25)}
+
+  /* ---- PHONE ----------------------------------------------------------
+     Portrait first. The title band gives most of its share back to the
+     monsters, the name plates keep only what stays legible in a fifth of a
+     375px screen, and every control grows to a real thumb target. The band
+     maths downstream reads these strips from the DOM, so the models reframe
+     themselves the moment the copy shrinks - nothing here is hand-tuned. */
+  @media (max-width:700px){
+    #copy{height:19vh;padding:2vh 5vw 0}
+    .beat{left:5vw;right:5vw;top:2vh}
+    .beat h1{font-size:1.62rem;letter-spacing:-.3px;line-height:1.06}
+    .beat h2{font-size:1.02rem;letter-spacing:.13em}
+    .beat p{font-size:.85rem;line-height:1.42;margin-top:6px;max-width:none}
+    .beat p.tight{margin-top:4px}
+    #labels{bottom:max(11vh,66px);height:max(11vh,46px)}
+    .lab{width:22%}
+    .lname{font-size:.71rem;letter-spacing:0}
+    .lstrand{font-size:.66rem;letter-spacing:0;margin-top:2px;
+      -webkit-line-clamp:2;display:-webkit-box;-webkit-box-orient:vertical;
+      overflow:hidden}
+    .ltrick{display:none}
+    #bar{height:max(11vh,64px);padding:0 12px}
+    .prime{padding:0 20px;height:46px;font-size:.78rem;border-radius:10px}
+    .ghost{padding:0 16px;height:44px;display:inline-flex;align-items:center;
+      border-radius:22px}
+    .hint{font-size:.72rem;max-width:56%;line-height:1.25;text-align:right}
+    #dots{gap:11px}
+    .dot{width:10px;height:10px}
+  }
+  /* Tablet portrait and the awkward band just above phone width: five columns
+     are too narrow for a whole sentence, so the italic quote lines run into
+     each other into an unreadable smear. The name and subject stay legible, so
+     below this width the quote steps aside and only returns on a wide desktop
+     where each column has room for it. */
+  @media (max-width:900px){
+    .ltrick{display:none}
+  }
+  /* Landscape on a phone: the copy band cannot take a fifth of 375px of height. */
+  @media (max-width:900px) and (max-height:460px){
+    #copy{height:31vh;padding:1.6vh 4vw 0}
+    .beat h1{font-size:1.3rem} .beat h2{font-size:.92rem}
+    .beat p{font-size:.76rem;line-height:1.32}
+    #labels{bottom:max(15vh,54px);height:max(13vh,34px)}
+    .ltrick{display:none} .lstrand{display:none}
+    #bar{height:max(15vh,52px)}
+  }
 </style>
 <div id="stage">
   <div id="v"></div>
@@ -173,6 +219,9 @@ ONBOARDING_TEMPLATE = r"""
 __VENDOR__
 <script>
 window.addEventListener('load', function(){
+  // The name field and the two entry buttons live outside this frame; give the
+  // scene whatever the phone screen has left over. Desktop keeps its 620.
+  GWB.holdFrame('auto', 380);
   var ROSTER=__ROSTER__, COLLECTOR=__COLLECTOR__;
   var STEPS=5, step=1;
 
@@ -513,6 +562,11 @@ window.addEventListener('load', function(){
   function band(withLabels){
     var hh=innerHeight||1;
     var top=document.getElementById('copy').getBoundingClientRect().bottom;
+    // A narrow screen wraps a paragraph past the reserved band. Measure the
+    // beat that is actually showing, so the models yield to the words rather
+    // than to the strip the words were expected to fit inside.
+    var live=document.querySelector('.beat.on');
+    if(live){ var lb=live.getBoundingClientRect().bottom; if(lb>top) top=lb; }
     var bot=document.getElementById(withLabels?'labels':'bar').getBoundingClientRect().top;
     var pad=Math.max(8,hh*0.018);
     top+=pad; bot-=pad;
@@ -543,17 +597,27 @@ window.addEventListener('load', function(){
     }
   }
 
+  // On a phone the roster is the tightest shot in the game: five monsters have
+  // to share 375px. They are allowed to fill their slots almost completely and
+  // to lean on their neighbours, and the name plates come up to meet their feet
+  // instead of sitting at a fixed height with a field of empty floor between.
+  var PH=(window.GWB && GWB.isPhone && GWB.isPhone());
+
   function layout(){
     var tallest=0,i,u;
+    // measure the strips where CSS puts them, never where a previous pass
+    // moved them, so repeated layouts cannot walk the plates up the screen
+    var labEl=document.getElementById('labels');
+    labEl.style.top=''; labEl.style.bottom='';
     if(step===2){
       var b2=band(true);
       var d2=CAM_Z, vh2=visH(d2), halfW2=vh2*0.5*cam.aspect;
-      var n=units.length, slot=(halfW2*2/n)*0.96;
+      var n=units.length, slot=(halfW2*2/n)*(PH?1.48:0.96);
       for(i=0;i<n;i++){
         u=units[i].holder.userData;
-        u.tk=Math.min(0.40*vh2, slot/u.mr);   // never wider than its own slot
+        u.tk=Math.min((PH?0.52:0.40)*vh2, slot/u.mr);  // never wider than its slot
       }
-      tallest=fitBand(units,vh2,Math.min(0.40,b2.frac));
+      tallest=fitBand(units,vh2,Math.min(PH?0.52:0.40,b2.frac));
       // pull the whole row in until the end monsters clear the frame edges
       var xs=[],need=0;
       for(i=0;i<n;i++){
@@ -561,23 +625,39 @@ window.addEventListener('load', function(){
         xs.push(((((i+0.5)/n)*2-1))*halfW2);
         need=Math.max(need,Math.abs(xs[i])+0.5*u.tk*u.mr);
       }
-      var inset=(need>halfW2*0.97)?(halfW2*0.97/need):1;
+      // a phone needs a wider margin: the end plates are as wide as their own
+      // names, and a name that runs off the screen is worse than a tight row
+      var edge=PH?0.88:0.97;
+      var inset=(need>halfW2*edge)?(halfW2*edge/need):1;
       for(i=0;i<n;i++){
         u=units[i].holder.userData;
         u.tx=xs[i]*inset; u.tz=0;
         // the plate follows its monster, so a name never drifts off its owner
-        units[i].lab.style.left=((0.5+u.tx/(2*halfW2))*100)+'%';
+        var lx=(0.5+u.tx/(2*halfW2))*100;
+        if(PH) lx=Math.max(11,Math.min(89,lx));
+        units[i].lab.style.left=lx+'%';
       }
       commit(units);
       frame(d2,tallest,b2.centre);
+      if(PH){
+        // the plates rise to just under the feet of the row they name
+        var hh2=innerHeight||1;
+        var feet=(b2.centre+(tallest*0.5)/vh2)*hh2+Math.max(6,hh2*0.012);
+        labEl.style.bottom='auto';
+        labEl.style.top=Math.round(Math.min(feet,
+          document.getElementById('bar').getBoundingClientRect().top
+          -labEl.getBoundingClientRect().height-4))+'px';
+      }
     } else if(step===3){
       var b3=band(false);
       var z3=1.0, d3=CAM_Z-z3, vh3=visH(d3), halfW3=vh3*0.5*cam.aspect;
       var hero=units[Math.min(2,units.length-1)];
       if(hero){
         u=hero.holder.userData;
-        u.tk=Math.min(0.46*vh3, halfW3*1.5/u.mr); u.tx=0; u.tz=z3;
-        tallest=fitBand([hero],vh3,Math.min(0.46,b3.frac));
+        // one monster alone can spend nearly the whole width of a phone
+        u.tk=Math.min((PH?0.54:0.46)*vh3, halfW3*(PH?1.95:1.5)/u.mr);
+        u.tx=0; u.tz=z3;
+        tallest=fitBand([hero],vh3,Math.min(PH?0.54:0.46,b3.frac));
         commit([hero]);
       }
       frame(d3,tallest,b3.centre);
@@ -587,8 +667,9 @@ window.addEventListener('load', function(){
       var z4=2.6, d4=CAM_Z-z4, vh4=visH(d4), halfW4=vh4*0.5*cam.aspect;
       if(collector){
         u=collector.holder.userData;
-        u.tk=Math.min(0.60*vh4, halfW4*1.25/u.mr); u.tx=0; u.tz=z4;
-        tallest=fitBand([collector],vh4,Math.min(0.60,b4.frac));
+        u.tk=Math.min((PH?0.72:0.60)*vh4, halfW4*(PH?1.85:1.25)/u.mr);
+        u.tx=0; u.tz=z4;
+        tallest=fitBand([collector],vh4,Math.min(PH?0.72:0.60,b4.frac));
         commit([collector]);
       }
       frame(d4,tallest,b4.centre);

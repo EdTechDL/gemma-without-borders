@@ -1,0 +1,38 @@
+[
+ {
+  "n": 1,
+  "title": "After the quiz \u2014 Bigger Sample Cures Bias",
+  "body": "**Parent report** \u2014 scored 4 of 5 (80%). The trick that caught them most: **Bigger Sample Cures Bias**.\n\nDear Parents,\n\nIt seems your child is currently struggling with the idea that a small group of people or things can accurately represent a larger population \u2013 they're assuming a smaller sample size is enough to draw conclusions. This suggests they might be overlooking how easily opinions and results can be skewed if you don\u2019t consider a wide range of perspectives.\n\n**Try at home**\n\n- Ask them to guess the color of candies in a jar, then have them pull out just 5 candies and make a prediction about the whole jar.\n- Have them survey only their immediate family about their favorite ice cream flavor, then discuss if that\u2019s truly representative of everyone in town.\n- Present two bowls of cereal \u2013 one with mostly Cheerios, one mixed - and ask them to guess the ratio based on just looking at a handful from each bowl.",
+  "kind": "quiz",
+  "trick_id": "DAT-1",
+  "trick_name": "Bigger Sample Cures Bias",
+  "strand": "Data"
+ },
+ {
+  "n": 2,
+  "title": "Still stuck on Bigger Sample Cures Bias",
+  "body": "**Parent report** \u2014 student is stuck on **Bigger Sample Cures Bias**. Tutoring approaches tried: Direct correction, Visual walkthrough, Side-by-side contrast, Real-world analogy. Follow-up questions: 0 of 4 correct.\n\nDear Parents,\n\nWe've observed that your student is grappling with a core conceptual understanding related to the material we were working on, and while they showed some initial engagement and willingness to learn, we haven\u2019t been able to move them toward mastery despite trying several different teaching methods. The sessions revealed an ability to follow instructions sometimes, but persistent difficulty applying those instructions to solve problems independently remains a challenge.\n\n**Try at home**\n\n- Have your student explain the concept back to you in their own words, even if it feels incomplete or inaccurate \u2013 focus on understanding *how* they're thinking about it.\n- Work through a very simple example together, pausing frequently to ask \"Why is this step necessary?\" and encouraging them to verbalize their reasoning.\n- Find a short video (perhaps animated) that presents the concept in a different way; discuss what resonated with them and where it still felt mixing up.",
+  "kind": "escalation",
+  "trick_id": "DAT-1",
+  "trick_name": "Bigger Sample Cures Bias",
+  "strand": "Data"
+ },
+ {
+  "n": 3,
+  "title": "After the quiz \u2014 Negative-Sign Handling Error",
+  "body": "**Parent report** \u2014 scored 1 of 5 (20%). The trick that caught them most: **Negative-Sign Handling Error**.\n\nDear Parents,\n\nWe've noticed your child is sometimes making a consistent mistake when working through math problems \u2013 they seem to be overlooking or misapplying negative signs, which suggests they\u2019re not always fully considering how those signs affect the overall calculation. This can indicate that they are focusing on individual steps without always checking how those steps interact with each other in the larger equation.\n\n**Try at home**\n\n- Use a deck of cards (remove face cards) and have your child add, subtract, multiply, and divide them, emphasizing when to use a negative sign (e.g., taking away 3 cards).\n- Create simple number lines on paper; start with a positive number and then perform operations like subtracting or adding a negative number, verbally explaining each step.\n- Give your child some everyday scenarios involving money \u2013 for example, \"You owe me $5\" or \"I paid you back $2,\" and have them represent these as addition/subtraction problems with positive and negative signs.",
+  "kind": "quiz",
+  "trick_id": "ALG-2",
+  "trick_name": "Negative-Sign Handling Error",
+  "strand": "Algebra"
+ },
+ {
+  "n": 4,
+  "title": "Still stuck on Negative-Sign Handling Error",
+  "body": "**Parent report** \u2014 student is stuck on **Negative-Sign Handling Error**. Tutoring approaches tried: Direct correction, Visual walkthrough, Side-by-side contrast, Real-world analogy. Follow-up questions: 0 of 4 correct.\n\nDear Parents,\n\nWe've observed that your student is encountering persistent difficulty with handling negative signs in mathematical expressions \u2013 it seems to be a core misunderstanding impacting their progress. While they showed some initial understanding when applying operations, consistently getting the sign correct remains a challenge and prevented us from achieving mastery on this topic.\n\n**Try at home**\n\n- Have them physically represent numbers on a number line, explicitly tracking movement based on positive and negative signs.\n- Encourage verbalizing each step of an equation aloud, emphasizing the impact of each negative sign.\n- Create simple word problems involving debt or temperature changes to provide context for understanding negative values.",
+  "kind": "escalation",
+  "trick_id": "ALG-2",
+  "trick_name": "Negative-Sign Handling Error",
+  "strand": "Algebra"
+ }
+]

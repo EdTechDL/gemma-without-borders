@@ -178,5 +178,14 @@
   "trick_id": "ALG-2",
   "trick_name": "Negative-Sign Handling Error",
   "strand": "Algebra"
+ },
+ {
+  "n": 21,
+  "title": "After the quiz \u2014 Negative-Sign Handling Error",
+  "body": "**Parent report** \u2014 scored 1 of 5 (20%). The trick that caught them most: **Negative-Sign Handling Error**.\n\nDear Parents,\n\nWe've been looking closely at your child\u2019s understanding of some basic math concepts, and it seems they are consistently overlooking negative signs when doing calculations. This suggests they might be focusing on just the numbers themselves without fully considering how operations like addition or subtraction affect them.\n\n**Try at home**\n\n- Use playing cards (remove face cards) to represent positive and negative numbers; have your child add and subtract them, verbally stating whether each card is positive or negative as they move them around.\n- Write out simple arithmetic problems with negative signs (like 5 - 3 = ? or -2 + 4 = ?) on slips of paper, and ask your child to explain *why* they\u2019re doing what they're doing at each step.\n- Create a number line using tape on the floor; have your child physically move along it performing addition and subtraction problems involving negative numbers.",
+  "kind": "quiz",
+  "trick_id": "ALG-2",
+  "trick_name": "Negative-Sign Handling Error",
+  "strand": "Algebra"
  }
 ]

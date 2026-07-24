@@ -7,5 +7,14 @@
   "trick_id": "FIN-9",
   "trick_name": "Percent\u2013decimal conversion error",
   "strand": "Financial Literacy"
+ },
+ {
+  "n": 2,
+  "title": "After the quiz \u2014 Bigger Sample Cures Bias",
+  "body": "**Parent report** \u2014 scored 1 of 5 (20%). The trick that caught them most: **Bigger Sample Cures Bias**.\n\nDear Parents,\n\nWe've noticed your child is having a little trouble understanding how increasing the amount of information you look at can sometimes help avoid misleading conclusions \u2013 they seem to be thinking that a small group always represents everyone accurately. This suggests they\u2019re looking for simple answers and might need some practice recognizing when more data would give a clearer picture.\n\n**Try at home**\n\n- Look around the kitchen - how many different types of fruit are there? Now look in the fridge \u2013 does that change the answer?\n- Gather up all the shoes in the house. Count just the red ones, then count *all* the shoes. Are they the same number? Why or why not?\n- Imagine we're choosing a favorite cereal. Ask only your immediate family and then ask three neighbors - are the results likely to be the same?",
+  "kind": "quiz",
+  "trick_id": "DAT-1",
+  "trick_name": "Bigger Sample Cures Bias",
+  "strand": "Data"
  }
 ]

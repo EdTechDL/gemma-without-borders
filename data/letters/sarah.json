@@ -124,5 +124,32 @@
   "trick_id": "DAT-3",
   "trick_name": "Mean by Default",
   "strand": "Data"
+ },
+ {
+  "n": 15,
+  "title": "After the quiz \u2014 Changing the base when operating on powers",
+  "body": "**Parent report** \u2014 scored 4 of 5 (80%). The trick that caught them most: **Changing the base when operating on powers**.\n\nDear Parents,\n\nWe've noticed your child is demonstrating a persistent misunderstanding when working with exponents \u2013 they sometimes incorrectly change the base of a number while trying to simplify expressions. This suggests they\u2019re focusing on manipulating symbols rather than understanding the underlying principle of repeated multiplication that defines powers.\n\n**Try at home**\n\n- Take two different numbers, like 2 and 3. Write them each as a power of another number (e.g., 2 = 4\u00b9/2 and 3 = 9\u00b9/2). Discuss why the base changed.\n- Pick a simple expression with exponents, like 2\u00b3 * 4\u00b2. Ask your child to explain each part before attempting to simplify it, emphasizing what\u2019s being multiplied.\n- Write out several expressions involving powers (e.g., 5\u00b2, 10\u00b3, 2\u2074) and ask your child to verbally describe what each one means in terms of repeated multiplication.",
+  "kind": "quiz",
+  "trick_id": "NUM-2",
+  "trick_name": "Changing the base when operating on powers",
+  "strand": "Number"
+ },
+ {
+  "n": 16,
+  "title": "After the quiz \u2014 Convenience/Volunteer Samples Are Fair",
+  "body": "**Parent report** \u2014 scored 0 of 5 (0%). The trick that caught them most: **Convenience/Volunteer Samples Are Fair**.\n\nDear Parents,\n\nWe've noticed your child is currently struggling with a common misunderstanding about how we gather information \u2013 they seem to be assuming that if people are easy to ask, their answers automatically represent everyone. This suggests they\u2019re looking for quick and simple ways to draw conclusions, which is great in some situations but can lead to inaccurate results when dealing with data.\n\n**Try at home**\n\n- Ask your child who their favorite ice cream flavor is, only asking the people standing near you right now. Discuss if those answers represent everyone's preferences.\n- Have them survey three family members about their preferred pizza toppings and then discuss whether that small group represents all possible topping choices.\n- Collect a pile of random household objects (spoons, pens, etc.). Ask your child to pick just a few at random and declare what *all* the items in the pile are like based only on those examples.",
+  "kind": "quiz",
+  "trick_id": "DAT-2",
+  "trick_name": "Convenience/Volunteer Samples Are Fair",
+  "strand": "Data"
+ },
+ {
+  "n": 17,
+  "title": "After the quiz \u2014 Changing the base when operating on powers",
+  "body": "**Parent report** \u2014 scored 4 of 5 (80%). The trick that caught them most: **Changing the base when operating on powers**.\n\nDear Parents,\n\nWe've noticed your child is demonstrating a persistent tendency to incorrectly change the base when working with exponents \u2013 for example, assuming 2\u00b3 can be easily transformed into something else without careful consideration of how that affects the overall value. This suggests they\u2019re looking for shortcuts in calculations but haven\u2019t fully grasped the fundamental rules governing powers.\n\n**Try at home**\n\n- Write out pairs of numbers (like 2 and 8, or 3 and 9) and ask your child to explain why one is a power of the other (e.g., 8 = 2\u00b3).\n- Give them simple expressions like 4\u00b2 and ask them to write it as a repeated multiplication (4 x 4), then have them try to rewrite it *without* changing anything fundamental about the calculation.\n- Present two similar problems, one where changing the base is correct and one where it isn't, and ask your child to explain why one works and the other doesn\u2019t.",
+  "kind": "quiz",
+  "trick_id": "NUM-2",
+  "trick_name": "Changing the base when operating on powers",
+  "strand": "Number"
  }
 ]

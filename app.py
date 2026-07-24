@@ -46,6 +46,10 @@ html, body, [class*="css"], p, li, label, span, div, button, input {
 [data-testid="stAppViewContainer"]{
   background:radial-gradient(70% 45% at 50% 0%, #1c1019 0%, #0b0710 55%) #0b0710 !important}
 [data-testid="stHeader"]{background:transparent !important}
+/* The dev-chrome toolbar (Deploy + the three-dot menu) is not part of the game.
+   Left visible it floats fixed at the top-right over the app's own top text on
+   every content-tall screen. A shipped game hides it everywhere. */
+[data-testid="stToolbar"]{display:none !important}
 html,body,p,li,label,span,div{color:var(--ink)}
 h1,h2,h3{
   font-weight:900 !important; text-transform:uppercase; letter-spacing:-0.5px;
@@ -142,11 +146,56 @@ stroke="%23d9c8bb" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="ro
   font-size:0 !important;line-height:0 !important;color:transparent !important}
 [class*="st-key-letters_float"] button:hover{border-color:#e08d6d !important;
   background-color:rgba(38,20,28,.95) !important}
+/* On a phone the scenes put their own controls across the bottom, so this one
+   keeps a tighter corner and every scene leaves that corner clear. */
+@media (max-width:700px){
+  [class*="st-key-letters_float"]{left:10px;bottom:10px}
+  [class*="st-key-letters_float"] button{width:44px !important;height:44px !important;
+    min-height:44px !important;background-size:23px 23px !important}
+}
 /* a quiet dot when notes are waiting, instead of a number stealing space */
 .st-key-letters_float_notes button{border-color:#e08d6d !important}
 .st-key-letters_float_notes::after{content:'';position:absolute;
   top:2px;right:2px;width:11px;height:11px;border-radius:50%;
   background:#e08d6d;border:2px solid #0b0710;pointer-events:none}
+/* A scene that has sized itself to the phone screen (see GWB.fitFrame) marks
+   its own frame; the wrapper Streamlit pinned to the height Python guessed
+   then gets out of the way and shrink-wraps whatever the scene chose. */
+[data-testid="stElementContainer"]:has(> iframe[data-gwb-fit]){
+  height:auto !important;flex:0 0 auto !important}
+[data-testid="stElementContainer"] > iframe[data-gwb-fit]{display:block}
+/* ---- invisible plumbing must not cost a flex gap ----------------------
+   Streamlit lays the page out as a flex column with a 16px gap between every
+   block, and it counts blocks it cannot see: the citadel's hidden relay
+   buttons, the scroll fix, a bare <style> tag. Eleven of them stack into a
+   dead band a third of a phone screen tall above the scene. Pulling the
+   wrappers out of the flow removes the gap with them - a hidden button is
+   still clickable by script, which is all the relays ever needed. */
+[data-testid="stVerticalBlock"] > div:has(> [class*="st-key-relay_"]),
+[data-testid="stVerticalBlock"] > div:has(> [class*="st-key-scrollfix"]),
+[data-testid="stVerticalBlock"] > div:has(> [class*="st-key-letters_float"]),
+[data-testid="stVerticalBlock"] > [class*="st-key-relay_"],
+[data-testid="stVerticalBlock"] > [class*="st-key-scrollfix"],
+[data-testid="stVerticalBlock"] > [data-testid="stElementContainer"]:has([data-testid="stMarkdownContainer"] > style:only-child){
+  position:absolute !important;height:0 !important;min-height:0 !important;
+  width:0 !important;margin:0 !important;padding:0 !important;
+  overflow:hidden !important;opacity:0 !important}
+/* The progress table: st.dataframe renders into a fixed-width canvas that
+   clips the long "Details" text off the right edge with no scrollbar on a
+   phone. This plain table lets Details wrap instead, so a parent reads the
+   whole sentence at any width. */
+.gwb-ptable{width:100%;overflow-x:auto;margin:.2rem 0 .6rem}
+.gwb-ptable table{width:100%;border-collapse:collapse;font-size:.9rem}
+.gwb-ptable th{text-align:left;text-transform:uppercase;letter-spacing:.1em;
+  font-size:.66rem;color:var(--muted);font-weight:800;padding:6px 10px;
+  border-bottom:1px solid var(--line)}
+.gwb-ptable td{padding:8px 10px;border-bottom:1px solid rgba(255,236,214,.08);
+  vertical-align:top;color:var(--ink)}
+.gwb-ptable td.pt-what{white-space:nowrap;font-weight:700;color:#d9c6b2}
+.gwb-ptable td.pt-count{white-space:nowrap;text-align:right;
+  font-variant-numeric:tabular-nums;color:var(--accent);font-weight:800}
+.gwb-ptable td.pt-details{overflow-wrap:anywhere;line-height:1.4;
+  color:#d9ccbe}
 .gwb-taunt{position:fixed;bottom:20px;right:20px;z-index:999;display:flex;
   align-items:flex-end;gap:10px;animation:gwbBob 3.2s ease-in-out infinite}
 .gwb-bubble{background:#1c1119;border:1px solid #e08d6d;
@@ -156,11 +205,78 @@ stroke="%23d9c8bb" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="ro
   animation:gwbSway 2.6s ease-in-out infinite}
 @keyframes gwbBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
 @keyframes gwbSway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+
+/* ======================= PHONE ========================================
+   Portrait is the case that matters. Nothing is hidden here: the page keeps
+   every control it has on a desktop, at a size a thumb can hit and a size
+   the eye can read, and anything genuinely wider than the screen - a table,
+   a code block, a chart - scrolls inside its own box rather than dragging
+   the whole page sideways. */
+@media (max-width:700px){
+  html,body{overflow-x:hidden}
+  [data-testid="stMainBlockContainer"], .block-container{
+    padding-left:14px !important;padding-right:14px !important;
+    padding-top:2.4rem !important}
+  h1{font-size:1.72rem !important;line-height:1.12 !important}
+  h2{font-size:1.28rem !important;line-height:1.18 !important}
+  h3{font-size:1.06rem !important}
+  p,li,label,.stMarkdown{font-size:.95rem}
+  /* real thumb targets, and never two of them touching */
+  .stButton button, .stDownloadButton button{
+    min-height:46px;padding:11px 16px;font-size:.78rem;white-space:normal;
+    line-height:1.2}
+  [data-testid="stHorizontalBlock"]{gap:10px}
+  /* answer chips: bigger hit area, and the option text may wrap */
+  .stRadio > div{gap:9px}
+  .stRadio label{padding:12px 13px;min-height:48px;align-items:flex-start}
+  .stRadio label p{font-size:.95rem;line-height:1.35}
+  /* the taunt in the corner of a battle must not sit on the questions */
+  .gwb-taunt{right:10px;gap:6px}
+  .gwb-bubble{max-width:150px;font-size:.76rem;padding:7px 10px}
+  /* wide things scroll inside themselves, never sideways as a page */
+  [data-testid="stTable"],[data-testid="stDataFrame"],
+  [data-testid="stExpander"] [data-testid="stTable"],pre{
+    max-width:100%;overflow-x:auto}
+  [data-testid="stTable"] table{font-size:.8rem}
+  [data-testid="stTable"] th,[data-testid="stTable"] td{padding:6px 8px}
+  code,pre{font-size:.8rem;white-space:pre-wrap;word-break:break-word}
+  [data-testid="stExpander"] summary{padding:12px 12px;font-size:.74rem}
+  [data-testid="stExpander"] [data-testid="stExpanderDetails"]{padding:0 12px 12px}
+  [data-testid="stMetricValue"]{font-size:1.5rem !important}
+  [data-testid="stVerticalBlockBorderWrapper"]{border-radius:12px}
+  [data-testid="stVerticalBlockBorderWrapper"] > div{padding:12px !important}
+  .gwb-note{padding:.75rem .85rem;font-size:.92rem}
+  [data-testid="stCaptionContainer"] p{font-size:.8rem;line-height:1.35}
+  /* the last control on a page must clear the fixed letters-home button */
+  [data-testid="stMainBlockContainer"], .block-container{padding-bottom:74px !important}
+}
 </style>
 """
 
 # ---- one identity everywhere: the GEMMA MONSTERS skin (looks only, no logic) ----
 st.markdown(_GAME_SKIN, unsafe_allow_html=True)
+
+
+def full_bleed(bottom: str = "1rem", phone_bottom: str = "58px"):
+    """Strip Streamlit chrome so a 3D scene IS the screen.
+
+    On a phone it also keeps a clear strip along the bottom of the page: the
+    letters-home button is fixed to that corner, and without the strip it lands
+    on top of whatever control happens to end the page. Stages whose scene runs
+    to the bottom edge pass phone_bottom="0" and reserve the corner inside the
+    scene instead.
+    """
+    st.markdown(f"""<style>
+      [data-testid="stHeader"]{{display:none}}
+      [data-testid="stMainBlockContainer"], .block-container{{
+        padding:0 0 {bottom} 0 !important; max-width:100% !important}}
+      [data-testid="stAppViewContainer"]{{background:#0b0710}}
+      [data-testid="stElementContainer"]:has(iframe){{width:100% !important}}
+      @media (max-width:700px){{
+        [data-testid="stMainBlockContainer"], .block-container{{
+          padding:0 0 {phone_bottom} 0 !important}}
+      }}
+    </style>""", unsafe_allow_html=True)
 
 
 def _inline_md(s: str) -> str:
@@ -481,6 +597,47 @@ _HUB_TEMPLATE = r"""
     filter:drop-shadow(0 0 14px rgba(226,192,125,.55))}
   #banner p{color:#cdd5e4;font-size:.85rem;margin:6px 0 0;letter-spacing:.04em;
     text-shadow:0 1px 3px rgba(0,0,0,.8)}
+
+  /* ---- PHONE ----------------------------------------------------------
+     Portrait is the case that matters. The header stops being a row that
+     runs off the edge and becomes a title with a wrapping control strip
+     under it; the card stops being a 300px panel pinned to the right and
+     becomes a sheet across the bottom, tall enough to read and short
+     enough to leave the citadel visible above it. */
+  @media (max-width:700px){
+    #ui{padding:10px 12px 12px}
+    #banner{padding:9px 12px;max-width:100%;border-left-width:3px;border-radius:5px}
+    #banner h1{font-size:1.35rem;letter-spacing:.06em}
+    #banner p{font-size:.8rem;margin:4px 0 0;line-height:1.35}
+    header{display:block}
+    .hbtns{margin-top:8px;flex-wrap:wrap;gap:7px}
+    .hbtn{padding:0 13px;height:44px;line-height:44px;border-radius:22px;
+      font-size:.7rem;letter-spacing:.06em;flex:0 0 auto}
+    #herotag{margin:2px 0 0 2px !important;font-size:.7rem !important;
+      display:block !important;width:100%}
+    /* the bottom strip stays clear for the letters-home button */
+    #card{align-self:stretch;width:100%;margin-bottom:54px}
+    .cardframe{padding:5px;border-radius:14px}
+    .cardinner{padding-bottom:11px}
+    .unitchip{margin:9px 0 0 12px;font-size:.62rem;padding:3px 9px}
+    .mname{font-size:1.45rem;margin:4px 12px 2px}
+    .mstage{height:92px;margin:6px 12px}
+    .lore{font-size:.85rem;line-height:1.4;margin:2px 12px 8px;
+      display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;
+      overflow:hidden}
+    .stats{margin:0 12px 9px;gap:6px}
+    .stat{font-size:.58rem;padding:5px 1px}
+    .stat b{font-size:.85rem}
+    .fight{margin:0 12px;padding:14px;font-size:.9rem}
+    footer{display:none}
+  }
+  /* Landscape on a phone: keep the card off the middle of the scene. */
+  @media (max-width:900px) and (max-height:460px){
+    #ui{padding:8px 10px}
+    #banner h1{font-size:1.1rem} #banner p{display:none}
+    #card{align-self:flex-end;width:262px}
+    .mstage{height:72px} .lore{display:none}
+  }
 </style>
 <div id="canvas-container"></div>
 <div id="vig"></div>
@@ -526,6 +683,8 @@ _HUB_TEMPLATE = r"""
 __VENDOR__
 <script>
 window.addEventListener('load', function(){
+// The citadel owns the whole phone screen; the relic shelf scrolls under it.
+GWB.holdFrame(0, 420);
 const UNITS = __UNITS__, HERO = __HERO__;
 const NAMES = Object.keys(UNITS);
 let base='/';
@@ -572,6 +731,27 @@ const PARTICLE_COUNT=250;
 const RING_R=21;
 const HOME={x:0,y:22,z:48},HOME_T={x:0,y:6,z:0};
 const clock=new THREE.Clock();
+// How much the shot has to open up for this viewport. The citadel is the
+// widest subject in the game - five monsters on a ring 42 units across - so a
+// tall narrow window drops them off the sides unless the camera answers it.
+// 1 on a desktop window, so nothing there moves. See GWB.frame.
+let FRAME=1;
+function homePos(){
+  // Step back mostly sideways-and-out, only a little upward: raising the eye by
+  // the full amount would tip the shot down and fill a phone with empty ground.
+  const up=1+(FRAME-1)*0.42;
+  return {x:HOME_T.x+(HOME.x-HOME_T.x)*FRAME,
+          y:HOME_T.y+(HOME.y-HOME_T.y)*up,
+          z:HOME_T.z+(HOME.z-HOME_T.z)*FRAME};
+}
+function refit(){
+  camera.aspect=innerWidth/Math.max(innerHeight,1);
+  FRAME=GWB.frame(camera,50,1.55,{power:0.78,maxFov:65,maxDist:1.75});
+  // stepping back would otherwise bury the citadel in its own fog
+  if(scene && scene.fog) scene.fog.density=0.012/FRAME;
+  if(controls){ controls.maxDistance=85*FRAME; controls.minDistance=8*FRAME; }
+  renderer.setSize(innerWidth,innerHeight);
+}
 
 init(); animate();
 
@@ -608,8 +788,10 @@ function init(){
   scene.background=new THREE.Color(0x0a0f1d);
   scene.fog=new THREE.FogExp2(0x0d1424,0.012);
 
-  camera=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,0.1,1000);
-  camera.position.set(HOME.x,HOME.y,HOME.z);
+  camera=new THREE.PerspectiveCamera(50,innerWidth/Math.max(innerHeight,1),0.1,1000);
+  FRAME=GWB.frame(camera,50,1.55,{power:0.78,maxFov:65,maxDist:1.75});
+  scene.fog.density=0.012/FRAME;
+  const h0=homePos(); camera.position.set(h0.x,h0.y,h0.z);
 
   renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
   renderer.setSize(innerWidth,innerHeight);
@@ -625,8 +807,8 @@ function init(){
   controls.enableDamping=true;
   controls.dampingFactor=0.04;
   controls.maxPolarAngle=Math.PI/2-0.01;
-  controls.minDistance=8;
-  controls.maxDistance=85;
+  controls.minDistance=8*FRAME;
+  controls.maxDistance=85*FRAME;
   controls.autoRotate=true;
   controls.autoRotateSpeed=0.4;
   controls.target.set(HOME_T.x,HOME_T.y,HOME_T.z);
@@ -901,11 +1083,7 @@ function init(){
     blending:THREE.AdditiveBlending,depthWrite:false}));
   scene.add(embers);
 
-  addEventListener('resize',()=>{
-    camera.aspect=innerWidth/innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(innerWidth,innerHeight);
-  });
+  addEventListener('resize',refit);
   renderer.domElement.addEventListener('click',onClick);
 }
 
@@ -953,8 +1131,10 @@ function ensureMini(){
 function showMini(name){
   const u=UNITS[name]; ensureMini();
   const stage=document.getElementById('c-stage');
-  const wpx=Math.max(stage.clientWidth,240);
-  miniR.outputEncoding=THREE.sRGBEncoding; miniR.setSize(wpx,132); miniCam.aspect=wpx/132; miniCam.updateProjectionMatrix();
+  // the pane is shorter on a phone; read it rather than assume the desktop 132
+  const wpx=Math.max(stage.clientWidth,200), hpx=Math.max(stage.clientHeight,80);
+  miniR.outputEncoding=THREE.sRGBEncoding; miniR.setSize(wpx,hpx);
+  miniCam.aspect=wpx/hpx; miniCam.updateProjectionMatrix();
   if(miniObj){ miniScene.remove(miniObj); miniObj=null; } miniMix=null;
   if(loader && u.model){
     loader.load((window.__ORIGIN||'')+u.model,(gltf)=>{
@@ -1030,12 +1210,20 @@ function focus(i){
   const name=NAMES[i], u=UNITS[name];
   const st=stations[i], ang=st.ang;
   controls.autoRotate=false;
-  // vantage: outside the ring, slightly above, looking at the monster
+  // Vantage: outside the ring, slightly above, looking at the monster. On a
+  // phone the card is a sheet across the bottom, so aim below the monster -
+  // it rides in the clear upper half instead of behind its own card.
+  const ph=GWB.isPhone();
+  // A phone's field of view is much wider, so the same standoff would leave the
+  // monster a speck: close in, drop the eye almost to its level, and aim just
+  // under it so it rides above the card instead of behind it.
+  const OUT=RING_R+(ph?9:12), camY=ph?6.0:8.5;
+  const aim=st.baseY+(ph?0.6:2.0);
   gsap.to(camera.position,{
-    x:Math.cos(ang)*(RING_R+12), y:8.5, z:Math.sin(ang)*(RING_R+12),
+    x:Math.cos(ang)*OUT, y:camY, z:Math.sin(ang)*OUT,
     duration:1.8, ease:'power3.inOut'});
   gsap.to(controls.target,{
-    x:st.x, y:st.baseY+2.0, z:st.z,
+    x:st.x, y:aim, z:st.z,
     duration:1.8, ease:'power3.inOut'});
   // turn the monster to face the camera
   gsap.to(st.holder.rotation,{y:Math.PI/2-ang,duration:0.9,ease:'power2.out'});
@@ -1057,7 +1245,8 @@ function focus(i){
 
 function resetCamera(){
   selected=null; document.getElementById('card').classList.remove('active');
-  gsap.to(camera.position,{x:HOME.x,y:HOME.y,z:HOME.z,duration:1.8,ease:'power2.inOut'});
+  const h=homePos();
+  gsap.to(camera.position,{x:h.x,y:h.y,z:h.z,duration:1.8,ease:'power2.inOut'});
   gsap.to(controls.target,{x:HOME_T.x,y:HOME_T.y,z:HOME_T.z,duration:1.8,ease:'power2.inOut',
     onComplete:()=>{ controls.autoRotate=true; }});
 }
@@ -1208,6 +1397,111 @@ _VENDOR_FILES = ["three.min.js", "gsap.min.js", "OrbitControls.js", "EffectCompo
                  "UnrealBloomPass.js", "GLTFLoader.js"]
 _vendor_cache = None  # dict of tuple(files)->joined script tags
 
+# ---------------------------------------------------------------------------
+# Phone fit: the two things a sandboxed scene cannot work out on its own.
+#
+# Every scene is its own document inside a component frame whose height Python
+# picked before anyone knew what device would open it, and whose innerWidth is
+# the frame's, not the phone's. Two facts rescue both: the frame is granted
+# allow-same-origin, so it may read the parent viewport AND resize its own
+# iframe element in the parent. This block ships with the vendored three.js so
+# every scene gets the same two helpers, and both are no-ops on desktop.
+# ---------------------------------------------------------------------------
+_PHONE_JS = r"""
+<script>
+(function(){
+  var PHONE_MAX = 700;                       // above this, nothing changes
+  var G = window.GWB = window.GWB || {};
+  G.parentSize = function(){
+    try{ var w=window.parent.innerWidth||0, h=window.parent.innerHeight||0;
+         if(w>0 && h>0) return {w:w, h:h}; }catch(e){}
+    return {w:0, h:0};
+  };
+  G.isPhone = function(){ var s=G.parentSize(); return s.w>0 && s.w<=PHONE_MAX; };
+
+  /* Give this scene's own iframe a height that suits the phone screen.
+     reserve = the Streamlit controls that must stay visible underneath it, in
+     pixels, or 'auto' to measure whatever the parent page holds besides this
+     frame (right when the tail is a couple of buttons, wrong when the tail is
+     a whole article - those stages pass 0 and let the article scroll).
+     Desktop keeps the fixed height Python asked for. */
+  G.fitFrame = function(reserve, minH){
+    // A scene may lock its own height (e.g. once a battle ends and it has
+    // collapsed to its result) so that a stray resize - the mobile address bar
+    // sliding away as the page scrolls - cannot re-inflate it to full screen.
+    if(window.__gwbFrameLock) return false;
+    var s=G.parentSize();
+    if(!s.w || s.w>PHONE_MAX) return false;
+    if(reserve === 'auto'){
+      reserve = 0;
+      try{
+        // the block container is content-sized, unlike documentElement, whose
+        // scrollHeight never falls below the viewport and would read as a tail
+        var fe0=window.frameElement;
+        var mb=window.parent.document.querySelector(
+          '[data-testid="stMainBlockContainer"]');
+        if(fe0 && mb) reserve=Math.max(0, Math.round(
+          mb.getBoundingClientRect().height - fe0.getBoundingClientRect().height));
+      }catch(e){}
+    }
+    // the viewport always wins: a floor taller than the screen (a phone held
+    // sideways) would push the scene's own controls below the fold
+    var h=Math.min(s.h, Math.max(minH||340, Math.round(s.h-(reserve||0))));
+    try{
+      var fe=window.frameElement; if(!fe) return false;
+      fe.style.height=h+'px'; fe.setAttribute('height', h);
+      // Streamlit also pins the wrapper's height, as a flex-basis in a
+      // generated class, so the block below the scene would otherwise stay
+      // put. The marker lets a rule in the app-wide stylesheet release just
+      // this wrapper - written as a style on the wrapper itself it would
+      // outlive the scene, because Streamlit recycles those DOM nodes for
+      // whatever element lands in the same slot on the next screen.
+      fe.setAttribute('data-gwb-fit','1');
+    }catch(e){ return false; }
+    return true;
+  };
+  /* Keep it applied: Streamlit rewrites the height whenever the component
+     reports its size, and phones fire resize on rotate and on chrome hiding. */
+  G.holdFrame = function(reserve, minH){
+    var go=function(){ G.fitFrame(reserve, minH); };
+    go(); setTimeout(go,60); setTimeout(go,300); setTimeout(go,1200);
+    addEventListener('resize', go);
+    try{ window.parent.addEventListener('resize', go); }catch(e){}
+    return go;
+  };
+
+  /* Framing that answers the viewport instead of assuming a wide window.
+     Every scene is composed for a landscape frame. Hold the vertical field
+     constant on a tall narrow one and the same shot shows far less of the
+     world sideways, so the subject crops or drifts off the edge. Recover the
+     missing width with a blend of the only two levers that exist: open the
+     field of view up to a cap (cheap, but distorts if pushed), then step the
+     camera back for whatever the cap could not cover (keeps the composition,
+     but shrinks the subject if pushed). Returns the distance multiplier the
+     scene should apply to its camera offset; 1 means nothing to do. */
+  G.frame = function(cam, baseFov, baseAspect, opts){
+    opts = opts || {};
+    var a  = cam.aspect || 1;
+    var a0 = baseAspect || 1.55;
+    if(a >= a0){ cam.fov=baseFov; cam.updateProjectionMatrix(); return 1; }
+    var power  = (opts.power  === undefined) ? 0.62 : opts.power;
+    var maxFov = (opts.maxFov === undefined) ? 66   : opts.maxFov;
+    var maxDist= (opts.maxDist=== undefined) ? 1.9  : opts.maxDist;
+    var need = Math.pow(a0/Math.max(a,0.05), power);
+    var t    = Math.tan(baseFov*Math.PI/360)*need;
+    var fov  = 2*Math.atan(t)*180/Math.PI;
+    var dist = 1;
+    if(fov > maxFov){
+      dist = Math.min(maxDist, t/Math.tan(maxFov*Math.PI/360));
+      fov  = maxFov;
+    }
+    cam.fov = fov; cam.updateProjectionMatrix();
+    return dist;
+  };
+})();
+</script>
+"""
+
 
 def _vendor_js(files=None) -> str:
     global _vendor_cache
@@ -1221,6 +1515,7 @@ def _vendor_js(files=None) -> str:
             p = vdir / f
             if p.exists():
                 parts.append("<script>\n" + p.read_text() + "\n</script>")
+        parts.append(_PHONE_JS)
         _vendor_cache[key] = "\n".join(parts)
     return _vendor_cache[key]
 
@@ -1308,13 +1603,7 @@ def onboard_stage():
     """The first thing a new challenger sees: who the monsters are, how a
     battle is won, and what the Collector is. Skippable, and never shown
     twice in a sitting."""
-    st.markdown("""<style>
-      [data-testid="stHeader"]{display:none}
-      [data-testid="stMainBlockContainer"], .block-container{
-        padding:0 !important; max-width:100% !important}
-      [data-testid="stAppViewContainer"]{background:#0b0710}
-      [data-testid="stElementContainer"]:has(iframe){width:100% !important}
-    </style>""", unsafe_allow_html=True)
+    full_bleed("0")
     roster = [{"name": m["monster"], "strand": s, "trick": m["taunt"],
                "color": m["color"], "model": m["model"],
                "clip": m.get("clip_ambient", ""),
@@ -1384,9 +1673,13 @@ def parents_stage():
     st.markdown('<div class="gwb-kicker">GEMMA MONSTERS · letters home</div>',
                 unsafe_allow_html=True)
     st.markdown(
-        f'<div style="display:flex;align-items:center;margin:0 0 .4rem">{_HUG_MARK}'
-        '<span style="font-size:2.6rem;font-weight:800;letter-spacing:-.01em;'
-        'color:#f2e8dc">For mum and dad</span></div>', unsafe_allow_html=True)
+        '<style>.gwb-parents-h{display:flex;align-items:center;gap:6px;margin:0 0 .4rem}'
+        '.gwb-parents-h span{font-size:2.6rem;font-weight:800;letter-spacing:-.01em;'
+        'color:#f2e8dc;line-height:1.05}'
+        '@media (max-width:700px){.gwb-parents-h span{font-size:1.62rem}'
+        '.gwb-parents-h svg{width:30px;height:30px;flex:0 0 30px}}</style>'
+        f'<div class="gwb-parents-h">{_HUG_MARK}'
+        '<span>For mum and dad</span></div>', unsafe_allow_html=True)
     # also at the foot of the page, but that is a long way down past the
     # letters, the progress panel and the worksheets
     scroll_to_top("parents")
@@ -1433,7 +1726,20 @@ def parents_stage():
         if pv.get("headline"):
             st.markdown(f"**{esc(pv['headline'])}**")
         if pv.get("rows"):
-            st.dataframe(pv["rows"], hide_index=True, use_container_width=True)
+            _pcols = ["What", "Count", "Details"]
+            _phead = "".join(f"<th>{_hescape(str(_c))}</th>" for _c in _pcols)
+            _pbody = "".join(
+                "<tr>" + "".join(
+                    f'<td class="pt-{_c.lower()}">{_hescape(str(_r.get(_c, "")))}</td>'
+                    for _c in _pcols
+                ) + "</tr>"
+                for _r in pv["rows"]
+            )
+            st.markdown(
+                '<div class="gwb-ptable"><table>'
+                f'<thead><tr>{_phead}</tr></thead><tbody>{_pbody}</tbody></table></div>',
+                unsafe_allow_html=True,
+            )
         if pv.get("chart"):
             st.caption("Speed drills - best against latest")
             st.bar_chart(pv["chart"])
@@ -1494,12 +1800,25 @@ _TAUNT_TEMPLATE = r"""
 __VENDOR__
 <script>
 window.addEventListener('load', function(){
-  const W=170,H=170;
+  // Draw at whatever size the frame actually is: a phone shrinks this heckler
+  // to a corner badge, and a canvas fixed at 170 square would be cropped to a
+  // slice of the monster instead of the whole of it.
+  let W=Math.max(innerWidth||0,40), H=Math.max(innerHeight||0,40);
   const r=new THREE.WebGLRenderer({antialias:true,alpha:true});
-  r.setSize(W,H); r.outputEncoding=THREE.sRGBEncoding; document.getElementById('v').appendChild(r.domElement);
+  r.setSize(W,H); r.setPixelRatio(Math.min(devicePixelRatio,2));
+  r.outputEncoding=THREE.sRGBEncoding; document.getElementById('v').appendChild(r.domElement);
   const sc=new THREE.Scene();
   const cam=new THREE.PerspectiveCamera(38,W/H,0.1,50);
   cam.position.set(0,1.6,4.6); cam.lookAt(0,1.1,0);
+  function fitBadge(){
+    W=Math.max(innerWidth||0,40); H=Math.max(innerHeight||0,40);
+    r.setSize(W,H); cam.aspect=W/H;
+    // a narrow badge would crop a wide monster: widen the field to suit
+    if(window.GWB) GWB.frame(cam,38,1.0,{power:0.5,maxFov:60,maxDist:1});
+    else cam.updateProjectionMatrix();
+  }
+  fitBadge();
+  addEventListener('resize',fitBadge);
   sc.add(new THREE.AmbientLight(0xffffff,0.95));
   const sp=new THREE.SpotLight(0xfff3e0,3.0,30,Math.PI/4,0.5);
   sp.position.set(0,7,3); sc.add(sp);
@@ -1545,7 +1864,14 @@ html,body{margin:0;background:#0b0710;overflow:hidden;font-family:'Trebuchet MS'
   font-size:.78rem;box-shadow:0 0 14px __COLOR__55}
 #win{position:absolute;inset:0;display:none;align-items:center;justify-content:center;
   font-size:1.1rem;font-weight:900;letter-spacing:.14em;color:#ffefdd;
-  text-shadow:0 0 18px __COLOR__}
+  text-shadow:0 0 18px __COLOR__;text-align:center;padding:0 14px;box-sizing:border-box}
+@media (max-width:700px){
+  #title{font-size:.6rem;letter-spacing:.08em;max-width:52%;line-height:1.3}
+  #hp{width:110px;top:6px;right:10px}
+  #hp .lbl{font-size:.56rem}
+  #bub{max-width:calc(100% - 24px);left:12px;right:12px;font-size:.76rem}
+  #win{font-size:.95rem;letter-spacing:.08em}
+}
 </style>
 <div id="v"></div>
 <div id="hud">
@@ -1571,8 +1897,16 @@ window.addEventListener('load', function(){
   r.setSize(W,H); r.outputEncoding=THREE.sRGBEncoding; r.setClearColor(0x0b0710);
   document.getElementById('v').appendChild(r.domElement);
   const sc=new THREE.Scene();
-  const cam=new THREE.PerspectiveCamera(36,W/H,0.1,60);
+  const cam=new THREE.PerspectiveCamera(36,W/Math.max(H,1),0.1,60);
   cam.position.set(0,1.8,5.4); cam.lookAt(0,1.1,0);
+  // a phone makes this strip wide and short - hold the subject in frame
+  if(window.GWB) GWB.frame(cam,36,2.6,{power:0.5,maxFov:52,maxDist:1});
+  addEventListener('resize',function(){
+    r.setSize(innerWidth,innerHeight);
+    cam.aspect=innerWidth/Math.max(innerHeight,1);
+    if(window.GWB) GWB.frame(cam,36,2.6,{power:0.5,maxFov:52,maxDist:1});
+    else cam.updateProjectionMatrix();
+  });
   sc.add(new THREE.AmbientLight(0xffffff,0.9));
   const sp=new THREE.SpotLight(0xfff3e0,3.2,40,Math.PI/4,0.5); sp.position.set(0,8,4); sc.add(sp);
   let mix=null,obj=null,hp=100,down=false,flash=0;
@@ -1647,16 +1981,34 @@ html,body{margin:0;background:#0b0710;overflow:hidden;font-family:'Trebuchet MS'
   background:radial-gradient(ellipse 75% 62% at 50% 42%,transparent 55%,rgba(4,3,8,.55) 82%,rgba(2,2,6,.9) 100%)}
 #bub{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:10;
   width:min(560px,86%);background:#1c1119;border:1px solid __COLOR__;
-  border-radius:14px;padding:14px 16px;color:#f2e8dc;font-size:1rem;
+  border-radius:14px;padding:14px 16px 46px;color:#f2e8dc;font-size:1rem;
   box-shadow:0 0 22px __COLOR__66}
 #bub .who{font-size:.68rem;letter-spacing:.16em;color:__COLOR__;font-weight:900}
-#next{position:absolute;right:10px;bottom:8px;background:__COLOR__;color:#14090c;
-  font-weight:900;border:none;border-radius:8px;padding:5px 14px;cursor:pointer;
-  letter-spacing:.08em}
+#line{margin:6px 0 0}
+/* NEXT sits in its own reserved strip under the line. It used to float over
+   the bottom-right corner of the bubble, where a long taunt ran underneath it
+   and lost its last words. */
+#next{position:absolute;right:12px;bottom:9px;background:__COLOR__;color:#14090c;
+  font-weight:900;border:none;border-radius:8px;padding:8px 18px;cursor:pointer;
+  letter-spacing:.08em;font-size:.8rem}
+#bub.done{padding-bottom:14px}
+@media (max-width:700px){
+  #bub{bottom:14px;width:calc(100% - 24px);padding:12px 13px 58px;
+    border-radius:12px;font-size:.95rem;line-height:1.4}
+  #bub .who{font-size:.66rem}
+  #bub.done{padding-bottom:12px}
+  #next{left:12px;right:12px;bottom:11px;padding:0;height:44px;
+    border-radius:10px;font-size:.85rem;width:auto}
+}
+@media (max-width:900px) and (max-height:460px){
+  #bub{bottom:10px;width:calc(100% - 84px);left:auto;right:12px;transform:none;
+    padding:9px 12px 12px;font-size:.85rem}
+  #next{position:static;display:block;margin:8px 0 0;width:100%;height:40px;padding:0}
+}
 </style>
 <div id="stage"><div id="v"></div><div id="vig"></div>
   <div id="bub"><div class="who">__NAME__</div>
-    <div id="line" style="margin:6px 40px 10px 0"></div>
+    <div id="line"></div>
     <button id="next">NEXT</button></div>
 </div>
 <script>
@@ -1667,12 +2019,15 @@ html,body{margin:0;background:#0b0710;overflow:hidden;font-family:'Trebuchet MS'
 __VENDOR__
 <script>
 window.addEventListener('load', function(){
+  // room for the two buttons Streamlit draws under the scene
+  GWB.holdFrame('auto', 360);
   const LINES=__LINES__; let li=0;
   const lineEl=document.getElementById('line'), btn=document.getElementById('next');
   lineEl.textContent=LINES[0];
   btn.onclick=()=>{ li++;
     if(li>=LINES.length){ lineEl.textContent="Enough talk. Step in - if you dare.";
-      btn.style.display='none'; return; }
+      btn.style.display='none';
+      document.getElementById('bub').classList.add('done'); return; }
     lineEl.textContent=LINES[li]; };
   const W=innerWidth,H=innerHeight;
   const r=new THREE.WebGLRenderer({antialias:true});
@@ -1689,8 +2044,26 @@ window.addEventListener('load', function(){
   const DAIS_TOP=0.9;             // height of the dais it stands on
   const DAIS_W=12.0, DAIS_D=6.4;  // its top step
   const TARGET_H=5.2;             // how tall a well-proportioned monster reads
-  const cam=new THREE.PerspectiveCamera(44,W/H,0.1,60);
-  cam.position.set(0,3.0,9.4); cam.lookAt(0,3.2,MON_Z);
+  const cam=new THREE.PerspectiveCamera(44,W/Math.max(H,1),0.1,60);
+  // Framing answers the viewport (see GWB.frame). A single monster centred in
+  // the hall needs only a modest widening on a phone - the tall screen already
+  // shows more of it top to bottom - but without any, wings clip at the sides.
+  const EYE=new THREE.Vector3(0,3.0,9.4);
+  let AIM=new THREE.Vector3(0,3.2,MON_Z), FRAME=1;
+  function place(){
+    FRAME=GWB.frame(cam,44,1.55,{power:0.45,maxFov:58,maxDist:1.12});
+    cam.position.set(AIM.x+(EYE.x-AIM.x)*FRAME,
+                     AIM.y+(EYE.y-AIM.y)*FRAME,
+                     AIM.z+(EYE.z-AIM.z)*FRAME);
+    // a phone puts the speech across the bottom: aim under the monster so it
+    // stands clear of its own words
+    cam.lookAt(AIM.x, AIM.y-(GWB.isPhone()?0.6:0), AIM.z);
+  }
+  place();
+  addEventListener('resize',function(){
+    cam.aspect=innerWidth/Math.max(innerHeight,1);
+    r.setSize(innerWidth,innerHeight); place();
+  });
 
   // ---- canvas masonry textures (same technique as the citadel hub) ----
   function makeStoneTex(base,line,cols,rows,rx,ry){
@@ -1874,7 +2247,7 @@ window.addEventListener('load', function(){
     obj.position.set(-c.x,-b2.min.y+lift,-c.z); daisAnchor.add(obj);
     // 4. frame whatever we ended up with, instead of a fixed guess
     const eyeY=DAIS_TOP+lift+h*0.52;
-    cam.lookAt(0,eyeY,MON_Z);
+    AIM.set(0,eyeY,MON_Z); place();
     rim.position.set(0,eyeY,MON_Z-2.4);
     key.target.position.set(0,eyeY,MON_Z);
     if(g.animations&&g.animations.length){
@@ -1949,6 +2322,35 @@ html,body{margin:0;background:#050308;overflow:hidden;font-family:'Trebuchet MS'
   flex-direction:column;background:rgba(3,2,7,.72);text-align:center;padding:0 8%}
 #endtitle{font-size:2.2rem;font-weight:900;letter-spacing:.16em;color:#fff;text-shadow:0 0 24px #6672ff}
 #endsub{margin-top:10px;color:#b9b4d6;font-size:1rem}
+/* ---- PHONE: the arena keeps every control, at thumb size ---------------
+   The answer field and STRIKE stack instead of sharing a line, and the whole
+   question box lifts clear of the letters-home button in the corner. */
+@media (max-width:700px){
+  #btitle{top:10px;left:12px;font-size:1.02rem;letter-spacing:.1em}
+  #bsub{top:33px;left:13px;font-size:.62rem;letter-spacing:.06em;
+    max-width:calc(100% - 130px);line-height:1.25}
+  #lives{top:11px;right:12px;gap:6px}
+  .pip{width:16px;height:16px}
+  #bmute{top:36px;right:12px;padding:9px 11px;font-size:.6rem}
+  #bline{top:78px;max-width:calc(100% - 24px);font-size:.85rem;padding:8px 12px;
+    line-height:1.35}
+  #qbox{bottom:62px;width:calc(100% - 24px)}
+  #qq{font-size:1.6rem;margin-bottom:7px}
+  #ans{width:100%;box-sizing:border-box;font-size:1.25rem;padding:11px;
+    margin:0 0 9px}
+  #go2{display:block;width:100%;margin:0;height:48px;padding:0;font-size:.92rem}
+  #endcard{padding:0 6%}
+  #endtitle{font-size:1.5rem;letter-spacing:.1em}
+  #endsub{font-size:.92rem;line-height:1.4}
+}
+@media (max-width:900px) and (max-height:460px){
+  #bsub{display:none}
+  #bline{top:auto;bottom:8px;left:62px;right:auto;transform:none;
+    max-width:38%;font-size:.75rem}
+  #qbox{bottom:10px;left:auto;right:12px;transform:none;width:46%}
+  #qq{font-size:1.2rem}
+  #go2{height:42px}
+}
 </style>
 <div id="stage">
   <div id="v"></div><div id="vig2"></div>
@@ -2058,16 +2460,60 @@ window.addEventListener('load', function(){
     });
   })();
 
+  // the arena owns the phone screen; the briefing below it scrolls
+  GWB.holdFrame(0, 420);
   const W=innerWidth,H=innerHeight;
   const r=new THREE.WebGLRenderer({antialias:true});
   r.setSize(W,H); r.outputEncoding=THREE.sRGBEncoding; r.setClearColor(0x050308);
   document.getElementById('v').appendChild(r.domElement);
   const sc=new THREE.Scene(); sc.fog=new THREE.FogExp2(0x050308,0.05);
-  const cam=new THREE.PerspectiveCamera(42,W/H,0.1,80);
-  cam.position.set(0,2.6,7.5); cam.lookAt(0,2.4,0);
-  sc.add(new THREE.AmbientLight(0x9aa0ff,0.5));
-  const key=new THREE.SpotLight(0xcfd4ff,2.6,50,Math.PI/3,0.5); key.position.set(0,12,6); sc.add(key);
+  const cam=new THREE.PerspectiveCamera(42,W/Math.max(H,1),0.1,80);
+  // framing answers the viewport, not a guess about the window (GWB.frame)
+  const EYE={x:0,y:2.6,z:7.5}, AIM={x:0,y:2.4,z:0};
+  function place(){
+    const f=GWB.frame(cam,42,1.55,{power:0.32,maxFov:50,maxDist:1.0});
+    cam.position.set(AIM.x+(EYE.x-AIM.x)*f, AIM.y+(EYE.y-AIM.y)*f,
+                     AIM.z+(EYE.z-AIM.z)*f);
+    const off=(innerWidth>innerHeight*1.4 && innerHeight<=470)
+      ? 0.22*2*Math.tan(cam.fov*Math.PI/360)*Math.abs(EYE.z-AIM.z)*cam.aspect : 0;
+    cam.lookAt(AIM.x+off, AIM.y+(GWB.isPhone()?0.5:0), AIM.z);
+  }
+  place();
+  addEventListener('resize',function(){
+    cam.aspect=innerWidth/Math.max(innerHeight,1);
+    r.setSize(innerWidth,innerHeight); place();
+  });
+  // How much room the fighter actually has, measured off the strips the HUD
+  // reserves rather than assumed: the taunt owns the top of the arena and the
+  // question box owns the bottom, and on a phone what is left between them is
+  // a fraction of what a desktop window leaves.
+  function visHAt(y){
+    const d=cam.position.distanceTo(new THREE.Vector3(0,y,0));
+    return 2*Math.tan(cam.fov*Math.PI/360)*d;
+  }
+  function visWAt(y){ return visHAt(y)*cam.aspect; }
+  // sideways on a phone the taunt and the question sit side by side along the
+  // bottom instead of stacking, so the strips are read by where they actually
+  // are rather than by where portrait puts them
+  function sideways(){ return innerWidth>innerHeight*1.4 && innerHeight<=470; }
+  function bandAt(y){
+    const hh=innerHeight||1, pad=Math.max(6,hh*0.015);
+    const bl=document.getElementById('bline').getBoundingClientRect();
+    const qb=document.getElementById('qbox').getBoundingClientRect();
+    let top=0, bot=hh;
+    if(bl.top<hh*0.5) top=Math.max(top,bl.bottom);
+    if(qb.bottom>hh*0.5) bot=Math.min(bot,qb.top);
+    let f=(bot-top-2*pad)/hh;
+    if(!(f>0.22)) f=0.22;
+    if(sideways()) f=Math.min(f,0.66);
+    return 0.88*f*visHAt(y);   // never let a limb touch either strip
+  }
+  sc.add(new THREE.AmbientLight(0x9aa0ff,0.85));
+  const key=new THREE.SpotLight(0xcfd4ff,3.4,50,Math.PI/3,0.5); key.position.set(0,12,6); sc.add(key);
   const under=new THREE.PointLight(0x6672ff,2.2,20); under.position.set(0,0.4,1.5); sc.add(under);
+  // A frontal fill aimed from the camera so the Collector reads as a monster and
+  // not a silhouette - on a phone the other five are well lit and he was not.
+  const fill=new THREE.PointLight(0xd7dcff,1.8,40); fill.position.set(0,3.4,7.5); sc.add(fill);
   const floor=new THREE.Mesh(new THREE.CircleGeometry(30,48),
     new THREE.MeshStandardMaterial({color:0x0a0712,metalness:.4,roughness:.85}));
   floor.rotation.x=-Math.PI/2; sc.add(floor);
@@ -2076,7 +2522,12 @@ window.addEventListener('load', function(){
     obj=g.scene;
     const b=new THREE.Box3().setFromObject(obj), sz=b.getSize(new THREE.Vector3());
     obj.scale.setScalar(0.15);
-    obj.userData.fullScale=5.2/Math.max(sz.x,sz.y,sz.z,0.001);
+    // A phone shows a smaller picture, so the subject has to own more of it -
+    // but never more than fits, so the width of the shot caps it as well.
+    obj.userData.fullScale=Math.min(
+      (GWB.isPhone()?7.4:5.2)/Math.max(sz.x,sz.y,sz.z,0.001),
+      bandAt(2.4)/Math.max(sz.y,0.001),
+      0.92*visWAt(2.4)/Math.max(sz.x,0.001));
     const b2=new THREE.Box3().setFromObject(obj), c=b2.getCenter(new THREE.Vector3());
     obj.position.set(-c.x,3.2,-c.z-1); sc.add(obj);
     if(g.animations&&g.animations.length){
@@ -2154,6 +2605,22 @@ window.addEventListener('load', function(){
       ? "\"Adequate... for now. Your basics are still yours, __HERO__. I will be back for the rest.\"  Score: "+score+" of "+QMAX
       : "\"Your basics belong to me now. Train with the little ones and buy them back.\"  Score: "+score+" of "+QMAX;
     document.getElementById('qbox').style.display='none';
+    // The fight owned the whole phone screen; the way forward (face him again,
+    // the drills, retreat) lives in Streamlit below it. Left at full height the
+    // endcard is a centred line of text floating in a screen of dead black with
+    // the controls a full scroll away. Collapse the arena to the endcard so
+    // those controls sit right under it and the screen reads as a result, not a
+    // dead end. Desktop keeps its composed arena.
+    try{
+      const s=(window.GWB&&GWB.parentSize)?GWB.parentSize():{w:innerWidth,h:innerHeight};
+      if(s.w && s.w<=700){
+        const fe=window.frameElement;
+        if(fe){ const h=Math.min(s.h,460);
+          fe.style.height=h+'px'; fe.setAttribute('height',h);
+          fe.setAttribute('data-gwb-fit','1');
+          window.__gwbFrameLock=1; }
+      }
+    }catch(e){}
   }
   let pt=0;
   (function loop(t){ requestAnimationFrame(loop);
@@ -2222,6 +2689,37 @@ html,body{margin:0;background:#050308;overflow:hidden;font-family:'Trebuchet MS'
 #coachlink{display:inline-block;margin-top:22px;pointer-events:auto;text-decoration:none;
   background:__COLOR__;color:#0a0714;font-weight:900;letter-spacing:.12em;
   border-radius:10px;padding:13px 26px;font-size:1rem;box-shadow:0 0 24px __COLOR__66}
+/* ---- PHONE: same arena rules as the Collector's ---------------------- */
+@media (max-width:700px){
+  #btitle{top:10px;left:12px;font-size:1.02rem;letter-spacing:.1em;
+    max-width:calc(100% - 100px)}
+  #bsub{top:32px;left:13px;font-size:.6rem;letter-spacing:.05em;
+    max-width:calc(100% - 100px);line-height:1.25}
+  #lives{top:11px;right:12px;gap:6px}
+  .pip{width:16px;height:16px}
+  /* the score gets its own line rather than colliding with the subtitle */
+  #streakbox{top:50px;left:13px;right:auto;text-align:left;
+    font-size:.66rem;letter-spacing:.06em}
+  #bline{bottom:auto;top:70px;max-width:calc(100% - 24px);font-size:.8rem;
+    padding:7px 11px;line-height:1.32;display:-webkit-box;-webkit-line-clamp:4;
+    -webkit-box-orient:vertical;overflow:hidden}
+  #qbox{bottom:58px;width:calc(100% - 24px)}
+  #qq{font-size:1.45rem;margin-bottom:6px}
+  #ans{width:100%;box-sizing:border-box;font-size:1.25rem;padding:11px;margin:0 0 9px}
+  #go2{display:block;width:100%;margin:0;height:48px;padding:0;font-size:.92rem}
+  #endcard{padding:0 6%}
+  #endtitle{font-size:1.5rem;letter-spacing:.1em}
+  #endsub{font-size:.92rem;line-height:1.4}
+  #coachlink{margin-top:18px;padding:14px 20px;font-size:.92rem}
+}
+@media (max-width:900px) and (max-height:460px){
+  #bsub{display:none}
+  #bline{top:auto;bottom:8px;left:62px;right:auto;transform:none;
+    max-width:38%;font-size:.75rem}
+  #qbox{bottom:10px;left:auto;right:12px;transform:none;width:46%}
+  #qq{font-size:1.2rem}
+  #go2{height:42px}
+}
 </style>
 <div id="stage">
   <div id="v"></div><div id="vig2"></div>
@@ -2252,6 +2750,10 @@ html,body{margin:0;background:#050308;overflow:hidden;font-family:'Trebuchet MS'
 __VENDOR__
 <script>
 window.addEventListener('load', function(){
+  // Gemma's whisper sits above this arena and the retreat below it, so the
+  // drill takes what is left of the screen - a 90 second clock must not need
+  // scrolling to see the question.
+  GWB.holdFrame('auto', 430);
   // Press a button in the parent rather than opening a tab: this frame is
   // sandboxed without allow-top-navigation, so a link is the only thing that
   // could leave it, and a link means a second tab.
@@ -2318,8 +2820,47 @@ window.addEventListener('load', function(){
   r.setSize(W,H); r.outputEncoding=THREE.sRGBEncoding; r.setClearColor(0x050308);
   document.getElementById('v').appendChild(r.domElement);
   const sc=new THREE.Scene(); sc.fog=new THREE.FogExp2(0x050308,0.05);
-  const cam=new THREE.PerspectiveCamera(42,W/H,0.1,80);
-  cam.position.set(0,2.6,7.5); cam.lookAt(0,2.4,0);
+  const cam=new THREE.PerspectiveCamera(42,W/Math.max(H,1),0.1,80);
+  // framing answers the viewport, not a guess about the window (GWB.frame)
+  const EYE={x:0,y:2.6,z:7.5}, AIM={x:0,y:2.4,z:0};
+  function place(){
+    const f=GWB.frame(cam,42,1.55,{power:0.32,maxFov:50,maxDist:1.0});
+    cam.position.set(AIM.x+(EYE.x-AIM.x)*f, AIM.y+(EYE.y-AIM.y)*f,
+                     AIM.z+(EYE.z-AIM.z)*f);
+    const off=(innerWidth>innerHeight*1.4 && innerHeight<=470)
+      ? 0.22*2*Math.tan(cam.fov*Math.PI/360)*Math.abs(EYE.z-AIM.z)*cam.aspect : 0;
+    cam.lookAt(AIM.x+off, AIM.y+(GWB.isPhone()?0.5:0), AIM.z);
+  }
+  place();
+  addEventListener('resize',function(){
+    cam.aspect=innerWidth/Math.max(innerHeight,1);
+    r.setSize(innerWidth,innerHeight); place();
+  });
+  // How much room the fighter actually has, measured off the strips the HUD
+  // reserves rather than assumed: the taunt owns the top of the arena and the
+  // question box owns the bottom, and on a phone what is left between them is
+  // a fraction of what a desktop window leaves.
+  function visHAt(y){
+    const d=cam.position.distanceTo(new THREE.Vector3(0,y,0));
+    return 2*Math.tan(cam.fov*Math.PI/360)*d;
+  }
+  function visWAt(y){ return visHAt(y)*cam.aspect; }
+  // sideways on a phone the taunt and the question sit side by side along the
+  // bottom instead of stacking, so the strips are read by where they actually
+  // are rather than by where portrait puts them
+  function sideways(){ return innerWidth>innerHeight*1.4 && innerHeight<=470; }
+  function bandAt(y){
+    const hh=innerHeight||1, pad=Math.max(6,hh*0.015);
+    const bl=document.getElementById('bline').getBoundingClientRect();
+    const qb=document.getElementById('qbox').getBoundingClientRect();
+    let top=0, bot=hh;
+    if(bl.top<hh*0.5) top=Math.max(top,bl.bottom);
+    if(qb.bottom>hh*0.5) bot=Math.min(bot,qb.top);
+    let f=(bot-top-2*pad)/hh;
+    if(!(f>0.22)) f=0.22;
+    if(sideways()) f=Math.min(f,0.66);
+    return 0.88*f*visHAt(y);   // never let a limb touch either strip
+  }
   const tint=new THREE.Color("__COLOR__");
   sc.add(new THREE.AmbientLight(0x9aa0ff,0.5));
   const key=new THREE.SpotLight(0xcfd4ff,2.6,50,Math.PI/3,0.5); key.position.set(0,12,6); sc.add(key);
@@ -2338,7 +2879,9 @@ window.addEventListener('load', function(){
     const MID_Y=2.5;
     const b=new THREE.Box3().setFromObject(obj), sz=b.getSize(new THREE.Vector3());
     const eff=Math.max(sz.y,0.62*Math.max(sz.x,sz.z),0.001);
-    obj.userData.fullScale=3.4/eff;
+    obj.userData.fullScale=Math.min((GWB.isPhone()?4.8:3.4)/eff,
+                                    bandAt(MID_Y)/Math.max(sz.y,0.001),
+                                    0.92*visWAt(MID_Y)/Math.max(sz.x,0.001));
     obj.scale.setScalar(obj.userData.fullScale);
     const b2=new THREE.Box3().setFromObject(obj), c=b2.getCenter(new THREE.Vector3());
     obj.scale.setScalar(0.15);                    // the entrance grows it back
@@ -2573,12 +3116,7 @@ def skirmish_stage():
     lane = st.session_state.get("skirmish_lane", "doubles")
     lt = _LIEUTENANTS[lane]
     _coach_relay()
-    st.markdown("""<style>
-      [data-testid="stHeader"]{display:none}
-      [data-testid="stMainBlockContainer"], .block-container{
-        padding:0 0 1rem 0 !important; max-width:100% !important}
-      [data-testid="stElementContainer"]:has(iframe){width:100% !important}
-    </style>""", unsafe_allow_html=True)
+    full_bleed()
     # Gemma whispers the mental strategy before the war (cached per lane)
     wkey = f"whisper_{lane}"
     if wkey not in st.session_state:
@@ -2591,7 +3129,15 @@ def skirmish_stage():
                 max_new_tokens=90))
         except Exception:
             st.session_state[wkey] = lt["whisper"]
-    note("GEMMA WHISPERS A WAR SECRET", esc_note(st.session_state[wkey]))
+    # On a phone this tip would take a third of the screen away from a drill
+    # that is on a 90 second clock, so there it becomes a short scrolling
+    # panel - every word still there, none of the height.
+    st.markdown('<style>@media (max-width:700px){'
+                '[class*="st-key-whisper_box"] .gwb-note{max-height:104px;'
+                'overflow:auto;font-size:.86rem;line-height:1.35}}</style>',
+                unsafe_allow_html=True)
+    with st.container(key=f"whisper_box_{lane}"):
+        note("GEMMA WHISPERS A WAR SECRET", esc_note(st.session_state[wkey]))
     components.html(_skirmish_html(st.session_state.get("player_name", "Challenger"),
                                    lane, lt["model"], lt["color"]),
                     height=560, scrolling=False)
@@ -2655,6 +3201,12 @@ html,body{margin:0;background:#050308;overflow:hidden;font-family:'Trebuchet MS'
 #ftitle{position:absolute;top:7%;width:100%;font-size:2rem;font-weight:900;letter-spacing:.22em;
   text-shadow:0 0 24px rgba(226,192,125,.8);opacity:0;transition:opacity 3s}
 #fsub{position:absolute;bottom:9%;width:100%;font-size:1rem;color:#d9ceb4;opacity:0;transition:opacity 3s}
+@media (max-width:700px){
+  #ftitle{top:5%;font-size:1.25rem;letter-spacing:.14em;padding:0 14px;
+    box-sizing:border-box}
+  #fsub{bottom:6%;font-size:.88rem;line-height:1.4;padding:0 16px;
+    box-sizing:border-box}
+}
 </style>
 <div id="stage"><div id="v"></div>
   <div id="hud3">
@@ -2670,6 +3222,8 @@ html,body{margin:0;background:#050308;overflow:hidden;font-family:'Trebuchet MS'
 __VENDOR__
 <script>
 window.addEventListener('load', function(){
+  // one button under the scene; give the rest of the phone screen to the gate
+  GWB.holdFrame('auto', 380);
   const W=innerWidth,H=innerHeight;
   const r=new THREE.WebGLRenderer({antialias:true});
   r.setSize(W,H); r.outputEncoding=THREE.sRGBEncoding;
@@ -2677,8 +3231,21 @@ window.addEventListener('load', function(){
   r.setClearColor(0x050308);
   document.getElementById('v').appendChild(r.domElement);
   const sc=new THREE.Scene(); sc.fog=new THREE.FogExp2(0x0d1424,0.02);
-  const cam=new THREE.PerspectiveCamera(46,W/H,0.1,120);
-  cam.position.set(0,4,26); cam.lookAt(0,4,0);
+  const cam=new THREE.PerspectiveCamera(46,W/Math.max(H,1),0.1,120);
+  // The gate is 28 units of wall wide - the widest subject after the citadel -
+  // so a narrow window has to open up hard or it sees only the doors.
+  const EYE={x:0,y:4,z:26}, AIM={x:0,y:4,z:0};
+  function place(){
+    const f=GWB.frame(cam,46,1.55,{power:0.72,maxFov:64,maxDist:1.5});
+    cam.position.set(AIM.x+(EYE.x-AIM.x)*f, AIM.y+(EYE.y-AIM.y)*f,
+                     AIM.z+(EYE.z-AIM.z)*f);
+    cam.lookAt(AIM.x,AIM.y,AIM.z);
+  }
+  place();
+  addEventListener('resize',function(){
+    cam.aspect=innerWidth/Math.max(innerHeight,1);
+    r.setSize(innerWidth,innerHeight); place();
+  });
   sc.add(new THREE.AmbientLight(0x141c30,0.9));
   const moon=new THREE.DirectionalLight(0x9fb6e8,1.0); moon.position.set(-20,30,-10); sc.add(moon);
 
@@ -2707,7 +3274,13 @@ window.addEventListener('load', function(){
   const figMat=new THREE.MeshStandardMaterial({color:0xffe9b0,emissive:0xffd98c,
     emissiveIntensity:1.2,roughness:.4});
   const fig=new THREE.Group();
-  const body=new THREE.Mesh(new THREE.CapsuleGeometry?new THREE.CapsuleGeometry(0.7,1.6,8,16):new THREE.CylinderGeometry(0.7,0.7,2.6,16),figMat);
+  // The vendored three is r128, which has no CapsuleGeometry - and `new
+  // THREE.CapsuleGeometry ? ... : ...` does not test for it, it CONSTRUCTS it,
+  // so the whole scene died here before it ever drew a frame.
+  const Capsule=THREE.CapsuleGeometry||null;
+  const body=new THREE.Mesh(
+    Capsule?new Capsule(0.7,1.6,8,16):new THREE.CylinderGeometry(0.7,0.7,2.6,16),
+    figMat);
   body.position.y=2.2; fig.add(body);
   const head=new THREE.Mesh(new THREE.SphereGeometry(0.55,20,20),figMat);
   head.position.y=4.0; fig.add(head);
@@ -2763,12 +3336,7 @@ def _finale_html(name):
 
 
 def finale_stage():
-    st.markdown("""<style>
-      [data-testid="stHeader"]{display:none}
-      [data-testid="stMainBlockContainer"], .block-container{
-        padding:0 0 1rem 0 !important; max-width:100% !important}
-      [data-testid="stElementContainer"]:has(iframe){width:100% !important}
-    </style>""", unsafe_allow_html=True)
+    full_bleed()
     components.html(_finale_html(st.session_state.get("player_name", "Challenger")),
                     height=620, scrolling=False)
     mid = st.columns([2, 2, 2])
@@ -2777,12 +3345,7 @@ def finale_stage():
 
 
 def boss_stage():
-    st.markdown("""<style>
-      [data-testid="stHeader"]{display:none}
-      [data-testid="stMainBlockContainer"], .block-container{
-        padding:0 0 1rem 0 !important; max-width:100% !important}
-      [data-testid="stElementContainer"]:has(iframe){width:100% !important}
-    </style>""", unsafe_allow_html=True)
+    full_bleed()
     run = st.session_state.get("boss_run", 0)
     components.html(_boss_html(st.session_state.get("player_name", "Challenger"))
                     + f"<!-- run {run} -->", height=620, scrolling=False)
@@ -2865,12 +3428,7 @@ def encounter_stage():
     mon = monster_for(strand)
     if not mon:
         back_to_map(); st.rerun()
-    st.markdown("""<style>
-      [data-testid="stHeader"]{display:none}
-      [data-testid="stMainBlockContainer"], .block-container{
-        padding:0 0 1rem 0 !important; max-width:100% !important}
-      [data-testid="stElementContainer"]:has(iframe){width:100% !important}
-    </style>""", unsafe_allow_html=True)
+    full_bleed()
     mem_key = f"enc_line_{strand}"
     if mem_key not in st.session_state:
         facts = {
@@ -2969,13 +3527,7 @@ def hub_relays():
 
 def map_stage():
     # full-bleed: strip Streamlit chrome so the game IS the screen (this stage only)
-    st.markdown("""<style>
-      [data-testid="stHeader"]{display:none}
-      [data-testid="stMainBlockContainer"], .block-container{
-        padding:0 !important; max-width:100% !important}
-      [data-testid="stAppViewContainer"]{background:#0b0710}
-      [data-testid="stElementContainer"]:has(iframe){width:100% !important}
-    </style>""", unsafe_allow_html=True)
+    full_bleed("0", phone_bottom="0")
     hub_relays()
     components.html(_hub_html(), height=800, scrolling=False)
     trophy_shelf()
@@ -2997,6 +3549,21 @@ def quiz():
                 'z-index:998; margin:0;'
                 f'filter:drop-shadow(0 0 14px {mon["color"]}66);'
                 'animation:gwbBob 3.2s ease-in-out infinite}'
+                # On a phone this heckler shares the screen with the questions.
+                # Pinned to the viewport corner it sat on top of whatever option
+                # scrolled under it. So on a phone the whole thing - bubble and
+                # monster - drops into the normal flow under the title: the
+                # monster tucks to the right, the questions begin below it, and
+                # nothing ever floats over the answers.
+                '@media (max-width:700px){'
+                '[data-testid="stElementContainer"]:has(iframe){'
+                'position:static !important; width:96px !important;'
+                'right:auto; bottom:auto; margin:0 0 .3rem auto}'
+                '[data-testid="stElementContainer"] iframe{height:120px !important}'
+                '.gwb-taunt{position:static !important;margin:0 0 .2rem;'
+                'animation:none;max-width:100%}'
+                '.gwb-bubble{max-width:100%;font-size:.86rem;'
+                'border-radius:12px 12px 12px 2px}}'
                 '</style>'
                 '<div class="gwb-taunt" style="bottom:190px;right:18px">'
                 f'<div class="gwb-bubble"><strong>{mon["monster"]}:</strong> '
