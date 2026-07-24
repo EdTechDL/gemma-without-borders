@@ -27,10 +27,9 @@ if "stage" not in st.session_state:
     st.session_state.stage = "map"
 
 st.set_page_config(
-    page_title=("GEMMA MONSTERS" if st.session_state.get("adventure") else "Gemma Without Borders"),
+    page_title="GEMMA MONSTERS",
     layout="centered")
 
-# ---- global styling: classic (ivory) or game skin (dark) — looks only, no logic ----
 _GAME_SKIN = """
 <style>
 :root { --ink:#f2e8dc; --muted:#b9a794; --line:#3a2a35; --card:#160e18; --accent:#e08d6d; }
@@ -98,6 +97,17 @@ code, pre{background:#1c1119 !important;color:#ffd9b8 !important}
 .gwb-kicker{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;
   color:var(--accent);margin-bottom:.2rem;font-weight:900}
 .katex{color:#ffefdd}
+/* selects and their dropdown menus: dark, readable */
+[data-baseweb="select"] > div{background:#1c1119 !important;border-color:#3a2a35 !important}
+[data-baseweb="select"] div, [data-baseweb="select"] span, [data-baseweb="select"] input{color:#f2e8dc !important}
+[data-baseweb="select"] svg{fill:#e08d6d !important}
+[data-baseweb="popover"] [role="listbox"], [data-baseweb="popover"] ul, [data-baseweb="menu"]{
+  background:#1c1119 !important;border:1px solid #3a2a35 !important}
+[data-baseweb="popover"] [role="option"], [data-baseweb="popover"] li, [data-baseweb="menu"] li{
+  color:#f2e8dc !important;background:#1c1119 !important}
+[data-baseweb="popover"] [role="option"]:hover, [data-baseweb="popover"] li:hover,
+[data-baseweb="menu"] li:hover, [data-baseweb="popover"] li[aria-selected="true"]{
+  background:#2a1a26 !important;color:#ffefdd !important}
 .gwb-taunt{position:fixed;bottom:20px;right:20px;z-index:999;display:flex;
   align-items:flex-end;gap:10px;animation:gwbBob 3.2s ease-in-out infinite}
 .gwb-bubble{background:#1c1119;border:1px solid #e08d6d;
@@ -110,74 +120,8 @@ code, pre{background:#1c1119 !important;color:#ffd9b8 !important}
 </style>
 """
 
-st.markdown("""
-<style>
-:root {
-    --ink: #1F1E1B;
-    --muted: #6E6B63;
-    --line: #E4E1D7;
-    --card: #FFFFFF;
-    --accent: #C96442;
-}
-h1, h2, h3 {
-    font-family: Georgia, 'Times New Roman', serif !important;
-    font-weight: 500 !important;
-    letter-spacing: -0.01em;
-    color: var(--ink) !important;
-}
-.stCaption, [data-testid="stCaptionContainer"] { color: var(--muted) !important; }
-.stButton button {
-    border-radius: 6px;
-    border: 1px solid var(--line);
-    box-shadow: none;
-}
-.stButton button[kind="primary"] {
-    background: var(--accent);
-    border: 1px solid var(--accent);
-    color: #FFFFFF;
-}
-.stButton button[kind="primary"]:hover { background: #B25638; border-color: #B25638; }
-[data-testid="stVerticalBlockBorderWrapper"] {
-    background: var(--card);
-    border: 1px solid var(--line) !important;
-    border-radius: 8px;
-}
-[data-testid="stExpander"] {
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    background: var(--card);
-}
-[data-testid="stMetricValue"] {
-    font-family: Georgia, 'Times New Roman', serif;
-    color: var(--ink);
-}
-hr { border-color: var(--line) !important; }
-.gwb-note {
-    border: 1px solid var(--line);
-    border-left: 3px solid var(--accent);
-    border-radius: 6px;
-    background: var(--card);
-    padding: 0.85rem 1.1rem;
-    margin: 0.4rem 0 0.9rem 0;
-    color: var(--ink);
-}
-.gwb-note .label {
-    display: block;
-    font-size: 0.72rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 0.25rem;
-}
-.gwb-kicker {
-    font-size: 0.75rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 0.2rem;
-}
-</style>
-""" if not st.session_state.get("adventure") else _GAME_SKIN, unsafe_allow_html=True)
+# ---- one identity everywhere: the GEMMA MONSTERS skin (looks only, no logic) ----
+st.markdown(_GAME_SKIN, unsafe_allow_html=True)
 
 
 def _inline_md(s: str) -> str:
@@ -246,9 +190,9 @@ def start_mastery(result, analysis):
 
 # ---------------- INTRO ----------------
 def intro():
-    st.markdown('<div class="gwb-kicker">Grade 9 EQAO Mathematics</div>', unsafe_allow_html=True)
-    st.title("Gemma Without Borders")
-    st.caption("An autonomous study agent, running privately on device.")
+    st.markdown('<div class="gwb-kicker">Grade 9 EQAO Mathematics · Simple mode</div>', unsafe_allow_html=True)
+    st.title("GEMMA MONSTERS")
+    st.caption("Simple mode — same brain, no monsters underfoot. Runs privately on device.")
     st.write(
         "Take a short quiz. When you submit, the agent identifies why you missed "
         "what you missed, teaches each gap, and gives you a fresh question to "
@@ -278,19 +222,19 @@ def intro():
 # design language — it's a different world.
 MONSTERS = {
     "Number": {
-        "monster": "Fractis", "taunt": "Ready to watch you crumble like a bad fraction.", "color": "#ff8a5c", "shape": "shard", "model": "/app/static/monsters/alien.glb",
+        "monster": "Fractis", "taunt": "Ready to watch you crumble like a bad fraction.", "lines": ["So... {name}. You found my shard field.", "Braver visitors than you have left here counting on their fingers, {name}.", "Show me your fractions - or become part of my collection."], "color": "#ff8a5c", "shape": "shard", "model": "/app/static/monsters/alien.glb",
         "lore": "Feeds on fractions added straight across. Weak to common denominators."},
     "Algebra": {
-        "monster": "Equazor", "taunt": "I am ready to watch you lose this battle. Your signs will slip.", "color": "#ff6b9d", "shape": "knot", "model": "/app/static/monsters/dragon.glb",
+        "monster": "Equazor", "taunt": "I am ready to watch you lose this battle. Your signs will slip.", "lines": ["Well, well. {name} dares to balance equations with ME watching.", "One slipped sign, {name}, and your answers belong to me.", "I hope you brought more than luck, kid."], "color": "#ff6b9d", "shape": "knot", "model": "/app/static/monsters/dragon.glb",
         "lore": "Twists equations until the signs flip wrong. Weak to balanced moves."},
     "Data": {
-        "monster": "Statiq", "taunt": "Your answers will drown in my noise.", "color": "#35d0c0", "shape": "blob", "model": "/app/static/monsters/fish.glb",
+        "monster": "Statiq", "taunt": "Your answers will drown in my noise.", "lines": ["Splash... {name}, was it? The data here gets... murky.", "Means, medians - it all blurs together down here, {name}.", "Let's see if you can keep your numbers in order. I doubt it."], "color": "#35d0c0", "shape": "blob", "model": "/app/static/monsters/fish.glb",
         "lore": "Blurs means and medians into noise. Weak to ordered data."},
     "Geometry & Measurement": {
-        "monster": "Polygor", "taunt": "Every angle you pick will be the wrong one, little hero.", "color": "#a78bfa", "shape": "poly", "model": "/app/static/monsters/frog.glb",
+        "monster": "Polygor", "taunt": "Every angle you pick will be the wrong one, little hero.", "lines": ["Hop hop, {name}. Welcome to my angle hoard.", "Every formula in here is ALMOST right. That's how I catch clever ones like you.", "Draw your diagrams carefully, kid. I feast on sloppy sketches."], "color": "#a78bfa", "shape": "poly", "model": "/app/static/monsters/frog.glb",
         "lore": "Hoards angles and stolen area formulas. Weak to a true diagram."},
     "Financial Literacy": {
-        "monster": "Ledgerling", "taunt": "I collect mistakes - and I charge interest.", "color": "#ffd166", "shape": "coin", "model": "/app/static/monsters/demon.glb",
+        "monster": "Ledgerling", "taunt": "I collect mistakes - and I charge interest.", "lines": ["Ah, a new account. Name: {name}. Balance: doubtful.", "I skim a little interest off every mistake, {name}. Business is booming.", "Check the math or sign it all away. Your move, kid."], "color": "#ffd166", "shape": "coin", "model": "/app/static/monsters/demon.glb",
         "lore": "Skims your interest while you sleep. Weak to a sharp budget."},
 }
 STATIONS = MONSTERS  # router alias: ?station= keys
@@ -336,7 +280,7 @@ _HUB_TEMPLATE = r"""
   .hbtn:hover{background:rgba(255,240,225,.16);color:#fff}
 
   /* ---- GAME CARD ---- */
-  #card{align-self:flex-end;width:320px;opacity:0;transform:translateY(26px) rotate(1.5deg) scale(.96);
+  #card{align-self:flex-end;width:300px;margin-top:auto;margin-bottom:8px;opacity:0;transform:translateY(26px) rotate(1.5deg) scale(.96);
     transition:all .5s cubic-bezier(.16,1,.3,1);pointer-events:auto;
     --mc:#e08d6d}
   #card.active{opacity:1;transform:translateY(0) rotate(0) scale(1)}
@@ -379,6 +323,15 @@ _HUB_TEMPLATE = r"""
     <div class="hbtns">
       <button class="hbtn" onclick="resetCamera()">Nexus view</button>
       <a class="hbtn" target="_top" id="exitlink" href="#">Simple dashboard</a>
+      <span id="herobox" style="display:none;margin-left:10px">
+        <input id="heroname" maxlength="20" placeholder="YOUR NAME, CHALLENGER"
+          style="background:#1c1119;border:1px solid #3a2a35;border-radius:18px;
+          padding:7px 12px;color:#f2e8dc;font-size:.75rem;letter-spacing:.08em;width:170px">
+        <button id="herogo" style="background:#e08d6d;border:none;border-radius:18px;
+          padding:7px 13px;font-weight:900;color:#14090c;cursor:pointer;font-size:.72rem">GO</button>
+      </span>
+      <span id="herotag" style="display:none;margin-left:10px;color:#7fe9d6;
+        font-size:.72rem;letter-spacing:.12em;font-weight:700"></span>
     </div>
   </header>
   <div id="card">
@@ -442,6 +395,7 @@ function init(){
   renderer=new THREE.WebGLRenderer({antialias:true});
   renderer.setSize(innerWidth,innerHeight);
   renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  renderer.outputEncoding=THREE.sRGBEncoding;
   el.appendChild(renderer.domElement);
   scene.add(new THREE.AmbientLight(0x2a1f22,1.1));
   const warm=new THREE.PointLight(0xffd9b8,1.6,60); warm.position.set(0,12,0); scene.add(warm);
@@ -504,7 +458,7 @@ function init(){
 
   composer=new THREE.EffectComposer(renderer);
   composer.addPass(new THREE.RenderPass(scene,camera));
-  composer.addPass(new THREE.UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),1.35,.55,.12));
+  composer.addPass(new THREE.UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),0.75,.3,.32));
 
   addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();
     renderer.setSize(innerWidth,innerHeight);composer.setSize(innerWidth,innerHeight);});
@@ -547,7 +501,7 @@ function ensureMini(){
   stage.innerHTML=''; stage.appendChild(miniR.domElement);
   miniScene=new THREE.Scene();
   miniCam=new THREE.PerspectiveCamera(40,2,0.1,50);
-  miniCam.position.set(0,1.5,4.4); miniCam.lookAt(0,1.0,0);
+  miniCam.position.set(0,1.6,3.6); miniCam.lookAt(0,1.15,0);
   miniScene.add(new THREE.AmbientLight(0xffffff,0.95));
   const sp=new THREE.SpotLight(0xfff3e0,2.6,30,Math.PI/4,0.5);
   sp.position.set(0,6,3); miniScene.add(sp);
@@ -556,14 +510,14 @@ function showMini(name){
   const u=UNITS[name]; ensureMini();
   const stage=document.getElementById('c-stage');
   const wpx=Math.max(stage.clientWidth,240);
-  miniR.setSize(wpx,132); miniCam.aspect=wpx/132; miniCam.updateProjectionMatrix();
+  miniR.outputEncoding=THREE.sRGBEncoding; miniR.setSize(wpx,132); miniCam.aspect=wpx/132; miniCam.updateProjectionMatrix();
   if(miniObj){ miniScene.remove(miniObj); miniObj=null; } miniMix=null;
   if(loader && u.model){
     loader.load((window.__ORIGIN||'')+u.model,(gltf)=>{
       const obj=gltf.scene;
       const box=new THREE.Box3().setFromObject(obj);
       const size=box.getSize(new THREE.Vector3());
-      const sc=2.3/Math.max(size.x,size.y,size.z,0.001); obj.scale.setScalar(sc);
+      const sc=3.0/Math.max(size.x,size.y,size.z,0.001); obj.scale.setScalar(sc);
       const b2=new THREE.Box3().setFromObject(obj);
       const c=b2.getCenter(new THREE.Vector3());
       obj.position.set(-c.x,-b2.min.y,-c.z);
@@ -603,7 +557,7 @@ function focus(i){
   const name=NAMES[i], u=UNITS[name];
   const R=15, ang=(i/NAMES.length)*Math.PI*2;
   const sx=Math.cos(ang)*R, sz=Math.sin(ang)*R;
-  gsap.to(camera.position,{x:Math.cos(ang)*(R+8),y:6,z:Math.sin(ang)*(R+8),duration:1.8,ease:"power3.inOut"});
+  gsap.to(camera.position,{x:Math.cos(ang)*(R+11),y:4.6,z:Math.sin(ang)*(R+11),duration:1.8,ease:"power3.inOut"});
   monsters.forEach((m,j)=>{ gsap.to(m.scale,{x:j===i?1.6:1,y:j===i?1.6:1,z:j===i?1.6:1,duration:0.9,ease:"power2.out"}); });
   gsap.to(monsters[i].rotation,{y:Math.PI/2-ang,duration:0.9,ease:'power2.out'});
   gsap.to(look,{x:sx,y:3.4,z:sz,duration:1.8,ease:"power3.inOut",
@@ -616,7 +570,9 @@ function focus(i){
   try{ showMini(name); }catch(e){ document.getElementById('c-stage').innerHTML=svgMini(u.color); }
   const fbtn=document.getElementById('c-fight');
   fbtn.onclick=null;
-  fbtn.href=base+'?station='+encodeURIComponent(name);
+  const hero=(localStorage.getItem('gwb_hero')||'').trim();
+  fbtn.href=base+'?station='+encodeURIComponent(name)
+           +(hero?'&hero='+encodeURIComponent(hero):'');
   fbtn.target='_blank'; fbtn.rel='opener';
   card.classList.add('active');
 }
@@ -653,6 +609,17 @@ function animate(time){
   composer.render();
 }
 window.resetCamera = resetCamera;
+// hero name: ask once, remember forever
+(function(){
+  const box=document.getElementById('herobox'), tag=document.getElementById('herotag');
+  const saved=(localStorage.getItem('gwb_hero')||'').trim();
+  function show(n){ tag.textContent='CHALLENGER: '+n.toUpperCase(); tag.style.display='inline';
+                    box.style.display='none'; }
+  if(saved){ show(saved); } else { box.style.display='inline'; }
+  document.getElementById('herogo').onclick=function(){
+    const n=document.getElementById('heroname').value.trim();
+    if(n){ localStorage.setItem('gwb_hero', n); show(n); } };
+})();
 window.__focus = focus;
 });
 </script>
@@ -708,7 +675,7 @@ __VENDOR__
 window.addEventListener('load', function(){
   const W=170,H=170;
   const r=new THREE.WebGLRenderer({antialias:true,alpha:true});
-  r.setSize(W,H); document.getElementById('v').appendChild(r.domElement);
+  r.setSize(W,H); r.outputEncoding=THREE.sRGBEncoding; document.getElementById('v').appendChild(r.domElement);
   const sc=new THREE.Scene();
   const cam=new THREE.PerspectiveCamera(38,W/H,0.1,50);
   cam.position.set(0,1.6,4.6); cam.lookAt(0,1.1,0);
@@ -722,6 +689,9 @@ window.addEventListener('load', function(){
     obj.scale.setScalar(2.6/Math.max(sz.x,sz.y,sz.z,0.001));
     const b2=new THREE.Box3().setFromObject(obj), c=b2.getCenter(new THREE.Vector3());
     obj.position.set(-c.x,-b2.min.y,-c.z); sc.add(obj);
+    const hh=b2.max.y-b2.min.y;
+    cam.position.set(0, hh*0.55, 3.4);
+    cam.lookAt(0, hh*0.5, 0);
     if(g.animations&&g.animations.length){
       mix=new THREE.AnimationMixer(obj);
       const pref=new RegExp("__CLIPPREF__","i");
@@ -778,7 +748,7 @@ window.addEventListener('load', function(){
   setInterval(()=>{ li=(li+1)%TAUNTS.length; lineEl.textContent=TAUNTS[li]; },3600);
   const W=innerWidth,H=innerHeight;
   const r=new THREE.WebGLRenderer({antialias:true});
-  r.setSize(W,H); r.setClearColor(0x0b0710);
+  r.setSize(W,H); r.outputEncoding=THREE.sRGBEncoding; r.setClearColor(0x0b0710);
   document.getElementById('v').appendChild(r.domElement);
   const sc=new THREE.Scene();
   const cam=new THREE.PerspectiveCamera(36,W/H,0.1,60);
@@ -844,6 +814,108 @@ def _taunt_html(model, clip_pref="walk", speed=0.55):
             .replace("__MODEL__", model)
             .replace("__CLIPPREF__", clip_pref)
             .replace("__TS__", str(speed)))
+
+
+_ENCOUNTER_TEMPLATE = r"""
+<style>
+html,body{margin:0;background:#0b0710;overflow:hidden;font-family:'Trebuchet MS',sans-serif}
+#stage{position:relative;width:100%;height:100vh}
+#bub{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);
+  width:min(560px,86%);background:#1c1119;border:1px solid __COLOR__;
+  border-radius:14px;padding:14px 16px;color:#f2e8dc;font-size:1rem;
+  box-shadow:0 0 22px __COLOR__66}
+#bub .who{font-size:.68rem;letter-spacing:.16em;color:__COLOR__;font-weight:900}
+#next{position:absolute;right:10px;bottom:8px;background:__COLOR__;color:#14090c;
+  font-weight:900;border:none;border-radius:8px;padding:5px 14px;cursor:pointer;
+  letter-spacing:.08em}
+</style>
+<div id="stage"><div id="v"></div>
+  <div id="bub"><div class="who">__NAME__</div>
+    <div id="line" style="margin:6px 40px 10px 0"></div>
+    <button id="next">NEXT</button></div>
+</div>
+<script>
+(function(){ let o='';
+  try{ o=window.parent.location.origin; }catch(e){ try{ o=new URL(document.referrer).origin; }catch(_){} }
+  window.__ORIGIN=o; })();
+</script>
+__VENDOR__
+<script>
+window.addEventListener('load', function(){
+  const LINES=__LINES__; let li=0;
+  const lineEl=document.getElementById('line'), btn=document.getElementById('next');
+  lineEl.textContent=LINES[0];
+  btn.onclick=()=>{ li++;
+    if(li>=LINES.length){ lineEl.textContent="Enough talk. Step in - if you dare.";
+      btn.style.display='none'; return; }
+    lineEl.textContent=LINES[li]; };
+  const W=innerWidth,H=innerHeight;
+  const r=new THREE.WebGLRenderer({antialias:true});
+  r.setSize(W,H); r.outputEncoding=THREE.sRGBEncoding; r.setClearColor(0x0b0710);
+  document.getElementById('v').appendChild(r.domElement);
+  const sc=new THREE.Scene();
+  const cam=new THREE.PerspectiveCamera(40,W/H,0.1,60);
+  cam.position.set(0,2.0,5.6); cam.lookAt(0,1.5,0);
+  sc.add(new THREE.AmbientLight(0xffffff,0.85));
+  const sp=new THREE.SpotLight(0xfff3e0,3.4,40,Math.PI/4,0.5); sp.position.set(0,9,4); sc.add(sp);
+  const rim=new THREE.PointLight(new THREE.Color("__COLOR__"),2.2,18); rim.position.set(0,3,-3); sc.add(rim);
+  let mix=null,obj=null;
+  new THREE.GLTFLoader().load((window.__ORIGIN||'')+"__MODEL__",(g)=>{
+    obj=g.scene;
+    const b=new THREE.Box3().setFromObject(obj), sz=b.getSize(new THREE.Vector3());
+    obj.scale.setScalar(3.6/Math.max(sz.x,sz.y,sz.z,0.001));
+    const b2=new THREE.Box3().setFromObject(obj), c=b2.getCenter(new THREE.Vector3());
+    obj.position.set(-c.x,-b2.min.y,-c.z); sc.add(obj);
+    if(g.animations&&g.animations.length){
+      mix=new THREE.AnimationMixer(obj);
+      const clip=g.animations.find(a=>/roar|attack|bite|jump/i.test(a.name))
+               ||g.animations.find(a=>/idle|walk/i.test(a.name))||g.animations[0];
+      const act=mix.clipAction(clip); act.timeScale=0.6; act.play();
+    }
+  });
+  let pt=0;
+  (function loop(t){ requestAnimationFrame(loop);
+    const tt=(t||0)*0.001, dt=Math.min(0.05,tt-pt); pt=tt;
+    if(mix) mix.update(dt);
+    if(obj) obj.rotation.y=Math.sin(tt*0.5)*0.25;
+    r.render(sc,cam); })(0);
+});
+</script>
+"""
+
+
+def _encounter_html(mon, name):
+    lines = [ln.format(name=name) for ln in mon.get("lines", [mon.get("taunt", "...")])]
+    return (_ENCOUNTER_TEMPLATE
+            .replace("__VENDOR__", _vendor_js(["three.min.js", "GLTFLoader.js"]))
+            .replace("__MODEL__", mon["model"])
+            .replace("__COLOR__", mon["color"])
+            .replace("__NAME__", mon["monster"].upper())
+            .replace("__LINES__", json.dumps(lines)))
+
+
+def encounter_stage():
+    strand = st.session_state.get("enc_strand")
+    mon = monster_for(strand)
+    if not mon:
+        back_to_map(); st.rerun()
+    st.markdown("""<style>
+      [data-testid="stHeader"]{display:none}
+      [data-testid="stMainBlockContainer"], .block-container{
+        padding:0 0 1rem 0 !important; max-width:100% !important}
+      [data-testid="stElementContainer"]:has(iframe){width:100% !important}
+    </style>""", unsafe_allow_html=True)
+    components.html(_encounter_html(mon, st.session_state.get("player_name", "challenger")),
+                    height=520, scrolling=False)
+    mid = st.columns([2, 2, 2])
+    if mid[1].button(f"FACE {mon['monster'].upper()}", type="primary",
+                     use_container_width=True, key="enc_go"):
+        st.session_state.quiz = pick_quiz(strand, 5)
+        st.session_state.answers = {}
+        st.session_state.stage = "quiz"
+        st.rerun()
+    mid[1].button("Retreat to the nexus", key="enc_flee", on_click=back_to_map,
+                  use_container_width=True)
 
 
 def back_to_map():
@@ -1038,7 +1110,11 @@ def results():
 
             # --- interactive "Now you try" ---
             p = guide["practice"]
-            st.markdown("**Now you try:** " + esc(p["question"]))
+            challenge_title = (f"{gmon['monster']}'s next challenge — "
+                               f"let's see you slip this time:" if gmon else "Now you try:")
+            st.markdown(f"**{challenge_title}** " + esc(p["question"]))
+            if not p.get("options"):
+                st.caption("Work it out on paper — then prove it in the training grounds below.")
             if p.get("options"):
                 choice = st.radio(
                     f"practice_{i}",
@@ -1204,10 +1280,14 @@ if st.query_params.get("exit"):
 _station = st.query_params.get("station")
 if _station in STATIONS:
     st.session_state.adventure = True
-    st.session_state.quiz = pick_quiz(_station, 5)
-    st.session_state.answers = {}
-    st.session_state.stage = "quiz"
+    hero = (st.query_params.get("hero") or "").strip()
+    if hero:
+        st.session_state.player_name = hero[:24]
+    # the monster confronts you before its trial begins
+    st.session_state.enc_strand = _station
+    st.session_state.stage = "encounter"
     st.query_params.clear()
 
 stage = st.session_state.get("stage", "intro")
-{"intro": intro, "map": map_stage, "quiz": quiz, "results": results, "mastery": mastery_stage}[stage]()
+{"intro": intro, "map": map_stage, "encounter": encounter_stage, "quiz": quiz,
+ "results": results, "mastery": mastery_stage}[stage]()

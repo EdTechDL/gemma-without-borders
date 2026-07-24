@@ -418,7 +418,7 @@
         "text": "3",
         "is_correct": false,
         "trick_id": "ALG-7",
-        "trick_name": "Point/Intercept Value Confusion"
+        "trick_name": "Point/Intercept Value Mix-Up"
       },
       {
         "label": "D",
@@ -483,7 +483,7 @@
         "text": "5",
         "is_correct": false,
         "trick_id": "ALG-7",
-        "trick_name": "Point/Intercept Value Confusion"
+        "trick_name": "Point/Intercept Value Mix-Up"
       },
       {
         "label": "C",
@@ -627,7 +627,7 @@
         "text": "9",
         "is_correct": false,
         "trick_id": "DAT-5",
-        "trick_name": "Mode/Value-Frequency Confusion"
+        "trick_name": "Mode/Value-Frequency Mix-Up"
       },
       {
         "label": "C",
@@ -742,14 +742,14 @@
         "text": "452.4 m²",
         "is_correct": false,
         "trick_id": "GEO-7",
-        "trick_name": "Radius–Diameter Confusion"
+        "trick_name": "Radius–Diameter Mix-Up"
       },
       {
         "label": "C",
         "text": "37.7 m²",
         "is_correct": false,
         "trick_id": "GEO-1",
-        "trick_name": "Perimeter–Area Confusion"
+        "trick_name": "Perimeter–Area Mix-Up"
       },
       {
         "label": "D",
@@ -792,7 +792,7 @@
         "text": "24 m",
         "is_correct": false,
         "trick_id": "GEO-1",
-        "trick_name": "Perimeter–Area Confusion"
+        "trick_name": "Perimeter–Area Mix-Up"
       }
     ],
     "correct": "A",
@@ -857,14 +857,14 @@
         "text": "22 degrees",
         "is_correct": false,
         "trick_id": "GEO-10",
-        "trick_name": "Angle Benchmark Confusion (90°/180°/360°)"
+        "trick_name": "Angle Benchmark Mix-Up (90°/180°/360°)"
       },
       {
         "label": "D",
         "text": "292 degrees",
         "is_correct": false,
         "trick_id": "GEO-10",
-        "trick_name": "Angle Benchmark Confusion (90°/180°/360°)"
+        "trick_name": "Angle Benchmark Mix-Up (90°/180°/360°)"
       }
     ],
     "correct": "A",
@@ -886,14 +886,14 @@
         "text": "3769.9 cm³",
         "is_correct": false,
         "trick_id": "GEO-7",
-        "trick_name": "Radius–Diameter Confusion"
+        "trick_name": "Radius–Diameter Mix-Up"
       },
       {
         "label": "C",
         "text": "534.1 cm³",
         "is_correct": false,
         "trick_id": "GEO-5",
-        "trick_name": "Surface Area–Volume Confusion"
+        "trick_name": "Surface Area–Volume Mix-Up"
       },
       {
         "label": "D",
@@ -929,14 +929,14 @@
         "text": "150.8 cm³",
         "is_correct": false,
         "trick_id": "GEO-7",
-        "trick_name": "Radius–Diameter Confusion"
+        "trick_name": "Radius–Diameter Mix-Up"
       },
       {
         "label": "D",
         "text": "75.4 cm³",
         "is_correct": false,
         "trick_id": "GEO-5",
-        "trick_name": "Surface Area–Volume Confusion"
+        "trick_name": "Surface Area–Volume Mix-Up"
       }
     ],
     "correct": "A",
@@ -972,7 +972,7 @@
         "text": "27 times",
         "is_correct": false,
         "trick_id": "GEO-5",
-        "trick_name": "Surface Area–Volume Confusion"
+        "trick_name": "Surface Area–Volume Mix-Up"
       }
     ],
     "correct": "A",
@@ -994,7 +994,7 @@
         "text": "60 cm²",
         "is_correct": false,
         "trick_id": "GEO-5",
-        "trick_name": "Surface Area–Volume Confusion"
+        "trick_name": "Surface Area–Volume Mix-Up"
       },
       {
         "label": "C",
@@ -1301,5 +1301,689 @@
     ],
     "correct": "D",
     "solution": "Total cost of the plan: $55 \\times 12 = \\$660$. Difference: $660 - 600 = \\$60$ more than paying up front. (A gives the plan's total cost, not the extra cost asked for. B assumes installments never add cost, ignoring that $55 \\times 12 > 600$. C compares one month only: $600 \\div 12 = \\$50$ and $55 - 50 = \\$5$, forgetting to multiply the monthly difference by all $12$ months.)"
+  },
+  {
+    "id": "EQAO-2025-NUM-03",
+    "strand": "Number",
+    "difficulty": "Easy",
+    "question": "Simplify (-36a^4b^6) / (-4ab^2).",
+    "options": [
+      {
+        "label": "A",
+        "text": "9a^3b^4",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "9a^4b^4",
+        "is_correct": false,
+        "trick_id": "NUM-EXP-01",
+        "trick_name": "Forgets to subtract the exponent of a when dividing like bases"
+      },
+      {
+        "label": "C",
+        "text": "-9a^3b^4",
+        "is_correct": false,
+        "trick_id": "NUM-SIGN-01",
+        "trick_name": "Thinks a negative divided by a negative stays negative"
+      },
+      {
+        "label": "D",
+        "text": "-9a^4b^4",
+        "is_correct": false,
+        "trick_id": "NUM-EXP-SIGN-01",
+        "trick_name": "Combines the exponent error with the sign error"
+      }
+    ],
+    "correct": "A",
+    "solution": "-36 divided by -4 is 9. For the letters, subtract exponents: a^4 divided by a is a^(4-1) = a^3, and b^6 divided by b^2 is b^(6-2) = b^4. So the simplified expression is 9a^3b^4."
+  },
+  {
+    "id": "EQAO-2025-NUM-04",
+    "strand": "Number",
+    "difficulty": "Medium",
+    "question": "Write the value of (5^4 times 5^4 times 5^(-2)) divided by (5^3 times 5^(-6)) in scientific notation.",
+    "options": [
+      {
+        "label": "A",
+        "text": "5 x 10^3",
+        "is_correct": false,
+        "trick_id": "NUM-SCI-01",
+        "trick_name": "Adds the exponents when dividing to get 5^3, then writes base 5 as if it were base 10"
+      },
+      {
+        "label": "B",
+        "text": "1.25 x 10^2",
+        "is_correct": false,
+        "trick_id": "NUM-EXP-02",
+        "trick_name": "Adds the exponents instead of subtracting when dividing powers, giving 5^3 = 125"
+      },
+      {
+        "label": "C",
+        "text": "1.953125 x 10^6",
+        "is_correct": true
+      },
+      {
+        "label": "D",
+        "text": "1.6384 x 10^(-10)",
+        "is_correct": false,
+        "trick_id": "NUM-EXP-04",
+        "trick_name": "Multiplies the exponents instead of adding when multiplying like bases, giving 5^(-14)"
+      }
+    ],
+    "correct": "C",
+    "solution": "Combine the exponents on top: 5^(4+4-2) = 5^6. Combine the exponents on the bottom: 5^(3-6) = 5^(-3). Then 5^6 divided by 5^(-3) = 5^(6-(-3)) = 5^9 = 1,953,125, which is 1.953125 x 10^6 in scientific notation."
+  },
+  {
+    "id": "EQAO-2025-ALG-07",
+    "strand": "Algebra",
+    "difficulty": "Easy",
+    "question": "Mia's pay, P, in dollars for making n birdhouses is P = 24.50n + 15. What is her pay for making 8 birdhouses?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$39.50",
+        "is_correct": false,
+        "trick_id": "ALG-SUB-01",
+        "trick_name": "Adds the rate and the fixed amount, ignoring the 8 birdhouses"
+      },
+      {
+        "label": "B",
+        "text": "$181.00",
+        "is_correct": false,
+        "trick_id": "ALG-SUB-02",
+        "trick_name": "Subtracts the fixed amount instead of adding it"
+      },
+      {
+        "label": "C",
+        "text": "$196.00",
+        "is_correct": false,
+        "trick_id": "ALG-SUB-03",
+        "trick_name": "Leaves out the fixed amount"
+      },
+      {
+        "label": "D",
+        "text": "$211.00",
+        "is_correct": true
+      }
+    ],
+    "correct": "D",
+    "solution": "Substitute n = 8: P = 24.50 x 8 + 15 = 196 + 15 = 211. Mia earns $211.00."
+  },
+  {
+    "id": "EQAO-2025-COD-10",
+    "strand": "Algebra",
+    "difficulty": "Medium",
+    "question": "In pseudocode, itemPrice is the original price and percentDiscount is the discount percent. Which line correctly calculates subtotal, the sale price before tax?",
+    "options": [
+      {
+        "label": "A",
+        "text": "subtotal = itemPrice * (percentDiscount / 100)",
+        "is_correct": false,
+        "trick_id": "FIN-DISC-01",
+        "trick_name": "Calculates the discount amount instead of the sale price"
+      },
+      {
+        "label": "B",
+        "text": "subtotal = itemPrice - (percentDiscount / 100)",
+        "is_correct": false,
+        "trick_id": "FIN-DISC-02",
+        "trick_name": "Subtracts a decimal rate from a dollar amount"
+      },
+      {
+        "label": "C",
+        "text": "subtotal = itemPrice + (itemPrice * percentDiscount / 100)",
+        "is_correct": false,
+        "trick_id": "FIN-DISC-03",
+        "trick_name": "Adds the discount instead of subtracting it"
+      },
+      {
+        "label": "D",
+        "text": "subtotal = itemPrice - (itemPrice * percentDiscount / 100)",
+        "is_correct": true
+      }
+    ],
+    "correct": "D",
+    "solution": "The discount amount is itemPrice * percentDiscount / 100. A sale price is the original price minus that amount, so the correct line is subtotal = itemPrice - (itemPrice * percentDiscount / 100)."
+  },
+  {
+    "id": "EQAO-2025-ALG-14",
+    "strand": "Algebra",
+    "difficulty": "Medium",
+    "question": "A line is represented by y = 6x. Its slope doubles and its y-intercept decreases by 5. What is the equation of the new line?",
+    "options": [
+      {
+        "label": "A",
+        "text": "y = 12x + 5",
+        "is_correct": false,
+        "trick_id": "ALG-LIN-01",
+        "trick_name": "Changes the intercept in the wrong direction"
+      },
+      {
+        "label": "B",
+        "text": "y = 12x - 5",
+        "is_correct": true
+      },
+      {
+        "label": "C",
+        "text": "y = 8x + 5",
+        "is_correct": false,
+        "trick_id": "ALG-LIN-03",
+        "trick_name": "Adds 2 to the slope instead of doubling it, and moves the intercept in the wrong direction"
+      },
+      {
+        "label": "D",
+        "text": "y = 8x - 5",
+        "is_correct": false,
+        "trick_id": "ALG-LIN-02",
+        "trick_name": "Adds 2 to the slope instead of doubling it"
+      }
+    ],
+    "correct": "B",
+    "solution": "The original slope is 6 and the original y-intercept is 0. Doubling the slope gives 12, and decreasing the intercept by 5 gives -5. So the new line is y = 12x - 5."
+  },
+  {
+    "id": "EQAO-2025-GEO-20",
+    "strand": "Geometry & Measurement",
+    "difficulty": "Medium",
+    "question": "One city block is 1/8 mile. Use 1 mile = 1609.3 m. Approximately how far, in metres, does a person walk in 5 blocks?",
+    "options": [
+      {
+        "label": "A",
+        "text": "201 m",
+        "is_correct": false,
+        "trick_id": "GEO-CONV-01",
+        "trick_name": "Finds the length of one block only"
+      },
+      {
+        "label": "B",
+        "text": "625 m",
+        "is_correct": false,
+        "trick_id": "GEO-CONV-02",
+        "trick_name": "Uses 1 mile = 1000 m instead of 1609.3 m"
+      },
+      {
+        "label": "C",
+        "text": "1006 m",
+        "is_correct": true
+      },
+      {
+        "label": "D",
+        "text": "2575 m",
+        "is_correct": false,
+        "trick_id": "GEO-CONV-03",
+        "trick_name": "Multiplies by 8/5 instead of 5/8, flipping the fraction of a mile"
+      }
+    ],
+    "correct": "C",
+    "solution": "5 blocks is 5 times 1/8 = 5/8 mile. Then 5/8 of 1609.3 m is 1005.8125 m, which is approximately 1006 m."
+  },
+  {
+    "id": "EQAO-2025-FIN-23",
+    "strand": "Financial Literacy",
+    "difficulty": "Hard",
+    "question": "A laptop costs $500. Option A requires a 10% down payment and $20.63 per month for 2 years. Option B requires no down payment and $15.56 per month for 3 years. Which statement is correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Option A costs $5.07 less than Option B.",
+        "is_correct": false,
+        "trick_id": "FIN-PAY-01",
+        "trick_name": "Compares monthly payments instead of total costs"
+      },
+      {
+        "label": "B",
+        "text": "Option B costs $5.07 less than Option A.",
+        "is_correct": false,
+        "trick_id": "FIN-PAY-01",
+        "trick_name": "Compares monthly payments instead of total costs"
+      },
+      {
+        "label": "C",
+        "text": "Option A costs $15.04 less than Option B.",
+        "is_correct": true
+      },
+      {
+        "label": "D",
+        "text": "Option B costs $15.04 less than Option A.",
+        "is_correct": false,
+        "trick_id": "FIN-PAY-02",
+        "trick_name": "Finds the right difference but reverses which option is cheaper"
+      }
+    ],
+    "correct": "C",
+    "solution": "Option A costs 10% of $500 plus 24 payments of $20.63: 50 + 495.12 = $545.12. Option B costs 36 payments of $15.56: $560.16. The difference is 560.16 - 545.12 = $15.04, so Option A costs $15.04 less."
+  },
+  {
+    "id": "EQAO-2024-NUM-01",
+    "strand": "Number",
+    "difficulty": "Easy",
+    "question": "Which number is irrational?",
+    "options": [
+      {
+        "label": "A",
+        "text": "-4",
+        "is_correct": false,
+        "trick_id": "NUM-SET-01",
+        "trick_name": "Thinks negative integers are irrational"
+      },
+      {
+        "label": "B",
+        "text": "0.35",
+        "is_correct": false,
+        "trick_id": "NUM-SET-02",
+        "trick_name": "Thinks all decimals are irrational"
+      },
+      {
+        "label": "C",
+        "text": "square root of 3",
+        "is_correct": true
+      },
+      {
+        "label": "D",
+        "text": "5",
+        "is_correct": false,
+        "trick_id": "NUM-SET-03",
+        "trick_name": "Thinks a plain whole number like 5 can be irrational"
+      }
+    ],
+    "correct": "C",
+    "solution": "-4, 0.35, and 5 can each be written as a fraction of integers, so they are rational. Since 3 is not a perfect square, the square root of 3 is irrational."
+  },
+  {
+    "id": "EQAO-2024-NUM-02",
+    "strand": "Number",
+    "difficulty": "Medium",
+    "question": "Set F = {2, 4, 6, 8, 10, 12, ...}. Set G is the set of whole-number multiples of 3. Which statement describes all numbers common to both sets?",
+    "options": [
+      {
+        "label": "A",
+        "text": "They are always divisible by 4.",
+        "is_correct": false,
+        "trick_id": "NUM-MULT-01",
+        "trick_name": "Picks an unrelated divisor from the even-number pattern"
+      },
+      {
+        "label": "B",
+        "text": "They are always multiples of 6.",
+        "is_correct": true
+      },
+      {
+        "label": "C",
+        "text": "They are always odd.",
+        "is_correct": false,
+        "trick_id": "NUM-MULT-02",
+        "trick_name": "Ignores that every number in Set F is even"
+      },
+      {
+        "label": "D",
+        "text": "There are no common numbers.",
+        "is_correct": false,
+        "trick_id": "NUM-MULT-03",
+        "trick_name": "Misses the common multiples the sets share"
+      }
+    ],
+    "correct": "B",
+    "solution": "Set F contains the multiples of 2, and Set G contains the multiples of 3. Numbers in both sets are multiples of the least common multiple of 2 and 3, which is 6."
+  },
+  {
+    "id": "EQAO-2024-NUM-03",
+    "strand": "Number",
+    "difficulty": "Easy",
+    "question": "Which value is equivalent to 1.2 x 10^4?",
+    "options": [
+      {
+        "label": "A",
+        "text": "120",
+        "is_correct": false,
+        "trick_id": "NUM-SCI-02",
+        "trick_name": "Moves the decimal two places instead of four"
+      },
+      {
+        "label": "B",
+        "text": "1200",
+        "is_correct": false,
+        "trick_id": "NUM-SCI-03",
+        "trick_name": "Moves the decimal three places instead of four"
+      },
+      {
+        "label": "C",
+        "text": "12,000",
+        "is_correct": true
+      },
+      {
+        "label": "D",
+        "text": "120,000",
+        "is_correct": false,
+        "trick_id": "NUM-SCI-04",
+        "trick_name": "Moves the decimal five places instead of four"
+      }
+    ],
+    "correct": "C",
+    "solution": "Multiplying by 10^4 moves the decimal point four places to the right: 1.2 becomes 12,000."
+  },
+  {
+    "id": "EQAO-2024-ALG-07",
+    "strand": "Algebra",
+    "difficulty": "Medium",
+    "question": "Simplify 2x(x^2 - 3x + 2).",
+    "options": [
+      {
+        "label": "A",
+        "text": "2x^2 - 6x + 4",
+        "is_correct": false,
+        "trick_id": "ALG-DIST-01",
+        "trick_name": "Multiplies by 2 but forgets to multiply each term by x"
+      },
+      {
+        "label": "B",
+        "text": "2x^2 - 3x + 2",
+        "is_correct": false,
+        "trick_id": "ALG-DIST-02",
+        "trick_name": "Multiplies only the first term, and only by the 2, leaving the other terms unchanged"
+      },
+      {
+        "label": "C",
+        "text": "2x^3 - 3x^2 + 2x",
+        "is_correct": false,
+        "trick_id": "ALG-DIST-03",
+        "trick_name": "Multiplies by x but forgets the coefficient 2 on later terms"
+      },
+      {
+        "label": "D",
+        "text": "2x^3 - 6x^2 + 4x",
+        "is_correct": true
+      }
+    ],
+    "correct": "D",
+    "solution": "Multiply 2x by every term: 2x times x^2 is 2x^3, 2x times -3x is -6x^2, and 2x times 2 is 4x. So the answer is 2x^3 - 6x^2 + 4x."
+  },
+  {
+    "id": "EQAO-2024-ALG-08",
+    "strand": "Algebra",
+    "difficulty": "Easy",
+    "question": "A game awards 100 points for each blue box, b, and subtracts 50 points for each yellow box, y. Which expression represents the total score?",
+    "options": [
+      {
+        "label": "A",
+        "text": "100b + 50y",
+        "is_correct": false,
+        "trick_id": "ALG-MODEL-01",
+        "trick_name": "Ignores the loss from yellow boxes"
+      },
+      {
+        "label": "B",
+        "text": "100b - 50y",
+        "is_correct": true
+      },
+      {
+        "label": "C",
+        "text": "100y + 50b",
+        "is_correct": false,
+        "trick_id": "ALG-MODEL-02",
+        "trick_name": "Swaps what the variables stand for"
+      },
+      {
+        "label": "D",
+        "text": "100y - 50b",
+        "is_correct": false,
+        "trick_id": "ALG-MODEL-03",
+        "trick_name": "Swaps the variables and reverses the gain and loss"
+      }
+    ],
+    "correct": "B",
+    "solution": "Blue boxes add 100b points. Yellow boxes take away 50y points. The total is 100b - 50y."
+  },
+  {
+    "id": "EQAO-2024-COD-10",
+    "strand": "Algebra",
+    "difficulty": "Medium",
+    "question": "Which pseudocode line correctly calculates the hypotenuse from sideA and sideB?",
+    "options": [
+      {
+        "label": "A",
+        "text": "hypotenuse = sqrt(sideA - sideB)",
+        "is_correct": false,
+        "trick_id": "GEO-PYT-01",
+        "trick_name": "Subtracts the side lengths without squaring them"
+      },
+      {
+        "label": "B",
+        "text": "hypotenuse = sqrt(sideA + sideB)",
+        "is_correct": false,
+        "trick_id": "GEO-PYT-02",
+        "trick_name": "Adds the side lengths without squaring them"
+      },
+      {
+        "label": "C",
+        "text": "hypotenuse = sqrt(sideA * sideA - sideB * sideB)",
+        "is_correct": false,
+        "trick_id": "GEO-PYT-03",
+        "trick_name": "Subtracts the squared legs instead of adding them"
+      },
+      {
+        "label": "D",
+        "text": "hypotenuse = sqrt(sideA * sideA + sideB * sideB)",
+        "is_correct": true
+      }
+    ],
+    "correct": "D",
+    "solution": "For a right triangle, c = square root of (a^2 + b^2). In pseudocode, squaring can be written as multiplying a value by itself, so use sqrt(sideA * sideA + sideB * sideB)."
+  },
+  {
+    "id": "EQAO-2023-NUM-01",
+    "strand": "Number",
+    "difficulty": "Easy",
+    "question": "How many real numbers are between 0 and 10?",
+    "options": [
+      {
+        "label": "A",
+        "text": "An infinite number",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "9",
+        "is_correct": false,
+        "trick_id": "NUM-DENS-01",
+        "trick_name": "Counts only the whole numbers strictly between the endpoints"
+      },
+      {
+        "label": "C",
+        "text": "10",
+        "is_correct": false,
+        "trick_id": "NUM-DENS-02",
+        "trick_name": "Counts whole-number steps or includes an endpoint"
+      },
+      {
+        "label": "D",
+        "text": "100",
+        "is_correct": false,
+        "trick_id": "NUM-DENS-03",
+        "trick_name": "Assumes numbers stop at a fixed decimal precision"
+      }
+    ],
+    "correct": "A",
+    "solution": "Between any two different real numbers there are infinitely many other real numbers. For example, between 0 and 10 are 0.1, 0.01, the square root of 2, pi, and infinitely many more."
+  },
+  {
+    "id": "EQAO-2023-NUM-02",
+    "strand": "Number",
+    "difficulty": "Easy",
+    "question": "Which statement about rational numbers is correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "A rational number is always positive.",
+        "is_correct": false,
+        "trick_id": "NUM-RAT-01",
+        "trick_name": "Thinks rational numbers cannot be negative"
+      },
+      {
+        "label": "B",
+        "text": "A rational number can be written as a fraction of integers.",
+        "is_correct": true
+      },
+      {
+        "label": "C",
+        "text": "The square root of every number is rational.",
+        "is_correct": false,
+        "trick_id": "NUM-RAT-02",
+        "trick_name": "Assumes all square roots are rational"
+      },
+      {
+        "label": "D",
+        "text": "A rational number has a non-ending, non-repeating decimal.",
+        "is_correct": false,
+        "trick_id": "NUM-RAT-03",
+        "trick_name": "Mixes up the decimal properties of rational and irrational numbers"
+      }
+    ],
+    "correct": "B",
+    "solution": "A rational number can be written as p/q, where p and q are integers and q is not 0. Its decimal either terminates or repeats."
+  },
+  {
+    "id": "EQAO-2023-NUM-03",
+    "strand": "Number",
+    "difficulty": "Medium",
+    "question": "Set C = {3, 6, 9, 12, ...}. Set D is the set of integer multiples of 5. Which statement describes all numbers common to both sets?",
+    "options": [
+      {
+        "label": "A",
+        "text": "They are always divisible by 9.",
+        "is_correct": false,
+        "trick_id": "NUM-MULT-04",
+        "trick_name": "Picks a number seen in one set that both sets do not require"
+      },
+      {
+        "label": "B",
+        "text": "They are always multiples of 15.",
+        "is_correct": true
+      },
+      {
+        "label": "C",
+        "text": "They are always odd.",
+        "is_correct": false,
+        "trick_id": "NUM-MULT-05",
+        "trick_name": "Guesses odd or even from just a few examples"
+      },
+      {
+        "label": "D",
+        "text": "There are no common numbers.",
+        "is_correct": false,
+        "trick_id": "NUM-MULT-03",
+        "trick_name": "Misses the common multiples the sets share"
+      }
+    ],
+    "correct": "B",
+    "solution": "The common numbers are multiples of both 3 and 5, so they are multiples of the least common multiple of 3 and 5, which is 15."
+  },
+  {
+    "id": "EQAO-2023-NUM-04",
+    "strand": "Number",
+    "difficulty": "Easy",
+    "question": "Which value is equivalent to 3.5 x 10^5?",
+    "options": [
+      {
+        "label": "A",
+        "text": "350",
+        "is_correct": false,
+        "trick_id": "NUM-SCI-02",
+        "trick_name": "Moves the decimal too few places"
+      },
+      {
+        "label": "B",
+        "text": "35,000",
+        "is_correct": false,
+        "trick_id": "NUM-SCI-03",
+        "trick_name": "Moves the decimal one place too few"
+      },
+      {
+        "label": "C",
+        "text": "350,000",
+        "is_correct": true
+      },
+      {
+        "label": "D",
+        "text": "3,500,000",
+        "is_correct": false,
+        "trick_id": "NUM-SCI-04",
+        "trick_name": "Moves the decimal one place too far"
+      }
+    ],
+    "correct": "C",
+    "solution": "10^5 = 100,000, so 3.5 x 100,000 = 350,000."
+  },
+  {
+    "id": "EQAO-2023-FIN-31",
+    "strand": "Financial Literacy",
+    "difficulty": "Medium",
+    "question": "A monthly income is $2800. Monthly expenses are rent $1500, utilities $350, food $400, and other expenses $345. Which statement is true?",
+    "options": [
+      {
+        "label": "A",
+        "text": "The budget needs to be modified because expenses are more than income.",
+        "is_correct": false,
+        "trick_id": "FIN-BUD-01",
+        "trick_name": "Totals the expenses incorrectly or compares the totals the wrong way"
+      },
+      {
+        "label": "B",
+        "text": "The budget does not need to be modified because expenses are less than income.",
+        "is_correct": true
+      },
+      {
+        "label": "C",
+        "text": "If rent increases by $105, expenses will equal income.",
+        "is_correct": false,
+        "trick_id": "FIN-BUD-03",
+        "trick_name": "Uses the wrong amount for the gap between income and expenses"
+      },
+      {
+        "label": "D",
+        "text": "If utilities decrease by $205, expenses will equal income.",
+        "is_correct": false,
+        "trick_id": "FIN-BUD-02",
+        "trick_name": "Changes the budget in the wrong direction"
+      }
+    ],
+    "correct": "B",
+    "solution": "Current expenses are 1500 + 350 + 400 + 345 = $2595, which is less than the $2800 income, so the budget already balances with $205 left over. Rent would have to increase by $205 (not $105) for expenses to equal income, and decreasing utilities would only make the surplus bigger."
+  },
+  {
+    "id": "EQAO-2023-FIN-33",
+    "strand": "Financial Literacy",
+    "difficulty": "Hard",
+    "question": "A person borrows money for a $3000 purchase at 0% interest. Which plan pays off the loan in the least time?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$300 down and $75 monthly",
+        "is_correct": false,
+        "trick_id": "FIN-LOAN-01",
+        "trick_name": "Looks at payment size but not payment frequency or remaining balance"
+      },
+      {
+        "label": "B",
+        "text": "$600 down and $50 monthly",
+        "is_correct": false,
+        "trick_id": "FIN-LOAN-02",
+        "trick_name": "Assumes the biggest down payment means the fastest payoff"
+      },
+      {
+        "label": "C",
+        "text": "$300 down and $50 every two weeks",
+        "is_correct": true
+      },
+      {
+        "label": "D",
+        "text": "$600 down and $30 every two weeks",
+        "is_correct": false,
+        "trick_id": "FIN-LOAN-03",
+        "trick_name": "Does not compare how much each plan pays per year"
+      }
+    ],
+    "correct": "C",
+    "solution": "Plan A: 2700 / 75 = 36 months. Plan B: 2400 / 50 = 48 months. Plan C: 2700 / 50 = 54 biweekly payments, which is about 24.9 months. Plan D: 2400 / 30 = 80 biweekly payments, which is about 36.9 months. Plan C is fastest."
   }
 ]

@@ -39,6 +39,10 @@ def pick_practice(item: dict, misc: dict, questions: list, used_ids: set) -> dic
         if q["id"] not in used_ids and q["strand"] == item["strand"]:
             used_ids.add(q["id"])
             return {"source": "bank", **q}
+    for q in questions or []:
+        if q["id"] not in used_ids:  # any strand beats a generated question:
+            used_ids.add(q["id"])    # bank items always carry options + a key
+            return {"source": "bank", **q}
     text = plainify(ask_gemma(
         f"TASK: practice\n"
         f"TRICK: {misc['name']}\n"
