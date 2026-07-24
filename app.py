@@ -1307,7 +1307,7 @@ def parents_stage():
         if pv.get("headline"):
             st.markdown(f"**{esc(pv['headline'])}**")
         if pv.get("rows"):
-            st.table(pv["rows"])
+            st.dataframe(pv["rows"], hide_index=True, use_container_width=True)
         if pv.get("chart"):
             st.caption("Speed drills - best against latest")
             st.bar_chart(pv["chart"])
