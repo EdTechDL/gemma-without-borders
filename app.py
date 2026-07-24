@@ -19,15 +19,18 @@ import mastery as m
 import tutor
 import rewards
 import practice_sheet
+import onboarding
 from gemma_client import plainify
 
 QUESTIONS = json.loads((Path(__file__).parent / "data" / "questions.json").read_text())
 STRANDS = sorted({q["strand"] for q in QUESTIONS})
 
-# GEMMA MONSTERS is the front door; the classic dashboard is one click away
+# GEMMA MONSTERS is the front door; the classic dashboard is one click away.
+# A first-time challenger meets the introduction before the citadel - it is
+# skippable, and never shown twice in a sitting.
 if "stage" not in st.session_state:
     st.session_state.adventure = True
-    st.session_state.stage = "map"
+    st.session_state.stage = "onboard"
 
 st.set_page_config(
     page_title="GEMMA MONSTERS",
@@ -311,7 +314,7 @@ def intro():
     st.caption("Rather play than scroll?")
     if st.button("Back to GEMMA Monsters", type="primary"):
         st.session_state.adventure = True
-        st.session_state.stage = "map"
+        st.session_state.stage = "map" if st.session_state.get("onboarded") else "onboard"
         st.rerun()
     if load_letters():
         st.button("For mum and dad", key="letters_intro", on_click=to_parents,
@@ -337,7 +340,7 @@ MONSTERS = {
         "monster": "Polygor", "taunt": "Every angle you pick will be the wrong one, little hero.", "lines": ["Hop hop, {name}. Welcome to my angle hoard.", "Every formula in here is ALMOST right. That's how I catch clever ones like you.", "Draw your diagrams carefully, kid. I feast on sloppy sketches.", "Careful, though. Fail too much and you'll meet something older than me. We call him the Collector. We don't joke about him."], "clip_ambient": "CharacterArmature|Idle", "clip_fight": "CharacterArmature|Punch", "sp_ambient": 0.8, "sp_fight": 0.7, "ns": 1.0, "color": "#a78bfa", "shape": "poly", "model": "/app/static/monsters/frog.glb",
         "lore": "Hoards angles and stolen area formulas. Weak to a true diagram."},
     "Financial Literacy": {
-        "monster": "Ledgerling", "taunt": "I collect mistakes - and I charge interest.", "lines": ["Ah, a new account. Name: {name}. Balance: doubtful.", "I skim a little interest off every mistake, {name}. Business is booming.", "Check the math or sign it all away. Your move, kid.", "Oh - and if your debts pile too high, my boss collects them personally. You do NOT want that meeting, {name}."], "clip_ambient": "CharacterArmature|Flying_Idle", "clip_fight": "CharacterArmature|Headbutt", "sp_ambient": 0.9, "sp_fight": 0.7, "ns": 1.0, "color": "#ffd166", "shape": "coin", "model": "/app/static/monsters/demon.glb",
+        "lift": 0.38, "monster": "Ledgerling", "taunt": "I collect mistakes - and I charge interest.", "lines": ["Ah, a new account. Name: {name}. Balance: doubtful.", "I skim a little interest off every mistake, {name}. Business is booming.", "Check the math or sign it all away. Your move, kid.", "Oh - and if your debts pile too high, my boss collects them personally. You do NOT want that meeting, {name}."], "clip_ambient": "CharacterArmature|Flying_Idle", "clip_fight": "CharacterArmature|Headbutt", "sp_ambient": 0.9, "sp_fight": 0.7, "ns": 1.0, "color": "#ffd166", "shape": "coin", "model": "/app/static/monsters/demon.glb",
         "lore": "Skims your interest while you sleep. Weak to a sharp budget."},
 }
 STATIONS = MONSTERS  # router alias: ?station= keys
@@ -1231,6 +1234,34 @@ _HUG_MARK = (
     '<path d="M25 42v-5.6c0-4.1 3.4-7.5 7.5-7.5s7.5 3.4 7.5 7.5V42"/>'
     '<path d="M15.5 23.6c5.6 0 9.4 3.4 12 8.2"/>'
     '</svg>')
+
+
+def onboard_stage():
+    """The first thing a new challenger sees: who the monsters are, how a
+    battle is won, and what the Collector is. Skippable, and never shown
+    twice in a sitting."""
+    st.markdown("""<style>
+      [data-testid="stHeader"]{display:none}
+      [data-testid="stMainBlockContainer"], .block-container{
+        padding:0 !important; max-width:100% !important}
+      [data-testid="stAppViewContainer"]{background:#0b0710}
+      [data-testid="stElementContainer"]:has(iframe){width:100% !important}
+    </style>""", unsafe_allow_html=True)
+    roster = [{"name": m["monster"], "strand": s, "trick": m["taunt"],
+               "color": m["color"], "model": m["model"],
+               "clip": m.get("clip_ambient", ""),
+               # a rest pose that splays along the floor needs a nudge to read
+               # as standing; measured placement alone leaves it looking prone
+               "lift": m.get("lift", 0)}
+              for s, m in MONSTERS.items()]
+    components.html(
+        onboarding.onboarding_html(
+            _vendor_js(["three.min.js", "GLTFLoader.js"]), roster,
+            {"name": "The Collector", "model": onboarding.COLLECTOR_MODEL,
+             "clip": onboarding.COLLECTOR_CLIP}),
+        height=620, scrolling=False)
+    # the scene carries its own Skip and Enter controls; a second pair of
+    # Streamlit buttons underneath only asks the player to choose twice
 
 
 def parents_stage():
@@ -3121,6 +3152,11 @@ if _station in STATIONS:
     st.session_state.stage = "encounter"
     st.query_params.clear()
 
+if st.query_params.get("onboarded"):
+    st.query_params.clear()
+    st.session_state.onboarded = True
+    st.session_state.adventure = True
+    st.session_state.stage = "map"
 if st.query_params.get("parents"):
     st.query_params.clear()
     to_parents()
@@ -3162,7 +3198,7 @@ stage = st.session_state.get("stage", "intro")
 {"intro": intro, "map": map_stage, "encounter": encounter_stage, "quiz": quiz,
  "results": results, "mastery": mastery_stage, "boss": boss_stage,
  "skirmish": skirmish_stage, "coach": coach_stage, "finale": finale_stage,
- "parents": parents_stage}[stage]()
+ "parents": parents_stage, "onboard": onboard_stage}[stage]()
 
 # One way back to the letters home from anywhere in the citadel. A real button,
 # not a link: a link would reload the page and take the session - and the

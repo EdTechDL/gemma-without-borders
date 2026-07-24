@@ -74,7 +74,7 @@ ONBOARDING_TEMPLATE = r"""
   .beat.cold p{color:#d8bfb6}
 
   /* ---- the roster's name plates: one column per monster, never over a model ---- */
-  #labels{position:absolute;left:0;right:0;bottom:15vh;height:13vh;
+  #labels{position:absolute;left:0;right:0;bottom:max(13vh,76px);height:max(12vh,52px);
     opacity:0;transition:opacity .5s ease;pointer-events:none}
   #labels.on{opacity:1}
   .lab{position:absolute;top:0;width:19%;transform:translateX(-50%);text-align:center;
@@ -88,7 +88,7 @@ ONBOARDING_TEMPLATE = r"""
     -webkit-line-clamp:2;-webkit-box-orient:vertical}
 
   /* ---- control bar ---- */
-  #bar{position:absolute;left:0;right:0;bottom:0;height:13vh;min-height:74px;
+  #bar{position:absolute;left:0;right:0;bottom:0;height:max(13vh,74px);
     display:flex;align-items:center;justify-content:space-between;padding:0 4vw;
     box-sizing:border-box}
   #bar a,#bar button{pointer-events:auto}
@@ -97,7 +97,8 @@ ONBOARDING_TEMPLATE = r"""
     text-transform:uppercase;letter-spacing:.1em;font-size:.7rem;text-decoration:none;
     font-family:inherit;transition:all .25s}
   .ghost:hover{background:rgba(255,240,225,.16);color:#fff}
-  .prime{border:none;border-radius:9px;padding:13px 26px;cursor:pointer;font-weight:900;
+  .prime{display:inline-flex;align-items:center;justify-content:center;
+    border:none;border-radius:9px;padding:13px 26px;cursor:pointer;font-weight:900;
     letter-spacing:.14em;text-transform:uppercase;font-size:.8rem;text-decoration:none;
     color:#1a0f14;font-family:inherit;transition:transform .15s,box-shadow .25s;
     background:linear-gradient(135deg,#e08d6d,#b8604a);
@@ -383,7 +384,12 @@ window.addEventListener('load', function(){
   // blended size metric treats squat frogs and wide-winged fliers alike, and
   // the seat lift is a fraction of the model's own height so an animation clip
   // that dips below the rest pose never looks swallowed by the floor.
-  function fitUnit(obj){
+  // extraLift is an artistic override in NORMALISED units (the model is scaled
+  // into a unit box first, so 0.3 is three tenths of its own size). It is not
+  // scaled by height on purpose: a flier animates in a horizontal pose, which
+  // makes its height tiny, so a height-proportional nudge cannot lift it off
+  // the floor - and a flier should hover anyway. Defaults to nothing.
+  function fitUnit(obj,extraLift){
     var b=new THREE.Box3().setFromObject(obj);
     var sz=b.getSize(new THREE.Vector3());
     var eff=Math.max(sz.y,0.62*Math.max(sz.x,sz.z),0.001);
@@ -391,7 +397,7 @@ window.addEventListener('load', function(){
     var b2=new THREE.Box3().setFromObject(obj);
     var c=b2.getCenter(new THREE.Vector3());
     var h=b2.max.y-b2.min.y;
-    var lift=Math.max(0.05,h*0.06);
+    var lift=Math.max(0.05,h*0.06)+(extraLift||0);
     obj.position.set(-c.x,-b2.min.y+lift,-c.z);
     var sx=b2.max.x-b2.min.x, sz=b2.max.z-b2.min.z;
     // r is the sweep diameter: the model turns on the spot, so a deep model
@@ -421,7 +427,7 @@ window.addEventListener('load', function(){
     if(!loader||!entry.model) return;
     loader.load((window.__ORIGIN||'')+entry.model,function(g){
       var obj=g.scene;
-      var m=fitUnit(obj);
+      var m=fitUnit(obj,entry.lift||0);
       obj.traverse(function(o){ if(o.isMesh) o.castShadow=true; });
       entry.holder.add(obj);
       entry.holder.userData.mh=m.h;
@@ -492,44 +498,92 @@ window.addEventListener('load', function(){
     camTargetY=(tallest*0.5)-(0.5-centreFrac)*vh;
   }
 
-  // ``span`` is the widest the model may sweep as it turns on the spot
-  function place(entry,x,z,target,span){
-    var u=entry.holder.userData;
-    u.tk=Math.min(target, span/u.mr);
-    u.tx=x; u.tz=z;
-    if(u.app<0.02){ u.k=u.tk; u.x=u.tx; u.z=u.tz; }   // not on screen yet: snap
-    return u.tk*u.mh;
+  // The band a model may occupy is measured off the reserved DOM strips, not
+  // guessed: copy owns the top, the name plates and the control bar own the
+  // bottom. Text can therefore never end up on top of a model at any window
+  // size, and the models still use every pixel that is genuinely free.
+  function band(withLabels){
+    var hh=innerHeight||1;
+    var top=document.getElementById('copy').getBoundingClientRect().bottom;
+    var bot=document.getElementById(withLabels?'labels':'bar').getBoundingClientRect().top;
+    var pad=Math.max(8,hh*0.018);
+    top+=pad; bot-=pad;
+    if(!(bot>top)){ top=hh*0.30; bot=hh*0.70; }
+    return {frac:(bot-top)/hh, centre:((top+bot)*0.5)/hh};
+  }
+
+  // The band cap has to be measured on the height a model actually RENDERS at,
+  // not on the normalised metric: a tall model and a squat one are deliberately
+  // not the same height, and only the tallest may touch the top of the band. If
+  // it would, every model in the shot shrinks by the same factor, so the group
+  // keeps its relative proportions. This is what keeps copy and models apart on
+  // a short window, where the reserved bands are only a few dozen pixels tall.
+  function fitBand(list,vh,maxFrac){
+    var tallest=0,i,u;
+    for(i=0;i<list.length;i++){ u=list[i].holder.userData; tallest=Math.max(tallest,u.tk*u.mh); }
+    if(tallest>maxFrac*vh && tallest>0){
+      var s=maxFrac*vh/tallest;
+      for(i=0;i<list.length;i++){ list[i].holder.userData.tk*=s; }
+      tallest=maxFrac*vh;
+    }
+    return tallest;
+  }
+  function commit(list){
+    for(var i=0;i<list.length;i++){
+      var u=list[i].holder.userData;
+      if(u.app<0.02){ u.k=u.tk; u.x=u.tx; u.z=u.tz; }   // not on screen yet: snap
+    }
   }
 
   function layout(){
-    var tallest=0,i;
+    var tallest=0,i,u;
     if(step===2){
+      var b2=band(true);
       var d2=CAM_Z, vh2=visH(d2), halfW2=vh2*0.5*cam.aspect;
-      var n=units.length, slot=(halfW2*2/n)*0.96, xs=[], need=0;
+      var n=units.length, slot=(halfW2*2/n)*0.96;
       for(i=0;i<n;i++){
-        var u2=units[i].holder.userData;
-        xs.push(((((i+0.5)/n)*2-1))*halfW2);
-        need=Math.max(need,Math.abs(xs[i])+0.5*Math.min(0.40*vh2,slot/u2.mr)*u2.mr);
+        u=units[i].holder.userData;
+        u.tk=Math.min(0.40*vh2, slot/u.mr);   // never wider than its own slot
       }
+      tallest=fitBand(units,vh2,Math.min(0.40,b2.frac));
       // pull the whole row in until the end monsters clear the frame edges
+      var xs=[],need=0;
+      for(i=0;i<n;i++){
+        u=units[i].holder.userData;
+        xs.push(((((i+0.5)/n)*2-1))*halfW2);
+        need=Math.max(need,Math.abs(xs[i])+0.5*u.tk*u.mr);
+      }
       var inset=(need>halfW2*0.97)?(halfW2*0.97/need):1;
       for(i=0;i<n;i++){
-        var x=xs[i]*inset;
-        tallest=Math.max(tallest,place(units[i],x,0,0.40*vh2,slot));
+        u=units[i].holder.userData;
+        u.tx=xs[i]*inset; u.tz=0;
         // the plate follows its monster, so a name never drifts off its owner
-        units[i].lab.style.left=((0.5+x/(2*halfW2))*100)+'%';
+        units[i].lab.style.left=((0.5+u.tx/(2*halfW2))*100)+'%';
       }
-      frame(d2,tallest,0.47);
+      commit(units);
+      frame(d2,tallest,b2.centre);
     } else if(step===3){
+      var b3=band(false);
       var z3=1.0, d3=CAM_Z-z3, vh3=visH(d3), halfW3=vh3*0.5*cam.aspect;
       var hero=units[Math.min(2,units.length-1)];
-      if(hero) tallest=place(hero,0,z3,0.42*vh3,halfW3*1.5);
-      frame(d3,tallest,0.50);
+      if(hero){
+        u=hero.holder.userData;
+        u.tk=Math.min(0.46*vh3, halfW3*1.5/u.mr); u.tx=0; u.tz=z3;
+        tallest=fitBand([hero],vh3,Math.min(0.46,b3.frac));
+        commit([hero]);
+      }
+      frame(d3,tallest,b3.centre);
     } else if(step===4){
       // he stands closer and reads bigger than any of the five ever did
+      var b4=band(false);
       var z4=2.6, d4=CAM_Z-z4, vh4=visH(d4), halfW4=vh4*0.5*cam.aspect;
-      if(collector) tallest=place(collector,0,z4,0.56*vh4,halfW4*1.25);
-      frame(d4,tallest,0.56);
+      if(collector){
+        u=collector.holder.userData;
+        u.tk=Math.min(0.60*vh4, halfW4*1.25/u.mr); u.tx=0; u.tz=z4;
+        tallest=fitBand([collector],vh4,Math.min(0.60,b4.frac));
+        commit([collector]);
+      }
+      frame(d4,tallest,b4.centre);
     } else {
       camTargetY=2.5;    // steps 1 and 5 look up the hall at the sealed gate
     }
@@ -584,8 +638,10 @@ window.addEventListener('load', function(){
     document.getElementById('vig').classList.toggle('dread',step===4);
     moodTo=(step===4)?DREAD:WARM;
     keyWant=(step===1||step===5)?0.34:1.0;
-    nextBtn.style.display=(step>=STEPS)?'none':'';
-    enterA.style.display=(step>=STEPS)?'':'none';
+    // explicit values both ways: an empty string would fall back to the
+    // stylesheet, and the stylesheet keeps the final control hidden
+    nextBtn.style.display=(step>=STEPS)?'none':'inline-flex';
+    enterA.style.display=(step>=STEPS)?'inline-flex':'none';
     if(step>=STEPS) enterA.href=exitHref();
     layout();
   }
@@ -713,12 +769,14 @@ def onboarding_html(vendor_js: str, monsters: list, collector: dict) -> str:
             "color": str(m.get("color", "") or "#e08d6d"),
             "model": str(m.get("model", "") or ""),
             "clip": str(m.get("clip", "") or ""),
+            "lift": float(m.get("lift", 0) or 0),
         })
     collector = collector or {}
     boss = {
         "name": str(collector.get("name", "") or "The Collector"),
         "model": str(collector.get("model", "") or COLLECTOR_MODEL),
         "clip": str(collector.get("clip", "") or COLLECTOR_CLIP),
+        "lift": float(collector.get("lift", 0) or 0),
     }
     # Vendor last: the inlined library is never scanned for template tokens.
     return (ONBOARDING_TEMPLATE
