@@ -1884,7 +1884,7 @@ html,body{margin:0;background:#050308;overflow:hidden;font-family:'Trebuchet MS'
   font-size:1.4rem;text-align:center;width:150px;padding:9px;outline:none}
 #go2{background:__COLOR__;border:none;border-radius:10px;color:#0a0714;font-weight:900;
   font-size:1rem;padding:12px 22px;margin-left:10px;cursor:pointer;letter-spacing:.1em}
-#bline{position:absolute;left:50%;top:70px;transform:translateX(-50%);max-width:80%;
+#bline{position:absolute;left:50%;bottom:165px;transform:translateX(-50%);max-width:80%;
   background:rgba(10,7,18,.85);border:1px solid __COLOR__;border-radius:12px;
   padding:9px 15px;font-size:.95rem;color:#efe9ff;text-align:center;
   box-shadow:0 0 20px __COLOR__44}
@@ -1961,11 +1961,20 @@ window.addEventListener('load', function(){
   let mix=null,obj=null,entrance=0,actIdle=null,actHit=null;
   new THREE.GLTFLoader().load((window.__ORIGIN||'')+"__MODEL__",(g)=>{
     obj=g.scene;
+    // The arena reserves three bands: the taunt and streak sit up top, the
+    // question box sits at the bottom, and the lieutenant owns the middle. So
+    // rather than dropping every model at a fixed height - which puts a tall
+    // model's head straight through the speech bubble - measure it and hang it
+    // from a fixed CEILING, using the same blended size metric as the citadel.
+    const MID_Y=2.5;
     const b=new THREE.Box3().setFromObject(obj), sz=b.getSize(new THREE.Vector3());
-    obj.scale.setScalar(0.15);
-    obj.userData.fullScale=5.2/Math.max(sz.x,sz.y,sz.z,0.001);
+    const eff=Math.max(sz.y,0.62*Math.max(sz.x,sz.z),0.001);
+    obj.userData.fullScale=3.4/eff;
+    obj.scale.setScalar(obj.userData.fullScale);
     const b2=new THREE.Box3().setFromObject(obj), c=b2.getCenter(new THREE.Vector3());
-    obj.position.set(-c.x,3.2,-c.z-1); sc.add(obj);
+    obj.scale.setScalar(0.15);                    // the entrance grows it back
+    obj.position.set(-c.x,MID_Y-c.y,-c.z-1); sc.add(obj);
+    cam.lookAt(0,MID_Y,0);
     if(g.animations&&g.animations.length){
       mix=new THREE.AnimationMixer(obj);
       const fi=g.animations.find(a=>/Flying_Idle/.test(a.name))
