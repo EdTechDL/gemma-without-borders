@@ -36,6 +36,18 @@
 \definecolor{Muted}{HTML}{9B8BA0}
 \definecolor{Deep}{HTML}{140C13}   % a shade between page and panel, for rules
 
+\usepackage{graphicx}
+\graphicspath{{shots/}}
+% a screenshot in the game frame: coral hairline, rounded, with a muted caption
+\newcommand{\shot}[2]{%
+  \begin{center}
+  \begin{tcolorbox}[enhanced,colback=Panel,colframe=Coral,boxrule=0.6pt,
+      arc=1.4mm,left=0.6mm,right=0.6mm,top=0.6mm,bottom=0.6mm,width=\linewidth]
+    \includegraphics[width=\linewidth]{#1}%
+  \end{tcolorbox}%
+  \vspace{-0.2em}{\footnotesize\itshape\color{Muted}#2}
+  \end{center}}
+
 \hypersetup{
   colorlinks=true, linkcolor=Gold, urlcolor=Teal, citecolor=Gold,
   pdftitle={Gemma Monsters: a team brief},
@@ -183,6 +195,9 @@ you can hunt it.
 the snare by answering fresh questions right \emph{and} showing the path you
 took. Then the monster has nothing left to eat.
 \end{snarebox}
+
+\shot{citadel.png}{The citadel. Five monsters, one on each platform, and the
+sealed keep behind them. Click one to face it.}
 
 Five monsters guard the citadel, one for each strand EQAO assesses.
 
@@ -678,6 +693,10 @@ This is speed, not curriculum, so nothing that happens in his arena counts
 against your quiz record. You cannot make things worse by facing him. You can
 only get faster.
 
+\shot{collector.png}{The Collector's speed trial: ten questions, eight seconds
+each, three lives. Nothing here counts against your record --- it is pure
+speed.}
+
 Lose to him --- and most people will, the first time --- and he sends you down
 to one of his three lieutenants. Each lieutenant is a smaller, faster fight
 built around a single mental shortcut: not a topic from the course, but a trick
@@ -731,6 +750,9 @@ explanations were tried, whether the snare fell or is still standing, and three
 things to try at the kitchen table with coins, cups, food or paper. Ten
 minutes, no jargon, nothing to buy. And it is about one evening --- it is not a
 label anyone gets to keep.
+
+\shot{letters.png}{The page a parent sees. Every figure on it is placed by
+code; \themodel\ only turns those facts into a note a family can act on.}
 
 One button on that page prints a practice sheet: up to ten questions on that
 one snare, room to write under each, and the answer key on its own page so a

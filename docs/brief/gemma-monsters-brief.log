@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.3.8)  24 JUL 2026 14:46
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.3.8)  24 JUL 2026 15:35
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -946,9 +946,9 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 )
 \Hy@SectionHShift=\skip75
 )
-Package hyperref Info: Option `colorlinks' set `true' on input line 43.
-LaTeX Font Info:    Trying to load font information for T1+lmr on input line 10
-8.
+Package hyperref Info: Option `colorlinks' set `true' on input line 55.
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 12
+0.
  (/usr/local/texlive/2025/texmf-dist/tex/latex/lm/t1lmr.fd
 File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
@@ -960,41 +960,41 @@ File: l3backend-pdftex.def 2024-05-08 L3 backend support: PDF output (pdfTeX)
 (./gemma-monsters-brief.aux)
 \openout1 = `gemma-monsters-brief.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 108.
-LaTeX Font Info:    ... okay on input line 108.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 108.
-LaTeX Font Info:    ... okay on input line 108.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 108.
-LaTeX Font Info:    ... okay on input line 108.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 108.
-LaTeX Font Info:    ... okay on input line 108.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 108.
-LaTeX Font Info:    ... okay on input line 108.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 108.
-LaTeX Font Info:    ... okay on input line 108.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 108.
-LaTeX Font Info:    ... okay on input line 108.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 108.
-LaTeX Font Info:    ... okay on input line 108.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 108.
-LaTeX Font Info:    ... okay on input line 108.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 120.
+LaTeX Font Info:    ... okay on input line 120.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 120.
+LaTeX Font Info:    ... okay on input line 120.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 120.
+LaTeX Font Info:    ... okay on input line 120.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 120.
+LaTeX Font Info:    ... okay on input line 120.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 120.
+LaTeX Font Info:    ... okay on input line 120.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 120.
+LaTeX Font Info:    ... okay on input line 120.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 120.
+LaTeX Font Info:    ... okay on input line 120.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 120.
+LaTeX Font Info:    ... okay on input line 120.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 120.
+LaTeX Font Info:    ... okay on input line 120.
 Package microtype Info: Patching varwidth to enable character protrusion.
 \MT@vwid@leftmargin=\dimen324
 \MT@vwid@rightmargin=\dimen325
-LaTeX Info: Redefining \microtypecontext on input line 108.
-Package microtype Info: Applying patch `item' on input line 108.
-Package microtype Info: Applying patch `toc' on input line 108.
-Package microtype Info: Applying patch `eqnum' on input line 108.
-Package microtype Info: Applying patch `footnote' on input line 108.
-Package microtype Info: Applying patch `verbatim' on input line 108.
-LaTeX Info: Redefining \microtypesetup on input line 108.
+LaTeX Info: Redefining \microtypecontext on input line 120.
+Package microtype Info: Applying patch `item' on input line 120.
+Package microtype Info: Applying patch `toc' on input line 120.
+Package microtype Info: Applying patch `eqnum' on input line 120.
+Package microtype Info: Applying patch `footnote' on input line 120.
+Package microtype Info: Applying patch `verbatim' on input line 120.
+LaTeX Info: Redefining \microtypesetup on input line 120.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using default protrusion set `alltext'.
 Package microtype Info: Automatic font expansion enabled (level 2),
 (microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
 Package microtype Info: Using default expansion set `alltext-nott'.
-LaTeX Info: Redefining \showhyphens on input line 108.
+LaTeX Info: Redefining \showhyphens on input line 120.
 Package microtype Info: No adjustment of tracking.
 Package microtype Info: No adjustment of interword spacing.
 Package microtype Info: No adjustment of character kerning.
@@ -1060,14 +1060,14 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
 \c@lstlisting=\count355
-Package hyperref Info: Link coloring ON on input line 108.
+Package hyperref Info: Link coloring ON on input line 120.
 
 (./gemma-monsters-brief.out) (./gemma-monsters-brief.out)
 \@outlinefile=\write4
 \openout4 = `gemma-monsters-brief.out'.
 
 LaTeX Font Info:    Trying to load font information for T1+lmss on input line 1
-19.
+31.
 
 (/usr/local/texlive/2025/texmf-dist/tex/latex/lm/t1lmss.fd
 File: t1lmss.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
@@ -1082,11 +1082,11 @@ Package microtype Info: Loading generic protrusion settings for font family
 (/usr/local/texlive/2025/texmf-dist/tex/latex/lm/omslmsy.fd)
 (/usr/local/texlive/2025/texmf-dist/tex/latex/lm/omxlmex.fd)
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 150.
+(Font)              <10> on input line 162.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 150.
+(Font)              <7> on input line 162.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 150.
+(Font)              <5> on input line 162.
 
 
 [1
@@ -1094,36 +1094,59 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 {/usr/local/texlive/2025/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/usr/loc
 al/texlive/2025/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/texlive/202
 5/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}]
+<shots/citadel.png, id=97, 2328.7pt x 1445.4pt>
+File: shots/citadel.png Graphic file (type png)
+<use shots/citadel.png>
+Package pdftex.def Info: shots/citadel.png  used on input line 200.
+(pdftex.def)             Requested size: 481.13026pt x 298.6247pt.
+
 
 
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.255 \]
-         [1{/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/u
-sr/local/texlive/2025/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}]
+l.218 \end{center}
+                   [1{/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/lm/lm-
+rm.enc}{/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc} <.
+/shots/citadel.png (PNG copy)>]
 
 [2]
+
+[3]
 LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 3
-78.
+93.
  (/usr/local/texlive/2025/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 
-[3{/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}]
-
-[4]
+[4{/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}]
 
 [5]
 
 [6]
 
 [7]
+<shots/collector.png, id=134, 2328.7pt x 1445.4pt>
+File: shots/collector.png Graphic file (type png)
+<use shots/collector.png>
+Package pdftex.def Info: shots/collector.png  used on input line 698.
+(pdftex.def)             Requested size: 481.13026pt x 298.6247pt.
+
 
 [8]
 
-[9] (./gemma-monsters-brief.aux)
+[9 <./shots/collector.png (PNG copy)>]
+<shots/letters.png, id=143, 2328.7pt x 1445.4pt>
+File: shots/letters.png Graphic file (type png)
+<use shots/letters.png>
+Package pdftex.def Info: shots/letters.png  used on input line 755.
+(pdftex.def)             Requested size: 481.13026pt x 298.6247pt.
+
+
+[10 <./shots/letters.png (PNG copy)>]
+
+[11] (./gemma-monsters-brief.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
@@ -1132,26 +1155,27 @@ Package rerunfilecheck Info: File `gemma-monsters-brief.out' has not changed.
 (rerunfilecheck)             Checksum: FDB4904C593E7251D81EF6FC70F79203;2054.
  ) 
 Here is how much of TeX's memory you used:
- 32844 strings out of 473190
- 656744 string characters out of 5715801
- 1120828 words of memory out of 5000000
- 55300 multiletter control sequences out of 15000+600000
- 657014 words of font info for 195 fonts, out of 8000000 for 9000
+ 32894 strings out of 473190
+ 657666 string characters out of 5715801
+ 1121040 words of memory out of 5000000
+ 55336 multiletter control sequences out of 15000+600000
+ 664842 words of font info for 202 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 102i,13n,107p,1209b,1041s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 102i,13n,107p,1209b,961s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/lo
 cal/texlive/2025/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/local/texliv
 e/2025/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></usr/local/texlive/2025/tex
 mf-dist/fonts/type1/public/lm/lmr10.pfb></usr/local/texlive/2025/texmf-dist/fon
 ts/type1/public/lm/lmr12.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/pu
 blic/lm/lmri10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lm
-ss10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmss8.pfb></
-usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmssbx10.pfb></usr/loca
-l/texlive/2025/texmf-dist/fonts/type1/public/lm/lmsy10.pfb>
-Output written on gemma-monsters-brief.pdf (10 pages, 261980 bytes).
+ri9.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmss10.pfb></
+usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmss8.pfb></usr/local/t
+exlive/2025/texmf-dist/fonts/type1/public/lm/lmssbx10.pfb></usr/local/texlive/2
+025/texmf-dist/fonts/type1/public/lm/lmsy10.pfb>
+Output written on gemma-monsters-brief.pdf (12 pages, 3324404 bytes).
 PDF statistics:
- 200 PDF objects out of 1000 (max. 8388607)
- 140 compressed objects within 2 object streams
- 21 named destinations out of 1000 (max. 500000)
- 59637 words of extra memory for PDF output out of 61914 (max. 10000000)
+ 216 PDF objects out of 1000 (max. 8388607)
+ 149 compressed objects within 2 object streams
+ 23 named destinations out of 1000 (max. 500000)
+ 63748 words of extra memory for PDF output out of 74296 (max. 10000000)
 
