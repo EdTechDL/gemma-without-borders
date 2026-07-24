@@ -265,6 +265,9 @@ def intro():
         st.session_state.adventure = True
         st.session_state.stage = "map"
         st.rerun()
+    if st.session_state.get("letters"):
+        st.button("For mum and dad", key="letters_intro", on_click=to_parents,
+                  help="Every note the agent has written for your parents this session")
 
 
 # ---------------- GEMMA MONSTERS (optional, additive game layer) ----------------
@@ -391,6 +394,7 @@ _HUB_TEMPLATE = r"""
     <div class="hbtns">
       <button class="hbtn" onclick="resetCamera()">Nexus view</button>
       <a class="hbtn" target="_top" id="exitlink" href="#">Simple dashboard</a>
+      <a class="hbtn" target="_top" id="parentlink" href="#">For mum and dad</a>
       <button class="hbtn" id="mutebtn" title="Toggle music and battle sounds">Sound: on</button>
       <span id="herobox" style="display:none;margin-left:10px">
         <input id="heroname" maxlength="20" placeholder="YOUR NAME, CHALLENGER"
@@ -436,7 +440,9 @@ let base='/';
 try{ base = window.parent.location.pathname || '/'; }
 catch(e){ try{ base = new URL(document.referrer).pathname || '/'; }catch(_){} }
 (function(){var x=document.getElementById('exitlink');
-  x.href=base+'?exit=1'; x.target='_blank';})();
+  x.href=base+'?exit=1'; x.target='_blank';
+  var p=document.getElementById('parentlink');
+  if(p){ p.href=base+'?parents=1'; p.target='_blank'; }})();
 
 let scene,camera,renderer,controls,selected=null;
 const monsters=[],groups=[],stations=[],mixers=[],torchLights=[],animatedPlants=[],
@@ -1121,6 +1127,50 @@ def to_dashboard():
     st.session_state.stage = "intro"
 
 
+# ---- the letters home ----------------------------------------------------
+# Everything the agent writes for the parents is kept for the whole session
+# and stacked on one page. A student who walks away from the Collector, or
+# retreats to the nexus, never loses the note that was written for them.
+def save_letter(title: str, body: str, kind: str = "report"):
+    letters = st.session_state.setdefault("letters", [])
+    if any(l["body"] == body for l in letters):
+        return
+    letters.append({"n": len(letters) + 1, "title": title, "body": body, "kind": kind})
+
+
+def to_parents():
+    st.session_state.parents_return = st.session_state.get("stage", "map")
+    st.session_state.stage = "parents"
+
+
+def parents_stage():
+    st.markdown('<div class="gwb-kicker">GEMMA MONSTERS · letters home</div>',
+                unsafe_allow_html=True)
+    st.title("For mum and dad")
+    letters = list(reversed(st.session_state.get("letters", [])))
+    who = st.session_state.get("player_name", "your child")
+    if not letters:
+        note("Nothing here yet",
+             "Every time the agent has something worth telling you — what tripped "
+             f"{_hescape(who)} up, what it tried, what to do at the kitchen table — "
+             "the note is kept on this page for the whole session.")
+    else:
+        st.caption(f"{len(letters)} note{'s' if len(letters) != 1 else ''} from this "
+                   "session, newest first. Nothing left the device to write them.")
+        for l in letters:
+            with st.expander(f"{l['n']}. {l['title']}", expanded=(l is letters[0])):
+                with st.container(border=True):
+                    st.markdown(l["body"])
+        bundle = f"# Letters home for {who}\n\n" + "\n\n---\n\n".join(
+            f"## {l['title']}\n\n{l['body']}" for l in reversed(letters))
+        st.download_button("Download every note as one file", bundle,
+                           file_name="letters_home.md", key="dl_letters")
+    st.divider()
+    back = st.session_state.get("parents_return", "map")
+    st.button("Back to the game", key="parents_back", type="primary",
+              on_click=lambda: st.session_state.update(stage=back))
+
+
 _TAUNT_TEMPLATE = r"""
 <style>html,body{margin:0;background:#0b0710;overflow:hidden}</style>
 <div id="v"></div>
@@ -1280,7 +1330,10 @@ _ENCOUNTER_TEMPLATE = r"""
 <style>
 html,body{margin:0;background:#0b0710;overflow:hidden;font-family:'Trebuchet MS',sans-serif}
 #stage{position:relative;width:100%;height:100vh}
-#bub{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);
+#v canvas{filter:saturate(1.06) contrast(1.09) brightness(.96)}
+#vig{position:absolute;inset:0;pointer-events:none;z-index:2;
+  background:radial-gradient(ellipse 75% 62% at 50% 42%,transparent 55%,rgba(4,3,8,.55) 82%,rgba(2,2,6,.9) 100%)}
+#bub{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:10;
   width:min(560px,86%);background:#1c1119;border:1px solid __COLOR__;
   border-radius:14px;padding:14px 16px;color:#f2e8dc;font-size:1rem;
   box-shadow:0 0 22px __COLOR__66}
@@ -1289,7 +1342,7 @@ html,body{margin:0;background:#0b0710;overflow:hidden;font-family:'Trebuchet MS'
   font-weight:900;border:none;border-radius:8px;padding:5px 14px;cursor:pointer;
   letter-spacing:.08em}
 </style>
-<div id="stage"><div id="v"></div>
+<div id="stage"><div id="v"></div><div id="vig"></div>
   <div id="bub"><div class="who">__NAME__</div>
     <div id="line" style="margin:6px 40px 10px 0"></div>
     <button id="next">NEXT</button></div>
@@ -1311,21 +1364,207 @@ window.addEventListener('load', function(){
     lineEl.textContent=LINES[li]; };
   const W=innerWidth,H=innerHeight;
   const r=new THREE.WebGLRenderer({antialias:true});
-  r.setSize(W,H); r.outputEncoding=THREE.sRGBEncoding; r.setClearColor(0x0b0710);
+  r.setSize(W,H); r.setPixelRatio(Math.min(devicePixelRatio,2));
+  r.outputEncoding=THREE.sRGBEncoding;
+  r.toneMapping=THREE.ACESFilmicToneMapping; r.toneMappingExposure=1.0;
+  r.setClearColor(0x0b0710);
   document.getElementById('v').appendChild(r.domElement);
   const sc=new THREE.Scene();
-  const cam=new THREE.PerspectiveCamera(40,W/H,0.1,60);
-  cam.position.set(0,2.0,5.6); cam.lookAt(0,1.5,0);
-  sc.add(new THREE.AmbientLight(0xffffff,0.85));
-  const sp=new THREE.SpotLight(0xfff3e0,3.4,40,Math.PI/4,0.5); sp.position.set(0,9,4); sc.add(sp);
-  const rim=new THREE.PointLight(new THREE.Color("__COLOR__"),2.2,18); rim.position.set(0,3,-3); sc.add(rim);
+  sc.fog=new THREE.FogExp2(0x0b0710,0.048);
+  // the great hall of the Blackthorn citadel: camera low in the aisle,
+  // looking up the hall toward the monster on its dais
+  const MON_Z=-3.9;               // how far up the hall the monster stands
+  const DAIS_TOP=0.9;             // height of the dais it stands on
+  const DAIS_W=12.0, DAIS_D=6.4;  // its top step
+  const TARGET_H=5.2;             // how tall a well-proportioned monster reads
+  const cam=new THREE.PerspectiveCamera(44,W/H,0.1,60);
+  cam.position.set(0,3.0,9.4); cam.lookAt(0,3.2,MON_Z);
+
+  // ---- canvas masonry textures (same technique as the citadel hub) ----
+  function makeStoneTex(base,line,cols,rows,rx,ry){
+    const cv=document.createElement('canvas'); cv.width=512; cv.height=512;
+    const ctx=cv.getContext('2d');
+    ctx.fillStyle=base; ctx.fillRect(0,0,512,512);
+    ctx.strokeStyle=line; ctx.lineWidth=5;
+    const rh=512/rows,cw=512/cols;
+    for(let i=0;i<rows;i++){
+      const y=i*rh;
+      ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(512,y); ctx.stroke();
+      const off=(i%2===0)?0:cw/2;
+      for(let j=0;j<cols+1;j++){
+        const x=j*cw+off;
+        ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x,y+rh); ctx.stroke();
+      }
+    }
+    for(let i=0;i<9000;i++){
+      const x=Math.random()*512,y=Math.random()*512;
+      const sh=Math.floor(Math.random()*40);
+      ctx.fillStyle='rgba('+sh+','+sh+','+sh+',0.16)';
+      ctx.fillRect(x,y,2,2);
+    }
+    const tex=new THREE.CanvasTexture(cv);
+    tex.wrapS=THREE.RepeatWrapping; tex.wrapT=THREE.RepeatWrapping;
+    tex.repeat.set(rx,ry);
+    return tex;
+  }
+  const floorMat=new THREE.MeshStandardMaterial({
+    map:makeStoneTex('#241b26','#100a14',4,5,2,4),roughness:0.85,metalness:0.1});
+  const wallMat=new THREE.MeshStandardMaterial({
+    map:makeStoneTex('#2a2130','#130d18',8,14,4,2),roughness:0.9,metalness:0.05});
+  const colMat=new THREE.MeshStandardMaterial({
+    map:makeStoneTex('#2a2130','#130d18',6,10,1.2,2.2),roughness:0.85,metalness:0.08});
+  const trimMat=new THREE.MeshStandardMaterial({color:0x1c1420,roughness:0.9});
+  const woodMat=new THREE.MeshStandardMaterial({color:0x2b1e16,roughness:0.8});
+  const ironMat=new THREE.MeshStandardMaterial({color:0x191216,roughness:0.55,metalness:0.55});
+
+  // ---- hall shell: flagstone floor, ceremonial runner, walls, ceiling ----
+  const floor=new THREE.Mesh(new THREE.PlaneGeometry(17,38),floorMat);
+  floor.rotation.x=-Math.PI/2; floor.position.set(0,0,-3); sc.add(floor);
+  const runner=new THREE.Mesh(new THREE.PlaneGeometry(2.3,7.6),
+    new THREE.MeshStandardMaterial({color:0x451523,roughness:0.95}));
+  runner.rotation.x=-Math.PI/2; runner.position.set(0,0.015,3.0); sc.add(runner);
+  const wallL=new THREE.Mesh(new THREE.BoxGeometry(0.6,9,36),wallMat);
+  wallL.position.set(-7.6,4.5,-3); sc.add(wallL);
+  const wallR=wallL.clone(); wallR.position.x=7.6; sc.add(wallR);
+  const backWall=new THREE.Mesh(new THREE.BoxGeometry(16,9,0.8),wallMat);
+  backWall.position.set(0,4.5,-9.4); sc.add(backWall);
+  const ceiling=new THREE.Mesh(new THREE.PlaneGeometry(17,38),
+    new THREE.MeshStandardMaterial({color:0x0e0912,roughness:1}));
+  ceiling.rotation.x=Math.PI/2; ceiling.position.set(0,8.4,-3); sc.add(ceiling);
+
+  // ---- two rows of columns receding toward the dais ----
+  function column(x,z){
+    const cg=new THREE.Group();
+    const shaft=new THREE.Mesh(new THREE.CylinderGeometry(0.52,0.62,6.6,10),colMat);
+    shaft.position.y=3.6; cg.add(shaft);
+    const cbase=new THREE.Mesh(new THREE.BoxGeometry(1.6,0.6,1.6),trimMat);
+    cbase.position.y=0.3; cg.add(cbase);
+    const cap=new THREE.Mesh(new THREE.BoxGeometry(1.5,0.45,1.5),trimMat);
+    cap.position.y=7.1; cg.add(cap);
+    cg.position.set(x,0,z); sc.add(cg);
+  }
+  [[-4.9,4.8],[4.9,4.8],[-4.9,1.4],[4.9,1.4],[-4.9,-2.0],[4.9,-2.0]]
+    .forEach(p=>column(p[0],p[1]));
+
+  // ---- banners on the side walls, banded in the monster's colour ----
+  const bannerMat=new THREE.MeshStandardMaterial({color:0x3a1220,roughness:0.95,
+    side:THREE.DoubleSide});
+  const bandMat=new THREE.MeshBasicMaterial({color:new THREE.Color("__COLOR__"),
+    transparent:true,opacity:0.8,side:THREE.DoubleSide});
+  [[-7.2,3.1],[7.2,3.1],[-7.2,-0.5],[7.2,-0.5]].forEach(p=>{
+    const inward=(p[0]<0)?1:-1;
+    const bn=new THREE.Mesh(new THREE.PlaneGeometry(1.4,3.1),bannerMat);
+    bn.position.set(p[0],4.7,p[1]); bn.rotation.y=inward*Math.PI/2; sc.add(bn);
+    const band=new THREE.Mesh(new THREE.PlaneGeometry(1.4,0.42),bandMat);
+    band.position.set(p[0]+inward*0.02,5.95,p[1]); band.rotation.y=inward*Math.PI/2;
+    sc.add(band);
+    const rod=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,1.8,6),woodMat);
+    rod.rotation.x=Math.PI/2; rod.position.set(p[0]+inward*0.02,6.35,p[1]); sc.add(rod);
+  });
+
+  // ---- raised dais of three flagstone steps ----
+  [[DAIS_W+2.8,DAIS_D+2.4,0.15],[DAIS_W+1.4,DAIS_D+1.2,0.45],[DAIS_W,DAIS_D,0.75]].forEach(s=>{
+    const step=new THREE.Mesh(new THREE.BoxGeometry(s[0],0.3,s[1]),floorMat);
+    step.position.set(0,s[2],MON_Z); sc.add(step);
+  });
+  const daisAnchor=new THREE.Group();
+  daisAnchor.position.set(0,DAIS_TOP,MON_Z); sc.add(daisAnchor);
+
+  // ---- a bare stone wall behind it: the firelight is the only feature ----
+  const sealGlow=new THREE.PointLight(0xffd87a,0.35,9);
+  sealGlow.position.set(0,5.2,-8.2); sc.add(sealGlow);
+
+  // ---- lighting: a dark hall lit almost entirely by its fires ----
+  sc.add(new THREE.AmbientLight(0x1a2338,0.42));
+  const moon=new THREE.DirectionalLight(0x9fb6e8,0.16);
+  moon.position.set(-6,12,4); sc.add(moon);
+  const key=new THREE.SpotLight(0xffd9a8,1.5,40,Math.PI/5,0.6);
+  key.position.set(0,7.6,3.4); key.target.position.set(0,1.6,MON_Z);
+  sc.add(key); sc.add(key.target);
+  const rim=new THREE.PointLight(new THREE.Color("__COLOR__"),2.4,18);
+  rim.position.set(0,3.4,MON_Z-2.4); sc.add(rim);
+
+  // ---- torch and brazier flames: sprite glow + emissive core + flicker ----
+  const flameTex=(function(){
+    const cv=document.createElement('canvas'); cv.width=64; cv.height=64;
+    const ctx=cv.getContext('2d');
+    const fg=ctx.createRadialGradient(32,36,2,32,32,30);
+    fg.addColorStop(0,'rgba(255,236,180,0.95)');
+    fg.addColorStop(0.35,'rgba(255,150,60,0.65)');
+    fg.addColorStop(1,'rgba(255,90,20,0)');
+    ctx.fillStyle=fg; ctx.fillRect(0,0,64,64);
+    return new THREE.CanvasTexture(cv);
+  })();
+  const flames=[];
+  function addFlame(x,y,z,intensity){
+    const spr=new THREE.Sprite(new THREE.SpriteMaterial({map:flameTex,color:0xffc078,
+      transparent:true,opacity:0.95,blending:THREE.AdditiveBlending,depthWrite:false}));
+    spr.position.set(x,y,z); spr.scale.set(0.85,1.2,1); sc.add(spr);
+    const core=new THREE.Mesh(new THREE.ConeGeometry(0.13,0.42,7),
+      new THREE.MeshBasicMaterial({color:0xffb45e}));
+    core.position.set(x,y-0.08,z); sc.add(core);
+    const l=new THREE.PointLight(0xff8844,intensity,13);
+    l.position.set(x,y+0.15,z); sc.add(l);
+    flames.push({light:l,sprite:spr,base:intensity,x:x,y:y,z:z,seed:Math.random()*10});
+  }
+  function addTorch(x,z){
+    const inward=(x<0)?1:-1;
+    const stick=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.07,0.6,6),woodMat);
+    stick.position.set(x-inward*0.12,3.1,z); stick.rotation.z=inward*0.45; sc.add(stick);
+    addFlame(x,3.5,z,1.15);
+  }
+  addTorch(-5.6,-2.0); addTorch(5.6,-2.0);
+  function addBrazier(x,z){
+    const ped=new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.42,1.05,8),trimMat);
+    ped.position.set(x,0.52,z); sc.add(ped);
+    const bowl=new THREE.Mesh(new THREE.CylinderGeometry(0.52,0.3,0.4,10),ironMat);
+    bowl.position.set(x,1.25,z); sc.add(bowl);
+    addFlame(x,1.72,z,1.45);
+  }
+  addBrazier(-4.4,0.4); addBrazier(4.4,0.4);
+
+  // ---- embers drifting up from the flames (same trick as the hub) ----
+  const EMBERS=120;
+  const eGeo=new THREE.BufferGeometry();
+  const ePos=new Float32Array(EMBERS*3);
+  const eMeta=[];
+  for(let i=0;i<EMBERS;i++){
+    const f=flames[i%flames.length];
+    const m={f:f,jx:(Math.random()-0.5)*0.7,jz:(Math.random()-0.5)*0.7,
+      spd:0.008+Math.random()*0.014,ph:Math.random()*6.28};
+    eMeta.push(m);
+    ePos[i*3]=f.x+m.jx; ePos[i*3+1]=f.y+Math.random()*3; ePos[i*3+2]=f.z+m.jz;
+  }
+  eGeo.setAttribute('position',new THREE.BufferAttribute(ePos,3));
+  sc.add(new THREE.Points(eGeo,new THREE.PointsMaterial({color:0xffcc55,size:0.09,
+    transparent:true,opacity:0.8,blending:THREE.AdditiveBlending,depthWrite:false})));
+
   let mix=null,obj=null;
   new THREE.GLTFLoader().load((window.__ORIGIN||'')+"__MODEL__",(g)=>{
     obj=g.scene;
+    // Placement has to hold for EVERY model in the bestiary: they differ wildly
+    // in proportion (squat frogs, wide wings, tall skeletons), so nothing here
+    // is tuned to one monster.
     const b=new THREE.Box3().setFromObject(obj), sz=b.getSize(new THREE.Vector3());
-    obj.scale.setScalar(3.6/Math.max(sz.x,sz.y,sz.z,0.001));
+    // 1. blended size metric: height alone inflates squat models, max-dimension
+    //    alone shrinks winged ones, so weigh the footprint at 62% (as the nexus)
+    const eff=Math.max(sz.y,0.62*Math.max(sz.x,sz.z),0.001);
+    // 2. keep it inside the hall so wings never pass through a wall
+    const s=Math.min(TARGET_H/eff, 13.0/Math.max(sz.x,0.001));
+    obj.scale.setScalar(s);
+    // 3. centre it and lift it clear of the stone. The lift is a fraction of
+    //    the model's own height, so a small frog and a tall skeleton both read
+    //    as STANDING ON the dais rather than sunk into it - animation clips
+    //    dip below the rest-pose box, which is what made models look swallowed.
     const b2=new THREE.Box3().setFromObject(obj), c=b2.getCenter(new THREE.Vector3());
-    obj.position.set(-c.x,-b2.min.y,-c.z); sc.add(obj);
+    const h=b2.max.y-b2.min.y;
+    const lift=Math.max(0.22,h*0.10);
+    obj.position.set(-c.x,-b2.min.y+lift,-c.z); daisAnchor.add(obj);
+    // 4. frame whatever we ended up with, instead of a fixed guess
+    const eyeY=DAIS_TOP+lift+h*0.52;
+    cam.lookAt(0,eyeY,MON_Z);
+    rim.position.set(0,eyeY,MON_Z-2.4);
+    key.target.position.set(0,eyeY,MON_Z);
     if(g.animations&&g.animations.length){
       mix=new THREE.AnimationMixer(obj);
       const clip=g.animations.find(a=>a.name==="__ECLIP__")
@@ -1338,6 +1577,22 @@ window.addEventListener('load', function(){
     const tt=(t||0)*0.001, dt=Math.min(0.05,tt-pt); pt=tt;
     if(mix) mix.update(dt);
     if(obj) obj.rotation.y=Math.sin(tt*0.5)*0.25;
+    flames.forEach(function(f){
+      f.light.intensity=f.base+Math.sin(tt*12+f.seed*7)*0.35+(Math.random()-0.5)*0.3;
+      const fs=1+Math.sin(tt*11+f.seed*9)*0.08;
+      f.sprite.scale.set(0.85*fs,1.2*fs,1);
+    });
+    const ea=eGeo.attributes.position.array;
+    for(let i=0;i<EMBERS;i++){
+      const m=eMeta[i];
+      ea[i*3+1]+=m.spd;
+      ea[i*3]=m.f.x+m.jx+Math.sin(tt*1.6+m.ph)*0.12;
+      ea[i*3+2]=m.f.z+m.jz+Math.cos(tt*1.3+m.ph)*0.12;
+      if(ea[i*3+1]>m.f.y+3.1) ea[i*3+1]=m.f.y-0.1;
+    }
+    eGeo.attributes.position.needsUpdate=true;
+    const sPulse=Math.sin(tt*1.4)*0.5+0.5;
+    sealGlow.intensity=0.22+sPulse*0.25;   // the back wall breathes with the fires
     r.render(sc,cam); })(0);
 });
 </script>
@@ -2046,21 +2301,27 @@ def boss_stage():
     </style>""", unsafe_allow_html=True)
     components.html(_boss_html(st.session_state.get("player_name", "Challenger")),
                     height=620, scrolling=False)
-    mid = st.columns([2, 2, 2])
-    mid[1].button("Retreat to the nexus", key="boss_flee", on_click=back_to_map,
-                  use_container_width=True)
     st.markdown('<div style="text-align:center;letter-spacing:.14em;font-size:.72rem;'
-                'color:#8a86a8;font-weight:700;margin-top:6px">OR SHARPEN YOUR SPEED AGAINST HIS LIEUTENANTS</div>',
+                'color:#8a86a8;font-weight:700;margin-top:6px">'
+                'BEAT HIS TIMER, OR SHARPEN YOUR SPEED ON HIS LIEUTENANTS FIRST</div>',
                 unsafe_allow_html=True)
     lc = st.columns(3)
     for _i, (_lane, _lt) in enumerate(_LIEUTENANTS.items()):
-        lc[_i].button(_lt["monster"], key=f"lt_{_lane}",
+        lc[_i].button(f"Train against {_lt['monster']}", key=f"lt_{_lane}",
                       on_click=lambda l=_lane: st.session_state.update(stage="skirmish", skirmish_lane=l),
                       use_container_width=True)
+    mid = st.columns([2, 2, 2])
     if "msession" in st.session_state:
-        mid[1].button("Back to training", key="boss_train",
+        mid[1].button("Back to training", key="boss_train", type="primary",
                       on_click=lambda: st.session_state.update(stage="mastery"),
                       use_container_width=True)
+    mid[1].button("For mum and dad", key="boss_letters", on_click=to_parents,
+                  use_container_width=True,
+                  help="The notes the agent wrote for your parents, all in one place")
+    mid[1].button("Retreat to the nexus", key="boss_flee", on_click=back_to_map,
+                  use_container_width=True)
+    st.caption("Retreating is safe — nothing you have earned is lost, and the notes "
+               "written for your parents stay on the letters-home page.")
 
 
 def _encounter_html(mon, name):
@@ -2273,10 +2534,15 @@ def results():
             if "teacher_report" not in st.session_state:
                 with st.spinner("Writing a note your parents can act on..."):
                     st.session_state.teacher_report = agent.teacher_report(result, analysis)
+            save_letter(f"After the quiz — {priority['name'] if priority else 'results'}",
+                        st.session_state.teacher_report, "quiz")
             with st.container(border=True):
                 st.markdown(st.session_state.teacher_report)
             st.download_button("Download report", st.session_state.teacher_report,
                                file_name="parent_report.md", key="dl_teacher")
+            st.button("Open the letters-home page", key="letters_from_results",
+                      on_click=to_parents,
+                      help="Every note the agent writes for your parents, kept in one place")
 
     # --- a study-guide card per missed question ---
     st.subheader("Your study guide")
@@ -2356,6 +2622,9 @@ def results():
     if st.session_state.get("adventure"):
         st.button("Back to the nexus", key="tomap_bottom", on_click=back_to_map)
     st.button("Take another quiz", key="again_bottom", on_click=reset)
+    if st.session_state.get("letters"):
+        st.button("For mum and dad", key="letters_bottom", on_click=to_parents,
+                  help="Every note the agent has written for your parents this session")
 
 
 # ---------------- MASTERY LOOP ----------------
@@ -2431,6 +2700,14 @@ def mastery_stage():
              "Two fresh questions in a row, answered correctly — and your reasoning showed "
              "real understanding, not a lucky guess. That's the evidence bar for mastery.")
         st.code(m.mastery_recap(s))
+        # good news belongs in the letters home too, not just the hard news
+        save_letter(f"Beat the trick: {s.trick_name}",
+                    f"**Good news** — {_hescape(st.session_state.get('player_name', 'your child'))} "
+                    f"worked past **{s.trick_name}** ({s.strand}).\n\n"
+                    + m.mastery_recap(s)
+                    + "\n\nThe agent only calls this mastery after two fresh questions in a "
+                      "row are answered correctly with reasoning that holds up — not a lucky guess.",
+                    "mastery")
         st.button("Back to my results", key="back_mastered",
                   on_click=lambda: st.session_state.update(stage="results"))
         st.button("Take another quiz", key="again_mastered", on_click=reset)
@@ -2452,10 +2729,15 @@ def mastery_stage():
         if "escal_report" not in st.session_state:
             with st.spinner("Writing a note your parents can act on..."):
                 st.session_state.escal_report = m.escalation_report(s)
+        save_letter(f"Still stuck on {s.trick_name}", st.session_state.escal_report,
+                    "escalation")
         with st.container(border=True):
             st.markdown(st.session_state.escal_report)
         st.download_button("Download report", st.session_state.escal_report,
                            file_name="parent_report.md", key="dl_escal")
+        st.button("Open the letters-home page", key="letters_from_escal",
+                  on_click=to_parents,
+                  help="Every note the agent writes for your parents, kept in one place")
         st.button("Back to my results", key="back_escalated",
                   on_click=lambda: st.session_state.update(stage="results"))
         st.button("Take another quiz", key="again_escalated", on_click=reset)
@@ -2524,6 +2806,9 @@ if _station in STATIONS:
     st.session_state.stage = "encounter"
     st.query_params.clear()
 
+if st.query_params.get("parents"):
+    st.query_params.clear()
+    to_parents()
 if st.query_params.get("finale"):
     st.session_state.adventure = True
     st.session_state.stage = "finale"
@@ -2561,4 +2846,5 @@ if _cl in ("doubles", "nines", "split"):
 stage = st.session_state.get("stage", "intro")
 {"intro": intro, "map": map_stage, "encounter": encounter_stage, "quiz": quiz,
  "results": results, "mastery": mastery_stage, "boss": boss_stage,
- "skirmish": skirmish_stage, "coach": coach_stage, "finale": finale_stage}[stage]()
+ "skirmish": skirmish_stage, "coach": coach_stage, "finale": finale_stage,
+ "parents": parents_stage}[stage]()
