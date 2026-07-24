@@ -118,26 +118,32 @@ ONBOARDING_TEMPLATE = r"""
     <div id="copy">
       <div class="beat on" data-s="1">
         <h1>Gemma Monsters</h1>
-        <p>Five monsters guard a citadel. Each one is a trick - a wrong idea that feels right.</p>
+        <p>Five monsters. One citadel. Every single one of them wants you to get it wrong.</p>
       </div>
       <div class="beat" data-s="2">
         <h2>The Five</h2>
-        <p>One monster for every strand of your maths. Learn their faces before you meet them.</p>
+        <p>Each one has a favourite way of tripping you up - a wrong move that
+           feels completely right, right up until it isn't. Learn their faces
+           now. You will be seeing them.</p>
       </div>
       <div class="beat" data-s="3">
         <h2>How a battle goes</h2>
-        <p>You face one monster, and you answer the questions it puts to you.</p>
-        <p class="tight">You beat it by proving its trick no longer fools you - never by luck.</p>
+        <p>Walk into its lair and it starts throwing questions - all of them bent
+           around its own favourite trick.</p>
+        <p class="tight">Lucky guesses will not save you here. It only goes down when
+           you can show it exactly why its trick stopped working.</p>
       </div>
       <div class="beat cold" data-s="4">
         <h2>The Collector</h2>
-        <p>He is not one of the five. He comes for a student who keeps failing, and he takes
-           back the arithmetic they should already own.</p>
+        <p>The five are pests. He is something else. He waits for the students who keep
+           slipping, and he takes back the maths they were supposed to already own -
+           and he takes it against a clock.</p>
       </div>
       <div class="beat" data-s="5">
-        <h2>It all runs here</h2>
-        <p>Every monster, every question and every answer stays on this laptop.
-           Nothing a student does ever leaves it.</p>
+        <h2>One last thing</h2>
+        <p>No internet. No cloud. No one looking over your shoulder.
+           Every monster in here lives on this laptop - and whatever happens
+           in this castle stays in this castle.</p>
       </div>
     </div>
     <div id="labels"></div>

@@ -1,68 +1,70 @@
 # GEMMA MONSTERS — an on-device math adventure powered by Gemma
 
-*Edge / On-Device track. An autonomous local tutor in a monster-battling castle: Gemma hunts the trick — the wrong idea that feels right — behind every wrong answer, and teaches until it is gone.*
+*Edge / On-Device track. A local tutor in a monster-battling castle: Gemma hunts the trick — the wrong idea that feels right — behind every wrong answer, teaches until it is gone, and writes home to mum and dad.*
 
 ## The problem
 
-Grade 9 students preparing for Ontario's EQAO assessment (MTH1W) do not fail randomly. Behind most wrong answers sits a specific trick — a wrong idea that feels right: "add fractions straight across," "mean and median are basically the same." Typical practice apps mark the answer wrong and move on; the trick stays. Cloud tutors can do better, but they need connectivity, ship a child's work to a server, and confidently invent mathematics when they hallucinate. A school-ready tutor needs three things at once: a diagnosis of *why* the student was wrong, teaching that adapts when the first explanation fails, and complete privacy on modest local hardware.
+Grade 9 students preparing for Ontario's EQAO assessment (MTH1W) do not fail randomly. Behind most wrong answers sits a specific trick — a wrong idea that feels right: "add fractions straight across," "mean and median are basically the same." Practice apps mark the answer wrong and move on; the trick stays. Cloud tutors do better, but they need connectivity, ship a child's work to a server, and invent mathematics when they hallucinate. A school-ready tutor needs four things at once: a diagnosis of *why* the student was wrong, teaching that adapts when the first explanation fails, a parent who can see it, and privacy on modest local hardware.
 
 ## The game
 
-The front door is the Citadel: a gothic castle nexus built in three.js, with a drag-orbit camera and five monsters idling on floating platforms — Quaternius CC0 models with hand-curated animations. Each guards one curriculum strand: Fractis (Number), Equazor (Algebra), Statiq (Data), Polygor (Geometry & Measurement), Ledgerling (Financial Literacy). At the heart of the castle stands a sealed golden gate. Someone is locked in the keep; defeating all five monsters breaks the seal — the rescue arc and finale.
+A new challenger opens on a skippable five-beat introduction, staged in the game's 3D world with the real models: the title, the five in a row with the strand each guards, how a battle is won, the Collector arriving in colder light, and the promise that every question and answer stays on this laptop.
 
-The game captures your hero name once. Click a monster and it confronts you in a full-screen encounter cinematic, by name — and because Gemma writes a battle memory line from your record, it *remembers* you: return after a loss and it gloats. The battle is the strand's quiz from a verified 55-question bank; the battle report shows exactly what got you, then hands off to a Gemma-grounded study guide with real exponent and fraction notation.
+Then the Citadel: a gothic castle nexus in three.js, drag to orbit, five Quaternius CC0 monsters idling on floating platforms with hand-curated animations — Fractis (Number), Equazor (Algebra), Statiq (Data), Polygor (Geometry & Measurement), Ledgerling (Financial Literacy) — under a sealed golden gate. Someone is locked in the keep; beating all five breaks the seal. Click a monster and it confronts you full-screen, by name, and because Gemma writes its greeting from your record it *remembers* you: return after a loss and it gloats. The battle is that strand's quiz from the verified bank; the report names what got you, then hands off to a Gemma-grounded study guide.
 
-Mastery drops a relic — a trophy Gemma forges from what you actually overcame. Struggle, and escalation summons THE COLLECTOR: a giant skull boss running a client-side mental-math speed trial — three lives, under attack. His three lieutenants hold the training grounds — Twinfang (doubles), The Niner (nines), Splitjaw (make-a-ten) — each a 90-second war-clock skirmish with streak escalation. Before a skirmish, Gemma whispers the lane's mental strategy; after, miss and latency telemetry feed GET COACHED BY GEMMA: Gemma names your miss pattern, teaches the fix, sets a three-question drill. A procedural WebAudio soundscape — no audio files — scores it all.
+Mastery drops a relic Gemma forges from what you overcame. Struggle, and escalation summons THE COLLECTOR: a giant skull running a client-side mental-math speed trial — three lives, under attack, his own looping theme. His lieutenants hold the training grounds — Twinfang (doubles), The Niner (nines), Splitjaw (make-a-ten) — 90-second skirmishes with a cue on every correct answer, Gemma whispering the lane's strategy first and coaching from your misses after. One **Sound** switch in the citadel header governs all of it.
 
 ## The agent under the hood
 
-Beneath the game runs an autonomous mastery loop: TEACH → CHECK → EVALUATE → ADAPT. The agent teaches against the diagnosed trick through a fixed ladder of pedagogies, then poses a check question the student has never seen, and evaluates both the answer *and* the student's typed reasoning — a right answer with shaky reasoning does not count toward mastery. When a lesson does not land, Gemma picks the next strategy from the remaining ladder and states its rationale on screen. Every agent decision — strategy switch, count/no-count, mastery, escalation — shows its why. Mastery ends with a forged relic. Ladder exhaustion ends with the Collector *and* a Gemma-written report for mum and dad: what was diagnosed, what was tried, what to try at home. The agent never gives up silently — it hands the student to a human.
+Beneath the game runs an autonomous mastery loop: TEACH → CHECK → EVALUATE → ADAPT. The agent teaches the diagnosed trick through a set ladder of pedagogies, poses a check question the student has never seen, and evaluates both the answer *and* the typed reasoning — a right answer with shaky reasoning does not count. Gemma answers that reasoning out loud too, in the citadel's voice, naming the idea in their own words that held up or slipped; fishing for compliments earns a warning that the monsters ahead only fall to real reasoning. When a lesson does not land, Gemma picks the next approach and says why. Every decision shows its evidence.
+
+Gemma also directs the session: after a battle it chooses which monster to hunt next, outside the Collector's arena which lieutenant to drill, and names the evidence from the run. Plain code owns the candidate list — real, still-open fights only — and rejects any answer that does not name one, so the director can never invent a destination or send a student somewhere already beaten.
+
+## The parents
+
+Every note the agent writes goes to a letters-home page, reachable from a button pinned to each screen. Notes go home after **any** battle where something was missed — not only when a run falls apart — because a parent who hears from us only on the worst days cannot see a pattern, or progress. Beating a trick is a letter too, with the evidence behind the call. Letters persist to disk, so closing the tab does not lose them.
+
+From that page a parent presses one button and gets a printable practice sheet: up to ten questions on one trick, working space under each, an answer key on its own page — a standalone document, no fonts, no scripts, no requests. Verified bank items fill it first; anything Gemma writes must solve its own question again, blind to the key it just wrote, and agree, or it never reaches the paper. On screen a bad key costs one silent retry; on a printed sheet it would cost a parent's evening.
 
 ## Where Gemma does the thinking
 
-Every model call passes through one auditable door — `ask_gemma()` in `gemma_client.py` — each site constrained so a model mistake cannot corrupt the loop:
+Every model call passes through one auditable door — `ask_gemma()` — each site constrained so a model mistake cannot corrupt the loop:
 
 | Call site | What Gemma does | Guardrail |
 |---|---|---|
-| Study-guide explanations | Explains the student's specific error | Facts come from the verified bank; never recomputes or states new numbers |
-| Mastery lessons | Writes a strategy-specific lesson per ladder rung | Recipe fixed by the ladder; grounded in the verified worked solution |
-| Reasoning grading | Classifies typed reasoning: RESOLVED / SHALLOW / SAME_ERROR | Closed label set; fails open; shaky reasoning blocks mastery, never punishes |
-| Strategy choice | Picks the next teaching strategy, with a stated rationale | Restricted to the remaining ladder; deterministic fallback on parse failure |
-| Fresh check questions | Authors one as JSON when the bank runs dry | Must pass a blind self-solve audit before a student ever sees it |
-| Relic forging | Names and inscribes the relic from the student's real battle | Flavor only; may not make mathematical claims |
-| Battle memory lines | One encounter line recalling the student's history | Grounded in logged results; a stock line stands in if generation fails |
-| Strategy whispers | Teaches the lane's mental strategy before a skirmish | Strategy fixed per lane; Gemma phrases it, never picks it |
-| Telemetry coaching | Reads miss + latency data, names the miss pattern, sets a 3-question drill | Telemetry computed client-side; drill stays inside the lane's fact family |
-| Reports for mum and dad | Interprets the record; proposes kitchen-table activities | Scores, diagnosed tricks, and strategies tried are computed deterministically and injected; Gemma writes only interpretation |
+| Direction | Picks the next monster or lieutenant, naming the evidence | Candidates built in code, any other reply refused; the record it gets is declared complete, so no history can be invented |
+| Study guides | Explains the student's specific error | Facts come from the bank; never recomputes or states new numbers |
+| Mastery lessons | A lesson per rung of the teaching ladder | Recipe set by the ladder; grounded in the verified solution |
+| Reasoning grading | Classifies typed reasoning: RESOLVED / SHALLOW / SAME_ERROR | Closed label set; fails open; shaky reasoning blocks mastery |
+| Answering the student | Reacts to their typed words | Comment only; the grader decides what counts |
+| Approach choice | Picks the next rung, and why | Restricted to the remaining ladder; deterministic fallback |
+| Fresh check questions | Authors one as JSON when the bank runs dry | Must pass a blind self-solve audit first |
+| Printable practice | Fills a parent's sheet when the bank runs short | Same audit, plus a call budget: a short sheet beats an unverified one |
+| Relics and greetings | Names the trophy; recalls the student's history | Flavour only; no mathematical claims |
+| Skirmish coaching | Names the miss pattern and sets a drill | Telemetry computed client-side; the drill stays in the lane |
+| Reports for mum and dad | Interprets the record; proposes kitchen-table activities | Scores, tricks and approaches tried are computed in code |
 
-Equally deliberate is what Gemma may *not* do: grade multiple-choice answers (ground-truth key), diagnose the trick behind a wrong answer (every wrong option is trick-tagged in the bank), or decide loop termination (hard caps in plain code). The model does the thinking; it is never the source of mathematical truth.
+Equally deliberate is what Gemma may *not* do: grade multiple-choice answers, diagnose the trick behind a wrong answer, choose a destination off the list, or decide when the loop ends. It does the thinking; it is never the source of mathematical truth.
 
 ## Reliability engineering
 
-- **Verified bank.** All 55 questions carry worked solutions, and every wrong option is tagged with the trick it reveals — diagnosis is a deterministic table lookup.
-- **Grounding rule.** The model never recomputes math shown to students. Every generation prompt carries the verified solution with an explicit instruction: do not invent numbers or redo the calculation.
-- **Bank-first, audit-second.** Check questions come from unused verified items wherever possible. When Gemma must author one, it is used only if Gemma can then solve it blind — without seeing its own answer key — and agree with itself. Failures are discarded.
-- **Hard caps.** Check attempts, a model-call budget, and ladder exhaustion each force the hand-off to mum and dad. The loop terminates regardless of model behavior.
-- **Fail-open grading.** An unparseable grader reply defaults to RESOLVED; a model hiccup can never punish a student.
+- **Verified bank.** 55 questions, every one inside what the EQAO Grade 9 assessment covers and mapped to a published MTH1W expectation, each with a worked solution and every wrong option tagged with the trick it reveals — so diagnosis is a table lookup, not a guess. The key is balanced across A–D so it cannot be gamed, and wrong-answer notes are keyed to the answer's *text*, never its letter, so they stay true however options are ordered.
+- **Grounding rule.** The model never recomputes math shown to students; the verified solution rides in every prompt as the only math it may state.
+- **Bank-first, audit-second.** Verified items are always preferred; anything generated must survive the blind self-solve, on screen and on paper.
+- **Hard caps.** Check attempts, call budgets and ladder exhaustion each force termination — the hand-off to mum and dad, or a shorter sheet.
+- **Fail-open grading.** An unparseable grader reply defaults to RESOLVED; a hiccup can never punish a student.
+- **Clean notation.** Model output arrives studded with LaTeX. We strip it, render true stacked fractions and exponents ourselves, and decide per dollar sign whether it is money or a delimiter.
 
-Testing across model sizes shaped this architecture. The 1B invented wrong arithmetic while re-explaining a solution — hence the grounding rule. It generated a question with a wrong answer key — hence bank-first plus the blind audit. And it under-detects shallow reasoning that the 12B catches on identical prompts — evidence that the guardrails, not the model, carry correctness, while model size dials quality.
+Testing across model sizes shaped every one of those rules. The 1B invented arithmetic while re-explaining a solution; it wrote a question with a wrong answer key; asked to choose a destination, it narrated a history the student never had. Hence grounding, the blind audit, the closed candidate list. It also under-detects shallow reasoning the 12B catches on identical prompts: the guardrails carry correctness, model size dials quality.
 
 ## Edge story
 
-Everything runs on-device. Gemma serves locally through Ollama: `gemma3:12b` is the primary brain; `gemma3:1b` is the light option for modest hardware — `GEMMA_MODEL` switches every call site in place. The three.js library and all monster models are vendored into the repo; the soundscape is synthesized in WebAudio, so there are no audio files, no CDNs, no external requests. The whole experience works offline. No accounts, no data collection: a student's work never leaves their machine. A companion Kaggle notebook reproduces the agent loop on cloud GPU with Gemma 4 12b-it.
-
-## Challenges overcome
-
-- **Sandboxed component iframes.** Streamlit renders components in iframes that cannot navigate their parent page. We redesigned the flow around what the sandbox allows instead of fighting the platform.
-- **The model inventing arithmetic.** The 1B confidently produced wrong math mid-explanation. We stopped asking the model to compute at all: the verified solution rides in every prompt as the only math it may state.
-- **Wrong generated answer keys.** Caught in testing; solved structurally with the blind self-solve audit rather than prompt tweaks.
-- **Notation rendering.** Model output arrived studded with LaTeX. We strip it, render true stacked fractions and exponents ourselves, and fixed currency dollar signs being parsed as math delimiters.
-- **Animation curation.** CC0 packs ship dozens of clips per model, most wrong for a castle guard; each monster's ambient and fight clips were hand-picked and re-timed.
+Everything runs on-device. Gemma serves through Ollama: `gemma3:12b` is the primary brain, `gemma3:1b` the light option — `GEMMA_MODEL` switches every call site in place. three.js, the monster models and the audio themes are vendored into the repo; battle stingers are synthesized in WebAudio. No CDNs, no external requests, no accounts, no data collection. The letters written about a child stay on that family's machine. A companion Kaggle notebook reproduces the loop on cloud GPU.
 
 ## What's next
 
-Adaptive difficulty from the bank's difficulty tags; a walkable hero in the Citadel; more lieutenants for more fact families; multi-grade banks; a home pilot where the reports land with real mums and dads.
+Adaptive difficulty from the bank's difficulty tags; a walkable hero in the Citadel; more lieutenants; multi-grade banks; a home pilot where the letters land with real parents.
 
 ## Credits
 
-Built with Google's Gemma, running locally via Ollama. Monster and boss models by Quaternius, CC0 public domain.
+Built with Google's Gemma via Ollama. Monster models by Quaternius, CC0. Themes generated with ElevenLabs.
