@@ -1,11 +1,11 @@
 """
 mastery.py  —  the autonomous mastery loop.
 
-After the quiz diagnoses a trick, this module keeps the agent working the
+After the quiz diagnoses a snare, this module keeps the agent working the
 problem until the student demonstrates understanding or a safety cap trips:
 
     TEACH (Gemma, strategy-specific lesson)
-      -> CHECK (a fresh question on the same trick)
+      -> CHECK (a fresh question on the same snare)
       -> EVALUATE (deterministic when the check question comes from the bank)
       -> ADAPT (plain code: mastery, next strategy, or parent hand-off)
 
@@ -26,7 +26,7 @@ from selection import next_on_idea
 # ---- the strategy ladder: each entry is a different way to teach ----
 STRATEGY_LADDER = [
     ("Direct correction",
-     "State the trick plainly ('you might think..., but actually...'), "
+     "State the snare plainly ('you might think..., but actually...'), "
      "explain the correct rule in 2-3 sentences, then show one fully worked example."),
     ("Visual walkthrough",
      "Teach it with a picture built from words: a number line, an area model, "
@@ -294,7 +294,7 @@ def _grade_reasoning(session: MasterySession, check: dict, chosen_label: str,
         f"word from this list and nothing else:\n"
         f"RESOLVED  (their reasoning shows the concept is genuinely understood)\n"
         f"SHALLOW   (right answer but the reasoning is missing, circular, or lucky)\n"
-        f"SAME_ERROR (their reasoning still shows the trick: "
+        f"SAME_ERROR (their reasoning still shows the snare: "
         f"{session.trick_name})"
     )
     m = re.search(r"\b(RESOLVED|SHALLOW|SAME_ERROR)\b", raw.upper())
@@ -315,14 +315,14 @@ def _reaction(session: MasterySession, explanation: str, correct: bool,
         return ""
     session.gemma_calls += 1
     quality = {"RESOLVED": "solid", "SHALLOW": "thin or missing",
-               "SAME_ERROR": "still caught in the trick"}.get(label, "solid")
+               "SAME_ERROR": "still caught in the snare"}.get(label, "solid")
     verdict = (f"their answer was correct and their reasoning was judged {quality}"
                if correct else "their answer was wrong")
     raw = ask_gemma(
         f"TASK: react\n"
         f"You are the voice of a monster citadel in a math game - dry wit, a "
         f"little theatrical, never mean, and you take real effort seriously.\n"
-        f"A Grade 9 challenger is battling the trick '{session.trick_name}'; "
+        f"A Grade 9 challenger is battling the snare '{session.trick_name}'; "
         f"{verdict}.\n"
         f"In the reasoning box they typed: \"{explanation.strip()[:400]}\"\n"
         f"Write ONE or TWO short sentences, in English, reacting directly to "
@@ -348,7 +348,7 @@ def _choose_strategy(session: MasterySession, explanation: str) -> str:
         raw = ask_gemma(
             f"TASK: choose\n"
             f"TRICK: {session.trick_name}\n"
-            f"A student still has this trick after a lesson. Their own "
+            f"A student still has this snare after a lesson. Their own "
             f"words about their thinking: \"{explanation}\"\n"
             f"Which teaching approach should be tried next? Reply with ONLY JSON: "
             f'{{"strategy": "<one of: {names}>", "why": "<one short sentence>"}}'
@@ -471,7 +471,7 @@ def escalation_report(session: MasterySession) -> str:
         "Write a brief, warm report for the PARENTS of a Grade 9 student whom an AI "
         "tutor worked with but could not bring to mastery. Use ONLY these facts; do not "
         "invent numbers.\n"
-        f"Trick: {session.trick_name}.\n"
+        f"Snare: {session.trick_name}.\n"
         f"The tutor tried these teaching approaches, in order, and none fully worked: "
         f"{', '.join(tried) or 'none'}.\n"
         f"Across {len(answers)} follow-up questions the student got {right} correct.\n"
@@ -481,7 +481,7 @@ def escalation_report(session: MasterySession) -> str:
         "First, TWO sentences: the underlying misunderstanding, and what the session "
         "showed about where the student improved and where they are still stuck.\n"
         "Then a line exactly 'Try at home:' followed by THREE specific interventions "
-        "(each on its own line starting with '- ') targeting this trick - and "
+        "(each on its own line starting with '- ') targeting this snare - and "
         "different from the tutoring approaches that already failed above.",
         max_new_tokens=400))
 

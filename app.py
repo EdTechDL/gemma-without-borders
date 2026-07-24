@@ -5,7 +5,7 @@ Run it:   streamlit run app.py
 
 Flow:  take a short quiz  ->  submit  ->  score + a personalized study guide the
 AGENT builds from your wrong answers (explanation + fresh practice per mistake),
-plus the agent's read on your #1 trick and a parent hand-off if needed.
+plus the agent's read on your #1 snare and a parent hand-off if needed.
 """
 import json
 import re
@@ -428,7 +428,7 @@ def reset():
 
 
 def start_mastery(result, analysis):
-    """Enter the autonomous practice loop, targeting the priority trick."""
+    """Enter the autonomous practice loop, targeting the priority snare."""
     pid = analysis["priority"]["id"]
     seed = next(w for w in result["wrong"]
                 if w["trick"] and w["trick"].get("id") == pid)
@@ -461,7 +461,7 @@ def intro():
     st.caption("Simple mode — same brain, no monsters underfoot. Runs privately on device.")
     st.write(
         "Take a short quiz. When you submit, the agent identifies why you missed "
-        "what you missed, teaches you past each trick, and gives you a fresh "
+        "what you missed, teaches you past each snare, and gives you a fresh "
         "question to confirm you understand."
     )
     col1, col2 = st.columns(2)
@@ -486,7 +486,7 @@ def intro():
 
 
 # ---------------- GEMMA MONSTERS (optional, additive game layer) ----------------
-# Every unit is guarded by a Gemma Monster — a personified trick. The hub
+# Every unit is guarded by a Gemma Monster — a personified snare. The hub
 # is a 3D nexus (three.js, bloom). Clicking a monster shows its game card; Begin
 # enters that unit's real quiz via ?station=. Deliberately NOT the app's clean
 # design language — it's a different world.
@@ -684,7 +684,10 @@ __VENDOR__
 <script>
 window.addEventListener('load', function(){
 // The citadel owns the whole phone screen; the relic shelf scrolls under it.
-GWB.holdFrame(0, 420);
+// On a phone with the tap-to-pick list below, it gives that list room to peek
+// so a thumb never has to guess there is more under a full-screen scene.
+// __FIT_RESERVE__ is 0 on desktop and on a phone that chose "Computer".
+GWB.holdFrame(__FIT_RESERVE__, 420);
 const UNITS = __UNITS__, HERO = __HERO__;
 const NAMES = Object.keys(UNITS);
 let base='/';
@@ -1526,9 +1529,14 @@ def _hub_html():
                 "clipA": m.get("clip_ambient", ""), "spA": m.get("sp_ambient", 0.8),
                 "ns": m.get("ns", 1.0)}
             for n, m in MONSTERS.items()}
+    # On a phone the tap-to-pick list sits below the scene; reserve room for it
+    # so it peeks above the fold. 0 everywhere else, so desktop and a phone that
+    # chose "Computer" keep the full-bleed citadel unchanged.
+    reserve = 430 if st.session_state.get("device") == "phone" else 0
     return (_HUB_TEMPLATE
             .replace("__VENDOR__", _vendor_js())
             .replace("__UNITS__", json.dumps(data))
+            .replace("__FIT_RESERVE__", str(reserve))
             .replace("__HERO__", json.dumps(
                 st.session_state.get("player_name", ""))))
 
@@ -1633,14 +1641,45 @@ def onboard_stage():
         if n:
             st.session_state.player_name = n[:24][:1].upper() + n[:24][1:]
 
-    name_col, skip_col, go_col = st.columns([3, 2, 2])
-    name_col.text_input("Your name, challenger", key="onboard_name",
-                        placeholder="What should the monsters call you?",
-                        label_visibility="collapsed", on_change=_remember)
+    # The device probe: a hidden text field the intro scene writes the real
+    # viewport's verdict into (see onboarding.py). It is pulled out of the flow
+    # so it costs nothing on screen - the scene reaches it by class name.
+    st.markdown('<style>[class*="st-key-onboard_device_probe"]{position:absolute;'
+                'width:1px;height:0;overflow:hidden;clip:rect(0 0 0 0);'
+                'margin:0;padding:0;opacity:0;pointer-events:none}</style>',
+                unsafe_allow_html=True)
+
+    def _device_probe():
+        v = (st.session_state.get("onboard_device_probe") or "").strip().lower()
+        # The measurement chooses the DEFAULT once; after that the toggle is the
+        # player's, so a later re-measure can never yank their choice back.
+        if v in ("phone", "desktop") and not st.session_state.get("_device_probed"):
+            st.session_state["_device_probed"] = True
+            st.session_state["device_pick"] = "Phone" if v == "phone" else "Computer"
+
+    st.text_input("device probe", key="onboard_device_probe",
+                  label_visibility="collapsed", on_change=_device_probe)
+    if "device_pick" not in st.session_state:
+        st.session_state["device_pick"] = "Phone"   # provisional until the probe
+
+    st.text_input("Your name, challenger", key="onboard_name",
+                  placeholder="What should the monsters call you?",
+                  label_visibility="collapsed", on_change=_remember)
+    go_col, skip_col = st.columns(2)
     go_col.button("Enter the citadel", key="enter_citadel", type="primary",
                   use_container_width=True, on_click=_enter)
     skip_col.button("Skip the introduction", key="skip_onboard",
                     use_container_width=True, on_click=_enter)
+
+    # How are you playing? Pre-selected from the real screen width, overridable.
+    # A phone gets a big tap-to-pick monster list in the citadel; a computer
+    # orbits the 3D nexus exactly as before.
+    st.markdown('<style>[class*="st-key-device_pick"] [role="radiogroup"]{gap:8px}'
+                '[class*="st-key-device_pick"] label{min-width:120px}</style>',
+                unsafe_allow_html=True)
+    pick = st.radio("How are you playing?", ["Phone", "Computer"],
+                    key="device_pick", horizontal=True)
+    st.session_state["device"] = "phone" if pick == "Phone" else "desktop"
 
     _named = st.session_state.get("player_name", "")
     if _named:
@@ -1746,20 +1785,20 @@ def parents_stage():
         if pv.get("reading"):
             note("What this says", esc_note(pv["reading"]))
 
-        # ---- printable practice, one sheet per trick ----
-        tricks, seen = [], set()
+        # ---- printable practice, one sheet per snare ----
+        snares, seen = [], set()
         for l in letters:
             t = (l.get("trick_id"), l.get("trick_name"), l.get("strand"))
             if t[0] and t[0] not in seen:
-                seen.add(t[0]); tricks.append(t)
-        if tricks:
+                seen.add(t[0]); snares.append(t)
+        if snares:
             st.divider()
             st.subheader("Practice you can print")
-            st.caption("Ten questions on one trick, with the working space and an "
+            st.caption("Ten questions on one snare, with the working space and an "
                        "answer key. Verified bank questions come first; Gemma writes "
                        "any extra ones and must solve each of them again, blind, "
                        "before it goes on the paper.")
-            for tid, tname, tstrand in tricks:
+            for tid, tname, tstrand in snares:
                 key = f"sheet_{tid}"
                 cols = st.columns([3, 2])
                 cols[0].markdown(f"**{tname}**  \n<span style='color:#a99'>{tstrand}"
@@ -2208,7 +2247,7 @@ window.addEventListener('load', function(){
   }
   addBrazier(-4.4,0.4); addBrazier(4.4,0.4);
 
-  // ---- embers drifting up from the flames (same trick as the hub) ----
+  // ---- embers drifting up from the flames (same snare as the hub) ----
   const EMBERS=120;
   const eGeo=new THREE.BufferGeometry();
   const ePos=new Float32Array(EMBERS*3);
@@ -2908,7 +2947,7 @@ window.addEventListener('load', function(){
   const LANE="__LANE__", TOTAL=90;
   const LINES_HIT=["Snap. That one is ours now.","Wrong. The Collector pays me per mistake.",
     "Slower than the rumors said, __HERO__.","Feel that? That was a number leaving you."];
-  const LINES_OK=["Tch. Faster than you look.","Keep it. For now.","One trick. Anyone can do one trick.",
+  const LINES_OK=["Tch. Faster than you look.","Keep it. For now.","One snare. Anyone can do one snare.",
     "The Collector will not be pleased with me, __HERO__."];
   function ri(a,b){ return a+Math.floor(Math.random()*(b-a+1)); }
   function evenIn(a,b){ let n=ri(a,b); if(n%2) n+=(n<b?1:-1); return n; }
@@ -3124,7 +3163,7 @@ def skirmish_stage():
             from gemma_client import ask_gemma, plainify
             st.session_state[wkey] = plainify(ask_gemma(
                 "TASK: explain\nIn TWO short sentences, teach a Grade 9 student the "
-                f"mental-math trick of {lt['whisper']} Plain text, encouraging, no examples "
+                f"mental-math snare of {lt['whisper']} Plain text, encouraging, no examples "
                 "longer than one, address them as a warrior sharpening a blade.",
                 max_new_tokens=90))
         except Exception:
@@ -3175,7 +3214,7 @@ def coach_stage():
                 f"best streak {d.get('streak')}. The exact questions they MISSED: "
                 f"{', '.join(misses) if misses else 'none - a clean sweep'}.\n"
                 "In plain text (no LaTeX): (1) name the specific pattern you see in those "
-                "misses in one sentence; (2) teach the ONE mental trick that fixes it, in two "
+                "misses in one sentence; (2) teach the ONE mental snare that fixes it, in two "
                 "sentences; (3) give a mini drill of exactly three practice questions of that "
                 "type (questions only, no answers). If they missed nothing, congratulate them "
                 "and raise the challenge with three harder questions of the same skill.",
@@ -3211,7 +3250,7 @@ html,body{margin:0;background:#050308;overflow:hidden;font-family:'Trebuchet MS'
 <div id="stage"><div id="v"></div>
   <div id="hud3">
     <div id="ftitle">THE SEAL BREAKS</div>
-    <div id="fsub">Five tricks defeated. The gate opens, __HERO__ — the one they kept from you steps into the light.</div>
+    <div id="fsub">Five snares defeated. The gate opens, __HERO__ — the one they kept from you steps into the light.</div>
   </div>
 </div>
 <script>
@@ -3525,11 +3564,62 @@ def hub_relays():
         st.button("For mum and dad", key="relay_go_parents", on_click=to_parents)
 
 
+def _enter_strand(s):
+    """Enter a monster's battle - the same routing the hidden relays fire, so a
+    thumb tapping the phone list lands exactly where a click on the 3D monster
+    would."""
+    st.session_state.update(
+        stage="encounter", enc_strand=s,
+        faced_strands=st.session_state.get("faced_strands", set()) | {s})
+
+
+def phone_monster_list():
+    """A phone cannot comfortably orbit the citadel to tap a small monster, so
+    below the scene it gets a full-width, vertical list of the five - name and
+    the strand each guards - as real buttons. Tapping one enters that battle.
+    Desktop never sees this: it is guarded behind device == 'phone'."""
+    st.markdown(
+        '<style>'
+        # give the list back the page padding the full-bleed map stripped, and
+        # clear the fixed letters-home button in the corner
+        '[class*="st-key-phone_pick_wrap"]{padding:0 14px 78px}'
+        '[class*="st-key-phone_pick_"] button{width:100%;text-align:left;'
+        'justify-content:flex-start;min-height:62px;border-radius:12px;'
+        'border:1px solid rgba(255,236,214,.14);border-left-width:5px;'
+        'background:linear-gradient(160deg,#1c1119,#160e18);color:#f2e8dc;'
+        'text-transform:none;letter-spacing:0;font-weight:700;padding:12px 16px;'
+        'line-height:1.3}'
+        '[class*="st-key-phone_pick_"] button:hover{border-color:#e08d6d;'
+        'box-shadow:0 0 16px rgba(224,141,109,.22)}'
+        '[class*="st-key-phone_pick_"] button p{font-size:1.05rem;font-weight:800}'
+        + "".join(
+            f'.st-key-phone_pick_{_slug(s)} button{{border-left-color:{m["color"]}}}'
+            for s, m in MONSTERS.items())
+        + '</style>', unsafe_allow_html=True)
+    with st.container(key="phone_pick_wrap"):
+        st.markdown('<div class="gwb-kicker" style="margin:.2rem 0 .5rem">'
+                    'Choose your monster</div>', unsafe_allow_html=True)
+        for s, m in MONSTERS.items():
+            st.button(f"{m['monster']}  \n{s}", key=f"phone_pick_{_slug(s)}",
+                      on_click=_enter_strand, args=(s,),
+                      use_container_width=True)
+        d_col, p_col = st.columns(2)
+        d_col.button("Simple dashboard", key="phone_pick_dash",
+                     on_click=to_dashboard, use_container_width=True)
+        p_col.button("For mum and dad", key="phone_pick_parents",
+                     on_click=to_parents, use_container_width=True)
+
+
 def map_stage():
     # full-bleed: strip Streamlit chrome so the game IS the screen (this stage only)
-    full_bleed("0", phone_bottom="0")
+    _phone = st.session_state.get("device") == "phone"
+    # A phone keeps a strip below the scene for the tap-to-pick list, so the
+    # scene must not run to the very bottom edge as it does on a desktop.
+    full_bleed("0", phone_bottom="0" if not _phone else "12px")
     hub_relays()
-    components.html(_hub_html(), height=800, scrolling=False)
+    components.html(_hub_html(), height=340 if _phone else 800, scrolling=False)
+    if _phone:
+        phone_monster_list()
     trophy_shelf()
 
 
@@ -3660,20 +3750,20 @@ def results():
     if priority and priority["id"] in mastered:
         note(
             "Mastered",
-            f"You've beaten the trick that caught you most — "
+            f"You've beaten the snare that caught you most — "
             f"<strong>{priority['name']}</strong>. Well done.",
         )
         st.write("Not feeling fully confident yet? Take another quiz to prove it sticks.")
         st.button("Take another quiz", type="primary", key="again_top", on_click=reset)
     elif priority:
         n = priority["count"]
-        reason = (f"it got you {n} times — more than any other trick"
+        reason = (f"it got you {n} times — more than any other snare"
                   if len(analysis["patterns"]) > 1 and n > 1
                   else "it shows up most clearly in your answers")
         note(
             "Why the agent starts here",
             f"How they got you: <strong>{priority['name']}</strong>. The agent hunts "
-            f"that trick first because {reason}. The study guide starts there.",
+            f"that snare first because {reason}. The study guide starts there.",
         )
         st.button(
             ("Defeat the monster — practice to mastery"
@@ -3744,7 +3834,7 @@ def results():
                         f"&nbsp;&middot;&nbsp;{guide['trick']['name']}</div>",
                         unsafe_allow_html=True)
                 else:
-                    st.caption(f"The trick that got you: {guide['trick']['name']}")
+                    st.caption(f"The snare that got you: {guide['trick']['name']}")
             st.markdown("**Why:** " + esc(guide["explanation"]))
             if guide["worked_solution"]:
                 with st.expander("See the worked solution"):
@@ -3799,12 +3889,12 @@ def results():
                 st.session_state.hunt_pick = agent.direct_next(
                     open_hunts,
                     [f"just scored {result['correct']} of {result['total']}",
-                     "tricks already beaten: " + (", ".join(
+                     "snares already beaten: " + (", ".join(
                          st.session_state.get("mastered_names", [])) or "none yet"),
                      "strands already cleared: " + (", ".join(cleared) or "none yet"),
                      "never attempted: " + (", ".join(
                          s for s in MONSTERS if s not in faced) or "none"),
-                     f"the trick that caught them most today: {priority['name']}"
+                     f"the snare that caught them most today: {priority['name']}"
                      if priority else ""],
                     "The student has just finished a battle. Pick the ONE monster "
                     "they should hunt next.")
@@ -3858,7 +3948,7 @@ def mastery_stage():
     st.markdown('<div class="gwb-kicker">' +
                 ("GEMMA MONSTERS · TRAINING GROUNDS" if st.session_state.get("adventure")
                  else "Autonomous practice") + '</div>', unsafe_allow_html=True)
-    st.title(("Defeat the trick: " if st.session_state.get("adventure") else "Mastering: ")
+    st.title(("Defeat the snare: " if st.session_state.get("adventure") else "Mastering: ")
              + s.trick_name)
 
     # one quiet status line + an escape hatch while practising
@@ -3871,7 +3961,7 @@ def mastery_stage():
 
     # terminal screens
     if s.state == m.MASTERED:
-        # remember it: the results page now shows this trick as beaten
+        # remember it: the results page now shows this snare as beaten
         st.session_state.setdefault("mastered", set()).add(s.trick_id)
         st.session_state.setdefault("mastered_names", []).append(s.trick_name)
         st.session_state.setdefault("defeated_strands", set()).add(s.strand)
@@ -3899,7 +3989,7 @@ def mastery_stage():
              "real understanding, not a lucky guess. That's the evidence bar for mastery.")
         st.code(m.mastery_recap(s))
         # good news belongs in the letters home too, not just the hard news
-        save_letter(f"Beat the trick: {s.trick_name}",
+        save_letter(f"Beat the snare: {s.trick_name}",
                     f"**Good news** — {_hescape(st.session_state.get('player_name', 'your child'))} "
                     f"worked past **{s.trick_name}** ({s.strand}).\n\n"
                     + m.mastery_recap(s)

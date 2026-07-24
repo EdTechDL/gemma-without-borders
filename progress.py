@@ -25,7 +25,7 @@ Three things follow from that split:
     the reply comes back empty, the fallback sentence is used and the parent
     still sees a complete summary.
 
-Written for mum and dad, in the app's house language: a "trick" is the wrong
+Written for mum and dad, in the app's house language: a "snare" is the wrong
 idea that feels right, and a single question is a "check question".
 """
 from __future__ import annotations
@@ -45,14 +45,14 @@ LANE_LABELS = {
 # What each note home was about, said the way a parent would say it.
 LETTER_KINDS = {
     "quiz": "after the diagnostic quiz",
-    "mastery": "celebrating a trick beaten",
-    "escalation": "asking for your help with a trick",
+    "mastery": "celebrating a snare beaten",
+    "escalation": "asking for your help with a snare",
     "report": "a progress note",
 }
 LETTER_KIND_ORDER = ["quiz", "mastery", "escalation", "report"]
 
 # THE READING MAY NOT STATE A FIGURE AT ALL. Checking each number against the
-# record is not enough: "beaten three tricks" borrows the 3 that belongs to the
+# record is not enough: "beaten three snares" borrows the 3 that belongs to the
 # notes count and reads as perfectly true. Pairing a number to the right noun
 # is exactly the judgement a 1b model gets wrong, and we watched it do so. So
 # the rule is absolute and needs no judgement to enforce — every count on this
@@ -200,12 +200,12 @@ def _relic_facts(relics) -> list:
 
 
 # ------------------------------------------------------------- the table
-def _build_rows(tricks, letter_facts, drills, relics) -> list:
+def _build_rows(snares, letter_facts, drills, relics) -> list:
     """Small uniform dicts, ready for st.table / st.dataframe."""
     rows = [{
-        "What": "Tricks beaten",
-        "Count": len(tricks),
-        "Details": _join(tricks) or "none yet",
+        "What": "Snares beaten",
+        "Count": len(snares),
+        "Details": _join(snares) or "none yet",
     }, {
         "What": "Notes written for you",
         "Count": letter_facts["total"],
@@ -247,12 +247,12 @@ def _build_chart(drills: list) -> dict:
     return {"Best score": best, "Latest score": latest}
 
 
-def _build_headline(tricks, letter_facts, drills, relics, trend) -> str:
+def _build_headline(snares, letter_facts, drills, relics, trend) -> str:
     """Computed by code, never by the model."""
-    if not tricks and not letter_facts["total"] and not drills and not relics:
+    if not snares and not letter_facts["total"] and not drills and not relics:
         return "Nothing to show yet — the first battle has not been fought."
-    bits = [_plural(len(tricks), "trick") + " beaten" if tricks
-            else "no tricks beaten yet"]
+    bits = [_plural(len(snares), "snare") + " beaten" if snares
+            else "no snares beaten yet"]
     if letter_facts["total"]:
         bits.append(_plural(letter_facts["total"], "note") + " written for you")
     if relics:
@@ -270,14 +270,14 @@ def _build_headline(tricks, letter_facts, drills, relics, trend) -> str:
 
 
 # --------------------------------------------------------------- the facts
-def _facts_lines(tricks, letter_facts, drills, relics, trend, last_score) -> list:
+def _facts_lines(snares, letter_facts, drills, relics, trend, last_score) -> list:
     """The complete, computed record handed to Gemma. Nothing else is."""
     lines = []
-    if tricks:
-        lines.append(f"Tricks beaten so far: {len(tricks)} "
-                     f"({_join(tricks)}).")
+    if snares:
+        lines.append(f"Snares beaten so far: {len(snares)} "
+                     f"({_join(snares)}).")
     else:
-        lines.append("Tricks beaten so far: 0.")
+        lines.append("Snares beaten so far: 0.")
     if letter_facts["total"]:
         about = ", ".join(f"{b['count']} {b['about']}"
                           for b in letter_facts["breakdown"])
@@ -309,24 +309,24 @@ def _facts_lines(tricks, letter_facts, drills, relics, trend, last_score) -> lis
 
 
 # ------------------------------------------------------------- the reading
-def _fallback_reading(tricks, letter_facts, drills, relics, trend) -> str:
+def _fallback_reading(snares, letter_facts, drills, relics, trend) -> str:
     """Two or three sentences composed straight from the computed facts, used
     whenever the model is unavailable, fails, states a figure of its own or
     oversteps the record. The page always has something true to show."""
-    if tricks:
-        first = (f"So far {_plural(len(tricks), 'trick')} has been beaten"
-                 if len(tricks) == 1 else
-                 f"So far {len(tricks)} tricks have been beaten")
-        first += f" ({_join(tricks)})"
+    if snares:
+        first = (f"So far {_plural(len(snares), 'snare')} has been beaten"
+                 if len(snares) == 1 else
+                 f"So far {len(snares)} snares have been beaten")
+        first += f" ({_join(snares)})"
         first += (f", and {_plural(letter_facts['total'], 'note')} "
                   "went home about the work"
                   if letter_facts["total"] else "")
         first += "."
     elif letter_facts["total"]:
-        first = (f"No tricks have been beaten yet, and "
+        first = (f"No snares have been beaten yet, and "
                  f"{_plural(letter_facts['total'], 'note')} has gone home about "
                  "the work so far." if letter_facts["total"] == 1 else
-                 f"No tricks have been beaten yet, and "
+                 f"No snares have been beaten yet, and "
                  f"{_plural(letter_facts['total'], 'note')} have gone home about "
                  "the work so far.")
     else:
@@ -348,10 +348,10 @@ def _fallback_reading(tricks, letter_facts, drills, relics, trend) -> str:
 
     if any(b["kind"] == "escalation" for b in letter_facts["breakdown"]):
         third = ("The note asking for your help is the one to open first: it "
-                 "names the trick that caught them and gives three things to "
+                 "names the snare that caught them and gives three things to "
                  "try at the kitchen table.")
-    elif tricks:
-        third = (f"A good next step is to ask them to explain {tricks[-1]} back "
+    elif snares:
+        third = (f"A good next step is to ask them to explain {snares[-1]} back "
                  "to you in their own words.")
     elif drills:
         third = ("A good next step is one more 90-second drill, so there is a "
@@ -368,7 +368,7 @@ def _states_a_figure(text: str) -> bool:
     return bool(re.search(r"\d", text) or _SPELLED_NUMBERS.search(text))
 
 
-def _contradicts_record(text: str, tricks: list, drills: list, relics: list,
+def _contradicts_record(text: str, snares: list, drills: list, relics: list,
                         trend: str, has_escalation: bool) -> bool:
     """True if the reading says something the record does not support.
 
@@ -387,7 +387,7 @@ def _contradicts_record(text: str, tricks: list, drills: list, relics: list,
                  r"struggl|behind)", low) and trend != "slipping" \
             and not has_escalation:
         return True
-    if re.search(r"\b(?:beat|master|conquer|defeat|overcome)", low) and not tricks:
+    if re.search(r"\b(?:beat|master|conquer|defeat|overcome)", low) and not snares:
         return True
     if "relic" in low and not relics:
         return True
@@ -401,7 +401,7 @@ def _is_grounded(text: str, names: list) -> bool:
 
     A small model asked to be encouraging will happily produce warm filler that
     would fit any child on any day. That is not a reading of these facts, so it
-    is refused too: the prose has to name something from the record — the trick
+    is refused too: the prose has to name something from the record — the snare
     that was beaten, the drill that was fought, the relic that was earned."""
     low = text.lower()
     return any(name.lower() in low for name in names if len(name) > 3)
@@ -419,8 +419,8 @@ def _ask_for_reading(facts_text: str) -> str:
     raw = ask_gemma(
         "TASK: parent\n"
         "A Grade 9 student is working through a maths game with an on-device "
-        "tutor. In this game a 'trick' is a wrong idea that feels right, and "
-        "beating a trick means two fresh check questions were answered "
+        "tutor. In this game a 'snare' is a wrong idea that feels right, and "
+        "beating a snare means two fresh check questions were answered "
         "correctly with reasoning that held up.\n"
         "THE COMPLETE RECORD of this student's progress — anything not listed "
         "here has NOT happened:\n"
@@ -431,9 +431,9 @@ def _ask_for_reading(facts_text: str) -> str:
         "Rules you must not break:\n"
         "- Use NO numbers at all, in digits or in words. The parents are "
         "already looking at every count in a table beside your sentences, so "
-        "your job is only to say what they mean. Name the trick, the drill or "
+        "your job is only to say what they mean. Name the snare, the drill or "
         "the relic itself instead of counting them.\n"
-        "- Name at least one thing from the record: the trick, the drill or "
+        "- Name at least one thing from the record: the snare, the drill or "
         "the relic, by the exact words used above.\n"
         "- Claim no progress, no struggle, no habit and no result that is not "
         "in the record above.\n"
@@ -453,7 +453,7 @@ def summarise(letters: list, mastered_names: list, skirmish_log: list,
     """The progress summary shown to parents on the letters-home page.
 
     Everything numeric is computed here from the session's own records:
-    the tricks beaten and their names, how many notes went home and what each
+    the snares beaten and their names, how many notes went home and what each
     was about, the best and latest speed-drill score per lane and whether it
     is improving, and the relics earned. Gemma is then handed those finished
     facts and writes 'reading' — two or three sentences of interpretation for
@@ -468,20 +468,20 @@ def summarise(letters: list, mastered_names: list, skirmish_log: list,
         reading  — Gemma's prose, or a deterministic sentence built from the
                    same facts if the model is unavailable or oversteps
     """
-    tricks = _dedupe(mastered_names)
+    snares = _dedupe(mastered_names)
     letter_facts = _letter_facts(letters)
     drills = _drill_facts(skirmish_log)
     relic_facts = _relic_facts(relics)
     trend = _overall_trend(drills)
 
-    rows = _build_rows(tricks, letter_facts, drills, relic_facts)
+    rows = _build_rows(snares, letter_facts, drills, relic_facts)
     chart = _build_chart(drills)
-    headline = _build_headline(tricks, letter_facts, drills, relic_facts, trend)
+    headline = _build_headline(snares, letter_facts, drills, relic_facts, trend)
 
-    facts = _facts_lines(tricks, letter_facts, drills, relic_facts, trend,
+    facts = _facts_lines(snares, letter_facts, drills, relic_facts, trend,
                          last_score)
     facts_text = "\n".join(f"- {line}" for line in facts)
-    fallback = _fallback_reading(tricks, letter_facts, drills, relic_facts, trend)
+    fallback = _fallback_reading(snares, letter_facts, drills, relic_facts, trend)
 
     reading = ""
     if gemma_available():
@@ -492,13 +492,13 @@ def summarise(letters: list, mastered_names: list, skirmish_log: list,
         # the stub text a model-less machine returns is not a reading
         if reading.startswith("_(") or "Install Ollama" in reading:
             reading = ""
-        named = (tricks + [r["name"] for r in relic_facts]
+        named = (snares + [r["name"] for r in relic_facts]
                  + [d["label"] for d in drills])
         escalated = any(b["kind"] == "escalation"
                         for b in letter_facts["breakdown"])
         if reading and (_states_a_figure(reading)
                         or not _is_grounded(reading, named)
-                        or _contradicts_record(reading, tricks, drills,
+                        or _contradicts_record(reading, snares, drills,
                                                relic_facts, trend, escalated)):
             reading = ""
     if not reading:
@@ -520,7 +520,7 @@ if __name__ == "__main__":
         {"n": 1, "title": "After the quiz — adding fractions straight across",
          "body": "...", "kind": "quiz", "trick_id": "T1",
          "trick_name": "adding fractions straight across", "strand": "Number"},
-        {"n": 2, "title": "Beat the trick: adding fractions straight across",
+        {"n": 2, "title": "Beat the snare: adding fractions straight across",
          "body": "...", "kind": "mastery", "trick_id": "T1",
          "trick_name": "adding fractions straight across", "strand": "Number"},
         {"n": 3, "title": "Still stuck on moving a sign across the equals",
@@ -537,7 +537,7 @@ if __name__ == "__main__":
     mod.gemma_available = lambda: False
     out = summarise(LETTERS, MASTERED, SKIRMISH, RELICS, last_score="3 of 5")
     print(json.dumps(out, indent=2))
-    assert out["headline"].startswith("1 trick beaten"), out["headline"]
+    assert out["headline"].startswith("1 snare beaten"), out["headline"]
     assert out["chart"] == {"Best score": {"doubling and halving": 12},
                             "Latest score": {"doubling and halving": 12}}, out["chart"]
     assert len(out["rows"]) == 4, out["rows"]
@@ -554,9 +554,9 @@ if __name__ == "__main__":
 
     # ---- the model invents a number: the reading is refused ----
     mod.ask_gemma = lambda p, max_new_tokens=600: (
-        "Your child has beaten 7 tricks this week and scored 41 on the drills.")
+        "Your child has beaten 7 snares this week and scored 41 on the drills.")
     refused = summarise(LETTERS, MASTERED, SKIRMISH, RELICS, "3 of 5")["reading"]
-    assert "7 tricks" not in refused, refused
+    assert "7 snares" not in refused, refused
     assert refused.startswith("So far"), refused
 
     # ---- warm filler that names none of the facts: also refused ----
@@ -567,14 +567,14 @@ if __name__ == "__main__":
 
     # ---- a count spelled out is refused too: it cannot be checked ----
     mod.ask_gemma = lambda p, max_new_tokens=600: (
-        "Your child has beaten three tricks with adding fractions straight "
+        "Your child has beaten three snares with adding fractions straight "
         "across, and earned a relic. Keep going.")
     spelled = summarise(LETTERS, MASTERED, SKIRMISH, RELICS, "3 of 5")["reading"]
-    assert "three tricks" not in spelled, spelled
+    assert "three snares" not in spelled, spelled
 
     # ---- even a TRUE figure is refused: code prints the counts, not Gemma ----
     mod.ask_gemma = lambda p, max_new_tokens=600: (
-        "Your child has beaten 1 trick, adding fractions straight across.")
+        "Your child has beaten 1 snare, adding fractions straight across.")
     true_but_numeric = summarise(LETTERS, MASTERED, SKIRMISH, RELICS,
                                  "3 of 5")["reading"]
     assert true_but_numeric.startswith("So far"), true_but_numeric
@@ -595,7 +595,7 @@ if __name__ == "__main__":
     kept = summarise(LETTERS, MASTERED, SKIRMISH, RELICS, "3 of 5")["reading"]
     assert kept.startswith("Good news"), kept
     assert "gap" not in kept and "$" not in kept, kept
-    assert "the trick that caught them" in kept, kept
+    assert "the snare that caught them" in kept, kept
 
     # ---- an empty session must not crash ----
     empty = summarise([], [], [], [], "")

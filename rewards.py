@@ -3,7 +3,7 @@ rewards.py  —  Gemma-powered creative features for GEMMA MONSTERS.
 
 Two small pieces of on-device flavor that make the game layer feel alive:
 
-  * forge_relic()        — after a monster's trick is mastered, Gemma forges a
+  * forge_relic()        — after a monster's snare is mastered, Gemma forges a
                            unique collectible relic tied to the exact skill won.
   * battle_memory_line() — at an encounter, the monster speaks ONE line that
                            references the player's real history (past wins,
@@ -30,7 +30,7 @@ def _clean_line(text: str) -> str:
 
 # ------------------------------------------------------------------ RELICS
 def forge_relic(player_name, monster_name, trick_name, attempts, strategies_tried):
-    """Forge a unique collectible relic for defeating a monster's trick.
+    """Forge a unique collectible relic for defeating a monster's snare.
 
     Returns {"name": str, "power": str}. The name is a short mythic item name
     (max 5 words); the power is one sentence, addressed to the player, tied to
@@ -39,7 +39,7 @@ def forge_relic(player_name, monster_name, trick_name, attempts, strategies_trie
     fallback = {
         "name": f"{monster_name}'s Broken Fang",
         "power": (f"Snapped from {monster_name} the moment you conquered "
-                  f"'{trick_name}', {player_name} — that trick can never bite "
+                  f"'{trick_name}', {player_name} — that snare can never bite "
                   f"you the same way again."),
     }
     try:

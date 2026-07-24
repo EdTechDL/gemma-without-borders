@@ -176,9 +176,9 @@ ONBOARDING_TEMPLATE = r"""
       <div class="beat" data-s="3">
         <h2>How a battle goes</h2>
         <p>Walk into its lair and it starts throwing questions - all of them bent
-           around its own favourite trick.</p>
+           around its own favourite snare.</p>
         <p class="tight">Lucky guesses will not save you here. It only goes down when
-           you can show it exactly why its trick stopped working.</p>
+           you can show it exactly why its snare stopped working.</p>
       </div>
       <div class="beat cold" data-s="4">
         <h2>The Collector</h2>
@@ -224,6 +224,34 @@ window.addEventListener('load', function(){
   GWB.holdFrame('auto', 380);
   var ROSTER=__ROSTER__, COLLECTOR=__COLLECTOR__;
   var STEPS=5, step=1;
+
+  // ---- device probe: the only fact Python cannot see for itself ----------
+  // The sandboxed frame reads the REAL viewport (window.parent.innerWidth) and
+  // writes a default into a hidden Streamlit text field, exactly the way the
+  // arenas post a score - native value setter plus an input event. Python turns
+  // that into the pre-selected "How are you playing?" answer; the player can
+  // still override it. Retries because the hidden field may not be mounted in
+  // the parent DOM the instant this scene loads.
+  (function(){
+    function relaySet(key, value){
+      try{
+        var el=window.parent.document.querySelector('.st-key-'+key+' input');
+        if(!el) return false;
+        var set=Object.getOwnPropertyDescriptor(
+          window.parent.HTMLInputElement.prototype,'value').set;
+        set.call(el, value);
+        el.dispatchEvent(new Event('input',{bubbles:true}));
+        return true;
+      }catch(e){ return false; }
+    }
+    var w=0; try{ w=window.parent.innerWidth||0; }catch(e){}
+    var dev=(w>0 && w<760)?'phone':'desktop';
+    var tries=0;
+    (function push(){
+      if(relaySet('onboard_device_probe', dev)) return;
+      if(tries++<25) setTimeout(push,150);
+    })();
+  })();
 
   // ---- leaving: the parent page path plus ?onboarded=1, built at click time ----
   function navBase(){
@@ -416,7 +444,7 @@ window.addEventListener('load', function(){
   addTorch(-8.0,-6.6); addTorch(8.0,-6.6);
   addTorch(-8.0,-10.4); addTorch(8.0,-10.4);
 
-  // ---- warm embers rising off the fires, same trick as the citadel ----
+  // ---- warm embers rising off the fires, same snare as the citadel ----
   var EMBERS=140;
   var eGeo=new THREE.BufferGeometry();
   var ePos=new Float32Array(EMBERS*3);
@@ -845,7 +873,7 @@ def onboarding_html(vendor_js: str, monsters: list, collector: dict) -> str:
     """Render the first-run intro scene.
 
     ``vendor_js``  inlined <script> blocks, e.g. _vendor_js(["three.min.js", "GLTFLoader.js"])
-    ``monsters``   five dicts of {name, model, color, clip, strand, trick}, in strand order
+    ``monsters``   five dicts of {name, model, color, clip, strand, snare}, in strand order
     ``collector``  {name, model, clip} for the Collector (skull.glb / Flying_Idle)
     """
     roster = []

@@ -2,7 +2,7 @@
 tutor.py  —  turns ONE wrong answer into a study-guide card.
 
 Splits cleanly into two kinds of content:
-  * FACTS we already have (no AI needed): the trick name, the correct
+  * FACTS we already have (no AI needed): the snare name, the correct
     answer, and the worked solution from our verified bank.
   * GENERATED content (Gemma's job): a friendly personalized explanation and a
     fresh follow-up practice question. These go through ask_gemma().
@@ -18,7 +18,7 @@ STRATEGIES = ["explanation", "worked_example", "visual", "analogy"]
 
 
 def diagnose(item: dict, chosen_label: str) -> dict | None:
-    """Which trick does this wrong choice reveal? Pure lookup from the
+    """Which snare does this wrong choice reveal? Pure lookup from the
     ground-truth tags — 100% reliable, no model call."""
     for opt in item["options"]:
         if opt["label"] == chosen_label and not opt["is_correct"]:

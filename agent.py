@@ -41,7 +41,7 @@ def grade_quiz(questions: list, answers: dict) -> dict:
 
 
 def analyze(result: dict) -> dict:
-    """The 'decide what to do' step: find the trick pattern across all
+    """The 'decide what to do' step: find the snare pattern across all
     wrong answers and pick the priority one to tackle first."""
     counts = Counter()
     for w in result["wrong"]:
@@ -101,7 +101,7 @@ def direct_next(candidates: list, evidence: list, situation: str) -> dict | None
         raw = ask_gemma(
             "TASK: choose\n"
             "You are the director of a monster citadel, where every monster is one "
-            "math trick a Grade 9 student falls for.\n"
+            "math snare a Grade 9 student falls for.\n"
             f"{situation}\n"
             f"The choices:\n{roster}\n"
             "THE COMPLETE RECORD of this student's run - there is nothing else, "
@@ -134,7 +134,7 @@ def direct_next(candidates: list, evidence: list, situation: str) -> dict | None
 
 
 def teacher_report(result: dict, analysis: dict) -> str:
-    """A report the PARENTS can act on. The FACTS (score, tricks) are
+    """A report the PARENTS can act on. The FACTS (score, snares) are
     deterministic; Gemma writes the interpretation and concrete interventions,
     grounded in those facts."""
     from gemma_client import ask_gemma, plainify, format_teacher_report
@@ -148,17 +148,17 @@ def teacher_report(result: dict, analysis: dict) -> str:
         "You are writing a brief, warm report for the PARENTS of a Grade 9 student, "
         "using ONLY the facts below. Do not invent numbers or facts.\n"
         f"Diagnostic-quiz score: {result['correct']} of {result['total']}.\n"
-        f"Tricks the student showed: {patterns}.\n"
-        f"The trick that caught them most: {focus}.\n\n"
+        f"Snares the student showed: {patterns}.\n"
+        f"The snare that caught them most: {focus}.\n\n"
         "Write, in plain text (no LaTeX, no dollar signs), addressed to the parents "
         "in plain everyday language, no teaching jargon:\n"
         "First, TWO sentences explaining, in everyday words, the wrong idea their child keeps applying "
         "and what it reveals about how the student is thinking.\n"
         "Then a line exactly 'Try at home:' followed by THREE specific, kitchen-table-ready "
         "activities (each on its own line starting with '- ') that target THIS "
-        "trick. Be concrete and doable at the kitchen table in 10 minutes - no teaching jargon.",
+        "snare. Be concrete and doable at the kitchen table in 10 minutes - no teaching jargon.",
         max_new_tokens=380))
 
     header = (f"**Parent report** — scored {result['correct']} of {result['total']} "
-              f"({result['score_pct']}%). The trick that caught them most: **{focus}**.")
+              f"({result['score_pct']}%). The snare that caught them most: **{focus}**.")
     return format_teacher_report(header, narrative)
