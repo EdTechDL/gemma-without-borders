@@ -180,6 +180,12 @@ stroke="%23d9c8bb" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="ro
   position:absolute !important;height:0 !important;min-height:0 !important;
   width:0 !important;margin:0 !important;padding:0 !important;
   overflow:hidden !important;opacity:0 !important}
+/* ...but the letters-home glyph is real UI, not plumbing. Its wrapper still
+   leaves the flow above; this puts its paint back, because the fixed-position
+   button escapes the wrapper's clipping either way - hidden, it was an
+   invisible 46px disc that still swallowed taps in the corner. */
+[data-testid="stVerticalBlock"] > div:has(> [class*="st-key-letters_float"]){
+  opacity:1 !important}
 /* The progress table: st.dataframe renders into a fixed-width canvas that
    clips the long "Details" text off the right edge with no scrollbar on a
    phone. This plain table lets Details wrap instead, so a parent reads the
@@ -556,9 +562,11 @@ _HUB_TEMPLATE = r"""
 
   /* ---- GAME CARD ---- */
   #card{align-self:flex-end;width:300px;margin-top:auto;margin-bottom:8px;opacity:0;transform:translateY(26px) rotate(1.5deg) scale(.96);
-    transition:all .5s cubic-bezier(.16,1,.3,1);pointer-events:auto;
+    transition:all .5s cubic-bezier(.16,1,.3,1);pointer-events:none;
     --mc:#e08d6d}
-  #card.active{opacity:1;transform:translateY(0) rotate(0) scale(1)}
+  /* pointer-events only while shown: the invisible card is a full-width sheet
+     on a phone and would otherwise swallow the taps meant for the monsters */
+  #card.active{opacity:1;transform:translateY(0) rotate(0) scale(1);pointer-events:auto}
   .cardframe{border-radius:16px;padding:7px;
     background:linear-gradient(160deg,var(--mc),#241322 55%,var(--mc));
     box-shadow:0 24px 50px rgba(0,0,0,.85),0 0 34px color-mix(in srgb,var(--mc) 45%,transparent)}
@@ -632,7 +640,7 @@ _HUB_TEMPLATE = r"""
     footer{display:none}
   }
   /* Landscape on a phone: keep the card off the middle of the scene. */
-  @media (max-width:900px) and (max-height:460px){
+  @media (max-width:940px) and (max-height:460px){
     #ui{padding:8px 10px}
     #banner h1{font-size:1.1rem} #banner p{display:none}
     #card{align-self:flex-end;width:262px}
@@ -1441,7 +1449,13 @@ _PHONE_JS = r"""
          if(w>0 && h>0) return {w:w, h:h}; }catch(e){}
     return {w:0, h:0};
   };
-  G.isPhone = function(){ var s=G.parentSize(); return s.w>0 && s.w<=PHONE_MAX; };
+  // A phone held sideways is still a phone: 932px wide, 430 tall. Width alone
+  // called that a desktop, so rotating dropped every scene's controls below
+  // the fold and left the landscape CSS dead. Heights under 460 only ever
+  // belong to phones - desktop windows that squat are vanishingly rare.
+  G.isSideways = function(s){ return s.h>0 && s.h<=460 && s.w<=940; };
+  G.isPhone = function(){ var s=G.parentSize();
+    return s.w>0 && (s.w<=PHONE_MAX || G.isSideways(s)); };
 
   /* Give this scene's own iframe a height that suits the phone screen.
      reserve = the Streamlit controls that must stay visible underneath it, in
@@ -1455,7 +1469,7 @@ _PHONE_JS = r"""
     // sliding away as the page scrolls - cannot re-inflate it to full screen.
     if(window.__gwbFrameLock) return false;
     var s=G.parentSize();
-    if(!s.w || s.w>PHONE_MAX) return false;
+    if(!s.w || (s.w>PHONE_MAX && !G.isSideways(s))) return false;
     if(reserve === 'auto'){
       reserve = 0;
       try{
@@ -1870,12 +1884,25 @@ window.addEventListener('load', function(){
   const sc=new THREE.Scene();
   const cam=new THREE.PerspectiveCamera(38,W/H,0.1,50);
   cam.position.set(0,1.6,4.6); cam.lookAt(0,1.1,0);
+  // Measured once the model loads: height, half-width (diagonal, to cover the
+  // idle sway) and half-depth. The camera backs off far enough for the whole
+  // creature at THIS badge's aspect - a fixed distance cropped wide monsters'
+  // limbs on the narrow phone badge, where frame() alone cannot help (its fov
+  // never reaches the cap at badge aspect, so it never steps back).
+  let hh=0,hw=0,hd=0;
+  function placeCam(){
+    if(!hh){ cam.position.set(0,1.6,4.6); cam.lookAt(0,1.1,0); return; }
+    const t=Math.tan(cam.fov*Math.PI/360);
+    const z=Math.max(3.4, hw*1.08/(t*cam.aspect)+hd, (hh/2)*1.05/t);
+    cam.position.set(0,hh*0.55,z); cam.lookAt(0,hh*0.5,0);
+  }
   function fitBadge(){
     W=Math.max(innerWidth||0,40); H=Math.max(innerHeight||0,40);
     r.setSize(W,H); cam.aspect=W/H;
     // a narrow badge would crop a wide monster: widen the field to suit
     if(window.GWB) GWB.frame(cam,38,1.0,{power:0.5,maxFov:60,maxDist:1});
     else cam.updateProjectionMatrix();
+    placeCam();
   }
   fitBadge();
   addEventListener('resize',fitBadge);
@@ -1889,9 +1916,9 @@ window.addEventListener('load', function(){
     obj.scale.setScalar(2.6/Math.max(sz.x,sz.y,sz.z,0.001));
     const b2=new THREE.Box3().setFromObject(obj), c=b2.getCenter(new THREE.Vector3());
     obj.position.set(-c.x,-b2.min.y,-c.z); sc.add(obj);
-    const hh=b2.max.y-b2.min.y;
-    cam.position.set(0, hh*0.55, 3.4);
-    cam.lookAt(0, hh*0.5, 0);
+    const bs=b2.getSize(new THREE.Vector3());
+    hh=bs.y; hw=Math.hypot(bs.x,bs.z)/2; hd=bs.z/2;
+    placeCam();
     if(g.animations&&g.animations.length){
       mix=new THREE.AnimationMixer(obj);
       const clip=g.animations.find(a=>a.name==="__CLIPPREF__")
@@ -1932,6 +1959,7 @@ html,body{margin:0;background:#0b0710;overflow:hidden;font-family:'Trebuchet MS'
   #bub{max-width:calc(100% - 24px);left:12px;right:12px;font-size:.76rem}
   #win{font-size:.95rem;letter-spacing:.08em}
 }
+#v canvas{cursor:pointer;touch-action:manipulation}
 </style>
 <div id="v"></div>
 <div id="hud">
@@ -1954,7 +1982,8 @@ window.addEventListener('load', function(){
   setInterval(()=>{ li=(li+1)%TAUNTS.length; lineEl.textContent=TAUNTS[li]; },3600);
   const W=innerWidth,H=innerHeight;
   const r=new THREE.WebGLRenderer({antialias:true});
-  r.setSize(W,H); r.outputEncoding=THREE.sRGBEncoding; r.setClearColor(0x0b0710);
+  r.setSize(W,H); r.setPixelRatio(Math.min(devicePixelRatio,2));
+  r.outputEncoding=THREE.sRGBEncoding; r.setClearColor(0x0b0710);
   document.getElementById('v').appendChild(r.domElement);
   const sc=new THREE.Scene();
   const cam=new THREE.PerspectiveCamera(36,W/Math.max(H,1),0.1,60);
@@ -1983,7 +2012,16 @@ window.addEventListener('load', function(){
       const act=mix.clipAction(clip); act.timeScale=__FTS__; act.play();
     }
   });
-  addEventListener('click',()=>{
+  // Hits land on pointerup on the canvas itself, never on a synthesized
+  // click: iOS Safari only synthesizes clicks from taps on elements it deems
+  // clickable, and a bare canvas with a window-level listener is not one -
+  // the monster was untappable on iPhones. The movement guard keeps a scroll
+  // swipe that starts on the canvas from counting as a hit.
+  let hx=0,hy=0;
+  r.domElement.addEventListener('pointerdown',e=>{ hx=e.clientX; hy=e.clientY; });
+  r.domElement.addEventListener('pointerup',e=>{
+    if(e.isPrimary===false||(e.button!==undefined&&e.button>0)) return;
+    if(Math.hypot(e.clientX-hx,e.clientY-hy)>(e.pointerType==='touch'?12:7)) return;
     if(down||!obj) return;
     hp=Math.max(0,hp-9); flash=1;
     document.getElementById('fill').style.width=hp+'%';
@@ -2060,7 +2098,7 @@ html,body{margin:0;background:#0b0710;overflow:hidden;font-family:'Trebuchet MS'
   #next{left:12px;right:12px;bottom:11px;padding:0;height:44px;
     border-radius:10px;font-size:.85rem;width:auto}
 }
-@media (max-width:900px) and (max-height:460px){
+@media (max-width:940px) and (max-height:460px){
   #bub{bottom:10px;width:calc(100% - 84px);left:auto;right:12px;transform:none;
     padding:9px 12px 12px;font-size:.85rem}
   #next{position:static;display:block;margin:8px 0 0;width:100%;height:40px;padding:0}
@@ -2403,7 +2441,7 @@ html,body{margin:0;background:#050308;overflow:hidden;font-family:'Trebuchet MS'
   #endtitle{font-size:1.5rem;letter-spacing:.1em}
   #endsub{font-size:.92rem;line-height:1.4}
 }
-@media (max-width:900px) and (max-height:460px){
+@media (max-width:940px) and (max-height:460px){
   #bsub{display:none}
   #bline{top:auto;bottom:8px;left:62px;right:auto;transform:none;
     max-width:38%;font-size:.75rem}
@@ -2772,7 +2810,7 @@ html,body{margin:0;background:#050308;overflow:hidden;font-family:'Trebuchet MS'
   #endsub{font-size:.92rem;line-height:1.4}
   #coachlink{margin-top:18px;padding:14px 20px;font-size:.92rem}
 }
-@media (max-width:900px) and (max-height:460px){
+@media (max-width:940px) and (max-height:460px){
   #bsub{display:none}
   #bline{top:auto;bottom:8px;left:62px;right:auto;transform:none;
     max-width:38%;font-size:.75rem}
@@ -3633,13 +3671,22 @@ def phone_monster_list():
 
 def map_stage():
     # full-bleed: strip Streamlit chrome so the game IS the screen (this stage only)
-    _phone = st.session_state.get("device") == "phone"
+    _device = st.session_state.get("device")
+    _phone = _device == "phone"
     # A phone keeps a strip below the scene for the tap-to-pick list, so the
     # scene must not run to the very bottom edge as it does on a desktop.
     full_bleed("0", phone_bottom="0" if not _phone else "12px")
     hub_relays()
     components.html(_hub_html(), height=340 if _phone else 800, scrolling=False)
-    if _phone:
+    if _device != "desktop":
+        # A session that skipped onboarding never ran the device probe, so
+        # "device" is unset - and a width-guarded list beats a missing one:
+        # render it and let the real viewport decide. Only an explicit
+        # "Computer" answer drops it entirely.
+        if not _phone:
+            st.markdown('<style>@media (min-width:701px){'
+                        '[class*="st-key-phone_pick_wrap"]{display:none}}</style>',
+                        unsafe_allow_html=True)
         phone_monster_list()
     trophy_shelf()
 
@@ -3669,6 +3716,10 @@ def quiz():
                 '@media (max-width:700px){'
                 '[data-testid="stElementContainer"]:has(iframe){'
                 'position:static !important; width:96px !important;'
+                # flex-basis is the load-bearing override: Streamlit pins the
+                # container at "flex:0 0 170px", so height alone leaves a
+                # 50px dead band under the shrunken badge
+                'flex:0 0 120px !important; height:120px !important;'
                 'right:auto; bottom:auto; margin:0 0 .3rem auto}'
                 '[data-testid="stElementContainer"] iframe{height:120px !important}'
                 '.gwb-taunt{position:static !important;margin:0 0 .2rem;'

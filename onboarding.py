@@ -127,8 +127,10 @@ ONBOARDING_TEMPLATE = r"""
     .beat p.tight{margin-top:4px}
     #labels{bottom:max(11vh,66px);height:max(11vh,46px)}
     .lab{width:22%}
-    .lname{font-size:.71rem;letter-spacing:0}
-    .lstrand{font-size:.66rem;letter-spacing:0;margin-top:2px;
+    /* track the viewport: at a fixed .71rem, LEDGERLING's plate runs into its
+       neighbour on a 390px screen; the clamp only bites below ~437px */
+    .lname{font-size:clamp(.58rem,2.7vw,.71rem);letter-spacing:0}
+    .lstrand{font-size:clamp(.55rem,2.5vw,.66rem);letter-spacing:0;margin-top:2px;
       -webkit-line-clamp:2;display:-webkit-box;-webkit-box-orient:vertical;
       overflow:hidden}
     .ltrick{display:none}
