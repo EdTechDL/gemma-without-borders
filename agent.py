@@ -81,7 +81,7 @@ def teacher_report(result: dict, analysis: dict) -> str:
         "using ONLY the facts below. Do not invent numbers or facts.\n"
         f"Diagnostic-quiz score: {result['correct']} of {result['total']}.\n"
         f"Tricks the student showed: {patterns}.\n"
-        f"Highest-priority gap: {focus}.\n\n"
+        f"The trick that caught them most: {focus}.\n\n"
         "Write, in plain text (no LaTeX, no dollar signs), addressed to the parents "
         "in plain everyday language, no teaching jargon:\n"
         "First, TWO sentences explaining, in everyday words, the wrong idea their child keeps applying "
@@ -92,5 +92,5 @@ def teacher_report(result: dict, analysis: dict) -> str:
         max_new_tokens=380))
 
     header = (f"**Parent report** — scored {result['correct']} of {result['total']} "
-              f"({result['score_pct']}%). Priority gap: **{focus}**.")
+              f"({result['score_pct']}%). The trick that caught them most: **{focus}**.")
     return format_teacher_report(header, narrative)

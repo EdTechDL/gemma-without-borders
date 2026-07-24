@@ -32,10 +32,24 @@ _SYMBOLS = {
 }
 
 
+# House vocabulary: the app talks about "tricks" (the wrong idea that feels
+# right). Model output sometimes reaches for other words; normalize them so
+# every screen speaks one language.
+_VOCAB = [
+    (re.compile(r"\bmisconceptions\b", re.I), "tricks"),
+    (re.compile(r"\bmisconception\b", re.I), "trick"),
+    (re.compile(r"\bconfusing\b", re.I), "mixing up"),
+    (re.compile(r"\bconfused\b", re.I), "mixed up"),
+    (re.compile(r"\bconfusion\b", re.I), "mix-up"),
+]
+
+
 def plainify(text: str) -> str:
     if not text:
         return text
     t = text
+    for pat, rep in _VOCAB:
+        t = pat.sub(rep, t)
     t = t.replace("\\$", "\x00")                       # protect currency (\$ in LaTeX)
     if "\\" in t or "$$" in t:                         # only LaTeX-looking text uses $
         t = t.replace("$$", "").replace("$", "")       # ...as math delimiters; keep

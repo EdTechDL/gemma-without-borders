@@ -231,8 +231,8 @@ def intro():
     st.caption("Simple mode — same brain, no monsters underfoot. Runs privately on device.")
     st.write(
         "Take a short quiz. When you submit, the agent identifies why you missed "
-        "what you missed, teaches each gap, and gives you a fresh question to "
-        "confirm you understand."
+        "what you missed, teaches you past each trick, and gives you a fresh "
+        "question to confirm you understand."
     )
     col1, col2 = st.columns(2)
     strand = col1.selectbox("Topic", ["Mixed"] + STRANDS)
@@ -2188,8 +2188,7 @@ def results():
     else:
         st.title("Results")
     st.session_state.last_score = f"{result['correct']} of {result['total']}"
-    st.metric("Score", f"{result['correct']} / {result['total']}",
-              f"{result['score_pct']}%", delta_color="off")
+    st.metric("Score", f"{result['correct']} / {result['total']}  ·  {result['score_pct']}%")
 
     if not result["wrong"]:
         st.write("A perfect score — nothing got past you this time.")
@@ -2224,20 +2223,20 @@ def results():
     if priority and priority["id"] in mastered:
         note(
             "Mastered",
-            f"You've closed your main gap — <strong>{priority['name']}</strong>. "
-            "Well done.",
+            f"You've beaten the trick that caught you most — "
+            f"<strong>{priority['name']}</strong>. Well done.",
         )
         st.write("Not feeling fully confident yet? Take another quiz to prove it sticks.")
         st.button("Take another quiz", type="primary", key="again_top", on_click=reset)
     elif priority:
         n = priority["count"]
-        reason = (f"you missed it {n} times — more than any other gap"
+        reason = (f"it got you {n} times — more than any other trick"
                   if len(analysis["patterns"]) > 1 and n > 1
-                  else f"it's the clearest gap in your answers")
+                  else "it shows up most clearly in your answers")
         note(
             "Why the agent starts here",
-            f"Your main gap is <strong>{priority['name']}</strong>. The agent tackles this "
-            f"first because {reason}. The study guide starts there.",
+            f"How they got you: <strong>{priority['name']}</strong>. The agent hunts "
+            f"that trick first because {reason}. The study guide starts there.",
         )
         st.button(
             ("Defeat the monster — practice to mastery"
@@ -2247,7 +2246,7 @@ def results():
             help="The agent keeps teaching and checking, switching approaches "
                  "when one doesn't land, until you get two in a row right.",
         )
-    # only nudge the parents when the main gap is still open
+    # only nudge the parents when the priority trick is still open
     if analysis["escalate"] and not (priority and priority["id"] in mastered):
         note(
             "For mum and dad to see",
@@ -2389,7 +2388,7 @@ def mastery_stage():
 
     # terminal screens
     if s.state == m.MASTERED:
-        # remember it: the results page now shows this gap as closed
+        # remember it: the results page now shows this trick as beaten
         st.session_state.setdefault("mastered", set()).add(s.trick_id)
         st.session_state.setdefault("mastered_names", []).append(s.trick_name)
         st.session_state.setdefault("defeated_strands", set()).add(s.strand)
