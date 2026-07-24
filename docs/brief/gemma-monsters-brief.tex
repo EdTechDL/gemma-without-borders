@@ -48,10 +48,10 @@
 % ---------- headings ----------
 \titleformat{\section}
   {\sffamily\Large\bfseries\color{Gold}}{\thesection}{0.6em}{}
-  [\vspace{-0.35em}{\color{Coral}\titlerule[1pt]}]
+  [\vspace{0.35em}{\color{Coral}\titlerule[1pt]}]
 \titleformat{\subsection}
   {\sffamily\large\bfseries\color{Coral}}{\thesubsection}{0.5em}{}
-\titlespacing*{\section}{0pt}{1.5em}{0.6em}
+\titlespacing*{\section}{0pt}{1.6em}{1.0em}
 \titlespacing*{\subsection}{0pt}{1.0em}{0.35em}
 
 % ---------- running head ----------
@@ -137,8 +137,8 @@ You win by proving yours no longer works on you.
 \vspace{0.7cm}
 
 \begin{tabularx}{\textwidth}{@{}>{\sffamily\bfseries\color{Coral}}l X@{}}
-What it is & An offline tutor for Ontario's Grade 9 EQAO mathematics\\
-           & assessment, built as a game\\[0.4em]
+What it is & An offline game for Ontario's Grade 9 EQAO mathematics\\
+           & assessment\\[0.4em]
 Where it runs & One laptop. \themodel\ served locally through Ollama\\[0.4em]
 Event & Build with AI --- \themodel\ Hackathon, GDG Windsor\\[0.4em]
 Track & Edge / On-Device\\[0.4em]
@@ -166,8 +166,8 @@ writes ever leaves the machine.\par}
 Every Grade 9 student in Ontario sits EQAO, the province's mathematics
 assessment, written once and marked province-wide. Around Windsor--Essex it is
 a date the whole house knows about. What is on
-offer is a tutor at sixty dollars an hour, or an app that puts a red X next to
-your answer and moves on.
+offer is sixty dollars an hour for someone to sit beside them, or an app that
+puts a red X next to the answer and moves on.
 
 The red X is the problem. A wrong answer in maths is almost never random. Ask a
 fourteen-year-old for $2/3 + 1/4$ and watch for $3/7$. Tops with tops, bottoms
@@ -673,24 +673,6 @@ And if \themodel\ is not installed at all, the app still opens, still runs the
 quiz, still marks it, and says plainly where the writing would have been.
 
 % =====================================================================
-\section{What we have not shown}
-
-No student has used this yet. Not one.
-
-Nothing in the game measures whether any of it sticks. Beating a snare means
-two fresh questions right in a row with reasoning that held up --- that is our
-bar, chosen by us, and it is a claim about one evening, not about next month.
-We have not tested whether a snare beaten on Tuesday is still beaten in June.
-We have not watched a real fourteen-year-old read a lesson and decide whether
-it made sense. We do not know which monster they will pick first, or which
-explanation actually lands.
-
-Those are the next things to find out, and they need students in a room, not
-more code. Until then, what we have is this: a game that runs offline on one
-laptop, that names the specific wrong idea behind a wrong answer instead of
-marking it and moving on, and that is honest about which parts of it are true
-and which parts are judgement.
-
 \vfill
 {\color{Muted}\hrule height 0.4pt}
 \vspace{0.6em}
