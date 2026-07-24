@@ -17,7 +17,7 @@ import agent
 import mastery as m
 import tutor
 import rewards
-from gemma_client import vision_available, transcribe_image, plainify
+from gemma_client import plainify
 
 QUESTIONS = json.loads((Path(__file__).parent / "data" / "questions.json").read_text())
 STRANDS = sorted({q["strand"] for q in QUESTIONS})
@@ -1823,6 +1823,135 @@ def coach_stage():
                 use_container_width=True)
 
 
+_FINALE_TEMPLATE = r"""
+<style>
+html,body{margin:0;background:#050308;overflow:hidden;font-family:'Trebuchet MS',sans-serif}
+#stage{position:relative;width:100%;height:100vh}
+#hud3{position:absolute;inset:0;z-index:5;pointer-events:none;color:#f3e5ab;text-align:center}
+#ftitle{position:absolute;top:7%;width:100%;font-size:2rem;font-weight:900;letter-spacing:.22em;
+  text-shadow:0 0 24px rgba(226,192,125,.8);opacity:0;transition:opacity 3s}
+#fsub{position:absolute;bottom:9%;width:100%;font-size:1rem;color:#d9ceb4;opacity:0;transition:opacity 3s}
+</style>
+<div id="stage"><div id="v"></div>
+  <div id="hud3">
+    <div id="ftitle">THE SEAL BREAKS</div>
+    <div id="fsub">Five tricks defeated. The gate opens, __HERO__ — the one they kept from you steps into the light.</div>
+  </div>
+</div>
+<script>
+(function(){ let o='';
+  try{ o=window.parent.location.origin; }catch(e){ try{ o=new URL(document.referrer).origin; }catch(_){} }
+  window.__ORIGIN=o; })();
+</script>
+__VENDOR__
+<script>
+window.addEventListener('load', function(){
+  const W=innerWidth,H=innerHeight;
+  const r=new THREE.WebGLRenderer({antialias:true});
+  r.setSize(W,H); r.outputEncoding=THREE.sRGBEncoding;
+  r.toneMapping=THREE.ACESFilmicToneMapping; r.toneMappingExposure=0.9;
+  r.setClearColor(0x050308);
+  document.getElementById('v').appendChild(r.domElement);
+  const sc=new THREE.Scene(); sc.fog=new THREE.FogExp2(0x0d1424,0.02);
+  const cam=new THREE.PerspectiveCamera(46,W/H,0.1,120);
+  cam.position.set(0,4,26); cam.lookAt(0,4,0);
+  sc.add(new THREE.AmbientLight(0x141c30,0.9));
+  const moon=new THREE.DirectionalLight(0x9fb6e8,1.0); moon.position.set(-20,30,-10); sc.add(moon);
+
+  const stone=new THREE.MeshStandardMaterial({color:0x2a2d36,roughness:.7,metalness:.2});
+  const ground=new THREE.Mesh(new THREE.PlaneGeometry(120,120),
+    new THREE.MeshStandardMaterial({color:0x121722,roughness:.9}));
+  ground.rotation.x=-Math.PI/2; sc.add(ground);
+
+  // the gate wall
+  const wallL=new THREE.Mesh(new THREE.BoxGeometry(14,16,2),stone); wallL.position.set(-10.5,8,0); sc.add(wallL);
+  const wallR=new THREE.Mesh(new THREE.BoxGeometry(14,16,2),stone); wallR.position.set(10.5,8,0); sc.add(wallR);
+  const arch=new THREE.Mesh(new THREE.BoxGeometry(8,4,2),stone); arch.position.set(0,14,0); sc.add(arch);
+
+  // double doors
+  const doorMat=new THREE.MeshStandardMaterial({color:0x2b1e16,roughness:.8});
+  const doorL=new THREE.Group(), doorR=new THREE.Group();
+  const dL=new THREE.Mesh(new THREE.BoxGeometry(3.5,12,0.5),doorMat); dL.position.x=1.75; doorL.add(dL);
+  const dR=new THREE.Mesh(new THREE.BoxGeometry(3.5,12,0.5),doorMat); dR.position.x=-1.75; doorR.add(dR);
+  doorL.position.set(-3.5,6,0); doorR.position.set(3.5,6,0);
+  sc.add(doorL); sc.add(doorR);
+
+  // light inside the keep
+  const innerGlow=new THREE.PointLight(0xffe9b0,0,40); innerGlow.position.set(0,6,-4); sc.add(innerGlow);
+
+  // the freed one: a glowing faceless figure (placeholder until the hero model arrives)
+  const figMat=new THREE.MeshStandardMaterial({color:0xffe9b0,emissive:0xffd98c,
+    emissiveIntensity:1.2,roughness:.4});
+  const fig=new THREE.Group();
+  const body=new THREE.Mesh(new THREE.CapsuleGeometry?new THREE.CapsuleGeometry(0.7,1.6,8,16):new THREE.CylinderGeometry(0.7,0.7,2.6,16),figMat);
+  body.position.y=2.2; fig.add(body);
+  const head=new THREE.Mesh(new THREE.SphereGeometry(0.55,20,20),figMat);
+  head.position.y=4.0; fig.add(head);
+  const halo=new THREE.PointLight(0xffe9b0,2.5,16); halo.position.y=3.4; fig.add(halo);
+  fig.position.set(0,0,-3); fig.scale.setScalar(0.001); sc.add(fig);
+
+  // golden particles
+  const N=220, g2=new THREE.BufferGeometry(), pp=new Float32Array(N*3);
+  for(let i=0;i<N;i++){ pp[i*3]=(Math.random()-0.5)*30; pp[i*3+1]=Math.random()*14;
+    pp[i*3+2]=(Math.random()-0.5)*20; }
+  g2.setAttribute('position',new THREE.BufferAttribute(pp,3));
+  const stars=new THREE.Points(g2,new THREE.PointsMaterial({color:0xffd98c,size:0.14,
+    transparent:true,opacity:0.0,blending:THREE.AdditiveBlending}));
+  sc.add(stars);
+
+  // gentle victory chord (procedural)
+  function chord(){ try{
+    const c=new (window.AudioContext||window.webkitAudioContext)();
+    [261.6,329.6,392.0,523.25].forEach((f,i)=>{
+      const o=c.createOscillator(),g=c.createGain();
+      o.type='triangle'; o.frequency.value=f; g.gain.value=0;
+      o.connect(g); g.connect(c.destination); o.start(c.currentTime+i*0.25);
+      g.gain.setValueAtTime(0.1,c.currentTime+i*0.25);
+      g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+i*0.25+2.4);
+      o.stop(c.currentTime+i*0.25+2.5); });}catch(e){} }
+
+  // cinematic timeline
+  setTimeout(()=>{ gsap.to(doorL.rotation,{y:-1.9,duration:4,ease:"power2.inOut"});
+    gsap.to(doorR.rotation,{y:1.9,duration:4,ease:"power2.inOut"});
+    gsap.to(innerGlow,{intensity:5,duration:4}); chord(); },1200);
+  setTimeout(()=>{ gsap.to(fig.scale,{x:1,y:1,z:1,duration:2.5,ease:"back.out(1.4)"});
+    gsap.to(fig.position,{z:5,duration:6,ease:"power1.inOut"});
+    gsap.to(stars.material,{opacity:0.85,duration:3});
+    document.getElementById('ftitle').style.opacity=1; },3600);
+  setTimeout(()=>{ document.getElementById('fsub').style.opacity=1; },6500);
+
+  let pt=0;
+  (function loop(t){ requestAnimationFrame(loop);
+    const tt=(t||0)*0.001, dt=Math.min(0.05,tt-pt); pt=tt;
+    fig.position.y=Math.sin(tt*1.2)*0.15;
+    fig.rotation.y=Math.sin(tt*0.4)*0.2;
+    stars.rotation.y+=dt*0.03;
+    r.render(sc,cam); })(0);
+});
+</script>
+"""
+
+
+def _finale_html(name):
+    return (_FINALE_TEMPLATE
+            .replace("__VENDOR__", _vendor_js(["three.min.js", "gsap.min.js"]))
+            .replace("__HERO__", name))
+
+
+def finale_stage():
+    st.markdown("""<style>
+      [data-testid="stHeader"]{display:none}
+      [data-testid="stMainBlockContainer"], .block-container{
+        padding:0 0 1rem 0 !important; max-width:100% !important}
+      [data-testid="stElementContainer"]:has(iframe){width:100% !important}
+    </style>""", unsafe_allow_html=True)
+    components.html(_finale_html(st.session_state.get("player_name", "challenger")),
+                    height=620, scrolling=False)
+    mid = st.columns([2, 2, 2])
+    mid[1].button("Return to the citadel", key="fin_home", on_click=back_to_map,
+                  use_container_width=True)
+
+
 def boss_stage():
     st.markdown("""<style>
       [data-testid="stHeader"]{display:none}
@@ -2148,14 +2277,7 @@ def check_answer():
     if not chosen:
         return
     explanation = st.session_state.get("mastery_reason", "")
-    photo = st.session_state.get(f"mastery_photo_{s.attempts}")
-    st.session_state.mtranscript = None
-    if photo is not None and vision_available():
-        with st.spinner("Gemma is reading your written work (on-device)..."):
-            transcript = transcribe_image(photo.getvalue())
-        st.session_state.mtranscript = transcript
-        explanation = (explanation + "\n" if explanation else "") + \
-            f"My written work: {transcript}"
+
     with st.spinner("The agent is reading your answer..."):
         outcome = m.submit_answer(s, probe, chosen, explanation)
     st.session_state.mfeedback = outcome
@@ -2196,6 +2318,7 @@ def mastery_stage():
         # remember it: the results page now shows this gap as closed
         st.session_state.setdefault("mastered", set()).add(s.trick_id)
         st.session_state.setdefault("mastered_names", []).append(s.trick_name)
+        st.session_state.setdefault("defeated_strands", set()).add(s.strand)
         relic_key = f"relic_{s.trick_id}"
         if relic_key not in st.session_state:
             gmon = monster_for(s.strand) or {}
@@ -2210,6 +2333,11 @@ def mastery_stage():
         _relic = st.session_state[relic_key]
         note("IT DROPS A RELIC",
              f"<strong>{_relic['name']}</strong> — {_relic['power']}")
+        if len(st.session_state.get("defeated_strands", set())) >= 5:
+            note("THE FIFTH SEAL SHATTERS",
+                 "Across the citadel, the gate is opening. Someone is waiting for you.")
+            st.button("GO TO THE GATE", type="primary", key="to_finale",
+                      on_click=lambda: st.session_state.update(stage="finale"))
         note("Why the agent declared mastery",
              "Two fresh questions in a row, answered correctly — and your reasoning showed "
              "real understanding, not a lucky guess. That's the evidence bar for mastery.")
@@ -2246,9 +2374,7 @@ def mastery_stage():
 
     # feedback from the previous answer
     fb = st.session_state.get("mfeedback")
-    if st.session_state.get("mtranscript"):
-        note("What Gemma read from your photo",
-             st.session_state.mtranscript.replace("\n", "<br>"))
+
     if fb and fb.get("rationale"):
         # explainable AI: every decision shows its evidence-based "why"
         headline = ("Correct" if fb["correct"] and fb.get("label") == "RESOLVED"
@@ -2283,11 +2409,7 @@ def mastery_stage():
         key="mastery_reason",
         placeholder="e.g. I found a common denominator of 12, then added the tops",
     )
-    if vision_available():
-        st.file_uploader(
-            "...or photograph your written work — Gemma reads it on this device",
-            type=["png", "jpg", "jpeg"], key=f"mastery_photo_{s.attempts}",
-        )
+
     st.button("Check my answer", type="primary", on_click=check_answer,
               disabled=st.session_state.get("mastery_choice") is None)
 
@@ -2309,6 +2431,10 @@ if _station in STATIONS:
     st.session_state.stage = "encounter"
     st.query_params.clear()
 
+if st.query_params.get("finale"):
+    st.session_state.adventure = True
+    st.session_state.stage = "finale"
+    st.query_params.clear()
 if st.query_params.get("boss"):
     st.session_state.adventure = True
     st.session_state.stage = "boss"
@@ -2340,4 +2466,4 @@ if _cl in ("doubles", "nines", "split"):
 stage = st.session_state.get("stage", "intro")
 {"intro": intro, "map": map_stage, "encounter": encounter_stage, "quiz": quiz,
  "results": results, "mastery": mastery_stage, "boss": boss_stage,
- "skirmish": skirmish_stage, "coach": coach_stage}[stage]()
+ "skirmish": skirmish_stage, "coach": coach_stage, "finale": finale_stage}[stage]()
