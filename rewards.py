@@ -100,6 +100,7 @@ def battle_memory_line(player_name, monster_name, memory_facts):
     facts = memory_facts or {}
     mastered = [str(t) for t in (facts.get("mastered_tricks") or [])]
     defeated = [str(m) for m in (facts.get("defeated_monsters") or [])]
+    walked = int(facts.get("walked_away_here") or 0)
     last_score = str(facts.get("last_score") or "")
     try:
         attempts_here = int(facts.get("attempts_here") or 0)
@@ -107,7 +108,10 @@ def battle_memory_line(player_name, monster_name, memory_facts):
         attempts_here = 0
 
     # canned fallback, composed directly from the facts
-    if monster_name in defeated:
+    if walked and monster_name not in defeated:
+        canned = (f"You walked out on me once, {player_name}. I kept your seat "
+                  f"warm.")
+    elif monster_name in defeated:
         canned = (f"Back again, {player_name}? You beat me once — "
                   f"let's see if it was luck.")
     elif attempts_here > 0:
@@ -133,6 +137,9 @@ def battle_memory_line(player_name, monster_name, memory_facts):
             fact_lines.append(f"- The player's last quiz score: {last_score}")
         if attempts_here:
             fact_lines.append(f"- Attempts the player has already made against THIS monster: {attempts_here}")
+        if walked:
+            fact_lines.append(f"- Times the player walked away from THIS monster "
+                              f"mid-battle: {walked} (tease this - never shame it)")
         if not fact_lines:
             fact_lines.append("- This is the player's very first battle.")
 

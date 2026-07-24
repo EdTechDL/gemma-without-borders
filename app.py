@@ -2403,6 +2403,11 @@ def coach_stage():
         st.session_state.setdefault("skirmish_log", []).append(
             {"lane": lane, "score": d.get("score"), "streak": d.get("streak"),
              "misses": misses})
+        try:
+            bests = st.session_state.setdefault("bests", {})
+            bests[lane] = max(int(bests.get(lane, 0)), int(d.get("score") or 0))
+        except (TypeError, ValueError):
+            pass
         st.session_state.pop("lt_pick", None)   # new evidence, fresh decision
     if ck not in st.session_state:
         try:
@@ -2663,9 +2668,11 @@ def encounter_stage():
             "defeated_monsters": [r.get("monster", "") for r in st.session_state.get("relics", [])],
             "last_score": st.session_state.get("last_score", ""),
             "attempts_here": st.session_state.get(f"visits_{strand}", 0),
+            "walked_away_here": st.session_state.get("fled_from", {}).get(strand, 0),
         }
         st.session_state[f"visits_{strand}"] = facts["attempts_here"] + 1
-        if any([facts["mastered_tricks"], facts["defeated_monsters"], facts["last_score"]]):
+        if any([facts["mastered_tricks"], facts["defeated_monsters"], facts["last_score"],
+                facts["walked_away_here"]]):
             with st.spinner("It recognizes you..."):
                 st.session_state[mem_key] = rewards.battle_memory_line(
                     st.session_state.get("player_name", "Challenger"),
@@ -2689,10 +2696,35 @@ def encounter_stage():
 
 
 def back_to_map():
+    # A retreat costs nothing - a student who needs a break must be able to
+    # take one. But the citadel notices, and the monster brings it up.
+    fled = st.session_state.get("enc_strand") or st.session_state.get("last_strand")
+    if fled and st.session_state.get("stage") in ("encounter", "quiz", "results", "mastery"):
+        st.session_state.setdefault("fled_from", {})
+        st.session_state.fled_from[fled] = st.session_state.fled_from.get(fled, 0) + 1
     for k in ("quiz", "answers", "guides", "mastered", "teacher_report", "escal_report",
               "msession", "mcheck", "mlesson", "mlesson_why", "mfeedback", "mtranscript"):
         st.session_state.pop(k, None)
     st.session_state.stage = "map"
+
+
+def trophy_shelf():
+    """Relics are the only permanent reward, and they are only earned by real
+    mastery. A collection you cannot look at is not a collection."""
+    relics = st.session_state.get("relics", [])
+    bests = st.session_state.get("bests", {})
+    if not relics and not bests:
+        return
+    with st.expander(f"Your relics ({len(relics)})", expanded=False):
+        for r in relics:
+            st.markdown(f"**{esc(r.get('name', 'A relic'))}** — {esc(r.get('power', ''))}"
+                        + (f"  \n<span style='color:#a99;font-size:.8rem'>taken from "
+                           f"{esc(r.get('monster', ''))}</span>" if r.get("monster") else ""),
+                        unsafe_allow_html=True)
+        if bests:
+            st.caption("Speed records: " + " · ".join(
+                f"{_LIEUTENANTS[k]['monster']} {v}" for k, v in bests.items()
+                if k in _LIEUTENANTS))
 
 
 def map_stage():
@@ -2705,6 +2737,7 @@ def map_stage():
       [data-testid="stElementContainer"]:has(iframe){width:100% !important}
     </style>""", unsafe_allow_html=True)
     components.html(_hub_html(), height=800, scrolling=False)
+    trophy_shelf()
 
 
 # ---------------- QUIZ ----------------
