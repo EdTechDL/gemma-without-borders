@@ -277,7 +277,7 @@ _HUB_TEMPLATE = r"""
   header p{color:#b9a794;font-size:.95rem;margin-top:4px;max-width:430px}
   header{display:flex;justify-content:space-between;align-items:flex-start}
   .hbtns{display:flex;gap:10px}
-  .hbtn{pointer-events:auto;background:rgba(255,240,225,.06);border:1px solid rgba(255,240,225,.16);
+  .hbtn{display:inline-flex;align-items:center;justify-content:center;text-align:center;pointer-events:auto;background:rgba(255,240,225,.06);border:1px solid rgba(255,240,225,.16);
     color:#d9c6b2;padding:10px 20px;border-radius:24px;cursor:pointer;font-weight:700;
     text-transform:uppercase;letter-spacing:1px;font-size:.75rem;text-decoration:none;
     transition:all .25s}
@@ -316,13 +316,23 @@ _HUB_TEMPLATE = r"""
     transition:transform .15s}
   .fight:hover{transform:translateY(-2px)}
   footer{color:#8d7c6b;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase}
+  #banner{background:rgba(8,11,20,.72);backdrop-filter:blur(10px);
+    border:1px solid rgba(226,192,125,.35);border-left:4px solid #e2c07d;
+    border-radius:6px;padding:14px 22px;max-width:520px;
+    box-shadow:0 12px 32px rgba(0,0,0,.7)}
+  #banner h1{font-size:2.1rem;font-weight:900;letter-spacing:.14em;margin:0;
+    background:linear-gradient(135deg,#fff3d8 20%,#e2c07d 60%,#c58f5a);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    filter:drop-shadow(0 0 14px rgba(226,192,125,.55))}
+  #banner p{color:#cdd5e4;font-size:.85rem;margin:6px 0 0;letter-spacing:.04em;
+    text-shadow:0 1px 3px rgba(0,0,0,.8)}
 </style>
 <div id="canvas-container"></div>
 <div id="vig"></div>
 <div id="ui">
   <header>
-    <div>
-      <h1>Gemma Monsters</h1>
+    <div id="banner">
+      <h1>GEMMA MONSTERS</h1>
       <p>Every monster is here to make you forget your math. Defeat them by proving you remember.</p>
     </div>
     <div class="hbtns">
@@ -673,7 +683,7 @@ function init(){
         const obj=gltf.scene;
         const box=new THREE.Box3().setFromObject(obj);
         const size=box.getSize(new THREE.Vector3());
-        const scale=2.6/Math.max(size.x,size.y,size.z,0.001);
+        const scale=4.4/Math.max(size.x,size.y,size.z,0.001);
         obj.scale.setScalar(scale);
         const box2=new THREE.Box3().setFromObject(obj);
         const c=box2.getCenter(new THREE.Vector3());
