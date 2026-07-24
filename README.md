@@ -93,6 +93,7 @@ GEMMA_MODEL=gemma3:12b streamlit run app.py
 
 - Built with Google's Gemma, running locally via Ollama.
 - Monster models (Alien, Demon, Dragon Evolved, Fish, Frog) by Quaternius (quaternius.com), CC0 public domain — thank you Quaternius.
+- Nexus theme generated with ElevenLabs by the team; battle sounds are procedural WebAudio.
 
 ---
 *Built for the GDG Windsor · Build with AI — Gemma Hackathon. Edge / On-Device track.*
