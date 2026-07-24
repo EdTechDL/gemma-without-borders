@@ -1,4 +1,3 @@
-<img width="1157" height="782" alt="taha" src="https://github.com/user-attachments/assets/469d3ba0-7d1d-40a7-bd08-b279bedab8e7" />
 # GEMMA MONSTERS
 
 *An on-device math adventure powered by Gemma — built for the GDG Windsor Build with AI hackathon, Edge/On-Device track.*
