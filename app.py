@@ -1277,7 +1277,103 @@ window.addEventListener('load', function(){
     }
     entrance=1;
   });
+  
+  // procedural battle audio (no files): thud on hit, resolution chord at the end
+  let __actx=null;
+  function __a(){ if(!__actx) __actx=new (window.AudioContext||window.webkitAudioContext)(); return __actx; }
+  function sndThud(){ try{ const c=__a(),o=c.createOscillator(),g=c.createGain();
+    o.type='sine'; o.frequency.setValueAtTime(110,c.currentTime);
+    o.frequency.exponentialRampToValueAtTime(38,c.currentTime+0.25);
+    g.gain.setValueAtTime(0.5,c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.3);
+    o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime+0.32);}catch(e){} }
+  function sndEnd(won){ try{ const c=__a();
+    const freqs=won?[523.25,659.25,783.99,1046.5]:[220,207.65,196,185];
+    freqs.forEach((f,i)=>{ const o=c.createOscillator(),g=c.createGain();
+      o.type=won?'triangle':'sawtooth'; o.frequency.value=f; g.gain.value=0.0;
+      o.connect(g); g.connect(c.destination); o.start(c.currentTime+i*0.12);
+      g.gain.setValueAtTime(0.12,c.currentTime+i*0.12);
+      g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+i*0.12+(won?0.9:1.4));
+      o.stop(c.currentTime+i*0.12+1.5); });}catch(e){} }
+
+  
+  // procedural battle audio (no files): thud on hit, resolution chord at the end
+  let __actx=null;
+  function __a(){ if(!__actx) __actx=new (window.AudioContext||window.webkitAudioContext)(); return __actx; }
+  function sndThud(){ try{ const c=__a(),o=c.createOscillator(),g=c.createGain();
+    o.type='sine'; o.frequency.setValueAtTime(110,c.currentTime);
+    o.frequency.exponentialRampToValueAtTime(38,c.currentTime+0.25);
+    g.gain.setValueAtTime(0.5,c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.3);
+    o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime+0.32);}catch(e){} }
+  function sndEnd(won){ try{ const c=__a();
+    const freqs=won?[523.25,659.25,783.99,1046.5]:[220,207.65,196,185];
+    freqs.forEach((f,i)=>{ const o=c.createOscillator(),g=c.createGain();
+      o.type=won?'triangle':'sawtooth'; o.frequency.value=f; g.gain.value=0.0;
+      o.connect(g); g.connect(c.destination); o.start(c.currentTime+i*0.12);
+      g.gain.setValueAtTime(0.12,c.currentTime+i*0.12);
+      g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+i*0.12+(won?0.9:1.4));
+      o.stop(c.currentTime+i*0.12+1.5); });}catch(e){} }
+
+  
+  // procedural battle audio (no files): thud on hit, resolution chord at the end
+  let __actx=null;
+  function __a(){ if(!__actx) __actx=new (window.AudioContext||window.webkitAudioContext)(); return __actx; }
+  function sndThud(){ try{ const c=__a(),o=c.createOscillator(),g=c.createGain();
+    o.type='sine'; o.frequency.setValueAtTime(110,c.currentTime);
+    o.frequency.exponentialRampToValueAtTime(38,c.currentTime+0.25);
+    g.gain.setValueAtTime(0.5,c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.3);
+    o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime+0.32);}catch(e){} }
+  function sndEnd(won){ try{ const c=__a();
+    const freqs=won?[523.25,659.25,783.99,1046.5]:[220,207.65,196,185];
+    freqs.forEach((f,i)=>{ const o=c.createOscillator(),g=c.createGain();
+      o.type=won?'triangle':'sawtooth'; o.frequency.value=f; g.gain.value=0.0;
+      o.connect(g); g.connect(c.destination); o.start(c.currentTime+i*0.12);
+      g.gain.setValueAtTime(0.12,c.currentTime+i*0.12);
+      g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+i*0.12+(won?0.9:1.4));
+      o.stop(c.currentTime+i*0.12+1.5); });}catch(e){} }
+
+  
+  // procedural battle audio (no files): thud on hit, resolution chord at the end
+  let __actx=null;
+  function __a(){ if(!__actx) __actx=new (window.AudioContext||window.webkitAudioContext)(); return __actx; }
+  function sndThud(){ try{ const c=__a(),o=c.createOscillator(),g=c.createGain();
+    o.type='sine'; o.frequency.setValueAtTime(110,c.currentTime);
+    o.frequency.exponentialRampToValueAtTime(38,c.currentTime+0.25);
+    g.gain.setValueAtTime(0.5,c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.3);
+    o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime+0.32);}catch(e){} }
+  function sndEnd(won){ try{ const c=__a();
+    const freqs=won?[523.25,659.25,783.99,1046.5]:[220,207.65,196,185];
+    freqs.forEach((f,i)=>{ const o=c.createOscillator(),g=c.createGain();
+      o.type=won?'triangle':'sawtooth'; o.frequency.value=f; g.gain.value=0.0;
+      o.connect(g); g.connect(c.destination); o.start(c.currentTime+i*0.12);
+      g.gain.setValueAtTime(0.12,c.currentTime+i*0.12);
+      g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+i*0.12+(won?0.9:1.4));
+      o.stop(c.currentTime+i*0.12+1.5); });}catch(e){} }
+
+  
+  // procedural battle audio (no files): thud on hit, resolution chord at the end
+  let __actx=null;
+  function __a(){ if(!__actx) __actx=new (window.AudioContext||window.webkitAudioContext)(); return __actx; }
+  function sndThud(){ try{ const c=__a(),o=c.createOscillator(),g=c.createGain();
+    o.type='sine'; o.frequency.setValueAtTime(110,c.currentTime);
+    o.frequency.exponentialRampToValueAtTime(38,c.currentTime+0.25);
+    g.gain.setValueAtTime(0.5,c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.3);
+    o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime+0.32);}catch(e){} }
+  function sndEnd(won){ try{ const c=__a();
+    const freqs=won?[523.25,659.25,783.99,1046.5]:[220,207.65,196,185];
+    freqs.forEach((f,i)=>{ const o=c.createOscillator(),g=c.createGain();
+      o.type=won?'triangle':'sawtooth'; o.frequency.value=f; g.gain.value=0.0;
+      o.connect(g); g.connect(c.destination); o.start(c.currentTime+i*0.12);
+      g.gain.setValueAtTime(0.12,c.currentTime+i*0.12);
+      g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+i*0.12+(won?0.9:1.4));
+      o.stop(c.currentTime+i*0.12+1.5); });}catch(e){} }
+
   function attack(){
+    sndThud();
     document.getElementById('stage').classList.add('shake');
     setTimeout(()=>document.getElementById('stage').classList.remove('shake'),380);
     if(actHit&&actIdle){ actHit.reset().fadeIn(0.1).play(); actIdle.fadeOut(0.1);
@@ -1331,7 +1427,7 @@ window.addEventListener('load', function(){
   function end(won){
     clearInterval(timerId);
     const ec=document.getElementById('endcard');
-    ec.style.display='flex';
+    sndEnd(won); ec.style.display='flex';
     document.getElementById('endtitle').textContent= won?"HE RETREATS":"COLLECTED";
     document.getElementById('endsub').textContent= won
       ? "\"Adequate... for now. Your basics are still yours, __HERO__. I will be back for the rest.\"  Score: "+score+" of "+QMAX
@@ -1468,6 +1564,7 @@ window.addEventListener('load', function(){
     entrance=1;
   });
   function attack(){
+    sndThud();
     document.getElementById('stage').classList.add('shake');
     setTimeout(()=>document.getElementById('stage').classList.remove('shake'),380);
     if(actHit&&actIdle){ actHit.reset().fadeIn(0.1).play(); actIdle.fadeOut(0.1);
@@ -1581,7 +1678,7 @@ window.addEventListener('load', function(){
     if(over) return;
     over=true; clearInterval(warId);
     const ec=document.getElementById('endcard');
-    ec.style.display='flex';
+    sndEnd(won); ec.style.display='flex';
     document.getElementById('endtitle').textContent= won?"CLOCK SURVIVED":"OVERRUN";
     document.getElementById('endsub').textContent= won
       ? "\"The clock saved you, __HERO__. Not your speed.\"  Score: "+score+"  Best streak: "+best
