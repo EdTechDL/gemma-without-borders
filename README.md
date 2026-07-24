@@ -10,7 +10,8 @@
 *The Citadel: drag to orbit the castle; five monsters wait on their floating platforms.*
 <br>
 <br>
-
+<br>
+<br>
 <img width="1157" height="782" alt="taha" src="https://github.com/user-attachments/assets/e37f082b-d0f8-49d5-b08b-69f19226e177" />
 *An encounter: the monster calls you by name, and Gemma writes what it remembers about you.*
 
