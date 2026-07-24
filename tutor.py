@@ -12,6 +12,7 @@ land, it re-calls with a different strategy (see agent.py / the blueprint).
 """
 from __future__ import annotations
 from gemma_client import ask_gemma, plainify
+from selection import next_on_idea
 
 STRATEGIES = ["explanation", "worked_example", "visual", "analogy"]
 
@@ -29,25 +30,34 @@ def pick_practice(item: dict, misc: dict, questions: list, used_ids: set) -> dic
     """The 'Now you try' question, as a full interactive item. Bank-first
     (verified answer key + worked solution), generation last: a small model can
     produce a garbled or wrong question, a bank item cannot."""
-    for q in questions or []:
-        if q["id"] in used_ids:
-            continue
-        if any(o.get("trick_id") == misc.get("id") for o in q["options"]):
-            used_ids.add(q["id"])
-            return {"source": "bank", **q}
-    for q in questions or []:
-        if q["id"] not in used_ids and q["strand"] == item["strand"]:
-            used_ids.add(q["id"])
-            return {"source": "bank", **q}
-    for q in questions or []:
-        if q["id"] not in used_ids:  # any strand beats a generated question:
-            used_ids.add(q["id"])    # bank items always carry options + a key
-            return {"source": "bank", **q}
+    q = next_on_idea(questions, misc.get("id"), used_ids, misc.get("name"))
+    if q:
+        used_ids.add(q["id"])
+        return {"source": "bank", **q}
+
+    # The bank is out of questions on this idea. It does NOT fall back to the
+    # strand: slope and the distributive property are both Algebra, and a
+    # student who was just caught by one is not helped by the other.
+    #
+    # A written question here is a full multiple-choice item that Gemma has
+    # solved again blind and agreed with, so "now you try" is still something
+    # the student can answer and be marked on.
+    from practice_sheet import generate_audited
+    made = generate_audited(misc["name"], item.get("strand", ""), item["question"])
+    if made:
+        return {**made, "id": f"GEN-{item['id']}"}
+
     text = plainify(ask_gemma(
         f"TASK: practice\n"
         f"TRICK: {misc['name']}\n"
-        f"Write ONE fresh Grade 9 practice question, in English, that tests the "
-        f"same skill as: {item['question']}\n"
+        f"Write ONE fresh Grade 9 practice question, in English, working the "
+        f"SAME idea as: {item['question']}\n"
+        f"The idea to work is: {misc['name']}\n"
+        f"Introduce NO new concept, formula or skill, and do not move to a "
+        f"neighbouring topic: if the idea is about exponents do not write a "
+        f"percentage question, if it is about the median do not write one about "
+        f"probability. Being in the same part of the course is NOT the same as "
+        f"being the same idea.\n"
         f"Use different numbers. Output ONLY the question itself - no answer, "
         f"no solution, no extra commentary."
     ))

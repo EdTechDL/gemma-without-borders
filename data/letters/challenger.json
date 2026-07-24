@@ -43,5 +43,23 @@
   "trick_id": "NUM-1",
   "trick_name": "Multiplying exponents when multiplying like bases",
   "strand": "Number"
+ },
+ {
+  "n": 6,
+  "title": "After the quiz \u2014 Combining Unlike Terms",
+  "body": "**Parent report** \u2014 scored 1 of 5 (20%). The trick that caught them most: **Combining Unlike Terms**.\n\nDear Parents,\n\nWe've been looking closely at your child\u2019s understanding of some early algebra concepts, and it seems they are sometimes mixing up terms that shouldn't be combined \u2013 essentially treating things as equal when they aren't. This suggests they might be focusing on what *looks* similar rather than carefully considering the underlying mathematical meaning of each part of an expression.\n\n**Try at home**\n\n- Use Lego bricks to represent different variables (like red for 'x' and blue for 'y'). Build a small tower with 2 red bricks, then another with 3 blue bricks \u2013 explain why you can\u2019t combine them.\n- Write out simple addition problems like 2 apples + 3 oranges = ? Then ask your child to explain why it doesn't equal 5 of something.\n- Give your child a pile of different colored candies and ask them to group only the ones that are the same color, explaining *why* they\u2019re grouping those specific colors together.",
+  "kind": "quiz",
+  "trick_id": "ALG-3",
+  "trick_name": "Combining Unlike Terms",
+  "strand": "Algebra"
+ },
+ {
+  "n": 7,
+  "title": "After the quiz \u2014 Multiplying exponents when multiplying like bases",
+  "body": "**Parent report** \u2014 scored 0 of 5 (0%). The trick that caught them most: **Multiplying exponents when multiplying like bases**.\n\nDear Parents,\n\nWe've noticed your child is having some difficulty with simplifying expressions involving exponents. It seems they\u2019re sometimes assuming that when you multiply things with the same base, you simply multiply the exponents as well \u2013 this suggests they might be focusing on the numbers involved and not quite grasping how the bases interact in these calculations. This kind of error often shows a tendency to look for patterns without fully understanding the underlying mathematical rules.\n\n**Try at home**\n\n- Take two identical LEGO bricks (or any small, matching objects). Multiply them by 2, then multiply that result by 2 again. Write out the equation each time and discuss how the number of bricks changes versus how you\u2019re writing it down.\n- Write \"2 x 2 = 4\" several times. Then write \"2 x 2 x 2 = 8\". Ask them to explain what's different about the two calculations, focusing on how many times '2' is being used.\n- Have them draw a square made of four smaller squares. Now have them draw another identical square and place it next to the first one. Discuss how you could represent the total number of small squares using exponents (and why just adding the exponents wouldn\u2019t be correct).",
+  "kind": "quiz",
+  "trick_id": "NUM-1",
+  "trick_name": "Multiplying exponents when multiplying like bases",
+  "strand": "Number"
  }
 ]

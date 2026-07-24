@@ -21,6 +21,7 @@ import re
 from dataclasses import dataclass, field
 
 from gemma_client import ask_gemma, plainify
+from selection import next_on_idea
 
 # ---- the strategy ladder: each entry is a different way to teach ----
 STRATEGY_LADDER = [
@@ -99,42 +100,26 @@ def teach(session: MasterySession) -> str:
 
 # ------------------------------------------------------------------ CHECK
 def next_check(session: MasterySession, questions: list) -> dict | None:
-    """A FRESH check question on the same trick.
+    """A FRESH check question on the SAME idea, never merely the same strand.
 
-    Order of preference (most trustworthy first):
-      1. an unused bank item tagged with the SAME trick (ground-truth key)
-      2. an unused bank item from the same STRAND (still ground-truth key)
-      3. a Gemma-generated item (last resort: a small model can get its own
-         answer key wrong, so the bank always wins while items remain)"""
+    Verified bank items first, because their answer key is ground truth. When
+    the bank has nothing left on this idea, Gemma writes one under audit. It
+    does not reach for a neighbouring topic to fill the slot: checking whether
+    a student has beaten one idea by asking about a different one tells nobody
+    anything."""
     def take(q, why):
         session.used_item_ids.append(q["id"])
         session.history.append({"kind": "check", "source": why, "id": q["id"]})
         return {"source": why, **q}
 
-    for q in questions:
-        if q["id"] in session.used_item_ids:
-            continue
-        if any(o.get("trick_id") == session.trick_id for o in q["options"]):
-            return take(q, "bank")
-    # A same-strand item is NOT the same skill: training "multiplying like bases"
-    # was answered with "what is 0.5 percent of 200?" simply because both are
-    # Number. Try the closely-related tags first (NUM-6 and NUM-6b are the same
-    # idea at different depths), then have Gemma write one under audit, and only
-    # fall back to the strand if nothing else can be found.
-    family = str(session.trick_id or "").rstrip("abcdefgh")
-    if family:
-        for q in questions:
-            if q["id"] in session.used_item_ids:
-                continue
-            if any(str(o.get("trick_id") or "").startswith(family) for o in q["options"]):
-                return take(q, "bank-family")
-    made = _generated_check(session)
-    if made:
-        return made
-    for q in questions:
-        if q["id"] not in session.used_item_ids and q["strand"] == session.strand:
-            return take(q, "bank-strand")
-    return None
+    q = next_on_idea(questions, session.trick_id, session.used_item_ids, session.trick_name)
+    if q:
+        return take(q, "bank")
+    # No verified question left on this idea. Gemma writes one, and it only
+    # reaches the student if it declares the right target AND solves itself
+    # blind. If it cannot, the loop ends and says so - which is better than
+    # checking mastery of one idea with a question about another.
+    return _generated_check(session)
 
 
 def _generated_check(session: MasterySession) -> dict | None:

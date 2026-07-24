@@ -28,6 +28,7 @@ import json
 import re
 
 from gemma_client import ask_gemma, plainify
+from selection import on_idea_pool
 
 ATTEMPTS_PER_ITEM = 3    # tries (write + audit) before we give up on one slot
 MAX_MODEL_CALLS = 24     # absolute ceiling for a whole sheet, belt and braces
@@ -73,27 +74,18 @@ def build_sheet(trick_id: str, trick_name: str, strand: str, questions: list,
 # ------------------------------------------------------------------- BANK
 def _bank_items(trick_id: str, strand: str, questions: list, want: int,
                 exclude: set) -> list:
-    """Verified items, most on-target first: tagged with THIS trick, then the
-    same strand. We stop at the strand — a sheet titled with one trick should
-    not quietly fill up with unrelated topics."""
-    picked, taken = [], set(exclude)
+    """Verified items on THIS idea only, closest first.
 
-    def take(q):
+    A sheet titled with one idea must not quietly fill up with a neighbouring
+    one. The strand is far too coarse a filter to protect that: slope and the
+    distributive property are both Algebra, and a parent working through ten
+    questions would have no way to tell the sheet had drifted."""
+    picked, taken = [], set(exclude)
+    for q in on_idea_pool(questions, trick_id, taken, trick_name):
+        if len(picked) >= want:
+            break
         taken.add(q["id"])
         picked.append(_from_bank(q))
-
-    for q in questions:
-        if len(picked) >= want:
-            return picked
-        if q["id"] in taken:
-            continue
-        if any(o.get("trick_id") == trick_id for o in q.get("options", [])):
-            take(q)
-    for q in questions:
-        if len(picked) >= want:
-            return picked
-        if q["id"] not in taken and q.get("strand") == strand:
-            take(q)
     return picked
 
 
@@ -127,6 +119,19 @@ def _generated_items(trick_name: str, strand: str, seed: str, need: int,
             break  # budget spent or three failed audits: return a shorter sheet
         made.append(item)
     return made
+
+
+def generate_audited(trick_name: str, strand: str, seed: str,
+                     avoid: list = None, calls: int = 6) -> dict | None:
+    """One question on ONE idea, with options and a key it has re-solved blind.
+
+    Public because the study guide needs the same thing the sheet does. Before
+    this existed, a study guide that ran out of verified questions produced a
+    bare line of text with no options, no key and no audit - which was tolerable
+    while it was rare and is not now that on-idea selection makes it common.
+    Returns None rather than anything unverified.
+    """
+    return _one_generated(trick_name, strand, seed, list(avoid or []), _Budget(calls))
 
 
 def _one_generated(trick_name: str, strand: str, seed: str, sofar: list,

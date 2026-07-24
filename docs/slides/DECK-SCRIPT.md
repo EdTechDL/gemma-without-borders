@@ -242,8 +242,8 @@ mastery.py. Four steps, repeated until something ends it.
 TEACH. Gemma writes one lesson in the style of the current rung of the ladder.
 
 CHECK. A fresh question she has not seen. Bank first, always: an unused item carrying the
-same snare, then any unused item from the same strand, and only if both run dry, a
-generated one. Sarah has already seen the five battle questions, so those are excluded,
+same snare, or one carrying the same idea under another name, and only when the
+bank has nothing left on that idea, a written one under audit. Sarah has already seen the five battle questions, so those are excluded,
 and the first tier finds the compound interest question about two accounts paying 6% over
 two years, which carries the same snare on option A.
 
@@ -263,7 +263,7 @@ marked Gemma for the reasoning), ADAPT (marked code). Three arrows leave ADAPT: 
 [MASTERED, two fresh correct in a row], rightward to [HANDED OFF, ladder spent, or 4
 checks, or 12 calls], and back into TEACH labelled "next rung". Beside CHECK, a funnel of
 three stacked bands: "unused bank item with the same snare", ticked and labelled "ground
-truth key and worked solution"; "unused bank item from the same strand", greyed and
+truth key and worked solution"; "unused bank item naming the same idea", greyed and
 labelled "not needed tonight"; "Gemma writes one", greyed, with a padlock labelled "only
 under audit, slide 12".
 
@@ -355,7 +355,7 @@ label set is what makes it safe to let the model near it.
 
 **Says:**
 Third check. Correct, and the explanation holds up. Streak 1. Fourth check, drawn from the
-same strand. Correct again, reasoning holds. Streak 2.
+same idea. Correct again, reasoning holds. Streak 2.
 
 Fresh means a question she has not seen. The bar is met, the loop stops, and the screen
 prints the agent's own reason: "Two fresh questions correct in a row, and your reasoning
@@ -547,7 +547,7 @@ loses the file, never the lesson.
 From that page a parent presses one button and gets a printable sheet on one snare: up to
 ten questions with room to write, and the answer key on its own page so the sheet can be
 worked before it is marked. Verified bank items first, tagged with that snare, then the
-same strand, and it stops at the strand rather than quietly filling with unrelated topics.
+the same idea under another name, and it stops there rather than quietly filling with a neighbouring topic.
 Anything generated to make up the number passes the blind audit from slide 12 first, and
 the page says which questions came from where. It is a standalone HTML file with inline
 styling, no fonts, no images and no scripts, so it prints the same on any machine.
