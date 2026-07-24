@@ -142,6 +142,10 @@ def note(label: str, body: str):
 
 
 _FRAC = re.compile(r"(?<![\w.$])(\d+)\s*/\s*(\d+)(?![\w.])")
+_SUPD = str.maketrans("0123456789", "\u2070\u00b9\u00b2\u00b3\u2074\u2075\u2076\u2077\u2078\u2079")
+_POW = re.compile(r"\b(\d+|[a-wyzA-Z])\s+to\s+the\s+power\s+(?:of\s+)?(negative\s+)?(\d+)\b", re.I)
+_SQ = re.compile(r"\b(\d+|[a-wyzA-Z])\s+squared\b", re.I)
+_CU = re.compile(r"\b(\d+|[a-wyzA-Z])\s+cubed\b", re.I)
 
 
 def esc(text) -> str:
@@ -150,6 +154,10 @@ def esc(text) -> str:
     fractions like 3/7 into proper stacked fractions via KaTeX. Decimals and
     money (3.60 / 1.5, $3.60) are left alone by the fraction rule."""
     t = str(text).replace("$", "\\$")                 # currency first
+    t = _POW.sub(lambda m: m.group(1) + ("\u207b" if m.group(2) else "")
+                 + m.group(3).translate(_SUPD), t)   # 2 to the power 6 -> 2\u2076
+    t = _SQ.sub(lambda m: m.group(1) + "\u00b2", t)
+    t = _CU.sub(lambda m: m.group(1) + "\u00b3", t)
     t = _FRAC.sub(r"$\\frac{\1}{\2}$", t)             # 3/7 -> stacked fraction
     return t
 
@@ -700,6 +708,11 @@ function init(){
       },undefined,fallback);
     } else fallback();
 
+    // generous invisible hit volume - clicking anywhere near the beast counts
+    const hitVol=new THREE.Mesh(new THREE.CylinderGeometry(4.8,4.8,10,10),
+      new THREE.MeshBasicMaterial({transparent:true,opacity:0.0,depthWrite:false}));
+    hitVol.position.y=4; hitVol.userData.gi=i; platformGroup.add(hitVol);
+
     stations.push({group:platformGroup,holder:holder,ring:ring,underLight:underLight,
       glowDiskMat:glowDiskMat,baseY:baseY,phaseOffset:i*1.25,ang:ang,x:x,z:z});
   });
@@ -801,17 +814,46 @@ function svgMini(col){
   return '<svg width="72" height="72" viewBox="0 0 40 40"><circle cx="20" cy="20" r="14" fill="'+col+'" opacity="0.85"/><circle cx="20" cy="20" r="17" fill="none" stroke="'+col+'" stroke-width="1.4" opacity="0.5"/></svg>';
 }
 
-function onClick(e){
-  if(e.target.closest && e.target.closest('#ui a, #ui button, #card')) return;
+let __downXY=null;
+addEventListener('pointerdown',e=>{ __downXY=[e.clientX,e.clientY]; });
+
+function stationAtPointer(e){
   mouse.x=(e.clientX/innerWidth)*2-1; mouse.y=-(e.clientY/innerHeight)*2+1;
   ray.setFromCamera(mouse,camera);
   const hit=ray.intersectObjects(groups,true);
   if(hit.length){
     let o=hit[0].object;
     while(o.parent && o.userData.gi===undefined) o=o.parent;
-    if(o.userData.gi!==undefined) focus(o.userData.gi);
+    if(o.userData.gi!==undefined) return o.userData.gi;
   }
+  // fallback: nearest station within 70px on screen
+  let best=-1,bd=70;
+  const v=new THREE.Vector3();
+  stations.forEach((st2,i2)=>{
+    st2.holder.getWorldPosition(v); v.project(camera);
+    const sx=(v.x+1)/2*innerWidth, sy=(-v.y+1)/2*innerHeight;
+    const d=Math.hypot(sx-e.clientX, sy-e.clientY);
+    if(v.z<1 && d<bd){ bd=d; best=i2; }
+  });
+  return best>=0 ? best : undefined;
 }
+
+function onClick(e){
+  if(e.target.closest && e.target.closest('#ui a, #ui button, #card, input')) return;
+  if(__downXY && Math.hypot(e.clientX-__downXY[0], e.clientY-__downXY[1])>7) return; // was a drag
+  const gi=stationAtPointer(e);
+  if(gi!==undefined) focus(gi);
+}
+
+addEventListener('pointermove',(function(){
+  let cool=false;
+  return function(e){
+    if(cool) return; cool=true; setTimeout(()=>cool=false,120);
+    if(!renderer) return;
+    const gi=stationAtPointer(e);
+    renderer.domElement.style.cursor = (gi!==undefined) ? 'pointer' : 'default';
+  };
+})());
 
 function focus(i){
   if(selected===i) return; selected=i;
