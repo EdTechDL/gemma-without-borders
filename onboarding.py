@@ -74,10 +74,11 @@ ONBOARDING_TEMPLATE = r"""
   .beat.cold p{color:#d8bfb6}
 
   /* ---- the roster's name plates: one column per monster, never over a model ---- */
-  #labels{position:absolute;left:0;right:0;bottom:15vh;height:13vh;display:flex;
-    align-items:flex-start;opacity:0;transition:opacity .5s ease;pointer-events:none}
+  #labels{position:absolute;left:0;right:0;bottom:15vh;height:13vh;
+    opacity:0;transition:opacity .5s ease;pointer-events:none}
   #labels.on{opacity:1}
-  .lab{flex:1 1 0;min-width:0;text-align:center;padding:0 .5vw;box-sizing:border-box}
+  .lab{position:absolute;top:0;width:19%;transform:translateX(-50%);text-align:center;
+    box-sizing:border-box}
   .lname{font-weight:900;letter-spacing:.1em;text-transform:uppercase;
     font-size:clamp(.68rem,1.15vw,.92rem);text-shadow:0 0 12px rgba(0,0,0,.9)}
   .lstrand{color:#b9a794;font-size:clamp(.55rem,.82vw,.7rem);letter-spacing:.12em;
@@ -392,7 +393,10 @@ window.addEventListener('load', function(){
     var h=b2.max.y-b2.min.y;
     var lift=Math.max(0.05,h*0.06);
     obj.position.set(-c.x,-b2.min.y+lift,-c.z);
-    return {h:h+lift, w:Math.max(b2.max.x-b2.min.x,b2.max.z-b2.min.z,0.001)};
+    var sx=b2.max.x-b2.min.x, sz=b2.max.z-b2.min.z;
+    // r is the sweep diameter: the model turns on the spot, so a deep model
+    // needs as much room as a wide one before it crosses a neighbour or the edge
+    return {h:h+lift, w:Math.max(sx,sz,0.001), r:Math.max(Math.sqrt(sx*sx+sz*sz),0.001)};
   }
 
   var loader=(typeof THREE.GLTFLoader!=='undefined')?new THREE.GLTFLoader():null;
@@ -403,11 +407,11 @@ window.addEventListener('load', function(){
   function makeHolder(color){
     var holder=new THREE.Group();
     holder.visible=false;
-    var pool=new THREE.Mesh(new THREE.CircleGeometry(0.66,32),
+    var pool=new THREE.Mesh(new THREE.CircleGeometry(0.5,32),
       new THREE.MeshBasicMaterial({color:new THREE.Color(color),transparent:true,
         opacity:0.26,depthWrite:false,blending:THREE.AdditiveBlending}));
     pool.rotation.x=-Math.PI/2; pool.position.y=0.02; holder.add(pool);
-    holder.userData={app:0,want:0,mh:1.0,mw:1.0,
+    holder.userData={app:0,want:0,mh:1.0,mw:1.0,mr:1.4,
                      k:1.0,tk:1.0,x:0,tx:0,z:0,tz:0,pool:pool};
     sc.add(holder);
     return holder;
@@ -422,6 +426,7 @@ window.addEventListener('load', function(){
       entry.holder.add(obj);
       entry.holder.userData.mh=m.h;
       entry.holder.userData.mw=m.w;
+      entry.holder.userData.mr=m.r;
       entry.obj=obj;
       if(g.animations&&g.animations.length){
         var mix=new THREE.AnimationMixer(obj);
@@ -465,7 +470,9 @@ window.addEventListener('load', function(){
         t.textContent='"'+u.trick+'"';
         d.appendChild(t);
       }
+      d.style.left='50%';
       box.appendChild(d);
+      u.lab=d;
     });
     var dots=document.getElementById('dots');
     for(var i=1;i<=STEPS;i++){
@@ -485,9 +492,10 @@ window.addEventListener('load', function(){
     camTargetY=(tallest*0.5)-(0.5-centreFrac)*vh;
   }
 
-  function place(entry,x,z,target,maxW){
+  // ``span`` is the widest the model may sweep as it turns on the spot
+  function place(entry,x,z,target,span){
     var u=entry.holder.userData;
-    u.tk=Math.min(target, maxW/u.mw);
+    u.tk=Math.min(target, span/u.mr);
     u.tx=x; u.tz=z;
     if(u.app<0.02){ u.k=u.tk; u.x=u.tx; u.z=u.tz; }   // not on screen yet: snap
     return u.tk*u.mh;
@@ -497,21 +505,31 @@ window.addEventListener('load', function(){
     var tallest=0,i;
     if(step===2){
       var d2=CAM_Z, vh2=visH(d2), halfW2=vh2*0.5*cam.aspect;
-      var slot=(halfW2*2/units.length)*0.86;
-      for(i=0;i<units.length;i++){
-        var x=(((i+0.5)/units.length)*2-1)*halfW2;
-        tallest=Math.max(tallest,place(units[i],x,0,0.36*vh2,slot));
+      var n=units.length, slot=(halfW2*2/n)*0.96, xs=[], need=0;
+      for(i=0;i<n;i++){
+        var u2=units[i].holder.userData;
+        xs.push(((((i+0.5)/n)*2-1))*halfW2);
+        need=Math.max(need,Math.abs(xs[i])+0.5*Math.min(0.40*vh2,slot/u2.mr)*u2.mr);
+      }
+      // pull the whole row in until the end monsters clear the frame edges
+      var inset=(need>halfW2*0.97)?(halfW2*0.97/need):1;
+      for(i=0;i<n;i++){
+        var x=xs[i]*inset;
+        tallest=Math.max(tallest,place(units[i],x,0,0.40*vh2,slot));
+        // the plate follows its monster, so a name never drifts off its owner
+        units[i].lab.style.left=((0.5+x/(2*halfW2))*100)+'%';
       }
       frame(d2,tallest,0.47);
     } else if(step===3){
       var z3=1.0, d3=CAM_Z-z3, vh3=visH(d3), halfW3=vh3*0.5*cam.aspect;
       var hero=units[Math.min(2,units.length-1)];
-      if(hero) tallest=place(hero,0,z3,0.42*vh3,halfW3*0.8);
+      if(hero) tallest=place(hero,0,z3,0.42*vh3,halfW3*1.5);
       frame(d3,tallest,0.50);
     } else if(step===4){
-      var z4=2.0, d4=CAM_Z-z4, vh4=visH(d4), halfW4=vh4*0.5*cam.aspect;
-      if(collector) tallest=place(collector,0,z4,0.50*vh4,halfW4*0.72);
-      frame(d4,tallest,0.53);
+      // he stands closer and reads bigger than any of the five ever did
+      var z4=2.6, d4=CAM_Z-z4, vh4=visH(d4), halfW4=vh4*0.5*cam.aspect;
+      if(collector) tallest=place(collector,0,z4,0.56*vh4,halfW4*1.25);
+      frame(d4,tallest,0.56);
     } else {
       camTargetY=2.5;    // steps 1 and 5 look up the hall at the sealed gate
     }

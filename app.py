@@ -200,6 +200,21 @@ _TRAP_SPLIT = re.compile(r"\s*\((?=[A-F][ ,)])(.*)\)\s*$", re.S)
 _TRAP_ITEM = re.compile(r"(?<=[.)])\s+(?=[A-F]\s)")
 
 
+def solution_md(item) -> str:
+    """A worked solution as the student should read it: numbered steps, then a
+    separate block naming each wrong answer and the thinking behind it. The
+    bank stores those notes as a list keyed to the ANSWER TEXT, not the option
+    letter, so they stay true when option order is randomised."""
+    if not isinstance(item, dict):
+        return steps_md(item)
+    out = steps_md(item.get("solution", ""))
+    traps = [t for t in (item.get("traps") or []) if t]
+    if traps:
+        out += ("\n\n**Why the other answers are traps**\n\n"
+                + "\n".join(f"- {esc(plainify(str(t)))}" for t in traps))
+    return out
+
+
 def steps_md(text) -> str:
     """Render a worked solution as numbered steps instead of one dense
     paragraph. Splits on sentence boundaries (decimals are safe: a digit
@@ -2849,7 +2864,7 @@ def results():
             st.markdown("**Why:** " + esc(guide["explanation"]))
             if guide["worked_solution"]:
                 with st.expander("See the worked solution"):
-                    st.markdown(steps_md(guide["worked_solution"]))
+                    st.markdown(solution_md(guide))
 
             # --- interactive "Now you try" ---
             p = guide["practice"]
@@ -2886,7 +2901,7 @@ def results():
                              "Take another look, or open a hint.")
                     if p.get("solution"):
                         with st.expander("See this one worked out"):
-                            st.markdown(steps_md(p["solution"]))
+                            st.markdown(solution_md(p))
 
     # Gemma directs the hunt: which monster is worth facing next, and why
     if st.session_state.get("adventure"):

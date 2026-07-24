@@ -44,8 +44,10 @@
     "options": [
       {
         "label": "A",
-        "text": "2 to the power 6, which is 64",
-        "is_correct": true
+        "text": "4 to the power 5, which is 1024",
+        "is_correct": false,
+        "trick_id": "NUM-2",
+        "trick_name": "Changing the base when operating on powers"
       },
       {
         "label": "B",
@@ -63,13 +65,11 @@
       },
       {
         "label": "D",
-        "text": "4 to the power 5, which is 1024",
-        "is_correct": false,
-        "trick_id": "NUM-2",
-        "trick_name": "Changing the base when operating on powers"
+        "text": "2 to the power 6, which is 64",
+        "is_correct": true
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "solution": "Power of a power: multiply the exponents and keep the base. (2³)² = 2⁶ because 3 × 2 = 6, and 2⁶ = 64 (check: 8² = 64).",
     "traps": []
   },
@@ -86,24 +86,24 @@
       },
       {
         "label": "B",
-        "text": "1/4",
-        "is_correct": false,
-        "trick_id": "NUM-4",
-        "trick_name": "Zero exponent equals zero"
-      },
-      {
-        "label": "C",
         "text": "negative 3",
         "is_correct": false,
         "trick_id": "NUM-5",
         "trick_name": "Negative exponent makes the value negative"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "negative 4",
         "is_correct": false,
         "trick_id": "NUM-4",
         "trick_name": "Zero exponent equals zero (combined with the negative-exponent error)"
+      },
+      {
+        "label": "D",
+        "text": "1/4",
+        "is_correct": false,
+        "trick_id": "NUM-4",
+        "trick_name": "Zero exponent equals zero"
       }
     ],
     "correct": "A",
@@ -123,24 +123,24 @@
       },
       {
         "label": "B",
-        "text": "3/7",
+        "text": "11/7",
         "is_correct": false,
         "trick_id": "NUM-6",
         "trick_name": "Adding fractions straight across"
       },
       {
         "label": "C",
+        "text": "3/7",
+        "is_correct": false,
+        "trick_id": "NUM-6",
+        "trick_name": "Adding fractions straight across"
+      },
+      {
+        "label": "D",
         "text": "1/4 (that is, 3/12)",
         "is_correct": false,
         "trick_id": "NUM-6b",
         "trick_name": "Common denominator found but numerators not rescaled"
-      },
-      {
-        "label": "D",
-        "text": "11/7",
-        "is_correct": false,
-        "trick_id": "NUM-6",
-        "trick_name": "Adding fractions straight across"
       }
     ],
     "correct": "A",
@@ -160,21 +160,21 @@
       },
       {
         "label": "B",
-        "text": "negative 8",
-        "is_correct": false,
-        "trick_id": "NUM-7",
-        "trick_name": "Mishandling subtraction of a negative integer"
-      },
-      {
-        "label": "C",
         "text": "negative 2",
         "is_correct": false,
         "trick_id": "NUM-7",
         "trick_name": "Mishandling subtraction of a negative integer"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "8",
+        "is_correct": false,
+        "trick_id": "NUM-7",
+        "trick_name": "Mishandling subtraction of a negative integer"
+      },
+      {
+        "label": "D",
+        "text": "negative 8",
         "is_correct": false,
         "trick_id": "NUM-7",
         "trick_name": "Mishandling subtraction of a negative integer"
@@ -197,24 +197,24 @@
       },
       {
         "label": "B",
-        "text": "100",
-        "is_correct": false,
-        "trick_id": "NUM-8",
-        "trick_name": "Taking a percent at face value"
-      },
-      {
-        "label": "C",
         "text": "10",
         "is_correct": false,
         "trick_id": "NUM-8b",
         "trick_name": "Percent-to-decimal place-value error (divides by 10 instead of 100)"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "40,000",
         "is_correct": false,
         "trick_id": "NUM-9",
         "trick_name": "Reversing part and whole in percent/proportion"
+      },
+      {
+        "label": "D",
+        "text": "100",
+        "is_correct": false,
+        "trick_id": "NUM-8",
+        "trick_name": "Taking a percent at face value"
       }
     ],
     "correct": "A",
@@ -266,32 +266,32 @@
     "options": [
       {
         "label": "A",
-        "text": "$2.80",
-        "is_correct": true
-      },
-      {
-        "label": "B",
-        "text": "$5.20",
-        "is_correct": false,
-        "trick_id": "NUM-10",
-        "trick_name": "Additive instead of multiplicative proportional reasoning"
-      },
-      {
-        "label": "C",
         "text": "$8.40",
         "is_correct": false,
         "trick_id": "NUM-11",
         "trick_name": "Treats a group price as a unit price (ignores group size)"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "$17.50",
         "is_correct": false,
         "trick_id": "NUM-9",
         "trick_name": "Reversing part and whole in percent/proportion"
+      },
+      {
+        "label": "C",
+        "text": "$2.80",
+        "is_correct": true
+      },
+      {
+        "label": "D",
+        "text": "$5.20",
+        "is_correct": false,
+        "trick_id": "NUM-10",
+        "trick_name": "Additive instead of multiplicative proportional reasoning"
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "solution": "Unit rate = 1.20/3 = $0.40 per apple. For 7 apples: 7 × 0.40 = $2.80 (equivalently 1.20 × 7/3).",
     "traps": []
   },
@@ -303,8 +303,10 @@
     "options": [
       {
         "label": "A",
-        "text": "x - 12",
-        "is_correct": true
+        "text": "11x - 12",
+        "is_correct": false,
+        "trick_id": "ALG-2",
+        "trick_name": "Negative-Sign Handling Error"
       },
       {
         "label": "B",
@@ -322,14 +324,12 @@
       },
       {
         "label": "D",
-        "text": "11x - 12",
-        "is_correct": false,
-        "trick_id": "ALG-2",
-        "trick_name": "Negative-Sign Handling Error"
+        "text": "x - 12",
+        "is_correct": true
       }
     ],
-    "correct": "A",
-    "solution": "Distribute: $3(2x-4)=6x-12. Then $6x-12-5x. Combine like terms: $6x-5x=x, giving x-12.",
+    "correct": "D",
+    "solution": "Distribute: 3(2x-4)=6x-12. Then 6x-12-5x. Combine like terms: 6x-5x=x, giving x-12.",
     "traps": []
   },
   {
@@ -340,32 +340,32 @@
     "options": [
       {
         "label": "A",
-        "text": "-6x + 10",
-        "is_correct": true
-      },
-      {
-        "label": "B",
         "text": "-6x - 10",
         "is_correct": false,
         "trick_id": "ALG-2",
         "trick_name": "Negative-Sign Handling Error"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "-6x - 5",
         "is_correct": false,
         "trick_id": "ALG-1",
         "trick_name": "Incomplete Distribution"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "4x",
         "is_correct": false,
         "trick_id": "ALG-3",
         "trick_name": "Combining Unlike Terms"
+      },
+      {
+        "label": "D",
+        "text": "-6x + 10",
+        "is_correct": true
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "solution": "Distribute the -2 to both terms: -2 × 3x = -6x and -2 × (-5) = +10. Result: -6x + 10.",
     "traps": []
   },
@@ -377,33 +377,33 @@
     "options": [
       {
         "label": "A",
-        "text": "x = 4",
-        "is_correct": true
-      },
-      {
-        "label": "B",
-        "text": "x = 2",
-        "is_correct": false,
-        "trick_id": "ALG-4",
-        "trick_name": "Balancing / Inverse Operation Error"
-      },
-      {
-        "label": "C",
         "text": "x = 12",
         "is_correct": false,
         "trick_id": "ALG-9",
         "trick_name": "Partial Division"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "x = -4",
         "is_correct": false,
         "trick_id": "ALG-4",
         "trick_name": "Balancing / Inverse Operation Error"
+      },
+      {
+        "label": "C",
+        "text": "x = 2",
+        "is_correct": false,
+        "trick_id": "ALG-4",
+        "trick_name": "Balancing / Inverse Operation Error"
+      },
+      {
+        "label": "D",
+        "text": "x = 4",
+        "is_correct": true
       }
     ],
-    "correct": "A",
-    "solution": "Subtract $2x from both sides: $3x-3=9. Add $3 to both sides: $3x=12. Divide by $3: x=4.",
+    "correct": "D",
+    "solution": "Subtract 2x from both sides: 3x-3=9. Add 3 to both sides: 3x=12. Divide by 3: x=4.",
     "traps": []
   },
   {
@@ -419,7 +419,7 @@
       },
       {
         "label": "B",
-        "text": "1/2",
+        "text": "-2",
         "is_correct": false,
         "trick_id": "ALG-5",
         "trick_name": "Inverted or Misordered Slope"
@@ -433,7 +433,7 @@
       },
       {
         "label": "D",
-        "text": "-2",
+        "text": "1/2",
         "is_correct": false,
         "trick_id": "ALG-5",
         "trick_name": "Inverted or Misordered Slope"
@@ -451,15 +451,15 @@
     "options": [
       {
         "label": "A",
-        "text": "The slope is -4 and the y-intercept is 7.",
-        "is_correct": true
-      },
-      {
-        "label": "B",
         "text": "The slope is 7 and the y-intercept is -4.",
         "is_correct": false,
         "trick_id": "ALG-6",
         "trick_name": "Slope-Intercept Swap"
+      },
+      {
+        "label": "B",
+        "text": "The slope is -4 and the y-intercept is 7.",
+        "is_correct": true
       },
       {
         "label": "C",
@@ -476,7 +476,7 @@
         "trick_name": "Negative-Sign Handling Error"
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "solution": "In y=mx+b, the coefficient of x is the slope m=-4 (a number, keeping its sign) and the constant b=7 is the y-intercept.",
     "traps": []
   },
@@ -488,8 +488,10 @@
     "options": [
       {
         "label": "A",
-        "text": "-1",
-        "is_correct": true
+        "text": "11",
+        "is_correct": false,
+        "trick_id": "ALG-4",
+        "trick_name": "Balancing / Inverse Operation Error"
       },
       {
         "label": "B",
@@ -500,10 +502,8 @@
       },
       {
         "label": "C",
-        "text": "11",
-        "is_correct": false,
-        "trick_id": "ALG-4",
-        "trick_name": "Balancing / Inverse Operation Error"
+        "text": "-1",
+        "is_correct": true
       },
       {
         "label": "D",
@@ -513,7 +513,7 @@
         "trick_name": "Balancing / Inverse Operation Error"
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "solution": "Use y=mx+b with m=3 and the point (2,5): $5=3(2)+b=6+b. Subtract $6: b=5-6=-1.",
     "traps": []
   },
@@ -525,19 +525,19 @@
     "options": [
       {
         "label": "A",
-        "text": "3n + 1",
-        "is_correct": true
-      },
-      {
-        "label": "B",
-        "text": "3n",
+        "text": "3n + 4",
         "is_correct": false,
         "trick_id": "ALG-8",
         "trick_name": "Pattern Rule Off-by-One"
       },
       {
+        "label": "B",
+        "text": "3n + 1",
+        "is_correct": true
+      },
+      {
         "label": "C",
-        "text": "3n + 4",
+        "text": "3n",
         "is_correct": false,
         "trick_id": "ALG-8",
         "trick_name": "Pattern Rule Off-by-One"
@@ -550,8 +550,8 @@
         "trick_name": "Assumes a proportional pattern (uses the first term as multiplier)"
       }
     ],
-    "correct": "A",
-    "solution": "The tiles increase by $3 each figure, so the coefficient of n is $3. Find the constant using Figure $1: $3(1)+c=4, so c=1. The rule is $3n+1 (check Figure $3: $3(3)+1=10).",
+    "correct": "B",
+    "solution": "The tiles increase by 3 each figure, so the coefficient of n is 3. Find the constant using Figure 1: 3(1)+c=4, so c=1. The rule is 3n+1 (check Figure 3: 3(3)+1=10).",
     "traps": []
   },
   {
@@ -562,15 +562,17 @@
     "options": [
       {
         "label": "A",
-        "text": "Randomly select 50 names from a list of all 1000 students.",
-        "is_correct": true
-      },
-      {
-        "label": "B",
         "text": "Survey all 400 students eating in the cafeteria on Monday, because 400 is much bigger than 50.",
         "is_correct": false,
         "trick_id": "DAT-1",
         "trick_name": "Bigger Sample Cures Bias"
+      },
+      {
+        "label": "B",
+        "text": "Survey the 28 students in her own homeroom because they are easy to reach.",
+        "is_correct": false,
+        "trick_id": "DAT-2",
+        "trick_name": "Convenience/Volunteer Samples Are Fair"
       },
       {
         "label": "C",
@@ -581,13 +583,11 @@
       },
       {
         "label": "D",
-        "text": "Survey the 28 students in her own homeroom because they are easy to reach.",
-        "is_correct": false,
-        "trick_id": "DAT-2",
-        "trick_name": "Convenience/Volunteer Samples Are Fair"
+        "text": "Randomly select 50 names from a list of all 1000 students.",
+        "is_correct": true
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "solution": "Random selection from the full student list gives every student an equal chance of being chosen, so the sample represents the whole school. Sample size cannot fix a biased selection method.",
     "traps": [
       "Surveying all 400 students eating in the cafeteria on Monday is a large but biased convenience sample - cafeteria users are more invested in the menu.",
@@ -603,8 +603,10 @@
     "options": [
       {
         "label": "A",
-        "text": "11",
-        "is_correct": true
+        "text": "11.5",
+        "is_correct": false,
+        "trick_id": "DAT-9",
+        "trick_name": "Median as midpoint of extremes (midrange)"
       },
       {
         "label": "B",
@@ -615,10 +617,8 @@
       },
       {
         "label": "C",
-        "text": "11.5",
-        "is_correct": false,
-        "trick_id": "DAT-9",
-        "trick_name": "Median as midpoint of extremes (midrange)"
+        "text": "11",
+        "is_correct": true
       },
       {
         "label": "D",
@@ -628,7 +628,7 @@
         "trick_name": "Mean by Default"
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "solution": "Order the data first: 3, 8, 11, 14, 20. The middle (3rd of 5) value is 11.",
     "traps": [
       "20 is the middle of the UNORDERED list - the values have to be put in order first.",
@@ -649,17 +649,17 @@
       },
       {
         "label": "B",
-        "text": "9",
-        "is_correct": false,
-        "trick_id": "DAT-5",
-        "trick_name": "Mode/Value-Frequency Mix-Up"
-      },
-      {
-        "label": "C",
         "text": "3",
         "is_correct": false,
         "trick_id": "DAT-10",
         "trick_name": "Mode as the maximum value"
+      },
+      {
+        "label": "C",
+        "text": "9",
+        "is_correct": false,
+        "trick_id": "DAT-5",
+        "trick_name": "Mode/Value-Frequency Mix-Up"
       },
       {
         "label": "D",
@@ -685,8 +685,10 @@
     "options": [
       {
         "label": "A",
-        "text": "A third variable, such as the size of the fire, likely increases both the firefighters sent and the damage.",
-        "is_correct": true
+        "text": "The city should send fewer firefighters to each fire to reduce damage costs.",
+        "is_correct": false,
+        "trick_id": "DAT-7",
+        "trick_name": "Correlation Implies Causation"
       },
       {
         "label": "B",
@@ -697,20 +699,18 @@
       },
       {
         "label": "C",
-        "text": "The city should send fewer firefighters to each fire to reduce damage costs.",
-        "is_correct": false,
-        "trick_id": "DAT-7",
-        "trick_name": "Correlation Implies Causation"
-      },
-      {
-        "label": "D",
         "text": "The line of best fit can reliably predict the damage for a fire with 10 times more firefighters than any fire in the data.",
         "is_correct": false,
         "trick_id": "DAT-8",
         "trick_name": "Best-Fit Line and Extrapolation Overreach"
+      },
+      {
+        "label": "D",
+        "text": "A third variable, such as the size of the fire, likely increases both the firefighters sent and the damage.",
+        "is_correct": true
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "solution": "Correlation shows association, not cause. A lurking variable — fire size — drives both variables: bigger fires need more firefighters AND cause more damage.",
     "traps": [
       "Saying that sending more firefighters causes greater damage reads the correlation as a causal mechanism.",
@@ -731,24 +731,24 @@
       },
       {
         "label": "B",
-        "text": "The mean, 43, is best because it uses every data value and outliers do not affect it.",
-        "is_correct": false,
-        "trick_id": "DAT-3",
-        "trick_name": "Mean by Default"
-      },
-      {
-        "label": "C",
         "text": "A typical day is 64 customers, halfway between the lowest (26) and highest (102) values.",
         "is_correct": false,
         "trick_id": "DAT-9",
         "trick_name": "Median as midpoint of extremes (midrange)"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "The mode is 102 because it is the largest value, so a typical day has 102 customers.",
         "is_correct": false,
         "trick_id": "DAT-10",
         "trick_name": "Mode as the maximum value"
+      },
+      {
+        "label": "D",
+        "text": "The mean, 43, is best because it uses every data value and outliers do not affect it.",
+        "is_correct": false,
+        "trick_id": "DAT-3",
+        "trick_name": "Mean by Default"
       }
     ],
     "correct": "A",
@@ -767,8 +767,10 @@
     "options": [
       {
         "label": "A",
-        "text": "113.1 m²",
-        "is_correct": true
+        "text": "18.8 m²",
+        "is_correct": false,
+        "trick_id": "GEO-2",
+        "trick_name": "Additive/Linear Formula Reasoning"
       },
       {
         "label": "B",
@@ -779,20 +781,18 @@
       },
       {
         "label": "C",
+        "text": "113.1 m²",
+        "is_correct": true
+      },
+      {
+        "label": "D",
         "text": "37.7 m²",
         "is_correct": false,
         "trick_id": "GEO-1",
         "trick_name": "Perimeter–Area Mix-Up"
-      },
-      {
-        "label": "D",
-        "text": "18.8 m²",
-        "is_correct": false,
-        "trick_id": "GEO-2",
-        "trick_name": "Additive/Linear Formula Reasoning"
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "solution": "The enlarged radius is 6 m. Area = π × r² = π × 6² = 36 × π, which is about 113.1 m². Note that doubling the radius makes the area 4 times as large (36 × π vs 9 × π), not 2 times, because area scales with the SQUARE of the dimensions.",
     "traps": [
       "452.4 m² uses the new diameter, 12 m, as the radius: π × 12² is about 452.4.",
@@ -808,32 +808,32 @@
     "options": [
       {
         "label": "A",
-        "text": "10 m",
-        "is_correct": true
-      },
-      {
-        "label": "B",
         "text": "14 m",
         "is_correct": false,
         "trick_id": "GEO-2",
         "trick_name": "Additive/Linear Formula Reasoning"
       },
       {
-        "label": "C",
-        "text": "100 m",
-        "is_correct": false,
-        "trick_id": "GEO-4",
-        "trick_name": "Forgets the Final Square Root"
-      },
-      {
-        "label": "D",
+        "label": "B",
         "text": "24 m",
         "is_correct": false,
         "trick_id": "GEO-1",
         "trick_name": "Perimeter–Area Mix-Up"
+      },
+      {
+        "label": "C",
+        "text": "10 m",
+        "is_correct": true
+      },
+      {
+        "label": "D",
+        "text": "100 m",
+        "is_correct": false,
+        "trick_id": "GEO-4",
+        "trick_name": "Forgets the Final Square Root"
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "solution": "The ramp is the hypotenuse of a right triangle with legs 6 and 8: c² = 6² + 8² = 36 + 64 = 100, so c = √(100) = 10 m.",
     "traps": [
       "14 m adds the legs, 6+8, instead of squaring them first.",
@@ -849,32 +849,32 @@
     "options": [
       {
         "label": "A",
-        "text": "12 m",
-        "is_correct": true
+        "text": "8 m",
+        "is_correct": false,
+        "trick_id": "GEO-2",
+        "trick_name": "Additive/Linear Formula Reasoning"
       },
       {
         "label": "B",
-        "text": "approximately 13.9 m",
-        "is_correct": false,
-        "trick_id": "GEO-3",
-        "trick_name": "Always Add in the Pythagorean Theorem"
-      },
-      {
-        "label": "C",
         "text": "144 m",
         "is_correct": false,
         "trick_id": "GEO-4",
         "trick_name": "Forgets the Final Square Root"
       },
       {
-        "label": "D",
-        "text": "8 m",
+        "label": "C",
+        "text": "approximately 13.9 m",
         "is_correct": false,
-        "trick_id": "GEO-2",
-        "trick_name": "Additive/Linear Formula Reasoning"
+        "trick_id": "GEO-3",
+        "trick_name": "Always Add in the Pythagorean Theorem"
+      },
+      {
+        "label": "D",
+        "text": "12 m",
+        "is_correct": true
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "solution": "The ladder is the hypotenuse, so the height is a leg: h² = 13² - 5² = 169 - 25 = 144, giving h = √(144) = 12 m.",
     "traps": [
       "approximately 13.9 m adds the squares, √(169+25) = √(194) ≈ 13.9, which is impossibly longer than the ladder itself.",
@@ -890,32 +890,32 @@
     "options": [
       {
         "label": "A",
-        "text": "112 degrees",
-        "is_correct": true
-      },
-      {
-        "label": "B",
         "text": "68 degrees",
         "is_correct": false,
         "trick_id": "GEO-6",
         "trick_name": "Angle Pairs Assumed Equal"
       },
       {
+        "label": "B",
+        "text": "112 degrees",
+        "is_correct": true
+      },
+      {
         "label": "C",
-        "text": "22 degrees",
+        "text": "292 degrees",
         "is_correct": false,
         "trick_id": "GEO-10",
         "trick_name": "Angle Benchmark Mix-Up (90°/180°/360°)"
       },
       {
         "label": "D",
-        "text": "292 degrees",
+        "text": "22 degrees",
         "is_correct": false,
         "trick_id": "GEO-10",
         "trick_name": "Angle Benchmark Mix-Up (90°/180°/360°)"
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "solution": "The two angles sit on the same side of the straight rail, so together they make a straight angle of 180 degrees: × = 180 - 68 = 112 degrees.",
     "traps": [
       "68 degrees assumes the two angles on either side of the brace are equal, but that is only true when the brace is perpendicular to the rail.",
@@ -931,32 +931,32 @@
     "options": [
       {
         "label": "A",
-        "text": "942.5 cm³",
-        "is_correct": true
-      },
-      {
-        "label": "B",
-        "text": "3769.9 cm³",
-        "is_correct": false,
-        "trick_id": "GEO-7",
-        "trick_name": "Radius–Diameter Mix-Up"
-      },
-      {
-        "label": "C",
         "text": "534.1 cm³",
         "is_correct": false,
         "trick_id": "GEO-5",
         "trick_name": "Surface Area–Volume Mix-Up"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "188.5 cm³",
         "is_correct": false,
         "trick_id": "GEO-2",
         "trick_name": "Additive/Linear Formula Reasoning"
+      },
+      {
+        "label": "C",
+        "text": "942.5 cm³",
+        "is_correct": true
+      },
+      {
+        "label": "D",
+        "text": "3769.9 cm³",
+        "is_correct": false,
+        "trick_id": "GEO-7",
+        "trick_name": "Radius–Diameter Mix-Up"
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "solution": "r = 10 ÷ 2 = 5 cm. V = π r² h = π (5)² (12) = 300π ≈ 942.5 cm³.",
     "traps": [
       "3769.9 cm³ uses the diameter as the radius: π(10)²(12) = 1200π.",
@@ -972,32 +972,32 @@
     "options": [
       {
         "label": "A",
-        "text": "37.7 cm³",
-        "is_correct": true
-      },
-      {
-        "label": "B",
-        "text": "113.1 cm³",
-        "is_correct": false,
-        "trick_id": "GEO-8",
-        "trick_name": "Dropped Formula Factor"
-      },
-      {
-        "label": "C",
         "text": "150.8 cm³",
         "is_correct": false,
         "trick_id": "GEO-7",
         "trick_name": "Radius–Diameter Mix-Up"
       },
       {
-        "label": "D",
+        "label": "B",
+        "text": "37.7 cm³",
+        "is_correct": true
+      },
+      {
+        "label": "C",
         "text": "75.4 cm³",
         "is_correct": false,
         "trick_id": "GEO-5",
         "trick_name": "Surface Area–Volume Mix-Up"
+      },
+      {
+        "label": "D",
+        "text": "113.1 cm³",
+        "is_correct": false,
+        "trick_id": "GEO-8",
+        "trick_name": "Dropped Formula Factor"
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "solution": "r = 6 ÷ 2 = 3 cm. V = (1/3)π r² h = (1/3)π(3)²(4) = 12π ≈ 37.7 cm³.",
     "traps": [
       "113.1 cm³ omits the (1/3): π(9)(4) = 36π ≈ 113.1.",
@@ -1013,8 +1013,10 @@
     "options": [
       {
         "label": "A",
-        "text": "9 times",
-        "is_correct": true
+        "text": "6 times",
+        "is_correct": false,
+        "trick_id": "GEO-2",
+        "trick_name": "Additive/Linear Formula Reasoning"
       },
       {
         "label": "B",
@@ -1025,10 +1027,8 @@
       },
       {
         "label": "C",
-        "text": "6 times",
-        "is_correct": false,
-        "trick_id": "GEO-2",
-        "trick_name": "Additive/Linear Formula Reasoning"
+        "text": "9 times",
+        "is_correct": true
       },
       {
         "label": "D",
@@ -1038,7 +1038,7 @@
         "trick_name": "Surface Area–Volume Mix-Up"
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "solution": "Original area = 10 × 15 = 150 cm². Enlarged area = 30 × 45 = 1350 cm². Ratio = 1350 ÷ 150 = 9 = 3²: when lengths scale by k, area scales by k².",
     "traps": [
       "3 times assumes the area triples along with the sides.",
@@ -1054,32 +1054,32 @@
     "options": [
       {
         "label": "A",
-        "text": "20 cm³",
-        "is_correct": true
+        "text": "12 cm³",
+        "is_correct": false,
+        "trick_id": "GEO-2",
+        "trick_name": "Additive/Linear Formula Reasoning"
       },
       {
         "label": "B",
-        "text": "94 cm³",
-        "is_correct": false,
-        "trick_id": "GEO-5",
-        "trick_name": "Surface Area–Volume Mix-Up"
-      },
-      {
-        "label": "C",
         "text": "60 cm³",
         "is_correct": false,
         "trick_id": "GEO-8",
         "trick_name": "Dropped Formula Factor"
       },
       {
+        "label": "C",
+        "text": "20 cm³",
+        "is_correct": true
+      },
+      {
         "label": "D",
-        "text": "12 cm³",
+        "text": "94 cm³",
         "is_correct": false,
-        "trick_id": "GEO-2",
-        "trick_name": "Additive/Linear Formula Reasoning"
+        "trick_id": "GEO-5",
+        "trick_name": "Surface Area–Volume Mix-Up"
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "solution": "The volume of the prism (the box) is 5 × 4 × 3 = 60 cm³. A pyramid with the same base and height has one third of the prism's volume: 60 / 3 = 20 cm³.",
     "traps": [
       "94 cm³ is the box's surface area, 2 × (20 + 15 + 12) = 94 cm², not a volume.",
@@ -1095,32 +1095,32 @@
     "options": [
       {
         "label": "A",
-        "text": "$24.00",
+        "text": "$14,400.00",
         "is_correct": false,
-        "trick_id": "FIN-3",
-        "trick_name": "Time-period mishandling"
+        "trick_id": "FIN-9",
+        "trick_name": "Percent–decimal conversion error"
       },
       {
         "label": "B",
-        "text": "$144.00",
-        "is_correct": true
-      },
-      {
-        "label": "C",
         "text": "$4,656.00",
         "is_correct": false,
         "trick_id": "FIN-2",
         "trick_name": "Wrong quantity reported"
       },
       {
+        "label": "C",
+        "text": "$144.00",
+        "is_correct": true
+      },
+      {
         "label": "D",
-        "text": "$14,400.00",
+        "text": "$24.00",
         "is_correct": false,
-        "trick_id": "FIN-9",
-        "trick_name": "Percent–decimal conversion error"
+        "trick_id": "FIN-3",
+        "trick_name": "Time-period mishandling"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "solution": "Each month Priya saves 3% of $800: 0.03 × 800 = $24. Over 6 months she saves 6 × 24 = $144.",
     "traps": [
       "$24.00 is only one month of savings - it ignores the 6-month period.",
@@ -1143,25 +1143,25 @@
       },
       {
         "label": "B",
-        "text": "$124.86",
-        "is_correct": false,
-        "trick_id": "FIN-2",
-        "trick_name": "Wrong quantity reported"
-      },
-      {
-        "label": "C",
         "text": "$1,124.86",
         "is_correct": true
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "$1,514.24",
         "is_correct": false,
         "trick_id": "FIN-9",
         "trick_name": "Percent–decimal conversion error"
+      },
+      {
+        "label": "D",
+        "text": "$124.86",
+        "is_correct": false,
+        "trick_id": "FIN-2",
+        "trick_name": "Wrong quantity reported"
       }
     ],
-    "correct": "C",
+    "correct": "B",
     "solution": "The value grows by 4% of the CURRENT value, so the year 3 value is 4% more than the year 2 value: 1,081.60 × 0.04 = 43.26, and 1,081.60 + 43.26 = $1,124.86.",
     "traps": [
       "$1,120.00 assumes the graph rises by the same flat $40 every year, the year 1 increase, giving 1,000 + 3 × 40 = $1,120.00 and missing the growth on growth the graph shows.",
@@ -1218,15 +1218,15 @@
     "options": [
       {
         "label": "A",
-        "text": "The 1.5 L bottle, because $3.60 divided by 1.5 is $2.40 per litre, which is less than $5.00 divided by 2, which is $2.50 per litre",
-        "is_correct": true
-      },
-      {
-        "label": "B",
-        "text": "The 2 L bottle, because larger packages always cost less per litre",
+        "text": "The 1.5 L bottle, because its total price of $3.60 is lower than $5.00",
         "is_correct": false,
         "trick_id": "FIN-6",
         "trick_name": "Value judged by size or total price"
+      },
+      {
+        "label": "B",
+        "text": "The 1.5 L bottle, because $3.60 divided by 1.5 is $2.40 per litre, which is less than $5.00 divided by 2, which is $2.50 per litre",
+        "is_correct": true
       },
       {
         "label": "C",
@@ -1237,13 +1237,13 @@
       },
       {
         "label": "D",
-        "text": "The 1.5 L bottle, because its total price of $3.60 is lower than $5.00",
+        "text": "The 2 L bottle, because larger packages always cost less per litre",
         "is_correct": false,
         "trick_id": "FIN-6",
         "trick_name": "Value judged by size or total price"
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "solution": "Compare unit prices (dollars per litre): 3.60 ÷ 1.5 = $2.40/L and 5.00 ÷ 2 = $2.50/L. Since 2.40 < 2.50, the 1.5 L bottle is the better buy.",
     "traps": [
       "Picking the 2 L bottle because larger packages always cost less per litre assumes bigger is automatically cheaper per unit, without calculating.",
@@ -1266,10 +1266,10 @@
       },
       {
         "label": "B",
-        "text": "$1,403",
+        "text": "$377",
         "is_correct": false,
-        "trick_id": "FIN-2",
-        "trick_name": "Wrong quantity reported"
+        "trick_id": "FIN-7",
+        "trick_name": "Incomplete budget"
       },
       {
         "label": "C",
@@ -1278,10 +1278,10 @@
       },
       {
         "label": "D",
-        "text": "$377",
+        "text": "$1,403",
         "is_correct": false,
-        "trick_id": "FIN-7",
-        "trick_name": "Incomplete budget"
+        "trick_id": "FIN-2",
+        "trick_name": "Wrong quantity reported"
       }
     ],
     "correct": "C",
@@ -1300,8 +1300,10 @@
     "options": [
       {
         "label": "A",
-        "text": "$7.20",
-        "is_correct": true
+        "text": "$127.20",
+        "is_correct": false,
+        "trick_id": "FIN-3",
+        "trick_name": "Time-period mishandling"
       },
       {
         "label": "B",
@@ -1312,20 +1314,18 @@
       },
       {
         "label": "C",
-        "text": "$127.20",
-        "is_correct": false,
-        "trick_id": "FIN-3",
-        "trick_name": "Time-period mishandling"
-      },
-      {
-        "label": "D",
         "text": "$247.20",
         "is_correct": false,
         "trick_id": "FIN-2",
         "trick_name": "Wrong quantity reported"
+      },
+      {
+        "label": "D",
+        "text": "$7.20",
+        "is_correct": true
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "solution": "Compare the two final values from the calculator for the SAME time period, 2 years: 2,247.20 - 2,240.00 = $7.20. Account 2 earns interest on its interest, so it pulls ahead even though both rates are 6%.",
     "traps": [
       "$0.00 assumes equal rates mean equal earnings, ignoring the way the interest is calculated.",
@@ -1341,22 +1341,22 @@
     "options": [
       {
         "label": "A",
+        "text": "$165.00",
+        "is_correct": false,
+        "trick_id": "FIN-3",
+        "trick_name": "Time-period mishandling"
+      },
+      {
+        "label": "B",
         "text": "$180.00",
         "is_correct": false,
         "trick_id": "FIN-4",
         "trick_name": "Additive percent change"
       },
       {
-        "label": "B",
+        "label": "C",
         "text": "$181.50",
         "is_correct": true
-      },
-      {
-        "label": "C",
-        "text": "$165.00",
-        "is_correct": false,
-        "trick_id": "FIN-3",
-        "trick_name": "Time-period mishandling"
       },
       {
         "label": "D",
@@ -1366,7 +1366,7 @@
         "trick_name": "Wrong quantity reported"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "solution": "The value grows by 10% of the CURRENT value, so the year 2 value is 10% more than the year 1 value: 165.00 × 0.10 = 16.50, and 165.00 + 16.50 = $181.50.",
     "traps": [
       "$180.00 adds 10% of the original price, $15, again: 165 + 15 = $180.00, missing the growth on growth.",
@@ -1382,32 +1382,32 @@
     "options": [
       {
         "label": "A",
-        "text": "$660",
-        "is_correct": false,
-        "trick_id": "FIN-2",
-        "trick_name": "Wrong quantity reported"
-      },
-      {
-        "label": "B",
         "text": "$0 — twelve payments of $55 just spread the same cost over time",
         "is_correct": false,
         "trick_id": "FIN-8",
         "trick_name": "Payment-size fallacy"
       },
       {
+        "label": "B",
+        "text": "$660",
+        "is_correct": false,
+        "trick_id": "FIN-2",
+        "trick_name": "Wrong quantity reported"
+      },
+      {
         "label": "C",
+        "text": "$60",
+        "is_correct": true
+      },
+      {
+        "label": "D",
         "text": "$5",
         "is_correct": false,
         "trick_id": "FIN-3",
         "trick_name": "Time-period mishandling"
-      },
-      {
-        "label": "D",
-        "text": "$60",
-        "is_correct": true
       }
     ],
-    "correct": "D",
+    "correct": "C",
     "solution": "Total cost of the plan: 55 × 12 = $660. Difference: 660 - 600 = $60 more than paying up front.",
     "traps": [
       "$660 is the plan's total cost, not the extra cost the question asks for.",
@@ -1423,15 +1423,15 @@
     "options": [
       {
         "label": "A",
-        "text": "9a³b⁴",
-        "is_correct": true
-      },
-      {
-        "label": "B",
         "text": "9a⁴b⁴",
         "is_correct": false,
         "trick_id": "NUM-EXP-01",
         "trick_name": "Forgets to subtract the exponent of a when dividing like bases"
+      },
+      {
+        "label": "B",
+        "text": "9a³b⁴",
+        "is_correct": true
       },
       {
         "label": "C",
@@ -1448,7 +1448,7 @@
         "trick_name": "Combines the exponent error with the sign error"
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "solution": "-36 ÷ -4 = 9. For the letters, subtract exponents: a⁴ ÷ a is a^(4-1) = a³, and b⁶ ÷ b² is b^(6-2) = b⁴. So the simplified expression is 9a³b⁴.",
     "traps": []
   },
@@ -1460,10 +1460,10 @@
     "options": [
       {
         "label": "A",
-        "text": "5 x 10³",
+        "text": "1.6384 x 10^(-10)",
         "is_correct": false,
-        "trick_id": "NUM-SCI-01",
-        "trick_name": "Adds the exponents when dividing to get 5^3, then writes base 5 as if it were base 10"
+        "trick_id": "NUM-EXP-04",
+        "trick_name": "Multiplies the exponents instead of adding when multiplying like bases, giving 5^(-14)"
       },
       {
         "label": "B",
@@ -1474,18 +1474,18 @@
       },
       {
         "label": "C",
-        "text": "1.953125 x 10⁶",
-        "is_correct": true
+        "text": "5 x 10³",
+        "is_correct": false,
+        "trick_id": "NUM-SCI-01",
+        "trick_name": "Adds the exponents when dividing to get 5^3, then writes base 5 as if it were base 10"
       },
       {
         "label": "D",
-        "text": "1.6384 x 10^(-10)",
-        "is_correct": false,
-        "trick_id": "NUM-EXP-04",
-        "trick_name": "Multiplies the exponents instead of adding when multiplying like bases, giving 5^(-14)"
+        "text": "1.953125 x 10⁶",
+        "is_correct": true
       }
     ],
-    "correct": "C",
+    "correct": "D",
     "solution": "Combine the exponents on top: 5^(4+4-2) = 5⁶. Combine the exponents on the bottom: 5^(3-6) = 5^(-3). Then 5⁶ divided by 5^(-3) = 5^(6-(-3)) = 5⁹ = 1,953,125, which is 1.953125 x 10⁶ in scientific notation.",
     "traps": []
   },
@@ -1497,32 +1497,32 @@
     "options": [
       {
         "label": "A",
-        "text": "$39.50",
-        "is_correct": false,
-        "trick_id": "ALG-SUB-01",
-        "trick_name": "Adds the rate and the fixed amount, ignoring the 8 birdhouses"
+        "text": "$211.00",
+        "is_correct": true
       },
       {
         "label": "B",
-        "text": "$181.00",
-        "is_correct": false,
-        "trick_id": "ALG-SUB-02",
-        "trick_name": "Subtracts the fixed amount instead of adding it"
-      },
-      {
-        "label": "C",
         "text": "$196.00",
         "is_correct": false,
         "trick_id": "ALG-SUB-03",
         "trick_name": "Leaves out the fixed amount"
       },
       {
+        "label": "C",
+        "text": "$181.00",
+        "is_correct": false,
+        "trick_id": "ALG-SUB-02",
+        "trick_name": "Subtracts the fixed amount instead of adding it"
+      },
+      {
         "label": "D",
-        "text": "$211.00",
-        "is_correct": true
+        "text": "$39.50",
+        "is_correct": false,
+        "trick_id": "ALG-SUB-01",
+        "trick_name": "Adds the rate and the fixed amount, ignoring the 8 birdhouses"
       }
     ],
-    "correct": "D",
+    "correct": "A",
     "solution": "Substitute n = 8: P = 24.50 x 8 + 15 = 196 + 15 = 211. Mia earns $211.00.",
     "traps": []
   },
@@ -1534,10 +1534,10 @@
     "options": [
       {
         "label": "A",
-        "text": "subtotal = itemPrice * (percentDiscount / 100)",
+        "text": "subtotal = itemPrice + (itemPrice * percentDiscount / 100)",
         "is_correct": false,
-        "trick_id": "FIN-DISC-01",
-        "trick_name": "Calculates the discount amount instead of the sale price"
+        "trick_id": "FIN-DISC-03",
+        "trick_name": "Adds the discount instead of subtracting it"
       },
       {
         "label": "B",
@@ -1548,10 +1548,10 @@
       },
       {
         "label": "C",
-        "text": "subtotal = itemPrice + (itemPrice * percentDiscount / 100)",
+        "text": "subtotal = itemPrice * (percentDiscount / 100)",
         "is_correct": false,
-        "trick_id": "FIN-DISC-03",
-        "trick_name": "Adds the discount instead of subtracting it"
+        "trick_id": "FIN-DISC-01",
+        "trick_name": "Calculates the discount amount instead of the sale price"
       },
       {
         "label": "D",
@@ -1571,22 +1571,22 @@
     "options": [
       {
         "label": "A",
+        "text": "y = 8x + 5",
+        "is_correct": false,
+        "trick_id": "ALG-LIN-03",
+        "trick_name": "Adds 2 to the slope instead of doubling it, and moves the intercept in the wrong direction"
+      },
+      {
+        "label": "B",
         "text": "y = 12x + 5",
         "is_correct": false,
         "trick_id": "ALG-LIN-01",
         "trick_name": "Changes the intercept in the wrong direction"
       },
       {
-        "label": "B",
+        "label": "C",
         "text": "y = 12x - 5",
         "is_correct": true
-      },
-      {
-        "label": "C",
-        "text": "y = 8x + 5",
-        "is_correct": false,
-        "trick_id": "ALG-LIN-03",
-        "trick_name": "Adds 2 to the slope instead of doubling it, and moves the intercept in the wrong direction"
       },
       {
         "label": "D",
@@ -1596,7 +1596,7 @@
         "trick_name": "Adds 2 to the slope instead of doubling it"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "solution": "The original slope is 6 and the original y-intercept is 0. Doubling the slope gives 12, and decreasing the intercept by 5 gives -5. So the new line is y = 12x - 5.",
     "traps": []
   },
@@ -1608,32 +1608,32 @@
     "options": [
       {
         "label": "A",
-        "text": "201 m",
-        "is_correct": false,
-        "trick_id": "GEO-CONV-01",
-        "trick_name": "Finds the length of one block only"
+        "text": "1006 m",
+        "is_correct": true
       },
       {
         "label": "B",
+        "text": "2575 m",
+        "is_correct": false,
+        "trick_id": "GEO-CONV-03",
+        "trick_name": "Multiplies by 8/5 instead of 5/8, flipping the fraction of a mile"
+      },
+      {
+        "label": "C",
         "text": "625 m",
         "is_correct": false,
         "trick_id": "GEO-CONV-02",
         "trick_name": "Uses 1 mile = 1000 m instead of 1609.3 m"
       },
       {
-        "label": "C",
-        "text": "1006 m",
-        "is_correct": true
-      },
-      {
         "label": "D",
-        "text": "2575 m",
+        "text": "201 m",
         "is_correct": false,
-        "trick_id": "GEO-CONV-03",
-        "trick_name": "Multiplies by 8/5 instead of 5/8, flipping the fraction of a mile"
+        "trick_id": "GEO-CONV-01",
+        "trick_name": "Finds the length of one block only"
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "solution": "5 blocks is 5 times 1/8 = 5/8 mile. Then 5/8 of 1609.3 m is 1005.8125 m, which is approximately 1006 m.",
     "traps": []
   },
@@ -1652,25 +1652,25 @@
       },
       {
         "label": "B",
-        "text": "Option B costs $5.07 less than Option A.",
-        "is_correct": false,
-        "trick_id": "FIN-PAY-01",
-        "trick_name": "Compares monthly payments instead of total costs"
-      },
-      {
-        "label": "C",
         "text": "Option A costs $15.04 less than Option B.",
         "is_correct": true
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "Option B costs $15.04 less than Option A.",
         "is_correct": false,
         "trick_id": "FIN-PAY-02",
         "trick_name": "Finds the right difference but reverses which option is cheaper"
+      },
+      {
+        "label": "D",
+        "text": "Option B costs $5.07 less than Option A.",
+        "is_correct": false,
+        "trick_id": "FIN-PAY-01",
+        "trick_name": "Compares monthly payments instead of total costs"
       }
     ],
-    "correct": "C",
+    "correct": "B",
     "solution": "Option A costs 10% of $500 plus 24 payments of $20.63: 50 + 495.12 = $545.12. Option B costs 36 payments of $15.56: $560.16. The difference is 560.16 - 545.12 = $15.04, so Option A costs $15.04 less.",
     "traps": []
   },
@@ -1719,32 +1719,32 @@
     "options": [
       {
         "label": "A",
-        "text": "They are always divisible by 4.",
-        "is_correct": false,
-        "trick_id": "NUM-MULT-01",
-        "trick_name": "Picks an unrelated divisor from the even-number pattern"
-      },
-      {
-        "label": "B",
-        "text": "They are always multiples of 6.",
-        "is_correct": true
-      },
-      {
-        "label": "C",
         "text": "They are always odd.",
         "is_correct": false,
         "trick_id": "NUM-MULT-02",
         "trick_name": "Ignores that every number in Set F is even"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "There are no common numbers.",
         "is_correct": false,
         "trick_id": "NUM-MULT-03",
         "trick_name": "Misses the common multiples the sets share"
+      },
+      {
+        "label": "C",
+        "text": "They are always divisible by 4.",
+        "is_correct": false,
+        "trick_id": "NUM-MULT-01",
+        "trick_name": "Picks an unrelated divisor from the even-number pattern"
+      },
+      {
+        "label": "D",
+        "text": "They are always multiples of 6.",
+        "is_correct": true
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "solution": "Set F contains the multiples of 2, and Set G contains the multiples of 3. Numbers in both sets are multiples of the least common multiple of 2 and 3, which is 6.",
     "traps": []
   },
@@ -1756,10 +1756,10 @@
     "options": [
       {
         "label": "A",
-        "text": "120",
+        "text": "120,000",
         "is_correct": false,
-        "trick_id": "NUM-SCI-02",
-        "trick_name": "Moves the decimal two places instead of four"
+        "trick_id": "NUM-SCI-04",
+        "trick_name": "Moves the decimal five places instead of four"
       },
       {
         "label": "B",
@@ -1770,18 +1770,18 @@
       },
       {
         "label": "C",
-        "text": "12,000",
-        "is_correct": true
+        "text": "120",
+        "is_correct": false,
+        "trick_id": "NUM-SCI-02",
+        "trick_name": "Moves the decimal two places instead of four"
       },
       {
         "label": "D",
-        "text": "120,000",
-        "is_correct": false,
-        "trick_id": "NUM-SCI-04",
-        "trick_name": "Moves the decimal five places instead of four"
+        "text": "12,000",
+        "is_correct": true
       }
     ],
-    "correct": "C",
+    "correct": "D",
     "solution": "Multiplying by 10⁴ moves the decimal point four places to the right: 1.2 becomes 12,000.",
     "traps": []
   },
@@ -1800,25 +1800,25 @@
       },
       {
         "label": "B",
+        "text": "2x³ - 6x² + 4x",
+        "is_correct": true
+      },
+      {
+        "label": "C",
         "text": "2x² - 3x + 2",
         "is_correct": false,
         "trick_id": "ALG-DIST-02",
         "trick_name": "Multiplies only the first term, and only by the 2, leaving the other terms unchanged"
       },
       {
-        "label": "C",
+        "label": "D",
         "text": "2x³ - 3x² + 2x",
         "is_correct": false,
         "trick_id": "ALG-DIST-03",
         "trick_name": "Multiplies by x but forgets the coefficient 2 on later terms"
-      },
-      {
-        "label": "D",
-        "text": "2x³ - 6x² + 4x",
-        "is_correct": true
       }
     ],
-    "correct": "D",
+    "correct": "B",
     "solution": "Multiply 2x by every term: 2x times x² is 2x³, 2x times -3x is -6x², and 2x times 2 is 4x. So the answer is 2x³ - 6x² + 4x.",
     "traps": []
   },
@@ -1830,10 +1830,10 @@
     "options": [
       {
         "label": "A",
-        "text": "100b + 50y",
+        "text": "100y - 50b",
         "is_correct": false,
-        "trick_id": "ALG-MODEL-01",
-        "trick_name": "Ignores the loss from yellow boxes"
+        "trick_id": "ALG-MODEL-03",
+        "trick_name": "Swaps the variables and reverses the gain and loss"
       },
       {
         "label": "B",
@@ -1842,17 +1842,17 @@
       },
       {
         "label": "C",
+        "text": "100b + 50y",
+        "is_correct": false,
+        "trick_id": "ALG-MODEL-01",
+        "trick_name": "Ignores the loss from yellow boxes"
+      },
+      {
+        "label": "D",
         "text": "100y + 50b",
         "is_correct": false,
         "trick_id": "ALG-MODEL-02",
         "trick_name": "Swaps what the variables stand for"
-      },
-      {
-        "label": "D",
-        "text": "100y - 50b",
-        "is_correct": false,
-        "trick_id": "ALG-MODEL-03",
-        "trick_name": "Swaps the variables and reverses the gain and loss"
       }
     ],
     "correct": "B",
@@ -1874,10 +1874,8 @@
       },
       {
         "label": "B",
-        "text": "hypotenuse = sqrt(sideA + sideB)",
-        "is_correct": false,
-        "trick_id": "GEO-PYT-02",
-        "trick_name": "Adds the side lengths without squaring them"
+        "text": "hypotenuse = sqrt(sideA * sideA + sideB * sideB)",
+        "is_correct": true
       },
       {
         "label": "C",
@@ -1888,11 +1886,13 @@
       },
       {
         "label": "D",
-        "text": "hypotenuse = sqrt(sideA * sideA + sideB * sideB)",
-        "is_correct": true
+        "text": "hypotenuse = sqrt(sideA + sideB)",
+        "is_correct": false,
+        "trick_id": "GEO-PYT-02",
+        "trick_name": "Adds the side lengths without squaring them"
       }
     ],
-    "correct": "D",
+    "correct": "B",
     "solution": "For a right triangle, c = √(a² + b²). In pseudocode, squaring can be written as multiplying a value by itself, so use sqrt(sideA * sideA + sideB * sideB).",
     "traps": []
   },
@@ -1904,32 +1904,32 @@
     "options": [
       {
         "label": "A",
+        "text": "100",
+        "is_correct": false,
+        "trick_id": "NUM-DENS-03",
+        "trick_name": "Assumes numbers stop at a fixed decimal precision"
+      },
+      {
+        "label": "B",
         "text": "An infinite number",
         "is_correct": true
       },
       {
-        "label": "B",
+        "label": "C",
         "text": "9",
         "is_correct": false,
         "trick_id": "NUM-DENS-01",
         "trick_name": "Counts only the whole numbers strictly between the endpoints"
       },
       {
-        "label": "C",
+        "label": "D",
         "text": "10",
         "is_correct": false,
         "trick_id": "NUM-DENS-02",
         "trick_name": "Counts whole-number steps or includes an endpoint"
-      },
-      {
-        "label": "D",
-        "text": "100",
-        "is_correct": false,
-        "trick_id": "NUM-DENS-03",
-        "trick_name": "Assumes numbers stop at a fixed decimal precision"
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "solution": "Between any two different real numbers there are infinitely many other real numbers. For example, between 0 and 10 are 0.1, 0.01, √2, π, and infinitely many more.",
     "traps": []
   },
@@ -1941,15 +1941,15 @@
     "options": [
       {
         "label": "A",
+        "text": "A rational number can be written as a fraction of integers.",
+        "is_correct": true
+      },
+      {
+        "label": "B",
         "text": "A rational number is always positive.",
         "is_correct": false,
         "trick_id": "NUM-RAT-01",
         "trick_name": "Thinks rational numbers cannot be negative"
-      },
-      {
-        "label": "B",
-        "text": "A rational number can be written as a fraction of integers.",
-        "is_correct": true
       },
       {
         "label": "C",
@@ -1966,7 +1966,7 @@
         "trick_name": "Mixes up the decimal properties of rational and irrational numbers"
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "solution": "A rational number can be written as p/q, where p and q are integers and q is not 0. Its decimal either terminates or repeats.",
     "traps": []
   },
@@ -2015,32 +2015,32 @@
     "options": [
       {
         "label": "A",
+        "text": "350,000",
+        "is_correct": true
+      },
+      {
+        "label": "B",
+        "text": "3,500,000",
+        "is_correct": false,
+        "trick_id": "NUM-SCI-04",
+        "trick_name": "Moves the decimal one place too far"
+      },
+      {
+        "label": "C",
         "text": "350",
         "is_correct": false,
         "trick_id": "NUM-SCI-02",
         "trick_name": "Moves the decimal too few places"
       },
       {
-        "label": "B",
+        "label": "D",
         "text": "35,000",
         "is_correct": false,
         "trick_id": "NUM-SCI-03",
         "trick_name": "Moves the decimal one place too few"
-      },
-      {
-        "label": "C",
-        "text": "350,000",
-        "is_correct": true
-      },
-      {
-        "label": "D",
-        "text": "3,500,000",
-        "is_correct": false,
-        "trick_id": "NUM-SCI-04",
-        "trick_name": "Moves the decimal one place too far"
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "solution": "10⁵ = 100,000, so 3.5 x 100,000 = 350,000.",
     "traps": []
   },
@@ -2052,15 +2052,15 @@
     "options": [
       {
         "label": "A",
-        "text": "The budget needs to be modified because expenses are more than income.",
-        "is_correct": false,
-        "trick_id": "FIN-BUD-01",
-        "trick_name": "Totals the expenses incorrectly or compares the totals the wrong way"
+        "text": "The budget does not need to be modified because expenses are less than income.",
+        "is_correct": true
       },
       {
         "label": "B",
-        "text": "The budget does not need to be modified because expenses are less than income.",
-        "is_correct": true
+        "text": "If utilities decrease by $205, expenses will equal income.",
+        "is_correct": false,
+        "trick_id": "FIN-BUD-02",
+        "trick_name": "Changes the budget in the wrong direction"
       },
       {
         "label": "C",
@@ -2071,13 +2071,13 @@
       },
       {
         "label": "D",
-        "text": "If utilities decrease by $205, expenses will equal income.",
+        "text": "The budget needs to be modified because expenses are more than income.",
         "is_correct": false,
-        "trick_id": "FIN-BUD-02",
-        "trick_name": "Changes the budget in the wrong direction"
+        "trick_id": "FIN-BUD-01",
+        "trick_name": "Totals the expenses incorrectly or compares the totals the wrong way"
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "solution": "Current expenses are 1500 + 350 + 400 + 345 = $2595, which is less than the $2800 income, so the budget already balances with $205 left over.",
     "traps": [
       "Saying the budget needs to be modified because expenses are more than income compares the totals the wrong way: $2595 is less than $2800.",
@@ -2093,32 +2093,32 @@
     "options": [
       {
         "label": "A",
-        "text": "$300 down and $75 monthly",
-        "is_correct": false,
-        "trick_id": "FIN-LOAN-01",
-        "trick_name": "Looks at payment size but not payment frequency or remaining balance"
-      },
-      {
-        "label": "B",
         "text": "$600 down and $50 monthly",
         "is_correct": false,
         "trick_id": "FIN-LOAN-02",
         "trick_name": "Assumes the biggest down payment means the fastest payoff"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "$300 down and $50 every two weeks",
         "is_correct": true
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "$600 down and $30 every two weeks",
         "is_correct": false,
         "trick_id": "FIN-LOAN-03",
         "trick_name": "Does not compare how much each plan pays per year"
+      },
+      {
+        "label": "D",
+        "text": "$300 down and $75 monthly",
+        "is_correct": false,
+        "trick_id": "FIN-LOAN-01",
+        "trick_name": "Looks at payment size but not payment frequency or remaining balance"
       }
     ],
-    "correct": "C",
+    "correct": "B",
     "solution": "The plan with $300 down and $50 every two weeks leaves 2700 to pay: 2700 / 50 = 54 biweekly payments, which is about 24.9 months - the least time of the four plans.",
     "traps": [
       "$300 down and $75 monthly: 2700 / 75 = 36 months. The larger payment looks faster, but it arrives only once a month.",

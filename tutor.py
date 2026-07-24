@@ -107,6 +107,8 @@ def study_guide(item: dict, chosen_label: str, strategy: str = "explanation",
         "strategy": strategy,
         "explanation": plainify(ask_gemma(explain_prompt)),  # Gemma, LaTeX stripped
         "worked_solution": item.get("solution", ""),    # real, from the bank
+        "solution": item.get("solution", ""),           # same, under the bank's key
+        "traps": item.get("traps", []),                 # wrong answers, by their text
         "practice": practice,
         "hint": hint(practice, misc, level=1),          # ready instantly, no rerun
     }
