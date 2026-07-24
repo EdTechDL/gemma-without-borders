@@ -1151,9 +1151,10 @@ def boss_stage():
     mid = st.columns([2, 2, 2])
     mid[1].button("Retreat to the nexus", key="boss_flee", on_click=back_to_map,
                   use_container_width=True)
-    mid[1].button("Back to training", key="boss_train",
-                  on_click=lambda: st.session_state.update(stage="mastery"),
-                  use_container_width=True)
+    if "msession" in st.session_state:
+        mid[1].button("Back to training", key="boss_train",
+                      on_click=lambda: st.session_state.update(stage="mastery"),
+                      use_container_width=True)
 
 
 def _encounter_html(mon, name):
@@ -1264,6 +1265,9 @@ def quiz():
 
 # ---------------- RESULTS ----------------
 def results():
+    if "quiz" not in st.session_state:
+        back_to_map()
+        st.rerun()
     result = agent.grade_quiz(st.session_state.quiz, st.session_state.answers)
     analysis = agent.analyze(result)
 
@@ -1456,6 +1460,10 @@ def check_answer():
 
 
 def mastery_stage():
+    if "msession" not in st.session_state:
+        # nothing to train (e.g. arrived from the boss debug route) - go home
+        back_to_map()
+        st.rerun()
     s = st.session_state.msession
     st.markdown('<div class="gwb-kicker">' +
                 ("GEMMA MONSTERS · TRAINING GROUNDS" if st.session_state.get("adventure")
