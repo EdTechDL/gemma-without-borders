@@ -296,6 +296,7 @@ def start_mastery(result, analysis):
         seed_chosen=seed.get("chosen_text") or seed.get("chosen", ""),
         seed_correct=next((o["text"] for o in seed["item"]["options"]
                            if o.get("is_correct")), ""),
+        topic=seed["item"].get("topic", ""),
         used_item_ids=[q["id"] for q in st.session_state.quiz],
     )
     st.session_state.msession = s
@@ -2826,6 +2827,14 @@ def quiz():
         st.title("Quiz")
         st.caption("Answer every question, then submit.")
     for i, q in enumerate(st.session_state.quiz, 1):
+        # the topic is shown so a battle across a whole strand reads as coverage
+        # rather than as a jumble: a student can see that solving an equation
+        # and finding a slope are both Algebra without having to wonder
+        if q.get("topic"):
+            st.markdown(
+                f'<div style="color:#9b8ba0;font-size:.68rem;letter-spacing:.12em;'
+                f'text-transform:uppercase;margin:.2rem 0 -.4rem">{_hescape(q["topic"])}</div>',
+                unsafe_allow_html=True)
         st.markdown(f"**{i}. {esc(q['question'])}**")
         labels = [o["label"] for o in q["options"]]
         choice = st.radio(

@@ -56,14 +56,23 @@ def _snare_names(item: dict) -> set:
             if o.get("trick_name")}
 
 
-def on_idea_pool(questions, snare_id, used_ids, snare_name=None) -> list:
-    """Every unused item that works this idea, closest first."""
+def on_idea_pool(questions, snare_id, used_ids, snare_name=None, topic=None) -> list:
+    """Every unused item that works this idea, closest first.
+
+    When a topic is given, it is a HARD filter, not a preference. The same wrong
+    idea is tagged on questions about solving equations and about y-intercepts,
+    because a sign can be slipped in either - so without the topic the closest
+    match by tag can still be the wrong lesson entirely.
+    """
     used = set(used_ids or ())
     family = snare_family(snare_id)
     want_name = snare_key(snare_name)
+    want_topic = snare_key(topic)
     exact, sibling, by_name = [], [], []
     for q in questions or []:
         if q.get("id") in used:
+            continue
+        if want_topic and snare_key(q.get("topic")) != want_topic:
             continue
         ids = _snare_ids(q)
         if snare_id and snare_id in ids:
@@ -75,11 +84,11 @@ def on_idea_pool(questions, snare_id, used_ids, snare_name=None) -> list:
     return exact + sibling + by_name
 
 
-def next_on_idea(questions, snare_id, used_ids, snare_name=None):
+def next_on_idea(questions, snare_id, used_ids, snare_name=None, topic=None):
     """The next verified question on this idea, or None if the bank is out.
 
     None is not a failure to handle quietly - it is the signal to write one
     under audit, or to tell the student the bank has nothing further.
     """
-    pool = on_idea_pool(questions, snare_id, used_ids, snare_name)
+    pool = on_idea_pool(questions, snare_id, used_ids, snare_name, topic)
     return pool[0] if pool else None

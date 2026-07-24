@@ -56,6 +56,7 @@ class MasterySession:
     seed_solution: str = ""       # its VERIFIED worked solution (grounds every lesson)
     seed_chosen: str = ""         # the wrong answer they actually picked
     seed_correct: str = ""        # what the answer should have been
+    topic: str = ""               # the sub-area of the strand, e.g. "solving equations"
     used_item_ids: list = field(default_factory=list)
     strategy_index: int = 0
     attempts: int = 0
@@ -123,7 +124,8 @@ def next_check(session: MasterySession, questions: list) -> dict | None:
         session.history.append({"kind": "check", "source": "similar"})
         return {**made, "id": f"GEN-{session.attempts + 1}"}
 
-    q = next_on_idea(questions, session.trick_id, session.used_item_ids, session.trick_name)
+    q = next_on_idea(questions, session.trick_id, session.used_item_ids,
+                     session.trick_name, session.topic)
     if q:
         return take(q, "bank")
     # No verified question left on this idea. Gemma writes one, and it only

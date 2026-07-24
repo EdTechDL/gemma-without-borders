@@ -41,7 +41,8 @@ def pick_practice(item: dict, misc: dict, questions: list, used_ids: set) -> dic
     if made:
         return {**made, "id": f"GEN-{item['id']}"}
 
-    q = next_on_idea(questions, misc.get("id"), used_ids, misc.get("name"))
+    q = next_on_idea(questions, misc.get("id"), used_ids, misc.get("name"),
+                     item.get("topic"))
     if q:
         used_ids.add(q["id"])
         return {"source": "bank", **q}

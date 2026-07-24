@@ -79,5 +79,14 @@
   "trick_id": "NUM-2",
   "trick_name": "Changing the base when operating on powers",
   "strand": "Number"
+ },
+ {
+  "n": 10,
+  "title": "After the quiz \u2014 Incomplete Distribution",
+  "body": "**Parent report** \u2014 scored 1 of 5 (20%). The trick that caught them most: **Incomplete Distribution**.\n\nDear Parents,\n\nWe've noticed your child is having a little trouble with some algebra concepts during our recent diagnostic quiz. It seems they sometimes forget to apply a number or variable to *every* term inside parentheses when simplifying expressions, which suggests they\u2019re focusing on individual steps rather than the overall process of distributing correctly. This can indicate a tendency to work through problems piece by piece without fully considering how each step affects the whole equation.\n\n**Try at home**\n\n- Use building blocks (like LEGOs) to represent terms in parentheses and show how you need to distribute one number/variable to *each* block.\n- Write out simple expressions like 2(x + 3) on a piece of paper, then verbally explain each step aloud as you simplify it.\n- Take a few everyday objects (like pencils or spoons) and put them in a bag; write down how many are in the bag, then double the number by putting another set of identical items in the bag \u2013 physically show doubling everything inside.",
+  "kind": "quiz",
+  "trick_id": "ALG-1",
+  "trick_name": "Incomplete Distribution",
+  "strand": "Algebra"
  }
 ]
