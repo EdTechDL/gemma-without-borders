@@ -110,14 +110,38 @@ code, pre{background:#1c1119 !important;color:#ffd9b8 !important}
 [data-baseweb="popover"] [role="option"]:hover, [data-baseweb="popover"] li:hover,
 [data-baseweb="menu"] li:hover, [data-baseweb="popover"] li[aria-selected="true"]{
   background:#2a1a26 !important;color:#ffefdd !important}
-/* the letters-home button: reachable from every screen, including the
-   full-bleed game stages, without reloading the page and losing the session */
-.st-key-letters_float{position:fixed;left:18px;bottom:18px;z-index:1000;width:auto}
-.st-key-letters_float button{background:rgba(20,12,22,.86) !important;
-  border:1px solid #3a2a35 !important;border-radius:20px !important;
-  color:#cbbfd6 !important;font-size:.72rem !important;letter-spacing:.1em !important;
-  padding:8px 14px !important;box-shadow:0 6px 18px rgba(0,0,0,.55) !important}
-.st-key-letters_float button:hover{color:#ffefdd !important;border-color:#e08d6d !important}
+/* The letters-home button: reachable from every screen, including the
+   full-bleed game stages, without reloading the page and losing the session.
+   Kept to a small round glyph so it never competes with the game - the label
+   stays in the DOM for screen readers and surfaces as a tooltip on hover.
+   The mark is drawn here rather than fetched: original, no licence to honour,
+   and nothing to load over a network this app is proud not to use. */
+[class*="st-key-letters_float"]{position:fixed;left:16px;bottom:16px;z-index:1000;width:auto}
+[class*="st-key-letters_float"] button{background:rgba(20,12,22,.9) !important;
+  border:1px solid #3a2a35 !important;border-radius:50% !important;
+  width:46px !important;height:46px !important;min-height:46px !important;
+  padding:0 !important;overflow:hidden !important;
+  box-shadow:0 6px 18px rgba(0,0,0,.55) !important;
+  background-image:url('data:image/svg+xml;utf8,\
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" \
+stroke="%23d9c8bb" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">\
+<circle cx="15" cy="12" r="5.8"/>\
+<path d="M5.5 42v-8.5C5.5 27.7 9.8 23.4 15 23.4"/>\
+<circle cx="32.5" cy="24" r="4.4"/>\
+<path d="M25 42v-5.6c0-4.1 3.4-7.5 7.5-7.5s7.5 3.4 7.5 7.5V42"/>\
+<path d="M15.5 23.6c5.6 0 9.4 3.4 12 8.2"/>\
+</svg>') !important;
+  background-repeat:no-repeat !important;background-position:center !important;
+  background-size:25px 25px !important}
+[class*="st-key-letters_float"] button p, [class*="st-key-letters_float"] button div{
+  font-size:0 !important;line-height:0 !important;color:transparent !important}
+[class*="st-key-letters_float"] button:hover{border-color:#e08d6d !important;
+  background-color:rgba(38,20,28,.95) !important}
+/* a quiet dot when notes are waiting, instead of a number stealing space */
+.st-key-letters_float_notes button{border-color:#e08d6d !important}
+.st-key-letters_float_notes::after{content:'';position:absolute;
+  top:2px;right:2px;width:11px;height:11px;border-radius:50%;
+  background:#e08d6d;border:2px solid #0b0710;pointer-events:none}
 .gwb-taunt{position:fixed;bottom:20px;right:20px;z-index:999;display:flex;
   align-items:flex-end;gap:10px;animation:gwbBob 3.2s ease-in-out infinite}
 .gwb-bubble{background:#1c1119;border:1px solid #e08d6d;
@@ -273,7 +297,7 @@ def intro():
         st.session_state.adventure = True
         st.session_state.stage = "map"
         st.rerun()
-    if st.session_state.get("letters"):
+    if load_letters():
         st.button("For mum and dad", key="letters_intro", on_click=to_parents,
                   help="Every note the agent has written for your parents this session")
 
@@ -1139,11 +1163,39 @@ def to_dashboard():
 # Everything the agent writes for the parents is kept for the whole session
 # and stacked on one page. A student who walks away from the Collector, or
 # retreats to the nexus, never loses the note that was written for them.
+_LETTER_DIR = Path(__file__).parent / "data" / "letters"
+
+
+def _letter_file():
+    """One file per challenger, on this machine only. Parents should still be
+    able to read what the agent wrote after the child has closed the game."""
+    who = re.sub(r"[^A-Za-z0-9_-]", "", st.session_state.get("player_name", "")
+                 or "challenger")[:24] or "challenger"
+    return _LETTER_DIR / f"{who.lower()}.json"
+
+
+def load_letters():
+    """Letters live in session state, backed by a file so a reload - or a whole
+    new sitting - does not lose them. Session state alone is per browser tab."""
+    if "letters" in st.session_state:
+        return st.session_state.letters
+    try:
+        st.session_state.letters = json.loads(_letter_file().read_text())
+    except (OSError, ValueError):
+        st.session_state.letters = []
+    return st.session_state.letters
+
+
 def save_letter(title: str, body: str, kind: str = "report"):
-    letters = st.session_state.setdefault("letters", [])
+    letters = load_letters()
     if any(l["body"] == body for l in letters):
         return
     letters.append({"n": len(letters) + 1, "title": title, "body": body, "kind": kind})
+    try:
+        _LETTER_DIR.mkdir(parents=True, exist_ok=True)
+        _letter_file().write_text(json.dumps(letters, indent=1))
+    except OSError:
+        pass          # a read-only disk must never break the lesson
 
 
 def to_parents():
@@ -1151,11 +1203,26 @@ def to_parents():
     st.session_state.stage = "parents"
 
 
+_HUG_MARK = (
+    '<svg viewBox="0 0 48 48" width="44" height="44" fill="none" stroke="#e08d6d" '
+    'stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" '
+    'style="vertical-align:middle;margin-right:12px">'
+    '<circle cx="15" cy="12" r="5.8"/>'
+    '<path d="M5.5 42v-8.5C5.5 27.7 9.8 23.4 15 23.4"/>'
+    '<circle cx="32.5" cy="24" r="4.4"/>'
+    '<path d="M25 42v-5.6c0-4.1 3.4-7.5 7.5-7.5s7.5 3.4 7.5 7.5V42"/>'
+    '<path d="M15.5 23.6c5.6 0 9.4 3.4 12 8.2"/>'
+    '</svg>')
+
+
 def parents_stage():
     st.markdown('<div class="gwb-kicker">GEMMA MONSTERS · letters home</div>',
                 unsafe_allow_html=True)
-    st.title("For mum and dad")
-    letters = list(reversed(st.session_state.get("letters", [])))
+    st.markdown(
+        f'<div style="display:flex;align-items:center;margin:0 0 .4rem">{_HUG_MARK}'
+        '<span style="font-size:2.6rem;font-weight:800;letter-spacing:-.01em;'
+        'color:#f2e8dc">For mum and dad</span></div>', unsafe_allow_html=True)
+    letters = list(reversed(load_letters()))
     who = st.session_state.get("player_name", "your child")
     if not letters:
         note("Nothing here yet",
@@ -1690,6 +1757,29 @@ window.addEventListener('load', function(){
       g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+i*0.12+(won?0.9:1.4));
       o.stop(c.currentTime+i*0.12+1.5); });}catch(e){} }
 
+  // ---- the "correct" cue: only the first beat of the clip, so a fast run of
+  // right answers never turns into overlapping four-second stings ----
+  let __cueBuf=null;
+  (function(){
+    fetch((window.__ORIGIN||'')+'/app/static/audio/correct.mp3')
+      .then(r=>r.arrayBuffer())
+      .then(a=>__a().decodeAudioData(a))
+      .then(b=>{ __cueBuf=b; })
+      .catch(function(){});
+  })();
+  function sndRight(){
+    if(__gmMuted()||!__cueBuf) return;
+    try{
+      const c=__a(), s=c.createBufferSource(), g=c.createGain();
+      s.buffer=__cueBuf; s.connect(g); g.connect(c.destination);
+      const DUR=1.0;
+      g.gain.setValueAtTime(0.85,c.currentTime);
+      g.gain.setValueAtTime(0.85,c.currentTime+DUR-0.16);
+      g.gain.linearRampToValueAtTime(0.0001,c.currentTime+DUR);
+      s.start(c.currentTime,0,DUR);
+    }catch(e){}
+  }
+
   // ---- the Collector's theme: loops for as long as he holds the room ----
   // Fetched as a blob because Streamlit serves .mp3 with a text content type
   // that the browser refuses to play directly. Same mute switch as the citadel.
@@ -1807,7 +1897,7 @@ window.addEventListener('load', function(){
     setTimeout(newQ,900);
   }
   function hit(){
-    clearInterval(timerId); score++;
+    clearInterval(timerId); score++; sndRight();
     say(LINES_OK[Math.floor(Math.random()*LINES_OK.length)]);
     setTimeout(newQ,500);
   }
@@ -1943,6 +2033,29 @@ window.addEventListener('load', function(){
       g.gain.setValueAtTime(0.12,c.currentTime+i*0.12);
       g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+i*0.12+(won?0.9:1.4));
       o.stop(c.currentTime+i*0.12+1.5); });}catch(e){} }
+
+  // ---- the "correct" cue: only the first beat of the clip, so a fast run of
+  // right answers never turns into overlapping four-second stings ----
+  let __cueBuf=null;
+  (function(){
+    fetch((window.__ORIGIN||'')+'/app/static/audio/correct.mp3')
+      .then(r=>r.arrayBuffer())
+      .then(a=>__a().decodeAudioData(a))
+      .then(b=>{ __cueBuf=b; })
+      .catch(function(){});
+  })();
+  function sndRight(){
+    if(__gmMuted()||!__cueBuf) return;
+    try{
+      const c=__a(), s=c.createBufferSource(), g=c.createGain();
+      s.buffer=__cueBuf; s.connect(g); g.connect(c.destination);
+      const DUR=1.0;
+      g.gain.setValueAtTime(0.85,c.currentTime);
+      g.gain.setValueAtTime(0.85,c.currentTime+DUR-0.16);
+      g.gain.linearRampToValueAtTime(0.0001,c.currentTime+DUR);
+      s.start(c.currentTime,0,DUR);
+    }catch(e){}
+  }
 
   const W=innerWidth,H=innerHeight;
   const r=new THREE.WebGLRenderer({antialias:true});
@@ -2084,7 +2197,7 @@ window.addEventListener('load', function(){
   }
   function hit(){
     if(over) return;
-    clockRt(); score++; streak++; if(streak>best) best=streak; hud();
+    clockRt(); sndRight(); score++; streak++; if(streak>best) best=streak; hud();
     say(LINES_OK[Math.floor(Math.random()*LINES_OK.length)]);
     setTimeout(newQ,400);
   }
@@ -2631,14 +2744,19 @@ def results():
             help="The agent keeps teaching and checking, switching approaches "
                  "when one doesn't land, until you get two in a row right.",
         )
-    # only nudge the parents when the priority trick is still open
-    if analysis["escalate"] and not (priority and priority["id"] in mastered):
+    # A note goes home whenever anything was missed - not only when the run
+    # falls apart. A parent who only ever hears from us on the worst days has
+    # no way to see the pattern, or the progress.
+    if result["wrong"] and not (priority and priority["id"] in mastered):
         note(
             "For mum and dad to see",
-            "Several questions were missed. The agent writes your parents a report they "
-            "can act on — not just a score.",
+            ("Several questions were missed. The agent writes your parents a report they "
+             "can act on — not just a score.") if analysis["escalate"] else
+            ("The agent has written your parents a short note about what tripped you up "
+             "here, and what to try at the kitchen table."),
         )
-        with st.expander("See the report for mum and dad", expanded=True):
+        with st.expander("See the report for mum and dad",
+                         expanded=bool(analysis["escalate"])):
             if "teacher_report" not in st.session_state:
                 with st.spinner("Writing a note your parents can act on..."):
                     st.session_state.teacher_report = agent.teacher_report(result, analysis)
@@ -2758,7 +2876,7 @@ def results():
     if st.session_state.get("adventure"):
         st.button("Back to the nexus", key="tomap_bottom", on_click=back_to_map)
     st.button("Take another quiz", key="again_bottom", on_click=reset)
-    if st.session_state.get("letters"):
+    if load_letters():
         st.button("For mum and dad", key="letters_bottom", on_click=to_parents,
                   help="Every note the agent has written for your parents this session")
 
@@ -2990,8 +3108,9 @@ stage = st.session_state.get("stage", "intro")
 # not a link: a link would reload the page and take the session - and the
 # letters with it - down with it.
 if stage != "parents":
-    _n = len(st.session_state.get("letters", []))
-    with st.container(key="letters_float"):
-        st.button(f"For mum and dad ({_n})" if _n else "For mum and dad",
-                  key="letters_fab", on_click=to_parents,
-                  help="Everything the agent has written for your parents this session")
+    _n = len(load_letters())
+    # two keys, so "notes are waiting" is a CSS state and needs no scripting
+    with st.container(key="letters_float_notes" if _n else "letters_float"):
+        st.button("For mum and dad", key="letters_fab", on_click=to_parents,
+                  help=(f"For mum and dad - {_n} note{'s' if _n != 1 else ''} waiting"
+                        if _n else "For mum and dad - nothing written yet"))

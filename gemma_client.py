@@ -70,6 +70,7 @@ def plainify(text: str) -> str:
         s = match.group(1)
         return s.translate(_SUP) if all(c in "0123456789+-=()n" for c in s) else "^" + s
     t = re.sub(r"\^\{([^{}]*)\}", _sup, t)             # ^{...}
+    t = re.sub(r"\^\(([^()]*)\)", _sup, t)             # ^(3+2) -> ⁽³⁺²⁾
     t = re.sub(r"\^([0-9n])", lambda m: m.group(1).translate(_SUP), t)  # ^2
     t = re.sub(r"_\{([^{}]*)\}", r"_\1", t)            # _{...}
     t = t.replace("\\\\", " ")                          # LaTeX line breaks
@@ -148,8 +149,11 @@ def format_teacher_report(header_md: str, narrative: str) -> str:
         i = low.index(marker)
         prose = narrative[:i].strip()
         after = narrative[i:].split(":", 1)[1] if ":" in narrative[i:] else ""
-        # split on bullet/number markers wherever they appear (incl. inline)
-        items = [t.strip() for t in re.split(r"\s*(?:\d+[.)]|[-–*•])\s+", after) if t.strip()]
+        # Split on bullet/number markers only at the START of a line. Matching
+        # them inline tore activities in half: '2x2x2 x 2x2) - and then...'
+        # looks like a numbered marker at '2) ', mid-expression.
+        items = [t.strip() for t in
+                 re.split(r"(?m)^[ \t]*(?:\d+[.)]|[-–*•])[ \t]+", after) if t.strip()]
     else:
         prose, items = narrative.strip(), []
 
