@@ -6,7 +6,8 @@
 
 <!-- drop the four PNGs into docs/screens/ to light these up -->
 
-C:\Users\mahal\Downloads\citadel.jpg*The Citadel: drag to orbit the castle; five monsters wait on their floating platforms.*
+*The Citadel: drag to orbit the castle; <img width="1912" height="901" alt="citadel" src="https://github.com/user-attachments/assets/c1089e4b-5246-43e4-9464-6fb4e47b033d" />
+five monsters wait on their floating platforms.*
 
 ![A full-screen encounter — the monster addresses you by name and remembers your last battle](docs/screens/encounter.png)
 *An encounter: the monster calls you by name, and Gemma writes what it remembers about you.*
