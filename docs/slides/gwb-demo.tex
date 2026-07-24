@@ -43,6 +43,8 @@
   \setbeamercolor{normal text}{fg=ivory}%
   \setbeamercolor{frametitle}{fg=ivory,bg=night}%
   \setbeamercolor{title}{fg=ivory}%
+  \setbeamercolor{itemize/enumerate body}{fg=ivory}%
+  \setbeamercolor{itemize/enumerate subbody}{fg=plight}%
 }{}
 
 \title{Gemma Monsters}
@@ -54,6 +56,7 @@
 % ---------------------------------------------------------------- 1 TITLE (dark)
 \begin{darkslides}
 \begin{frame}
+  \color{ivory}
   \begin{center}
     \vspace{1.2em}
     \kicker{GDG Windsor · Build with AI · Edge / On-Device Track}
@@ -96,11 +99,12 @@
 % ---------------------------------------------------------------- 3 GAME WORLD (dark)
 \begin{darkslides}
 \begin{frame}{The game world: the Citadel}
-  {\small A gothic castle nexus in three.js --- drag to orbit. Five monsters idle on floating platforms, each guarding one curriculum strand and a sealed \textcolor{gold}{golden gate}. Someone is locked in the keep; defeat all five and the finale opens the gate.}\par
-  \vspace{0.5em}
-  \renewcommand{\arraystretch}{1.22}
+  \color{ivory}
+  {\small A gothic castle nexus in three.js --- drag to orbit. Five monsters idle on floating platforms, each guarding one curriculum strand and a sealed \textcolor{gold}{golden gate}. Someone is locked in the keep; defeat all five to open it.}\par
+  \vspace{0.2em}
+  \renewcommand{\arraystretch}{1.15}
   {\footnotesize
-  \begin{tabular}{@{}p{2.1cm}p{3.6cm}p{7.2cm}@{}}
+  \begin{tabular}{@{}p{2.1cm}>{\raggedright\arraybackslash}p{3.6cm}p{7.2cm}@{}}
     \toprule
     \textbf{Monster} & \textbf{Strand (MTH1W)} & \textbf{The trick it feeds on} \\
     \midrule
@@ -111,8 +115,8 @@
     Ledgerling & Financial Literacy      & interest skimmed off a sloppy budget \\
     \bottomrule
   \end{tabular}}
-  \vspace{0.5em}
-  \begin{itemize}\setlength\itemsep{0.25em}
+  \vspace{0.2em}
+  \begin{itemize}\setlength\itemsep{0.2em}
     \item {\small The game captures your \textbf{hero name}; monsters address you by it in full-screen encounter cinematics.}
     \item {\small And they \textbf{remember}: Gemma writes each monster's greeting from your actual battle history.}
   \end{itemize}
@@ -132,8 +136,8 @@
     \node[box, right=of enc] (battle) {Battle\\ \scriptsize 5 verified EQAO-style\\ \scriptsize questions};
     \node[box, right=of battle] (report) {Battle report\\ \scriptsize the trick named +\\ \scriptsize grounded study guide};
     \node[accent, right=of report] (train) {Training\\ \scriptsize the autonomous\\ \scriptsize mastery loop};
-    \node[box, above right=0.3cm and 0.42cm of train.east, anchor=west] (win) {\color{okg}Mastery\\ \tiny Gemma forges a relic;\\ \tiny the strand falls};
-    \node[box, below right=0.3cm and 0.42cm of train.east, anchor=west] (esc) {Escalation\\ \tiny the Collector is summoned\\ \tiny + teacher report};
+    \node[box, above right=0.55cm and 0.42cm of train.east, anchor=west] (win) {\color{okg}Mastery\\ \tiny Gemma forges a relic};
+    \node[box, below right=0.55cm and 0.42cm of train.east, anchor=west] (esc) {Escalation\\ \tiny the Collector + teacher report};
     \draw[arr] (enc) -- (battle);
     \draw[arr] (battle) -- (report);
     \draw[arr] (report) -- (train);
@@ -170,11 +174,11 @@
       \end{center}
     \end{column}
     \begin{column}{0.42\textwidth}
-      \textbf{The reasoning gate:} a right answer with shaky typed reasoning \textbf{does not count toward mastery} --- Gemma grades the explanation (closed labels), not just the bubble.\par
-      \vspace{0.6em}
-      \textbf{Explainable everywhere:} every agent decision is shown with its why --- \mutedtext{\small ``Trying a visual walkthrough --- you said you can't see why the denominators matter.''}\par
-      \vspace{0.6em}
-      \textbf{It cannot run away:} 4-attempt cap, 12-model-call budget, strategy exhaustion $\rightarrow$ clean hand-off.\par
+      {\small \textbf{The reasoning gate:} a right answer with shaky typed reasoning \textbf{does not count} --- Gemma grades the explanation (closed labels), not just the bubble.\par
+      \vspace{0.5em}
+      \textbf{Explainable everywhere:} every decision shows its why --- \mutedtext{``Trying a visual walkthrough --- you said you can't see why the denominators matter.''}\par
+      \vspace{0.5em}
+      \textbf{It cannot run away:} 4-attempt cap, 12-model-call budget, exhaustion $\rightarrow$ clean hand-off.\par}
       \vspace{0.3em}
       {\scriptsize\color{muted}Orange boxes = Gemma. Every session provably terminates.}
     \end{column}
@@ -209,26 +213,27 @@
 % ---------------------------------------------------------------- 7 COLLECTOR (dark)
 \begin{darkslides}
 \begin{frame}{The Collector, his lieutenants, and the Gemma coach}
+  \color{ivory}
   \begin{columns}[T]
     \begin{column}{0.5\textwidth}
-      \textbf{\textcolor{gold}{THE COLLECTOR}} --- {\small a giant skull boss, summoned when the mastery loop escalates. A client-side mental-math speed trial: 3 lives, he attacks on every miss. Alongside him, Gemma writes the teacher report --- the agent knows its limits.}\par
-      \vspace{0.6em}
+      \textbf{\textcolor{gold}{THE COLLECTOR}} --- {\small a giant skull boss, summoned when the mastery loop escalates: a mental-math speed trial, 3 lives, he attacks on every miss. Gemma writes the teacher report alongside --- the agent knows its limits.}\par
+      \vspace{0.2em}
       \textbf{Three lieutenants}, one mental-math lane each:
-      \begin{itemize}\setlength\itemsep{0.25em}
+      \begin{itemize}\setlength\itemsep{0.2em}
         \item {\small \textbf{Twinfang} --- doubles and halves}
         \item {\small \textbf{The Niner} --- the nines shortcut}
         \item {\small \textbf{Splitjaw} --- make-a-ten}
       \end{itemize}
-      {\small 90-second war-clock skirmishes with streak escalation; every miss and its latency is logged.}
+      {\small 90-second war-clock skirmishes with streak escalation; every miss and its latency logged.}
     \end{column}
     \begin{column}{0.47\textwidth}
       \textbf{GET COACHED BY GEMMA}
-      \begin{itemize}\setlength\itemsep{0.4em}
+      \begin{itemize}\setlength\itemsep{0.3em}
         \item {\small Before the fight, Gemma \textbf{whispers the lane's mental strategy} in its own words.}
         \item {\small After it, Gemma reads the miss + latency telemetry, \textbf{names your miss pattern}, teaches the fix, and sets a \textbf{3-question drill}.}
         \item {\small The battle is pure client-side speed; \textbf{the coaching is where the model earns its keep}.}
       \end{itemize}
-      \vspace{0.3em}
+      \vspace{0.15em}
       \dmuted{\scriptsize The whole wing runs to a procedural WebAudio soundscape --- no audio files shipped.}
     \end{column}
   \end{columns}
@@ -238,21 +243,21 @@
 % ---------------------------------------------------------------- 8 RELIABILITY
 \begin{frame}{We caught our model failing --- and engineered around it}
   \mutedtext{Every guardrail exists because live testing broke something. The commit history is the proof of work.}\par
-  \vspace{0.4em}
-  \renewcommand{\arraystretch}{1.15}
+  \vspace{0.3em}
+  \renewcommand{\arraystretch}{1.1}
   {\small
-  \begin{tabular}{@{}p{5.6cm}p{6.6cm}@{}}
+  \begin{tabular}{@{}p{5.8cm}>{\raggedright\arraybackslash}p{7.2cm}@{}}
     \toprule
     \textbf{Caught in testing} & \textbf{Architectural fix} \\
     \midrule
     Generated a question with a \textbf{wrong answer key} & blind self-solve audit; bank-first probes \\
     Wrote a probe \textbf{in Spanish} & constrained generation prompts \\
-    \textbf{Invented wrong arithmetic} in an explanation ($\tfrac{2}{3}+\tfrac{1}{4}=\tfrac{17}{12}$) & grounding rule: explain \emph{why}, never recompute --- all numbers come from the verified solution \\
+    \textbf{Invented wrong arithmetic} in an explanation ($\tfrac{2}{3}+\tfrac{1}{4}=\tfrac{17}{12}$) & grounding rule: explain \emph{why}, never recompute; numbers only from the verified solution \\
     Rambled when reconstructing multi-step errors & diagnosis by ground-truth tag lookup, not model reasoning \\
     Emitted \texttt{2\^{}3} and \texttt{2/3} as raw markup & notation layer: real exponents and stacked fractions on screen \\
     \bottomrule
   \end{tabular}}
-  \vspace{0.4em}
+  \vspace{0.25em}
   \begin{itemize}
     \item {\small The result: \textbf{the model is never the source of truth for math} anywhere a student can see it.}
   \end{itemize}
@@ -262,24 +267,23 @@
 \begin{frame}{Fully on-device \hfill {\normalsize\color{muted}the Edge track promise, kept literally}}
   \begin{columns}[T]
     \begin{column}{0.55\textwidth}
-      \begin{itemize}\setlength\itemsep{0.45em}
-        \item Gemma runs locally via \textbf{Ollama}: \texttt{gemma3:12b} primary, \texttt{gemma3:1b} light --- one environment variable. The demo works in airplane mode.
-        \item The 3D world is local too: \textbf{three.js and the CC0 Quaternius monsters are vendored} --- no CDN, no asset fetches.
-        \item The soundscape is \textbf{synthesized procedurally in WebAudio} --- zero audio files.
-        \item Tutoring data is a protected student record --- \textbf{what a student struggles with stays on their machine.}
+      \begin{itemize}\setlength\itemsep{0.3em}
+        \item {\small Gemma runs locally via \textbf{Ollama}: \texttt{gemma3:12b} primary, \texttt{gemma3:1b} light --- one env var. Works in airplane mode.}
+        \item {\small The 3D world is local too: \textbf{three.js and the CC0 Quaternius monsters are vendored} --- no CDN.}
+        \item {\small The soundscape is \textbf{synthesized procedurally in WebAudio} --- zero audio files.}
+        \item {\small A student's struggles are a protected record --- \textbf{they stay on their machine.}}
       \end{itemize}
-      \vspace{0.15em}
-      {\scriptsize\color{muted}Companion Kaggle notebook runs Gemma 4 12b-it on a cloud GPU --- the app itself never leaves the laptop.}
+      {\scriptsize\color{muted}Companion Kaggle notebook: Gemma 4 12b-it on a cloud GPU --- the app never leaves the laptop.}
     \end{column}
     \begin{column}{0.42\textwidth}
       \begin{tikzpicture}
-        \node[draw=line, fill=card, rounded corners=3pt, inner sep=10pt, text width=4.6cm, align=center] {
-          {\small\bfseries The student's laptop}\\[4pt]
+        \node[draw=line, fill=card, rounded corners=3pt, inner sep=8pt, text width=4.6cm, align=center] {
+          {\small\bfseries The student's laptop}\\[3pt]
           {\small three.js Citadel + Streamlit}\\
-          {\scriptsize\color{muted}battles · agent loop · coach · reports}\\[3pt]
+          {\scriptsize\color{muted}battles · agent loop · coach · reports}\\[2pt]
           {\color{clay}$\updownarrow$}\\[2pt]
           {\small Ollama + Gemma}\\
-          {\scriptsize\color{muted}12B primary · 1B one flag away}\\[6pt]
+          {\scriptsize\color{muted}12B primary · 1B one flag away}\\[4pt]
           {\color{line}\rule{3.8cm}{0.6pt}}\\[3pt]
           {\scriptsize\color{okg}\bfseries nothing crosses this line}\\[1pt]
           {\scriptsize\color{muted}(the internet)}
@@ -314,7 +318,7 @@
   {\color{line}\hrule height 1pt}
   \vspace{0.5em}
   \kicker{How we score ourselves on the rubric}
-  {\small
+  \resizebox{\textwidth}{!}{%
   \begin{tabular}{@{}llll@{}}
     \textbf{Gemma Integration 30\%} & \textbf{Innovation 30\%} & \textbf{Functionality 20\%} & \textbf{Writeup 20\%} \\
     \mutedtext{\scriptsize 8 roles, all guardrailed} & \mutedtext{\scriptsize a tutor agent you can fight} & \mutedtext{\scriptsize live, on-device, terminates} & \mutedtext{\scriptsize honest engineering story} \\
@@ -324,6 +328,7 @@
 % ---------------------------------------------------------------- 12 CLOSE (dark)
 \begin{darkslides}
 \begin{frame}
+  \color{ivory}
   \begin{center}
     \vspace{1.5em}
     {\rmfamily\fontsize{26}{32}\selectfont\color{ivory} Every monster is a trick ---\\ a wrong idea that feels right.\par}

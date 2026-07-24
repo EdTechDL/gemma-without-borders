@@ -979,33 +979,22 @@ function animate(){
 })();
 window.resetCamera = resetCamera;
 
-// --- procedural soundscape: calm drone + sparse bells (WebAudio, no files) ---
+// --- nexus theme: dark cinematic loop (starts on first interaction) ---
 (function(){
-  let ctx=null,master=null,started=false;
-  function startAmbient(){ if(started) return; started=true;
-    ctx=new (window.AudioContext||window.webkitAudioContext)();
-    master=ctx.createGain(); master.gain.value=0.05; master.connect(ctx.destination);
-    [65.4,98.0,130.8].forEach(function(f,i){
-      const o=ctx.createOscillator(), g=ctx.createGain();
-      o.type='sine'; o.frequency.value=f; g.gain.value=0;
-      o.connect(g); g.connect(master); o.start();
-      g.gain.linearRampToValueAtTime(0.16/(i+1), ctx.currentTime+4);
-      const lfo=ctx.createOscillator(), lg=ctx.createGain();
-      lfo.frequency.value=0.05+i*0.02; lg.gain.value=0.05;
-      lfo.connect(lg); lg.connect(g.gain); lfo.start();
-    });
-    (function bell(){
-      if(!ctx) return;
-      const o=ctx.createOscillator(), g=ctx.createGain();
-      o.type='triangle'; o.frequency.value=[523.25,659.25,783.99][Math.floor(Math.random()*3)];
-      g.gain.value=0; o.connect(g); g.connect(master); o.start();
-      g.gain.linearRampToValueAtTime(0.09, ctx.currentTime+0.05);
-      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+3.5);
-      setTimeout(function(){o.stop();}, 4000);
-      setTimeout(bell, 9000+Math.random()*14000);
-    })();
-  }
-  addEventListener('pointerdown', startAmbient, {once:true});
+  let started=false;
+  addEventListener('pointerdown', function(){
+    if(started) return; started=true;
+    fetch((window.__ORIGIN||'')+'/app/static/audio/nexus-theme.mp3')
+      .then(r=>r.blob())
+      .then(b=>{
+        const a=new Audio(URL.createObjectURL(new Blob([b],{type:'audio/mpeg'})));
+        a.loop=true; a.volume=0.0; a.play().catch(function(){});
+        // gentle fade in
+        let v=0; const t2=setInterval(function(){ v+=0.02;
+          a.volume=Math.min(0.32,v); if(v>=0.32) clearInterval(t2); },120);
+        window.__theme=a;
+      }).catch(function(){});
+  }, {once:true});
 })();
 window.__focus = focus;
 
