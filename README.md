@@ -11,14 +11,17 @@
 <br>
 <br>
 <br>
-<br>
 <img width="1157" height="782" alt="taha" src="https://github.com/user-attachments/assets/e37f082b-d0f8-49d5-b08b-69f19226e177" />
 *An encounter: the monster calls you by name, and Gemma writes what it remembers about you.*
-
-![The battle report — exactly which tricks got you, with a Gemma-grounded study guide](docs/screens/battle-report.png)
+<br>
+<br>
+<br>
+<img width="977" height="907" alt="sg" src="https://github.com/user-attachments/assets/443aa3a4-8b96-4cf5-a2e5-7e0ad8ff2cbb" />
 *The battle report: what got you, why it felt right, and the study guide that fixes it.*
-
-![The Collector — a giant skull boss running a mental-math speed trial](docs/screens/collector.png)
+<br>
+<br>
+<br>
+<img width="1917" height="917" alt="col" src="https://github.com/user-attachments/assets/5b035bed-e4bb-4eb2-9ae2-1fc8389e625f" />
 *The Collector: three lives, a speed trial, and no patience for slow arithmetic.*
 
 ## The story
