@@ -659,7 +659,7 @@ function init(){
 
     // the monster standing on top
     const holder=new THREE.Group();
-    holder.position.y=0.95;
+    holder.position.y=0.98;
     holder.userData={i:i};
     platformGroup.add(holder);
     monsters.push(holder);
