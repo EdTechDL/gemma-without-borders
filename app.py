@@ -362,6 +362,7 @@ _HUB_TEMPLATE = r"""
     <div class="hbtns">
       <button class="hbtn" onclick="resetCamera()">Nexus view</button>
       <a class="hbtn" target="_top" id="exitlink" href="#">Simple dashboard</a>
+      <button class="hbtn" id="mutebtn" title="Toggle music and battle sounds">Sound: on</button>
       <span id="herobox" style="display:none;margin-left:10px">
         <input id="heroname" maxlength="20" placeholder="YOUR NAME, CHALLENGER"
           style="background:#1c1119;border:1px solid #3a2a35;border-radius:18px;
@@ -1005,7 +1006,21 @@ function animate(){
 window.resetCamera = resetCamera;
 
 // --- nexus theme: dark cinematic loop (starts on first interaction) ---
+// A mute toggle lives in the header for anyone who prefers quiet; the choice
+// persists (when the browser allows) and the battle arenas honour it too.
 (function(){
+  function saved(){ try{ return localStorage.getItem('gm_mute')==='1'; }catch(e){ return false; } }
+  window.__muted = saved();
+  const mb=document.getElementById('mutebtn');
+  function paint(){ if(mb) mb.textContent = window.__muted ? 'Sound: off' : 'Sound: on'; }
+  paint();
+  if(mb) mb.addEventListener('click', function(){
+    window.__muted = !window.__muted;
+    try{ localStorage.setItem('gm_mute', window.__muted ? '1' : '0'); }catch(e){}
+    const t=window.__theme;
+    if(t){ if(window.__muted) t.pause(); else t.play().catch(function(){}); }
+    paint();
+  });
   let started=false;
   addEventListener('pointerdown', function(){
     if(started) return; started=true;
@@ -1013,7 +1028,8 @@ window.resetCamera = resetCamera;
       .then(r=>r.blob())
       .then(b=>{
         const a=new Audio(URL.createObjectURL(new Blob([b],{type:'audio/mpeg'})));
-        a.loop=true; a.volume=0.0; a.play().catch(function(){});
+        a.loop=true; a.volume=0.0;
+        if(!window.__muted) a.play().catch(function(){});
         // gentle fade in, plus a duck near the end of each loop (the track swells)
         const BASE=0.30, DUCK_S=6;
         let fade=0; const t2=setInterval(function(){ fade=Math.min(1,fade+0.06);
@@ -1360,13 +1376,14 @@ window.addEventListener('load', function(){
   // procedural battle audio (no files): thud on hit, resolution chord at the end
   let __actx=null;
   function __a(){ if(!__actx) __actx=new (window.AudioContext||window.webkitAudioContext)(); return __actx; }
-  function sndThud(){ try{ const c=__a(),o=c.createOscillator(),g=c.createGain();
+  function __gmMuted(){ try{ return localStorage.getItem('gm_mute')==='1'; }catch(e){ return false; } }
+  function sndThud(){ if(__gmMuted()) return; try{ const c=__a(),o=c.createOscillator(),g=c.createGain();
     o.type='sine'; o.frequency.setValueAtTime(110,c.currentTime);
     o.frequency.exponentialRampToValueAtTime(38,c.currentTime+0.25);
     g.gain.setValueAtTime(0.5,c.currentTime);
     g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.3);
     o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime+0.32);}catch(e){} }
-  function sndEnd(won){ try{ const c=__a();
+  function sndEnd(won){ if(__gmMuted()) return; try{ const c=__a();
     const freqs=won?[523.25,659.25,783.99,1046.5]:[220,207.65,196,185];
     freqs.forEach((f,i)=>{ const o=c.createOscillator(),g=c.createGain();
       o.type=won?'triangle':'sawtooth'; o.frequency.value=f; g.gain.value=0.0;
@@ -1572,13 +1589,14 @@ window.addEventListener('load', function(){
   // procedural battle audio (no files): thud on hit, resolution chord at the end
   let __actx=null;
   function __a(){ if(!__actx) __actx=new (window.AudioContext||window.webkitAudioContext)(); return __actx; }
-  function sndThud(){ try{ const c=__a(),o=c.createOscillator(),g=c.createGain();
+  function __gmMuted(){ try{ return localStorage.getItem('gm_mute')==='1'; }catch(e){ return false; } }
+  function sndThud(){ if(__gmMuted()) return; try{ const c=__a(),o=c.createOscillator(),g=c.createGain();
     o.type='sine'; o.frequency.setValueAtTime(110,c.currentTime);
     o.frequency.exponentialRampToValueAtTime(38,c.currentTime+0.25);
     g.gain.setValueAtTime(0.5,c.currentTime);
     g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.3);
     o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime+0.32);}catch(e){} }
-  function sndEnd(won){ try{ const c=__a();
+  function sndEnd(won){ if(__gmMuted()) return; try{ const c=__a();
     const freqs=won?[523.25,659.25,783.99,1046.5]:[220,207.65,196,185];
     freqs.forEach((f,i)=>{ const o=c.createOscillator(),g=c.createGain();
       o.type=won?'triangle':'sawtooth'; o.frequency.value=f; g.gain.value=0.0;
@@ -2216,11 +2234,11 @@ def results():
     # only nudge the parents when the main gap is still open
     if analysis["escalate"] and not (priority and priority["id"] in mastered):
         note(
-            "Parent hand-off",
+            "For mum and dad to see",
             "Several questions were missed. The agent writes your parents a report they "
             "can act on — not just a score.",
         )
-        with st.expander("See the parent report", expanded=True):
+        with st.expander("See the report for mum and dad", expanded=True):
             if "teacher_report" not in st.session_state:
                 with st.spinner("Writing a note your parents can act on..."):
                     st.session_state.teacher_report = agent.teacher_report(result, analysis)
@@ -2395,7 +2413,7 @@ def mastery_stage():
             st.button("FACE THE COLLECTOR — the speed trial", type="primary",
                       key="boss_go",
                       on_click=lambda: st.session_state.update(stage="boss"))
-        note("Parent hand-off",
+        note("For mum and dad to see",
              "The agent tried every approach it has. Time for a human — here is a report "
              "your parents can act on, informed by what already didn't work.")
         if "escal_report" not in st.session_state:
@@ -2413,6 +2431,9 @@ def mastery_stage():
     # feedback from the previous answer
     fb = st.session_state.get("mfeedback")
 
+    if fb and fb.get("reaction"):
+        # Gemma read the student's own typed words and answers them directly
+        note("The citadel heard you", esc(fb["reaction"]))
     if fb and fb.get("rationale"):
         # explainable AI: every decision shows its evidence-based "why"
         headline = ("Correct" if fb["correct"] and fb.get("label") == "RESOLVED"
@@ -2443,7 +2464,7 @@ def mastery_stage():
         label_visibility="collapsed",
     )
     st.text_input(
-        "In one line: how did you get your answer? (optional — the agent reads it)",
+        "In one line: how did you get your answer? (optional — the agent reads it and answers back)",
         key="mastery_reason",
         placeholder="e.g. I found a common denominator of 12, then added the tops",
     )

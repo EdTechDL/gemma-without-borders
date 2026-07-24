@@ -206,6 +206,36 @@ def _grade_reasoning(session: MasterySession, probe: dict, chosen_label: str,
     return label
 
 
+def _reaction(session: MasterySession, explanation: str, correct: bool,
+              label: str) -> str:
+    """One or two lines from Gemma reacting DIRECTLY to the student's own typed
+    words, in the voice of the citadel. The grader (above) classifies; this is
+    where the student feels heard — real reasoning gets a real acknowledgement,
+    and joking or off-topic text gets a playful callout plus a warning that the
+    monsters ahead only fall to genuine reasoning."""
+    if not explanation.strip() or session.gemma_calls >= MAX_GEMMA_CALLS:
+        return ""
+    session.gemma_calls += 1
+    quality = {"RESOLVED": "solid", "SHALLOW": "thin or missing",
+               "SAME_ERROR": "still caught in the trick"}.get(label, "solid")
+    verdict = (f"their answer was correct and their reasoning was judged {quality}"
+               if correct else "their answer was wrong")
+    raw = ask_gemma(
+        f"TASK: react\n"
+        f"You are the voice of a monster citadel in a math game - dry wit, a "
+        f"little theatrical, never mean, and you take real effort seriously.\n"
+        f"A Grade 9 challenger is battling the trick '{session.trick_name}'; "
+        f"{verdict}.\n"
+        f"In the reasoning box they typed: \"{explanation.strip()[:400]}\"\n"
+        f"Write ONE or TWO short sentences, in English, reacting directly to "
+        f"what they typed. If it is genuine math reasoning, name the specific "
+        f"idea in their words that was right or wrong. If it is off-topic, "
+        f"joking, or fishing for compliments, call that out playfully and warn "
+        f"them the monsters ahead only fall to real reasoning. Plain text only: "
+        f"no emojis, no LaTeX, no dollar signs, no quotation marks.")
+    return plainify(raw).strip().strip('"')
+
+
 def _choose_strategy(session: MasterySession, explanation: str) -> str:
     """Gemma DECIDES the next teaching move: given the student's own words, it
     picks the most promising remaining strategy and says why. Deterministic
@@ -286,9 +316,10 @@ def submit_answer(session: MasterySession, probe: dict, chosen_label: str,
         session.escalation_reason = "model call budget reached"
 
     rationale = _rationale(session, correct, label, strategy_changed, strategy_why)
+    reaction = _reaction(session, explanation, correct, label)
     return {"correct": correct, "label": label, "state": session.state,
             "strategy_changed": strategy_changed, "strategy_why": strategy_why,
-            "rationale": rationale}
+            "rationale": rationale, "reaction": reaction}
 
 
 def _rationale(session, correct, label, strategy_changed, strategy_why) -> str:
