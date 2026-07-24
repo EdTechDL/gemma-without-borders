@@ -285,6 +285,8 @@ _HUB_TEMPLATE = r"""
   header p{color:#b9a794;font-size:.95rem;margin-top:4px;max-width:430px}
   header{display:flex;justify-content:space-between;align-items:flex-start}
   .hbtns{display:flex;gap:10px}
+  #herobox, #herobox *, #herotag{pointer-events:auto}
+  #heroname{cursor:text}
   .hbtn{display:inline-flex;align-items:center;justify-content:center;text-align:center;pointer-events:auto;background:rgba(255,240,225,.06);border:1px solid rgba(255,240,225,.16);
     color:#d9c6b2;padding:10px 20px;border-radius:24px;cursor:pointer;font-weight:700;
     text-transform:uppercase;letter-spacing:1px;font-size:.75rem;text-decoration:none;
@@ -959,6 +961,15 @@ function animate(){
   function show(n){ tag.textContent='CHALLENGER: '+n.toUpperCase(); tag.style.display='inline';
                     box.style.display='none'; }
   if(saved){ show(saved); } else { box.style.display='inline'; }
+  // click your name tag to change it
+  tag.style.cursor='pointer';
+  tag.title='Click to change your name';
+  tag.onclick=function(){
+    const cur=(localStorage.getItem('gwb_hero')||'').trim();
+    document.getElementById('heroname').value=cur;
+    box.style.display='inline'; tag.style.display='none';
+    document.getElementById('heroname').focus();
+  };
   function saveHero(){
     const n=document.getElementById('heroname').value.trim();
     if(n){ localStorage.setItem('gwb_hero', n); show(n); } }
