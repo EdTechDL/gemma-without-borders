@@ -156,3 +156,26 @@ Teammates can also clone + run locally (README has steps; 1B model is an 815MB p
 - Nexus designer pass: vignette + color grade, denser fog, layered beveled
   platforms at varied heights with slow bobbing, colored rim light behind each
   monster, floating debris field, nebula dome + beacons (subtle), dimmer core.
+
+## Addendum - July 24 (late-4) - CITADEL ERA
+- Nexus is now the Blackthorn-style CITADEL: gothic castle w/ sealed golden gate
+  (rescue story - character model reveal pending, user will supply .glb), 5
+  floating platforms in a ring with the monsters (8.8 max-dim, big), stone
+  textures, pine forest, plants, embers, drag-orbit + zoom (OrbitControls
+  vendored), ACES 0.85 exposure. Gothic title banner; centered pill buttons.
+- Gemma creative layer: rewards.py (forge_relic on mastery -> named relic note;
+  battle_memory_line prepended to encounter dialogue with session facts).
+- Mental-math wars: _SKIRMISH_TEMPLATE + _LIEUTENANTS (Twinfang/doubles,
+  The Niner/nines, Splitjaw/split), 90s war clock, streak-escalating JS
+  question gen, miss+latency telemetry, end-card GET COACHED BY GEMMA link
+  (?coach=lane&misses=...) -> coach_stage: Gemma names the miss pattern,
+  teaches the fix, 3-question drill; rematch button. Entry: boss arena page
+  lieutenant buttons, or ?skirmish=doubles|nines|split.
+- Procedural WebAudio (no files): citadel ambient drone+bells on first
+  interaction; arenas thud on hit, resolving chord on end (win bright/loss low).
+- NOT YET BROWSER-VERIFIED after final integration: skirmish arena run-through,
+  coach page round-trip, citadel card/focus flow with 8.8 monsters, encounter
+  memory line, relic drop. Test these first: /?skirmish=doubles then miss twice,
+  finish, click GET COACHED; then citadel monster click -> card -> Begin.
+- Tunnel may need restart: pkill cloudflared; nohup cloudflared tunnel --url
+  http://localhost:8501 >/tmp/gwb_tunnel.log 2>&1 & then grep the URL.
