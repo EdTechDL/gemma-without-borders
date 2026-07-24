@@ -1,3 +1,4 @@
+<img width="1157" height="782" alt="taha" src="https://github.com/user-attachments/assets/469d3ba0-7d1d-40a7-bd08-b279bedab8e7" />
 # GEMMA MONSTERS
 
 *An on-device math adventure powered by Gemma — built for the GDG Windsor Build with AI hackathon, Edge/On-Device track.*
@@ -9,7 +10,7 @@
 <img width="1912" height="901" alt="citadel" src="https://github.com/user-attachments/assets/c1089e4b-5246-43e4-9464-6fb4e47b033d" />
 *The Citadel: drag to orbit the castle; five monsters wait on their floating platforms.*
 
-![A full-screen encounter — the monster addresses you by name and remembers your last battle](docs/screens/encounter.png)
+<img width="1157" height="782" alt="taha" src="https://github.com/user-attachments/assets/e37f082b-d0f8-49d5-b08b-69f19226e177" />
 *An encounter: the monster calls you by name, and Gemma writes what it remembers about you.*
 
 ![The battle report — exactly which tricks got you, with a Gemma-grounded study guide](docs/screens/battle-report.png)
