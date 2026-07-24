@@ -262,13 +262,34 @@ def pick_quiz(strand: str, n: int) -> list:
     return pool[:n]
 
 
+def scroll_to_top(token: str):
+    """Put a new screen at its top.
+
+    Streamlit keeps the scroll position across a rerun, so submitting a quiz
+    from the bottom of a five-question page left the player staring at the
+    footer while the battle report sat above them. Fires once per token, so
+    opening an expander or pressing a button on the same screen does not yank
+    the page back up under the player's hands.
+    """
+    if st.session_state.get("_scrolled") == token:
+        return
+    st.session_state._scrolled = token
+    components.html(
+        "<script>(function(){try{var d=window.parent.document;"
+        "window.parent.scrollTo({top:0,behavior:'instant'});"
+        "['section.main','[data-testid=\"stAppViewContainer\"]',"
+        "'[data-testid=\"stMain\"]','.main'].forEach(function(s){"
+        "var el=d.querySelector(s); if(el&&el.scrollTo) el.scrollTo(0,0);});"
+        "}catch(e){}})();</script>", height=0)
+
+
 def clear_battle_artifacts():
     """A new battle inherits nothing from the last one. These are all derived
     from a specific quiz, so leaving them behind shows the previous fight's
     study guide under the new monster's banner."""
     for k in ("guides", "teacher_report", "escal_report", "msession", "mcheck",
               "mlesson", "mlesson_why", "mfeedback", "mtranscript",
-              "hunt_pick", "progress_view", "fight_shown"):
+              "hunt_pick", "progress_view", "progress_sig", "fight_shown"):
         st.session_state.pop(k, None)
 
 
@@ -1247,7 +1268,8 @@ def save_letter(title: str, body: str, kind: str = "report", trick_id: str = "",
     letters = load_letters()
     if any(l["body"] == body for l in letters):
         return
-    st.session_state.pop("progress_view", None)   # the record changed
+    for _k in ("progress_view", "progress_sig"):  # the record changed
+        st.session_state.pop(_k, None)
     letters.append({"n": len(letters) + 1, "title": title, "body": body, "kind": kind,
                     "trick_id": trick_id, "trick_name": trick_name, "strand": strand})
     try:
@@ -1348,6 +1370,10 @@ def parents_stage():
         f'<div style="display:flex;align-items:center;margin:0 0 .4rem">{_HUG_MARK}'
         '<span style="font-size:2.6rem;font-weight:800;letter-spacing:-.01em;'
         'color:#f2e8dc">For mum and dad</span></div>', unsafe_allow_html=True)
+    # also at the foot of the page, but that is a long way down past the
+    # letters, the progress panel and the worksheets
+    scroll_to_top("parents")
+    st.button("Back to the game", key="parents_back_top", on_click=back_to_map)
     letters = list(reversed(load_letters()))
     who = st.session_state.get("player_name", "your child")
     if not letters:
@@ -1374,7 +1400,8 @@ def parents_stage():
                 len(st.session_state.get("relics", [])),
                 tuple(st.session_state.get("mastered_names", [])),
                 st.session_state.get("last_score", ""))
-        if st.session_state.get("progress_sig") != _sig:
+        if (st.session_state.get("progress_sig") != _sig
+                or "progress_view" not in st.session_state):
             st.session_state.progress_sig = _sig
             with st.spinner("Reading the run so far..."):
                 st.session_state.progress_view = progress.summarise(
@@ -1383,7 +1410,7 @@ def parents_stage():
                     st.session_state.get("skirmish_log", []),
                     st.session_state.get("relics", []),
                     st.session_state.get("last_score", ""))
-        pv = st.session_state.progress_view
+        pv = st.session_state.get("progress_view") or {}
         st.divider()
         st.subheader("How it is going")
         if pv.get("headline"):
@@ -3002,6 +3029,10 @@ def results():
         st.rerun()
     result = agent.grade_quiz(st.session_state.quiz, st.session_state.answers)
     analysis = agent.analyze(result)
+    # the player submits from the foot of a five-question page; the report is
+    # at the top, so put them there
+    scroll_to_top(f"results-{result['correct']}-{result['total']}-"
+                  f"{len(st.session_state.get('answers', {}))}")
 
     if st.session_state.get("adventure"):
         st.markdown('<div class="gwb-kicker">GEMMA MONSTERS</div>', unsafe_allow_html=True)
@@ -3237,6 +3268,8 @@ def mastery_stage():
         back_to_map()
         st.rerun()
     s = st.session_state.msession
+    # every answered check question puts a new lesson and verdict at the top
+    scroll_to_top(f"mastery-{s.attempts}-{s.state}")
     st.markdown('<div class="gwb-kicker">' +
                 ("GEMMA MONSTERS · TRAINING GROUNDS" if st.session_state.get("adventure")
                  else "Autonomous practice") + '</div>', unsafe_allow_html=True)

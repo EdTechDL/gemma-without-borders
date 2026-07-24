@@ -115,5 +115,14 @@
   "trick_id": "NUM-2",
   "trick_name": "Changing the base when operating on powers",
   "strand": "Number"
+ },
+ {
+  "n": 14,
+  "title": "After the quiz \u2014 Mean by Default",
+  "body": "**Parent report** \u2014 scored 2 of 5 (40%). The trick that caught them most: **Mean by Default**.\n\nDear Parents,\n\nWe've noticed your child is sometimes jumping to conclusions when solving problems, often assuming the average or \"mean\" even when it doesn\u2019t quite fit the situation. This suggests they might be looking for a quick solution and relying on a familiar calculation without fully considering all the information presented.\n\n**Try at home**\n\n- Have them figure out the total cost of three items with different prices, then divide to find the average price per item.\n- Present a list of family members\u2019 ages and ask them to find the *median* age (the one in the middle when they're lined up).\n- Give them a set of objects \u2013 some red, some blue \u2013 and ask them to describe the proportions without calculating an average.",
+  "kind": "quiz",
+  "trick_id": "DAT-3",
+  "trick_name": "Mean by Default",
+  "strand": "Data"
  }
 ]

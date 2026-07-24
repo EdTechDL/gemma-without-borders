@@ -151,5 +151,14 @@
   "trick_id": "DAT-2",
   "trick_name": "Convenience/Volunteer Samples Are Fair",
   "strand": "Data"
+ },
+ {
+  "n": 18,
+  "title": "After the quiz \u2014 Negative-Sign Handling Error",
+  "body": "**Parent report** \u2014 scored 0 of 5 (0%). The trick that caught them most: **Negative-Sign Handling Error**.\n\nDear Parents,\n\nWe've been looking closely at your child\u2019s understanding of some foundational math concepts, and it seems they are consistently overlooking negative signs when working through problems. This suggests they might be rushing or not fully considering the order of operations, which can sometimes lead to a misunderstanding of how numbers interact in equations.\n\n**Try at home**\n\n- Write out five simple addition/subtraction problems (e.g., 5 + 3, 8 - 2) and have your child explain each step aloud, paying special attention to any negative signs involved.\n- Create a number line together and practice moving left and right based on positive and negative instructions (e.g., \"Start at zero, move forward 4, then backward 2\").\n- Use small objects like coins or candies to represent numbers in simple equations with both positive and negative values; physically manipulate them to solve the problem.",
+  "kind": "quiz",
+  "trick_id": "ALG-2",
+  "trick_name": "Negative-Sign Handling Error",
+  "strand": "Algebra"
  }
 ]
