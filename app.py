@@ -1307,16 +1307,38 @@ def onboard_stage():
             st.session_state.player_name = n[:24][:1].upper() + n[:24][1:]
         st.session_state.update(onboarded=True, stage="map")
 
+    def _remember():
+        """Commit on Enter, so the welcome appears the moment the name lands
+        rather than only once the player has already left this screen."""
+        n = (st.session_state.get("onboard_name") or "").strip()
+        if n:
+            st.session_state.player_name = n[:24][:1].upper() + n[:24][1:]
+
     name_col, skip_col, go_col = st.columns([3, 2, 2])
     name_col.text_input("Your name, challenger", key="onboard_name",
                         placeholder="What should the monsters call you?",
-                        label_visibility="collapsed")
+                        label_visibility="collapsed", on_change=_remember)
     go_col.button("Enter the citadel", key="enter_citadel", type="primary",
                   use_container_width=True, on_click=_enter)
     skip_col.button("Skip the introduction", key="skip_onboard",
                     use_container_width=True, on_click=_enter)
-    st.caption("Your name follows you through the citadel. Leave it blank and "
-               "the monsters will simply call you Challenger.")
+
+    _named = st.session_state.get("player_name", "")
+    if _named:
+        st.markdown(
+            f'<div style="text-align:center;margin:.6rem 0 .2rem">'
+            f'<span style="font-size:1.45rem;font-weight:800;letter-spacing:.01em;'
+            f'background:linear-gradient(135deg,#fff3d8 20%,#e2c07d 60%,#c58f5a);'
+            f'-webkit-background-clip:text;-webkit-text-fill-color:transparent;'
+            f'filter:drop-shadow(0 0 12px rgba(226,192,125,.45))">'
+            f'Welcome, {_hescape(_named)}</span>'
+            f'<div style="color:#9b8ba0;font-size:.72rem;letter-spacing:.1em;'
+            f'text-transform:uppercase;margin-top:.25rem">'
+            f'the monsters know your name now</div></div>',
+            unsafe_allow_html=True)
+    else:
+        st.caption("Your name follows you through the citadel. Leave it blank "
+                   "and the monsters will simply call you Challenger.")
 
 
 def parents_stage():
