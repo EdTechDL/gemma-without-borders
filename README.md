@@ -17,7 +17,7 @@
 <br>
 <br>
 <img width="977" height="907" alt="sg" src="https://github.com/user-attachments/assets/443aa3a4-8b96-4cf5-a2e5-7e0ad8ff2cbb" />
-<b>The battle report: what got you, why it felt right, and the study guide that fixes it.</b>
+<b> The battle report: what got you, why it felt right, and the study guide that fixes it.</b>
 <br>
 <br>
 <br>
