@@ -212,7 +212,7 @@ def pick_quiz(strand: str, n: int) -> list:
 
 def reset():
     for k in ("stage", "quiz", "answers", "guides", "mastered", "teacher_report",
-              "escal_report", "msession", "mprobe", "mlesson", "mlesson_why",
+              "escal_report", "msession", "mcheck", "mlesson", "mlesson_why",
               "mfeedback", "mtranscript"):
         st.session_state.pop(k, None)
 
@@ -233,7 +233,7 @@ def start_mastery(result, analysis):
     st.session_state.msession = s
     with st.spinner("The agent is preparing your first lesson..."):
         st.session_state.mlesson = m.teach(s)
-        st.session_state.mprobe = m.next_probe(s, QUESTIONS)
+        st.session_state.mcheck = m.next_check(s, QUESTIONS)
     st.session_state.mlesson_why = ("Starting with the most direct explanation of the "
                                     "mistake — the quickest path to seeing it.")
     st.session_state.mfeedback = None
@@ -2383,7 +2383,7 @@ def encounter_stage():
 
 def back_to_map():
     for k in ("quiz", "answers", "guides", "mastered", "teacher_report", "escal_report",
-              "msession", "mprobe", "mlesson", "mlesson_why", "mfeedback", "mtranscript"):
+              "msession", "mcheck", "mlesson", "mlesson_why", "mfeedback", "mtranscript"):
         st.session_state.pop(k, None)
     st.session_state.stage = "map"
 
@@ -2630,14 +2630,14 @@ def results():
 # ---------------- MASTERY LOOP ----------------
 def check_answer():
     s = st.session_state.msession
-    probe = st.session_state.mprobe
+    check = st.session_state.mcheck
     chosen = st.session_state.get("mastery_choice")
     if not chosen:
         return
     explanation = st.session_state.get("mastery_reason", "")
 
     with st.spinner("The agent is reading your answer..."):
-        outcome = m.submit_answer(s, probe, chosen, explanation)
+        outcome = m.submit_answer(s, check, chosen, explanation)
     st.session_state.mfeedback = outcome
     if outcome["state"] == m.IN_PROGRESS:
         with st.spinner("The agent is deciding what to try next..."):
@@ -2646,7 +2646,7 @@ def check_answer():
                 st.session_state.mlesson_why = (
                     outcome.get("strategy_why")
                     or f"Trying a different approach: {s.strategy_name}.")
-            st.session_state.mprobe = m.next_probe(s, QUESTIONS)
+            st.session_state.mcheck = m.next_check(s, QUESTIONS)
     st.session_state.pop("mastery_choice", None)
     st.session_state.pop("mastery_reason", None)
 
@@ -2763,17 +2763,17 @@ def mastery_stage():
         if st.session_state.get("mlesson_why"):
             st.caption("Why this approach: " + esc(st.session_state.mlesson_why))
 
-    # the probe
-    probe = st.session_state.mprobe
-    if probe is None:
+    # the check question
+    check = st.session_state.mcheck
+    if check is None:
         s.state = m.ESCALATED
         s.escalation_reason = "no fresh check question available"
         st.rerun()
-    st.markdown(f"**Check yourself: {esc(probe['question'])}**")
+    st.markdown(f"**Check yourself: {esc(check['question'])}**")
     st.radio(
-        "mastery probe",
-        [o["label"] for o in probe["options"]],
-        format_func=lambda l: f"{l})  " + esc(next(o["text"] for o in probe["options"] if o["label"] == l)),
+        "mastery check question",
+        [o["label"] for o in check["options"]],
+        format_func=lambda l: f"{l})  " + esc(next(o["text"] for o in check["options"] if o["label"] == l)),
         index=None,
         key="mastery_choice",
         label_visibility="collapsed",

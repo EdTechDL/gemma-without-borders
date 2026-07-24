@@ -5,14 +5,14 @@ After the quiz diagnoses a trick, this module keeps the agent working the
 problem until the student demonstrates understanding or a safety cap trips:
 
     TEACH (Gemma, strategy-specific lesson)
-      -> PROBE (a fresh question on the same trick)
-      -> EVALUATE (deterministic when the probe comes from the bank)
+      -> CHECK (a fresh question on the same trick)
+      -> EVALUATE (deterministic when the check question comes from the bank)
       -> ADAPT (plain code: mastery, next strategy, or parent hand-off)
 
 Design rules (from the project blueprint):
   * Adaptation = advancing through a FIXED strategy ladder — each retry is a
     genuinely different teaching approach, never an open-ended invention.
-  * Evaluation prefers bank probes, where the answer key is ground truth.
+  * Evaluation prefers bank questions, where the answer key is ground truth.
   * Hard caps guarantee termination: the demo cannot loop forever.
 """
 from __future__ import annotations
@@ -40,7 +40,7 @@ STRATEGY_LADDER = [
 ]
 
 MASTERY_BAR = 2      # consecutive correct answers to declare mastery
-MAX_ATTEMPTS = 4     # probe cycles before we hand off to a human
+MAX_ATTEMPTS = 4     # check cycles before we hand off to a human
 MAX_GEMMA_CALLS = 12 # absolute budget, belt and suspenders
 
 MASTERED, ESCALATED, IN_PROGRESS = "MASTERED", "ESCALATED", "IN_PROGRESS"
@@ -60,7 +60,7 @@ class MasterySession:
     gemma_calls: int = 0
     state: str = IN_PROGRESS
     escalation_reason: str = ""
-    history: list = field(default_factory=list)   # dicts: lesson / probe / answer rows
+    history: list = field(default_factory=list)   # dicts: lesson / check / answer rows
 
     @property
     def strategy_name(self) -> str:
@@ -92,8 +92,8 @@ def teach(session: MasterySession) -> str:
     return lesson
 
 
-# ------------------------------------------------------------------ PROBE
-def next_probe(session: MasterySession, questions: list) -> dict | None:
+# ------------------------------------------------------------------ CHECK
+def next_check(session: MasterySession, questions: list) -> dict | None:
     """A FRESH check question on the same trick.
 
     Order of preference (most trustworthy first):
@@ -103,7 +103,7 @@ def next_probe(session: MasterySession, questions: list) -> dict | None:
          answer key wrong, so the bank always wins while items remain)"""
     def take(q, why):
         session.used_item_ids.append(q["id"])
-        session.history.append({"kind": "probe", "source": why, "id": q["id"]})
+        session.history.append({"kind": "check", "source": why, "id": q["id"]})
         return {"source": why, **q}
 
     for q in questions:
@@ -114,11 +114,11 @@ def next_probe(session: MasterySession, questions: list) -> dict | None:
     for q in questions:
         if q["id"] not in session.used_item_ids and q["strand"] == session.strand:
             return take(q, "bank-strand")
-    return _generated_probe(session)
+    return _generated_check(session)
 
 
-def _generated_probe(session: MasterySession) -> dict | None:
-    """Gemma-generated multiple-choice probe, validated before use."""
+def _generated_check(session: MasterySession) -> dict | None:
+    """Gemma-generated multiple-choice check question, validated before use."""
     for _ in range(2):  # one retry on a bad parse
         if session.gemma_calls >= MAX_GEMMA_CALLS:
             return None
@@ -140,7 +140,7 @@ def _generated_probe(session: MasterySession) -> dict | None:
             data = json.loads(m.group())
             opts = data["options"]
             if data["correct"] in opts and len(opts) >= 3 and _self_check(session, data):
-                probe = {
+                check = {
                     "source": "generated",
                     "id": f"GEN-{session.attempts + 1}",
                     "question": plainify(data["question"]),
@@ -149,8 +149,8 @@ def _generated_probe(session: MasterySession) -> dict | None:
                     "correct": data["correct"],
                     "solution": "",
                 }
-                session.history.append({"kind": "probe", "source": "generated"})
-                return probe
+                session.history.append({"kind": "check", "source": "generated"})
+                return check
         except (json.JSONDecodeError, KeyError, TypeError):
             continue
     return None
@@ -178,18 +178,18 @@ def _self_check(session: MasterySession, data: dict) -> bool:
 
 
 # ------------------------------------------------------------ EVALUATE + ADAPT
-def _grade_reasoning(session: MasterySession, probe: dict, chosen_label: str,
+def _grade_reasoning(session: MasterySession, check: dict, chosen_label: str,
                      explanation: str) -> str:
     """Gemma as a CONSTRAINED grader: classify the student's typed reasoning
     into a closed label set. It compares against the known answer — it never
     recomputes the math open-endedly. Fail-open: any parse problem returns
     RESOLVED so a model hiccup can never hurt the student."""
-    correct_opt = next(o["text"] for o in probe["options"] if o["is_correct"])
+    correct_opt = next(o["text"] for o in check["options"] if o["is_correct"])
     session.gemma_calls += 1
     raw = ask_gemma(
         f"TASK: grade\n"
         f"TRICK: {session.trick_name}\n"
-        f"A Grade 9 student answered this question: {probe['question']}\n"
+        f"A Grade 9 student answered this question: {check['question']}\n"
         f"The correct answer is: {correct_opt}. The student chose "
         f"'{chosen_label}' and explained their thinking: \"{explanation}\"\n"
         f"Classify ONLY the quality of their reasoning. Reply with exactly one "
@@ -269,25 +269,25 @@ def _choose_strategy(session: MasterySession, explanation: str) -> str:
     return fallback_reason
 
 
-def submit_answer(session: MasterySession, probe: dict, chosen_label: str,
+def submit_answer(session: MasterySession, check: dict, chosen_label: str,
                   explanation: str = "") -> dict:
-    """Grade the probe answer, judge the reasoning, decide what happens next.
+    """Grade the check answer, judge the reasoning, decide what happens next.
 
     Multiple-choice correctness is deterministic (bank ground truth). Gemma
     grades the typed reasoning and chooses the next strategy; hard caps and
     final state transitions stay in plain code so the loop always terminates.
 
     Returns {"correct", "label", "state", "strategy_changed", "strategy_why"}."""
-    correct = chosen_label == probe["correct"]
+    correct = chosen_label == check["correct"]
     session.attempts += 1
-    session.history.append({"kind": "answer", "probe_id": probe.get("id"),
+    session.history.append({"kind": "answer", "check_id": check.get("id"),
                             "chosen": chosen_label, "correct": correct})
 
     label = ""
     strategy_changed = False
     strategy_why = ""
     if correct:
-        label = (_grade_reasoning(session, probe, chosen_label, explanation)
+        label = (_grade_reasoning(session, check, chosen_label, explanation)
                  if explanation.strip() else "RESOLVED")
         if label == "SHALLOW":
             # right answer, shaky reasoning: mastery is not demonstrated,
@@ -310,7 +310,7 @@ def submit_answer(session: MasterySession, probe: dict, chosen_label: str,
 
     if session.state == IN_PROGRESS and session.attempts >= MAX_ATTEMPTS:
         session.state = ESCALATED
-        session.escalation_reason = f"attempt cap reached ({MAX_ATTEMPTS} probes)"
+        session.escalation_reason = f"attempt cap reached ({MAX_ATTEMPTS} check questions)"
     if session.state == IN_PROGRESS and session.gemma_calls >= MAX_GEMMA_CALLS:
         session.state = ESCALATED
         session.escalation_reason = "model call budget reached"
@@ -353,7 +353,7 @@ def mastery_recap(session: MasterySession) -> str:
     tried = [h["strategy"] for h in session.history if h["kind"] == "lesson"]
     return (
         f"Mastery demonstrated: {session.trick_name}.\n"
-        f"Probes answered: {session.attempts} - final streak of "
+        f"Check questions answered: {session.attempts} - final streak of "
         f"{session.consecutive_correct} correct.\n"
         f"Teaching approaches used: {', '.join(dict.fromkeys(tried))}."
     )
