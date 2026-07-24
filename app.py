@@ -9,6 +9,7 @@ plus the agent's read on your #1 trick and a parent hand-off if needed.
 """
 import json
 import re
+from html import escape as _hescape
 from pathlib import Path
 import streamlit as st
 import streamlit.components.v1 as components
@@ -146,6 +147,18 @@ _SUPD = str.maketrans("0123456789", "\u2070\u00b9\u00b2\u00b3\u2074\u2075\u2076\
 _POW = re.compile(r"\b(\d+|[a-wyzA-Z])\s+to\s+the\s+power\s+(?:of\s+)?(negative\s+)?(\d+)\b", re.I)
 _SQ = re.compile(r"\b(\d+|[a-wyzA-Z])\s+squared\b", re.I)
 _CU = re.compile(r"\b(\d+|[a-wyzA-Z])\s+cubed\b", re.I)
+
+
+def esc_note(text) -> str:
+    """esc() for note boxes. Notes are raw HTML, so markdown/KaTeX never runs
+    there: keep fractions plain (3/7), convert wordy powers to unicode, and
+    HTML-escape the rest so model output can never break the box."""
+    t = plainify(str(text))
+    t = _POW.sub(lambda m: m.group(1) + ("⁻" if m.group(2) else "")
+                 + m.group(3).translate(_SUPD), t)
+    t = _SQ.sub(lambda m: m.group(1) + "²", t)
+    t = _CU.sub(lambda m: m.group(1) + "³", t)
+    return _hescape(t, quote=False)
 
 
 _STEP_SPLIT = re.compile(r"(?<=[.;])\s+(?=[A-Z(√\d])")
@@ -1515,7 +1528,7 @@ def _boss_html(name):
     html = (_BOSS_TEMPLATE
             .replace("__VENDOR__", _vendor_js(["three.min.js", "GLTFLoader.js"]))
             .replace("__MODEL__", "/app/static/monsters/skull.glb"))
-    return html.replace("__HERO__", name)
+    return html.replace("__HERO__", _hescape(name))
 
 
 _SKIRMISH_TEMPLATE = r"""
@@ -1797,7 +1810,7 @@ def _skirmish_html(name, lane, monster_model, color):
             .replace("__COLOR__", color)
             .replace("__MONSTER__", lieutenants.get(lane, "Lieutenant").upper())
             .replace("__LANE__", lane))
-    return html.replace("__HERO__", name)
+    return html.replace("__HERO__", _hescape(name))
 
 
 _LIEUTENANTS = {
@@ -1834,12 +1847,12 @@ def skirmish_stage():
                 max_new_tokens=90))
         except Exception:
             st.session_state[wkey] = lt["whisper"]
-    note("GEMMA WHISPERS A WAR SECRET", esc(st.session_state[wkey]))
-    components.html(_skirmish_html(st.session_state.get("player_name", "challenger"),
+    note("GEMMA WHISPERS A WAR SECRET", esc_note(st.session_state[wkey]))
+    components.html(_skirmish_html(st.session_state.get("player_name", "Challenger"),
                                    lane, lt["model"], lt["color"]),
                     height=560, scrolling=False)
     mid = st.columns([2, 2, 2])
-    mid[1].button("Retreat to the citadel", key="sk_flee", on_click=back_to_map,
+    mid[1].button("Retreat to the nexus", key="sk_flee", on_click=back_to_map,
                   use_container_width=True)
 
 
@@ -1856,7 +1869,7 @@ def coach_stage():
             from gemma_client import ask_gemma, plainify
             st.session_state[ck] = plainify(ask_gemma(
                 "TASK: coach\nYou are a sharp, kind mental-math coach. A Grade 9 student "
-                f"named {st.session_state.get('player_name', 'challenger')} just fought a "
+                f"named {st.session_state.get('player_name', 'Challenger')} just fought a "
                 f"90-second speed battle on the skill: {lane}. Score {d.get('score')} correct, "
                 f"best streak {d.get('streak')}. The exact questions they MISSED: "
                 f"{', '.join(misses) if misses else 'none - a clean sweep'}.\n"
@@ -1875,7 +1888,7 @@ def coach_stage():
     c[0].button("Rematch " + lt["monster"], key="coach_rematch",
                 on_click=lambda: st.session_state.update(stage="skirmish", skirmish_lane=lane),
                 use_container_width=True)
-    c[1].button("Back to the citadel", key="coach_home", on_click=back_to_map,
+    c[1].button("Back to the nexus", key="coach_home", on_click=back_to_map,
                 use_container_width=True)
 
 
@@ -1991,7 +2004,7 @@ window.addEventListener('load', function(){
 def _finale_html(name):
     return (_FINALE_TEMPLATE
             .replace("__VENDOR__", _vendor_js(["three.min.js", "gsap.min.js"]))
-            .replace("__HERO__", name))
+            .replace("__HERO__", _hescape(name)))
 
 
 def finale_stage():
@@ -2001,10 +2014,10 @@ def finale_stage():
         padding:0 0 1rem 0 !important; max-width:100% !important}
       [data-testid="stElementContainer"]:has(iframe){width:100% !important}
     </style>""", unsafe_allow_html=True)
-    components.html(_finale_html(st.session_state.get("player_name", "challenger")),
+    components.html(_finale_html(st.session_state.get("player_name", "Challenger")),
                     height=620, scrolling=False)
     mid = st.columns([2, 2, 2])
-    mid[1].button("Return to the citadel", key="fin_home", on_click=back_to_map,
+    mid[1].button("Return to the nexus", key="fin_home", on_click=back_to_map,
                   use_container_width=True)
 
 
@@ -2015,7 +2028,7 @@ def boss_stage():
         padding:0 0 1rem 0 !important; max-width:100% !important}
       [data-testid="stElementContainer"]:has(iframe){width:100% !important}
     </style>""", unsafe_allow_html=True)
-    components.html(_boss_html(st.session_state.get("player_name", "challenger")),
+    components.html(_boss_html(st.session_state.get("player_name", "Challenger")),
                     height=620, scrolling=False)
     mid = st.columns([2, 2, 2])
     mid[1].button("Retreat to the nexus", key="boss_flee", on_click=back_to_map,
@@ -2035,7 +2048,9 @@ def boss_stage():
 
 
 def _encounter_html(mon, name):
-    lines = [ln.format(name=name) for ln in mon.get("lines", [mon.get("taunt", "...")])]
+    # .replace, not .format: one line is Gemma-written, and stray braces in
+    # model output would crash str.format for the whole encounter
+    lines = [ln.replace("{name}", name) for ln in mon.get("lines", [mon.get("taunt", "...")])]
     return (_ENCOUNTER_TEMPLATE
             .replace("__VENDOR__", _vendor_js(["three.min.js", "GLTFLoader.js"]))
             .replace("__MODEL__", mon["model"])
@@ -2069,14 +2084,14 @@ def encounter_stage():
         if any([facts["mastered_tricks"], facts["defeated_monsters"], facts["last_score"]]):
             with st.spinner("It recognizes you..."):
                 st.session_state[mem_key] = rewards.battle_memory_line(
-                    st.session_state.get("player_name", "challenger"),
+                    st.session_state.get("player_name", "Challenger"),
                     mon["monster"], facts)
         else:
             st.session_state[mem_key] = ""
     mon_l = dict(mon)
     if st.session_state.get(mem_key):
         mon_l["lines"] = [st.session_state[mem_key]] + list(mon.get("lines", []))
-    components.html(_encounter_html(mon_l, st.session_state.get("player_name", "challenger")),
+    components.html(_encounter_html(mon_l, st.session_state.get("player_name", "Challenger")),
                     height=520, scrolling=False)
     mid = st.columns([2, 2, 2])
     if mid[1].button(f"FACE {mon['monster'].upper()}", type="primary",
@@ -2134,7 +2149,7 @@ def quiz():
                                         mon.get("clip_ambient", ""),
                                         mon.get("sp_ambient", 0.8) * 0.85), height=170)
         st.caption("Answer every question, then submit. Wrong answers feed the monster.")
-        st.button("Back to the Nexus", key="quiz_to_nexus", on_click=back_to_map)
+        st.button("Back to the nexus", key="quiz_to_nexus", on_click=back_to_map)
     else:
         st.title("Quiz")
         st.caption("Answer every question, then submit.")
@@ -2173,7 +2188,8 @@ def results():
     else:
         st.title("Results")
     st.session_state.last_score = f"{result['correct']} of {result['total']}"
-    st.metric("Score", f"{result['correct']} / {result['total']}", f"{result['score_pct']}%")
+    st.metric("Score", f"{result['correct']} / {result['total']}",
+              f"{result['score_pct']}%", delta_color="off")
 
     if not result["wrong"]:
         st.write("A perfect score — nothing got past you this time.")
@@ -2291,7 +2307,9 @@ def results():
                                f"let's see you slip this time:" if gmon else "Now you try:")
             st.markdown(f"**{challenge_title}** " + esc(p["question"]))
             if not p.get("options"):
-                st.caption("Work it out on paper — then prove it in the training grounds below.")
+                st.caption("Work it out on paper — then prove it in the training grounds."
+                           if st.session_state.get("adventure")
+                           else "Work it out on paper — then check it in practice mode above.")
             if p.get("options"):
                 choice = st.radio(
                     f"practice_{i}",
@@ -2321,7 +2339,7 @@ def results():
                             st.markdown(steps_md(p["solution"]))
 
     if st.session_state.get("adventure"):
-        st.button("Back to the monster nexus", key="tomap_bottom", on_click=back_to_map)
+        st.button("Back to the nexus", key="tomap_bottom", on_click=back_to_map)
     st.button("Take another quiz", key="again_bottom", on_click=reset)
 
 
@@ -2381,7 +2399,7 @@ def mastery_stage():
             tried = [h["strategy"] for h in s.history if h["kind"] == "lesson"]
             with st.spinner("The monster drops something..."):
                 st.session_state[relic_key] = rewards.forge_relic(
-                    st.session_state.get("player_name", "challenger"),
+                    st.session_state.get("player_name", "Challenger"),
                     gmon.get("monster", "the monster"), s.trick_name,
                     s.attempts, tried)
             st.session_state.setdefault("relics", []).append(
@@ -2408,7 +2426,7 @@ def mastery_stage():
             note("THE AIR GOES COLD",
                  "The little monsters have gone silent. Something older has noticed "
                  f"how many answers you've dropped, "
-                 f"{st.session_state.get('player_name', 'challenger')}. "
+                 f"{_hescape(st.session_state.get('player_name', 'Challenger'))}. "
                  "<strong>The Collector is here.</strong>")
             st.button("FACE THE COLLECTOR — the speed trial", type="primary",
                       key="boss_go",
@@ -2433,13 +2451,13 @@ def mastery_stage():
 
     if fb and fb.get("reaction"):
         # Gemma read the student's own typed words and answers them directly
-        note("The citadel heard you", esc(fb["reaction"]))
+        note("The citadel heard you", esc_note(fb["reaction"]))
     if fb and fb.get("rationale"):
         # explainable AI: every decision shows its evidence-based "why"
         headline = ("Correct" if fb["correct"] and fb.get("label") == "RESOLVED"
                     else "Right answer — but not yet" if fb["correct"]
                     else "Not yet")
-        note(f"Why the agent decided this · {headline}", esc(fb["rationale"]))
+        note(f"Why the agent decided this · {headline}", esc_note(fb["rationale"]))
 
     # the lesson for the current strategy, with the reason this approach was chosen
     with st.container(border=True):

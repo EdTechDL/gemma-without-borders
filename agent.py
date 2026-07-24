@@ -86,7 +86,7 @@ def teacher_report(result: dict, analysis: dict) -> str:
         "in plain everyday language, no teaching jargon:\n"
         "First, TWO sentences explaining, in everyday words, the wrong idea their child keeps applying "
         "and what it reveals about how the student is thinking.\n"
-        "Then a line exactly 'Try at home:' followed by THREE specific, classroom-ready "
+        "Then a line exactly 'Try at home:' followed by THREE specific, kitchen-table-ready "
         "activities (each on its own line starting with '- ') that target THIS "
         "trick. Be concrete and doable at the kitchen table in 10 minutes - no teaching jargon.",
         max_new_tokens=380))

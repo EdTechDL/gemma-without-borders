@@ -26,7 +26,7 @@ _SYMBOLS = {
     r"\\times": "×", r"\\cdot": "·", r"\\div": "÷", r"\\pm": "±",
     r"\\leq": "≤", r"\\le": "≤", r"\\geq": "≥", r"\\ge": "≥",
     r"\\neq": "≠", r"\\ne": "≠", r"\\approx": "≈", r"\\pi": "π",
-    r"\\circ": "°", r"\\degree": "°", r"\\%": "%",
+    r"\\circ": "°", r"\\degree": "°", r"\\%": "%", r"\\Delta": "Δ",
     r"\\left": "", r"\\right": "", r"\\,": " ", r"\\;": " ", r"\\!": "",
     r"\\quad": "  ", r"\\qquad": "   ",
 }
@@ -36,7 +36,10 @@ def plainify(text: str) -> str:
     if not text:
         return text
     t = text
-    t = t.replace("$$", "").replace("$", "")          # math delimiters
+    t = t.replace("\\$", "\x00")                       # protect currency (\$ in LaTeX)
+    if "\\" in t or "$$" in t:                         # only LaTeX-looking text uses $
+        t = t.replace("$$", "").replace("$", "")       # ...as math delimiters; keep
+    t = t.replace("{,}", ",")                          # real $450 in plain solutions
     t = re.sub(r"\\[\(\)\[\]]", "", t)                 # \( \) \[ \]
     t = re.sub(r"\\begin\{[^}]*\}|\\end\{[^}]*\}", "", t)
     t = re.sub(r"\\[dt]?frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}", r"\1/\2", t)  # fractions
@@ -54,6 +57,8 @@ def plainify(text: str) -> str:
     t = t.replace("\\\\", " ")                          # LaTeX line breaks
     t = t.replace("\\ ", " ")                           # backslash-space artifacts
     t = re.sub(r"\\([a-zA-Z]+)", r"\1", t)             # drop any leftover \command
+    t = t.replace("^°", "°")                            # 180^\circ -> 180°
+    t = t.replace("\x00", "$")                          # restore protected currency
     t = re.sub(r"[ \t]{2,}", " ", t)
     return t.strip()
 
