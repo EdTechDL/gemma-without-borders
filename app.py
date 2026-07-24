@@ -18,6 +18,7 @@ import agent
 import mastery as m
 import tutor
 import rewards
+import practice_sheet
 from gemma_client import plainify
 
 QUESTIONS = json.loads((Path(__file__).parent / "data" / "questions.json").read_text())
@@ -1186,11 +1187,13 @@ def load_letters():
     return st.session_state.letters
 
 
-def save_letter(title: str, body: str, kind: str = "report"):
+def save_letter(title: str, body: str, kind: str = "report", trick_id: str = "",
+                trick_name: str = "", strand: str = ""):
     letters = load_letters()
     if any(l["body"] == body for l in letters):
         return
-    letters.append({"n": len(letters) + 1, "title": title, "body": body, "kind": kind})
+    letters.append({"n": len(letters) + 1, "title": title, "body": body, "kind": kind,
+                    "trick_id": trick_id, "trick_name": trick_name, "strand": strand})
     try:
         _LETTER_DIR.mkdir(parents=True, exist_ok=True)
         _letter_file().write_text(json.dumps(letters, indent=1))
@@ -1240,6 +1243,43 @@ def parents_stage():
             f"## {l['title']}\n\n{l['body']}" for l in reversed(letters))
         st.download_button("Download every note as one file", bundle,
                            file_name="letters_home.md", key="dl_letters")
+
+        # ---- printable practice, one sheet per trick ----
+        tricks, seen = [], set()
+        for l in letters:
+            t = (l.get("trick_id"), l.get("trick_name"), l.get("strand"))
+            if t[0] and t[0] not in seen:
+                seen.add(t[0]); tricks.append(t)
+        if tricks:
+            st.divider()
+            st.subheader("Practice you can print")
+            st.caption("Ten questions on one trick, with the working space and an "
+                       "answer key. Verified bank questions come first; Gemma writes "
+                       "any extra ones and must solve each of them again, blind, "
+                       "before it goes on the paper.")
+            for tid, tname, tstrand in tricks:
+                key = f"sheet_{tid}"
+                cols = st.columns([3, 2])
+                cols[0].markdown(f"**{tname}**  \n<span style='color:#a99'>{tstrand}"
+                                 "</span>", unsafe_allow_html=True)
+                if key not in st.session_state:
+                    if cols[1].button("Make a practice sheet", key=f"mk_{tid}",
+                                      use_container_width=True):
+                        with st.spinner(f"Building ten questions on {tname}..."):
+                            st.session_state[key] = practice_sheet.build_sheet(
+                                tid, tname, tstrand, QUESTIONS, want=10)
+                        st.rerun()
+                else:
+                    sheet = st.session_state[key]
+                    c = sheet["counts"]
+                    cols[1].download_button(
+                        f"Print sheet ({len(sheet['items'])} questions)",
+                        sheet["html"],
+                        file_name=f"practice_{tid.lower()}.html",
+                        mime="text/html", key=f"dl_{tid}", use_container_width=True)
+                    cols[0].caption(f"{c['bank']} from the verified bank"
+                                    + (f", {c['generated']} written and self-checked "
+                                       "by Gemma" if c["generated"] else ""))
     st.divider()
     back = st.session_state.get("parents_return", "map")
     st.button("Back to the game", key="parents_back", type="primary",
@@ -2761,7 +2801,10 @@ def results():
                 with st.spinner("Writing a note your parents can act on..."):
                     st.session_state.teacher_report = agent.teacher_report(result, analysis)
             save_letter(f"After the quiz — {priority['name'] if priority else 'results'}",
-                        st.session_state.teacher_report, "quiz")
+                        st.session_state.teacher_report, "quiz",
+                        trick_id=(priority or {}).get("id", ""),
+                        trick_name=(priority or {}).get("name", ""),
+                        strand=result["wrong"][0]["item"]["strand"] if result["wrong"] else "")
             with st.container(border=True):
                 st.markdown(st.session_state.teacher_report)
             st.download_button("Download report", st.session_state.teacher_report,
@@ -2961,7 +3004,8 @@ def mastery_stage():
                     + m.mastery_recap(s)
                     + "\n\nThe agent only calls this mastery after two fresh questions in a "
                       "row are answered correctly with reasoning that holds up — not a lucky guess.",
-                    "mastery")
+                    "mastery", trick_id=s.trick_id, trick_name=s.trick_name,
+                    strand=s.strand)
         st.button("Back to my results", key="back_mastered",
                   on_click=lambda: st.session_state.update(stage="results"))
         st.button("Take another quiz", key="again_mastered", on_click=reset)
@@ -2984,7 +3028,8 @@ def mastery_stage():
             with st.spinner("Writing a note your parents can act on..."):
                 st.session_state.escal_report = m.escalation_report(s)
         save_letter(f"Still stuck on {s.trick_name}", st.session_state.escal_report,
-                    "escalation")
+                    "escalation", trick_id=s.trick_id, trick_name=s.trick_name,
+                    strand=s.strand)
         with st.container(border=True):
             st.markdown(st.session_state.escal_report)
         st.download_button("Download report", st.session_state.escal_report,

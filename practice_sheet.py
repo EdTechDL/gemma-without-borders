@@ -251,8 +251,8 @@ def _render(trick_name: str, strand: str, items: list) -> str:
     scripts, so it prints the same on any machine that opens the file."""
     guidance = (
         f"Watch how they get there, not only what they write down: every question "
-        f"here is built around one trick, {_lower_first(trick_name)}, so the moment "
-        f"that idea shows up in their working, stop and talk that single step "
+        f"here is built around a single trick - {trick_name or 'this one'} - so the "
+        f"moment that idea shows up in their working, stop and talk that one step "
         f"through together."
     )
     head = (
@@ -312,11 +312,3 @@ def _render(trick_name: str, strand: str, items: list) -> str:
 
 def _esc(text) -> str:
     return html.escape(str(text or ""), quote=False).replace("\n", "<br>")
-
-
-def _lower_first(name: str) -> str:
-    """Trick names are stored title-cased for headings; mid-sentence they read
-    better lowered, unless the name starts with an initialism."""
-    if not name:
-        return "this trick"
-    return name if name[:2].isupper() else name[0].lower() + name[1:]

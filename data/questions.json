@@ -33,7 +33,8 @@
       }
     ],
     "correct": "A",
-    "solution": "Same base, so keep the base and add the exponents: 2³ × 2⁴ = 2³⁺⁴ = 2⁷ = 128."
+    "solution": "Same base, so keep the base and add the exponents: 2³ × 2⁴ = 2³⁺⁴ = 2⁷ = 128.",
+    "traps": []
   },
   {
     "id": "NUM-ITEM-02",
@@ -69,7 +70,8 @@
       }
     ],
     "correct": "A",
-    "solution": "Power of a power: multiply the exponents and keep the base. (2³)² = 2⁶ because 3 × 2 = 6, and 2⁶ = 64 (check: 8² = 64)."
+    "solution": "Power of a power: multiply the exponents and keep the base. (2³)² = 2⁶ because 3 × 2 = 6, and 2⁶ = 64 (check: 8² = 64).",
+    "traps": []
   },
   {
     "id": "NUM-ITEM-03",
@@ -105,7 +107,8 @@
       }
     ],
     "correct": "A",
-    "solution": "3⁰ = 1 (any nonzero base to the power 0 is 1). 2⁻² = 1/(2²) = 1/4. Sum: 1 + 1/4 = 5/4."
+    "solution": "3⁰ = 1 (any nonzero base to the power 0 is 1). 2⁻² = 1/(2²) = 1/4. Sum: 1 + 1/4 = 5/4.",
+    "traps": []
   },
   {
     "id": "NUM-ITEM-04",
@@ -141,7 +144,8 @@
       }
     ],
     "correct": "A",
-    "solution": "Find a common denominator (LCD = 12): 2/3 = 8/12 and 1/4 = 3/12. Then 8/12 + 3/12 = 11/12."
+    "solution": "Find a common denominator (LCD = 12): 2/3 = 8/12 and 1/4 = 3/12. Then 8/12 + 3/12 = 11/12.",
+    "traps": []
   },
   {
     "id": "NUM-ITEM-05",
@@ -177,7 +181,8 @@
       }
     ],
     "correct": "A",
-    "solution": "Subtracting a negative is the same as adding: -3 - (-5) = -3 + 5 = 2."
+    "solution": "Subtracting a negative is the same as adding: -3 - (-5) = -3 + 5 = 2.",
+    "traps": []
   },
   {
     "id": "NUM-ITEM-06",
@@ -213,7 +218,8 @@
       }
     ],
     "correct": "A",
-    "solution": "Convert the percent to a decimal: 0.5% = 0.5/100 = 0.005. Then 0.005 × 200 = 1."
+    "solution": "Convert the percent to a decimal: 0.5% = 0.5/100 = 0.005. Then 0.005 × 200 = 1.",
+    "traps": []
   },
   {
     "id": "NUM-ITEM-07",
@@ -249,7 +255,8 @@
       }
     ],
     "correct": "A",
-    "solution": "Percent = part/whole × 100 = 15/60 × 100 = 0.25 × 100 = 25%."
+    "solution": "Percent = part/whole × 100 = 15/60 × 100 = 0.25 × 100 = 25%.",
+    "traps": []
   },
   {
     "id": "NUM-ITEM-08",
@@ -285,7 +292,8 @@
       }
     ],
     "correct": "A",
-    "solution": "Unit rate = 1.20/3 = $0.40 per apple. For 7 apples: 7 × 0.40 = $2.80 (equivalently 1.20 × 7/3)."
+    "solution": "Unit rate = 1.20/3 = $0.40 per apple. For 7 apples: 7 × 0.40 = $2.80 (equivalently 1.20 × 7/3).",
+    "traps": []
   },
   {
     "id": "ALG-ITEM-1",
@@ -321,7 +329,8 @@
       }
     ],
     "correct": "A",
-    "solution": "Distribute: $3(2x-4)=6x-12. Then $6x-12-5x. Combine like terms: $6x-5x=x, giving x-12."
+    "solution": "Distribute: $3(2x-4)=6x-12. Then $6x-12-5x. Combine like terms: $6x-5x=x, giving x-12.",
+    "traps": []
   },
   {
     "id": "ALG-ITEM-2",
@@ -357,7 +366,8 @@
       }
     ],
     "correct": "A",
-    "solution": "Distribute the -2 to both terms: -2 × 3x = -6x and -2 × (-5) = +10. Result: -6x + 10."
+    "solution": "Distribute the -2 to both terms: -2 × 3x = -6x and -2 × (-5) = +10. Result: -6x + 10.",
+    "traps": []
   },
   {
     "id": "ALG-ITEM-3",
@@ -393,7 +403,8 @@
       }
     ],
     "correct": "A",
-    "solution": "Subtract $2x from both sides: $3x-3=9. Add $3 to both sides: $3x=12. Divide by $3: x=4."
+    "solution": "Subtract $2x from both sides: $3x-3=9. Add $3 to both sides: $3x=12. Divide by $3: x=4.",
+    "traps": []
   },
   {
     "id": "ALG-ITEM-4",
@@ -429,7 +440,8 @@
       }
     ],
     "correct": "A",
-    "solution": "Slope = Δy/Δx = (11 - 3)/(6 - 2) = 8/4 = 2."
+    "solution": "Slope = Δy/Δx = (11 - 3)/(6 - 2) = 8/4 = 2.",
+    "traps": []
   },
   {
     "id": "ALG-ITEM-5",
@@ -465,7 +477,8 @@
       }
     ],
     "correct": "A",
-    "solution": "In y=mx+b, the coefficient of x is the slope m=-4 (a number, keeping its sign) and the constant b=7 is the y-intercept."
+    "solution": "In y=mx+b, the coefficient of x is the slope m=-4 (a number, keeping its sign) and the constant b=7 is the y-intercept.",
+    "traps": []
   },
   {
     "id": "ALG-ITEM-6",
@@ -501,7 +514,8 @@
       }
     ],
     "correct": "A",
-    "solution": "Use y=mx+b with m=3 and the point (2,5): $5=3(2)+b=6+b. Subtract $6: b=5-6=-1."
+    "solution": "Use y=mx+b with m=3 and the point (2,5): $5=3(2)+b=6+b. Subtract $6: b=5-6=-1.",
+    "traps": []
   },
   {
     "id": "ALG-ITEM-8",
@@ -537,7 +551,8 @@
       }
     ],
     "correct": "A",
-    "solution": "The tiles increase by $3 each figure, so the coefficient of n is $3. Find the constant using Figure $1: $3(1)+c=4, so c=1. The rule is $3n+1 (check Figure $3: $3(3)+1=10)."
+    "solution": "The tiles increase by $3 each figure, so the coefficient of n is $3. Find the constant using Figure $1: $3(1)+c=4, so c=1. The rule is $3n+1 (check Figure $3: $3(3)+1=10).",
+    "traps": []
   },
   {
     "id": "DAT-Q1",
@@ -573,7 +588,12 @@
       }
     ],
     "correct": "A",
-    "solution": "Random selection from the full student list gives every student an equal chance of being chosen, so the sample represents the whole school. B is a large but biased convenience sample (cafeteria users are more invested in the menu); C is self-selected (only strong opinions respond); D is a convenience sample of one classroom. Sample size cannot fix a biased selection method."
+    "solution": "Random selection from the full student list gives every student an equal chance of being chosen, so the sample represents the whole school. Sample size cannot fix a biased selection method.",
+    "traps": [
+      "Surveying all 400 students eating in the cafeteria on Monday is a large but biased convenience sample - cafeteria users are more invested in the menu.",
+      "A voluntary online poll on the school website is self-selected: only students with strong opinions answer.",
+      "Surveying the 28 students in her own homeroom is a convenience sample of a single classroom."
+    ]
   },
   {
     "id": "DAT-Q2",
@@ -609,7 +629,12 @@
       }
     ],
     "correct": "A",
-    "solution": "Order the data first: 3, 8, 11, 14, 20. The middle (3rd of 5) value is 11. Distractor B (20) is the middle of the UNORDERED list; C (11.5) is the midpoint of min and max, (3+20)/2; D (11.2) is the mean, 56 ÷ 5, computed by a student who treats every \"average\" as the mean."
+    "solution": "Order the data first: 3, 8, 11, 14, 20. The middle (3rd of 5) value is 11.",
+    "traps": [
+      "20 is the middle of the UNORDERED list - the values have to be put in order first.",
+      "11.5 is the midpoint of the smallest and largest values, (3+20)/2, not the median.",
+      "11.2 is the mean, 56 ÷ 5, from treating every average as the mean."
+    ]
   },
   {
     "id": "DAT-Q3",
@@ -645,7 +670,12 @@
       }
     ],
     "correct": "A",
-    "solution": "The mode is the data VALUE that occurs most often. The tallest bar is at 1 pet (9 students), so the mode is 1. Distractor B (9) reports the height (frequency) of the tallest bar instead of the value; C (3) picks the largest data value; D is the mean, (0·7+1·9+2·5+3·4) ÷ 25 = 31 ÷ 25 = 1.24, from a student who reaches for the mean whenever an \"average\" is requested."
+    "solution": "The mode is the data VALUE that occurs most often. The tallest bar is at 1 pet (9 students), so the mode is 1.",
+    "traps": [
+      "9 is the height (frequency) of the tallest bar, not the value it stands above.",
+      "3 is the largest data value, not the most common one.",
+      "1.24 is the mean, (0·7+1·9+2·5+3·4) ÷ 25 = 31 ÷ 25 = 1.24, from reaching for the mean whenever an average is requested."
+    ]
   },
   {
     "id": "DAT-Q4",
@@ -681,7 +711,12 @@
       }
     ],
     "correct": "A",
-    "solution": "Correlation shows association, not cause. A lurking variable — fire size — drives both variables: bigger fires need more firefighters AND cause more damage. B and C both read the correlation as a causal mechanism (C even acts on it as policy). D trusts extrapolation far beyond the observed data range, where the linear model is not validated."
+    "solution": "Correlation shows association, not cause. A lurking variable — fire size — drives both variables: bigger fires need more firefighters AND cause more damage.",
+    "traps": [
+      "Saying that sending more firefighters causes greater damage reads the correlation as a causal mechanism.",
+      "Sending fewer firefighters to each fire to reduce damage costs takes that same causal reading and acts on it as policy.",
+      "Predicting the damage for a fire with 10 times more firefighters than any fire in the data trusts extrapolation far beyond the observed data range, where the linear model is not validated."
+    ]
   },
   {
     "id": "DAT-Q5",
@@ -717,7 +752,12 @@
       }
     ],
     "correct": "A",
-    "solution": "Ordered data: 26, 28, 29, 30, 102; median = 29. Mean = 215 ÷ 5 = 43, which exceeds four of the five days because the outlier 102 inflates it — so the median better represents a typical day. B wrongly claims the mean resists outliers; C computes the midrange (26+102)/2 = 64 as if it were the median; D calls the largest value the mode."
+    "solution": "Ordered data: 26, 28, 29, 30, 102; median = 29. Mean = 215 ÷ 5 = 43, which exceeds four of the five days because the outlier 102 inflates it — so the median better represents a typical day.",
+    "traps": [
+      "Choosing the mean, 43, wrongly claims that outliers do not affect it - the festival day of 102 is exactly what pulls it up.",
+      "64 is the midrange, (26+102)/2, computed as if it were the median.",
+      "102 is the largest value, not the mode."
+    ]
   },
   {
     "id": "GM-01",
@@ -753,7 +793,12 @@
       }
     ],
     "correct": "A",
-    "solution": "The enlarged radius is 6 m. Area = π × r² = π × 6² = 36 × π, which is about 113.1 m². Note that doubling the radius makes the area 4 times as large (36 × π vs 9 × π), not 2 times, because area scales with the SQUARE of the dimensions. (B uses the new diameter, 12 m, as the radius: π × 12² is about 452.4. C computes the circumference of the enlarged garden, 2 × π × 6, which is about 37.7 m, instead of the area. D multiplies π × 6 without squaring, giving about 18.8.)"
+    "solution": "The enlarged radius is 6 m. Area = π × r² = π × 6² = 36 × π, which is about 113.1 m². Note that doubling the radius makes the area 4 times as large (36 × π vs 9 × π), not 2 times, because area scales with the SQUARE of the dimensions.",
+    "traps": [
+      "452.4 m² uses the new diameter, 12 m, as the radius: π × 12² is about 452.4.",
+      "37.7 m² is the circumference of the enlarged garden, 2 × π × 6, which is about 37.7 m, not the area.",
+      "18.8 m² multiplies π × 6 without squaring, giving about 18.8."
+    ]
   },
   {
     "id": "GM-02",
@@ -789,7 +834,12 @@
       }
     ],
     "correct": "A",
-    "solution": "The ramp is the hypotenuse of a right triangle with legs 6 and 8: c² = 6² + 8² = 36 + 64 = 100, so c = √(100) = 10 m. (B adds the legs 6+8; C stops at c² = 100; D computes the triangle's area (1/2) × 6 × 8 = 24 instead of a length.)"
+    "solution": "The ramp is the hypotenuse of a right triangle with legs 6 and 8: c² = 6² + 8² = 36 + 64 = 100, so c = √(100) = 10 m.",
+    "traps": [
+      "14 m adds the legs, 6+8, instead of squaring them first.",
+      "100 m stops at c² = 100 and never takes the square root.",
+      "24 m is the triangle's area, (1/2) × 6 × 8 = 24, not a length."
+    ]
   },
   {
     "id": "GM-03",
@@ -825,7 +875,12 @@
       }
     ],
     "correct": "A",
-    "solution": "The ladder is the hypotenuse, so the height is a leg: h² = 13² - 5² = 169 - 25 = 144, giving h = √(144) = 12 m. (B adds the squares, √(169+25) = √(194) ≈ 13.9, which is impossibly longer than the ladder; C stops at h² = 144; D subtracts the lengths directly, 13 - 5 = 8.)"
+    "solution": "The ladder is the hypotenuse, so the height is a leg: h² = 13² - 5² = 169 - 25 = 144, giving h = √(144) = 12 m.",
+    "traps": [
+      "approximately 13.9 m adds the squares, √(169+25) = √(194) ≈ 13.9, which is impossibly longer than the ladder itself.",
+      "144 m stops at h² = 144 and never takes the square root.",
+      "8 m subtracts the lengths directly, 13 - 5 = 8."
+    ]
   },
   {
     "id": "GM-04",
@@ -861,7 +916,12 @@
       }
     ],
     "correct": "A",
-    "solution": "The two angles sit on the same side of the straight rail, so together they make a straight angle of 180 degrees: × = 180 - 68 = 112 degrees. (B assumes the two angles on either side of the brace are equal, but that is only true when the brace is perpendicular to the rail. C uses the 90-degree benchmark: 90 - 68 = 22. D uses the 360-degree benchmark: 360 - 68 = 292, which is not even a possible angle in this design.)"
+    "solution": "The two angles sit on the same side of the straight rail, so together they make a straight angle of 180 degrees: × = 180 - 68 = 112 degrees.",
+    "traps": [
+      "68 degrees assumes the two angles on either side of the brace are equal, but that is only true when the brace is perpendicular to the rail.",
+      "22 degrees uses the 90-degree benchmark: 90 - 68 = 22.",
+      "292 degrees uses the 360-degree benchmark: 360 - 68 = 292, which is not even a possible angle in this design."
+    ]
   },
   {
     "id": "GM-06",
@@ -897,7 +957,12 @@
       }
     ],
     "correct": "A",
-    "solution": "r = 10 ÷ 2 = 5 cm. V = π r² h = π (5)² (12) = 300π ≈ 942.5 cm³. (B uses the diameter as the radius: π(10)²(12) = 1200π; C is the total surface area 2π r h + 2π r² = 170π ≈ 534.1; D forgets to square the radius: π(5)(12) = 60π ≈ 188.5.)"
+    "solution": "r = 10 ÷ 2 = 5 cm. V = π r² h = π (5)² (12) = 300π ≈ 942.5 cm³.",
+    "traps": [
+      "3769.9 cm³ uses the diameter as the radius: π(10)²(12) = 1200π.",
+      "534.1 cm³ is the total surface area, 2π r h + 2π r² = 170π ≈ 534.1.",
+      "188.5 cm³ forgets to square the radius: π(5)(12) = 60π ≈ 188.5."
+    ]
   },
   {
     "id": "GM-07",
@@ -933,7 +998,12 @@
       }
     ],
     "correct": "A",
-    "solution": "r = 6 ÷ 2 = 3 cm. V = (1/3)π r² h = (1/3)π(3)²(4) = 12π ≈ 37.7 cm³. (B omits the (1/3): π(9)(4) = 36π ≈ 113.1; C uses the diameter as the radius: (1/3)π(6)²(4) = 48π ≈ 150.8; D is the total surface area: slant height s = √(3²+4²) = 5, so π r² + π r s = 9π + 15π = 24π ≈ 75.4.)"
+    "solution": "r = 6 ÷ 2 = 3 cm. V = (1/3)π r² h = (1/3)π(3)²(4) = 12π ≈ 37.7 cm³.",
+    "traps": [
+      "113.1 cm³ omits the (1/3): π(9)(4) = 36π ≈ 113.1.",
+      "150.8 cm³ uses the diameter as the radius: (1/3)π(6)²(4) = 48π ≈ 150.8.",
+      "75.4 cm³ is the total surface area: slant height s = √(3²+4²) = 5, so π r² + π r s = 9π + 15π = 24π ≈ 75.4."
+    ]
   },
   {
     "id": "GM-08",
@@ -969,7 +1039,12 @@
       }
     ],
     "correct": "A",
-    "solution": "Original area = 10 × 15 = 150 cm². Enlarged area = 30 × 45 = 1350 cm². Ratio = 1350 ÷ 150 = 9 = 3²: when lengths scale by k, area scales by k². (B assumes area triples along with the sides; C adds the factors 3 + 3 = 6 instead of multiplying 3 × 3; D applies the volume scale factor 3³ = 27 to an area.)"
+    "solution": "Original area = 10 × 15 = 150 cm². Enlarged area = 30 × 45 = 1350 cm². Ratio = 1350 ÷ 150 = 9 = 3²: when lengths scale by k, area scales by k².",
+    "traps": [
+      "3 times assumes the area triples along with the sides.",
+      "6 times adds the factors, 3 + 3 = 6, instead of multiplying 3 × 3.",
+      "27 times applies the volume scale factor 3³ = 27 to an area."
+    ]
   },
   {
     "id": "GM-10",
@@ -1005,7 +1080,12 @@
       }
     ],
     "correct": "A",
-    "solution": "The volume of the prism (the box) is 5 × 4 × 3 = 60 cm³. A pyramid with the same base and height has one third of the prism's volume: 60 / 3 = 20 cm³. (B computes the box's surface area, 2 × (20 + 15 + 12) = 94 cm², instead of a volume. C drops the one-third factor and gives the full prism volume, 60. D adds the dimensions: 5 + 4 + 3 = 12.)"
+    "solution": "The volume of the prism (the box) is 5 × 4 × 3 = 60 cm³. A pyramid with the same base and height has one third of the prism's volume: 60 / 3 = 20 cm³.",
+    "traps": [
+      "94 cm³ is the box's surface area, 2 × (20 + 15 + 12) = 94 cm², not a volume.",
+      "60 cm³ drops the one-third factor and gives the full prism volume.",
+      "12 cm³ adds the dimensions: 5 + 4 + 3 = 12."
+    ]
   },
   {
     "id": "FIN-Q1",
@@ -1041,7 +1121,12 @@
       }
     ],
     "correct": "B",
-    "solution": "Each month Priya saves 3% of $800: 0.03 × 800 = $24. Over 6 months she saves 6 × 24 = $144. (A finds only one month of savings, $24, ignoring the 6-month period. C computes the money she does NOT save: 800 - 24 = $776 per month, and 6 × 776 = $4,656, reporting the wrong quantity. D uses 3 instead of 0.03, giving 800 × 3 = $2,400 per month and 6 × 2,400 = $14,400.)"
+    "solution": "Each month Priya saves 3% of $800: 0.03 × 800 = $24. Over 6 months she saves 6 × 24 = $144.",
+    "traps": [
+      "$24.00 is only one month of savings - it ignores the 6-month period.",
+      "$4,656.00 is the money she does NOT save: 800 - 24 = $776 per month, and 6 × 776 = $4,656 - the wrong quantity.",
+      "$14,400.00 uses 3 instead of 0.03, giving 800 × 3 = $2,400 per month and 6 × 2,400 = $14,400."
+    ]
   },
   {
     "id": "FIN-Q2",
@@ -1077,7 +1162,12 @@
       }
     ],
     "correct": "C",
-    "solution": "The value grows by 4% of the CURRENT value, so the year 3 value is 4% more than the year 2 value: 1,081.60 × 0.04 = 43.26, and 1,081.60 + 43.26 = $1,124.86. (A assumes the graph rises by the same flat $40 every year, the year 1 increase, giving 1,000 + 3 × 40 = $1,120.00 and missing the growth on growth the graph shows. B reports the total increase since year 0, 1,124.86 - 1,000 = $124.86, instead of the value. D converts 4% to 0.4, giving 1,081.60 × 1.4 = $1,514.24.)"
+    "solution": "The value grows by 4% of the CURRENT value, so the year 3 value is 4% more than the year 2 value: 1,081.60 × 0.04 = 43.26, and 1,081.60 + 43.26 = $1,124.86.",
+    "traps": [
+      "$1,120.00 assumes the graph rises by the same flat $40 every year, the year 1 increase, giving 1,000 + 3 × 40 = $1,120.00 and missing the growth on growth the graph shows.",
+      "$124.86 is the total increase since year 0, 1,124.86 - 1,000 = $124.86, instead of the value.",
+      "$1,514.24 converts 4% to 0.4, giving 1,081.60 × 1.4 = $1,514.24."
+    ]
   },
   {
     "id": "FIN-Q3",
@@ -1113,7 +1203,12 @@
       }
     ],
     "correct": "D",
-    "solution": "Each year the car keeps 100% - 15% = 85% of its CURRENT value. The year 2 value is 85% of the year 1 value: 20,400 × 0.85 = $17,340. (A subtracts 15% of the ORIGINAL price again: 20,400 - 3,600 = $16,800, treating the drop as a fixed dollar amount. B reduces the value TO 15% instead of BY 15%: 20,400 × 0.15 = $3,060. C stops at the year 1 value, applying the decrease only once.)"
+    "solution": "Each year the car keeps 100% - 15% = 85% of its CURRENT value. The year 2 value is 85% of the year 1 value: 20,400 × 0.85 = $17,340.",
+    "traps": [
+      "$16,800 subtracts 15% of the ORIGINAL price again: 20,400 - 3,600 = $16,800, treating the drop as a fixed dollar amount.",
+      "$3,060 reduces the value TO 15% instead of BY 15%: 20,400 × 0.15 = $3,060.",
+      "$20,400 stops at the year 1 value, applying the decrease only once."
+    ]
   },
   {
     "id": "FIN-Q4",
@@ -1149,7 +1244,12 @@
       }
     ],
     "correct": "A",
-    "solution": "Compare unit prices (dollars per litre): 3.60 ÷ 1.5 = $2.40/L and 5.00 ÷ 2 = $2.50/L. Since 2.40 < 2.50, the 1.5 L bottle is the better buy. (B assumes bigger is automatically cheaper per unit without calculating. C computes litres per dollar but then treats the smaller number as the cheaper option — for litres per dollar, bigger is better. D compares total prices, which ignores that the bottles contain different amounts.)"
+    "solution": "Compare unit prices (dollars per litre): 3.60 ÷ 1.5 = $2.40/L and 5.00 ÷ 2 = $2.50/L. Since 2.40 < 2.50, the 1.5 L bottle is the better buy.",
+    "traps": [
+      "Picking the 2 L bottle because larger packages always cost less per litre assumes bigger is automatically cheaper per unit, without calculating.",
+      "Picking the 2 L bottle because 2 divided by 5.00 equals 0.40, which is smaller than 1.5 divided by 3.60, about 0.42, computes litres per dollar but then treats the smaller number as the cheaper option - for litres per dollar, bigger is better.",
+      "Picking the 1.5 L bottle because its total price of $3.60 is lower than $5.00 compares total prices, which ignores that the bottles contain different amounts."
+    ]
   },
   {
     "id": "FIN-Q5",
@@ -1185,7 +1285,12 @@
       }
     ],
     "correct": "C",
-    "solution": "Total allocations: fixed 450 + 65 + 128 = $643, variable 310 + 150 = $460, savings $300. Total = 643 + 460 + 300 = $1403. Money left = 1480 - 1403 = $77. (A subtracts only the fixed expenses: 1480 - 643 = $837. B reports the total spent, $1403, instead of the money remaining. D forgets to treat the planned savings as part of the budget: 1480 - 1103 = $377.)"
+    "solution": "Total allocations: fixed 450 + 65 + 128 = $643, variable 310 + 150 = $460, savings $300. Total = 643 + 460 + 300 = $1403. Money left = 1480 - 1403 = $77.",
+    "traps": [
+      "$837 subtracts only the fixed expenses: 1480 - 643 = $837.",
+      "$1,403 is the total spent, instead of the money remaining.",
+      "$377 forgets to treat the planned savings as part of the budget: 1480 - 1103 = $377."
+    ]
   },
   {
     "id": "FIN-Q6",
@@ -1221,7 +1326,12 @@
       }
     ],
     "correct": "A",
-    "solution": "Compare the two final values from the calculator for the SAME time period, 2 years: 2,247.20 - 2,240.00 = $7.20. Account 2 earns interest on its interest, so it pulls ahead even though both rates are 6%. (B assumes equal rates mean equal earnings, ignoring the way the interest is calculated. C compares values from different time periods: 2,247.20 - 2,120.00 = $127.20 uses Account 2 at 2 years but Account 1 at only 1 year, since 2,000 + 120 = $2,120. D reports Account 2's total interest earned, 2,247.20 - 2,000 = $247.20, instead of the difference between the accounts.)"
+    "solution": "Compare the two final values from the calculator for the SAME time period, 2 years: 2,247.20 - 2,240.00 = $7.20. Account 2 earns interest on its interest, so it pulls ahead even though both rates are 6%.",
+    "traps": [
+      "$0.00 assumes equal rates mean equal earnings, ignoring the way the interest is calculated.",
+      "$127.20 compares values from different time periods: 2,247.20 - 2,120.00 = $127.20 uses Account 2 at 2 years but Account 1 at only 1 year, since 2,000 + 120 = $2,120.",
+      "$247.20 is Account 2's total interest earned, 2,247.20 - 2,000 = $247.20, instead of the difference between the accounts."
+    ]
   },
   {
     "id": "FIN-Q8",
@@ -1257,7 +1367,12 @@
       }
     ],
     "correct": "B",
-    "solution": "The value grows by 10% of the CURRENT value, so the year 2 value is 10% more than the year 1 value: 165.00 × 0.10 = 16.50, and 165.00 + 16.50 = $181.50. (A adds 10% of the original price, $15, again: 165 + 15 = $180.00, missing the growth on growth. C stops at the year 1 value, applying the increase only once. D reports the total gain in value, 181.50 - 150 = $31.50, instead of the value itself.)"
+    "solution": "The value grows by 10% of the CURRENT value, so the year 2 value is 10% more than the year 1 value: 165.00 × 0.10 = 16.50, and 165.00 + 16.50 = $181.50.",
+    "traps": [
+      "$180.00 adds 10% of the original price, $15, again: 165 + 15 = $180.00, missing the growth on growth.",
+      "$165.00 stops at the year 1 value, applying the increase only once.",
+      "$31.50 is the total gain in value, 181.50 - 150 = $31.50, instead of the value itself."
+    ]
   },
   {
     "id": "FIN-Q9",
@@ -1293,7 +1408,12 @@
       }
     ],
     "correct": "D",
-    "solution": "Total cost of the plan: 55 × 12 = $660. Difference: 660 - 600 = $60 more than paying up front. (A gives the plan's total cost, not the extra cost asked for. B assumes installments never add cost, ignoring that 55 × 12 > 600. C compares one month only: 600 ÷ 12 = $50 and 55 - 50 = $5, forgetting to multiply the monthly difference by all 12 months.)"
+    "solution": "Total cost of the plan: 55 × 12 = $660. Difference: 660 - 600 = $60 more than paying up front.",
+    "traps": [
+      "$660 is the plan's total cost, not the extra cost the question asks for.",
+      "$0 assumes installments never add cost, ignoring that 55 × 12 > 600.",
+      "$5 compares one month only: 600 ÷ 12 = $50 and 55 - 50 = $5, forgetting to multiply the monthly difference by all 12 months."
+    ]
   },
   {
     "id": "EQAO-2025-NUM-03",
@@ -1329,7 +1449,8 @@
       }
     ],
     "correct": "A",
-    "solution": "-36 ÷ -4 = 9. For the letters, subtract exponents: a⁴ ÷ a is a^(4-1) = a³, and b⁶ ÷ b² is b^(6-2) = b⁴. So the simplified expression is 9a³b⁴."
+    "solution": "-36 ÷ -4 = 9. For the letters, subtract exponents: a⁴ ÷ a is a^(4-1) = a³, and b⁶ ÷ b² is b^(6-2) = b⁴. So the simplified expression is 9a³b⁴.",
+    "traps": []
   },
   {
     "id": "EQAO-2025-NUM-04",
@@ -1365,7 +1486,8 @@
       }
     ],
     "correct": "C",
-    "solution": "Combine the exponents on top: 5^(4+4-2) = 5⁶. Combine the exponents on the bottom: 5^(3-6) = 5^(-3). Then 5⁶ divided by 5^(-3) = 5^(6-(-3)) = 5⁹ = 1,953,125, which is 1.953125 x 10⁶ in scientific notation."
+    "solution": "Combine the exponents on top: 5^(4+4-2) = 5⁶. Combine the exponents on the bottom: 5^(3-6) = 5^(-3). Then 5⁶ divided by 5^(-3) = 5^(6-(-3)) = 5⁹ = 1,953,125, which is 1.953125 x 10⁶ in scientific notation.",
+    "traps": []
   },
   {
     "id": "EQAO-2025-ALG-07",
@@ -1401,7 +1523,8 @@
       }
     ],
     "correct": "D",
-    "solution": "Substitute n = 8: P = 24.50 x 8 + 15 = 196 + 15 = 211. Mia earns $211.00."
+    "solution": "Substitute n = 8: P = 24.50 x 8 + 15 = 196 + 15 = 211. Mia earns $211.00.",
+    "traps": []
   },
   {
     "id": "EQAO-2025-COD-10",
@@ -1437,7 +1560,8 @@
       }
     ],
     "correct": "D",
-    "solution": "The discount amount is itemPrice * percentDiscount / 100. A sale price is the original price minus that amount, so the correct line is subtotal = itemPrice - (itemPrice * percentDiscount / 100)."
+    "solution": "The discount amount is itemPrice * percentDiscount / 100. A sale price is the original price minus that amount, so the correct line is subtotal = itemPrice - (itemPrice * percentDiscount / 100).",
+    "traps": []
   },
   {
     "id": "EQAO-2025-ALG-14",
@@ -1473,7 +1597,8 @@
       }
     ],
     "correct": "B",
-    "solution": "The original slope is 6 and the original y-intercept is 0. Doubling the slope gives 12, and decreasing the intercept by 5 gives -5. So the new line is y = 12x - 5."
+    "solution": "The original slope is 6 and the original y-intercept is 0. Doubling the slope gives 12, and decreasing the intercept by 5 gives -5. So the new line is y = 12x - 5.",
+    "traps": []
   },
   {
     "id": "EQAO-2025-GEO-20",
@@ -1509,7 +1634,8 @@
       }
     ],
     "correct": "C",
-    "solution": "5 blocks is 5 times 1/8 = 5/8 mile. Then 5/8 of 1609.3 m is 1005.8125 m, which is approximately 1006 m."
+    "solution": "5 blocks is 5 times 1/8 = 5/8 mile. Then 5/8 of 1609.3 m is 1005.8125 m, which is approximately 1006 m.",
+    "traps": []
   },
   {
     "id": "EQAO-2025-FIN-23",
@@ -1545,7 +1671,8 @@
       }
     ],
     "correct": "C",
-    "solution": "Option A costs 10% of $500 plus 24 payments of $20.63: 50 + 495.12 = $545.12. Option B costs 36 payments of $15.56: $560.16. The difference is 560.16 - 545.12 = $15.04, so Option A costs $15.04 less."
+    "solution": "Option A costs 10% of $500 plus 24 payments of $20.63: 50 + 495.12 = $545.12. Option B costs 36 payments of $15.56: $560.16. The difference is 560.16 - 545.12 = $15.04, so Option A costs $15.04 less.",
+    "traps": []
   },
   {
     "id": "EQAO-2024-NUM-01",
@@ -1581,7 +1708,8 @@
       }
     ],
     "correct": "C",
-    "solution": "-4, 0.35, and 5 can each be written as a fraction of integers, so they are rational. Since 3 is not a perfect square, √3 is irrational."
+    "solution": "-4, 0.35, and 5 can each be written as a fraction of integers, so they are rational. Since 3 is not a perfect square, √3 is irrational.",
+    "traps": []
   },
   {
     "id": "EQAO-2024-NUM-02",
@@ -1617,7 +1745,8 @@
       }
     ],
     "correct": "B",
-    "solution": "Set F contains the multiples of 2, and Set G contains the multiples of 3. Numbers in both sets are multiples of the least common multiple of 2 and 3, which is 6."
+    "solution": "Set F contains the multiples of 2, and Set G contains the multiples of 3. Numbers in both sets are multiples of the least common multiple of 2 and 3, which is 6.",
+    "traps": []
   },
   {
     "id": "EQAO-2024-NUM-03",
@@ -1653,7 +1782,8 @@
       }
     ],
     "correct": "C",
-    "solution": "Multiplying by 10⁴ moves the decimal point four places to the right: 1.2 becomes 12,000."
+    "solution": "Multiplying by 10⁴ moves the decimal point four places to the right: 1.2 becomes 12,000.",
+    "traps": []
   },
   {
     "id": "EQAO-2024-ALG-07",
@@ -1689,7 +1819,8 @@
       }
     ],
     "correct": "D",
-    "solution": "Multiply 2x by every term: 2x times x² is 2x³, 2x times -3x is -6x², and 2x times 2 is 4x. So the answer is 2x³ - 6x² + 4x."
+    "solution": "Multiply 2x by every term: 2x times x² is 2x³, 2x times -3x is -6x², and 2x times 2 is 4x. So the answer is 2x³ - 6x² + 4x.",
+    "traps": []
   },
   {
     "id": "EQAO-2024-ALG-08",
@@ -1725,7 +1856,8 @@
       }
     ],
     "correct": "B",
-    "solution": "Blue boxes add 100b points. Yellow boxes take away 50y points. The total is 100b - 50y."
+    "solution": "Blue boxes add 100b points. Yellow boxes take away 50y points. The total is 100b - 50y.",
+    "traps": []
   },
   {
     "id": "EQAO-2024-COD-10",
@@ -1761,7 +1893,8 @@
       }
     ],
     "correct": "D",
-    "solution": "For a right triangle, c = √(a² + b²). In pseudocode, squaring can be written as multiplying a value by itself, so use sqrt(sideA * sideA + sideB * sideB)."
+    "solution": "For a right triangle, c = √(a² + b²). In pseudocode, squaring can be written as multiplying a value by itself, so use sqrt(sideA * sideA + sideB * sideB).",
+    "traps": []
   },
   {
     "id": "EQAO-2023-NUM-01",
@@ -1797,7 +1930,8 @@
       }
     ],
     "correct": "A",
-    "solution": "Between any two different real numbers there are infinitely many other real numbers. For example, between 0 and 10 are 0.1, 0.01, √2, π, and infinitely many more."
+    "solution": "Between any two different real numbers there are infinitely many other real numbers. For example, between 0 and 10 are 0.1, 0.01, √2, π, and infinitely many more.",
+    "traps": []
   },
   {
     "id": "EQAO-2023-NUM-02",
@@ -1833,7 +1967,8 @@
       }
     ],
     "correct": "B",
-    "solution": "A rational number can be written as p/q, where p and q are integers and q is not 0. Its decimal either terminates or repeats."
+    "solution": "A rational number can be written as p/q, where p and q are integers and q is not 0. Its decimal either terminates or repeats.",
+    "traps": []
   },
   {
     "id": "EQAO-2023-NUM-03",
@@ -1869,7 +2004,8 @@
       }
     ],
     "correct": "B",
-    "solution": "The common numbers are multiples of both 3 and 5, so they are multiples of the least common multiple of 3 and 5, which is 15."
+    "solution": "The common numbers are multiples of both 3 and 5, so they are multiples of the least common multiple of 3 and 5, which is 15.",
+    "traps": []
   },
   {
     "id": "EQAO-2023-NUM-04",
@@ -1905,7 +2041,8 @@
       }
     ],
     "correct": "C",
-    "solution": "10⁵ = 100,000, so 3.5 x 100,000 = 350,000."
+    "solution": "10⁵ = 100,000, so 3.5 x 100,000 = 350,000.",
+    "traps": []
   },
   {
     "id": "EQAO-2023-FIN-31",
@@ -1941,7 +2078,12 @@
       }
     ],
     "correct": "B",
-    "solution": "Current expenses are 1500 + 350 + 400 + 345 = $2595, which is less than the $2800 income, so the budget already balances with $205 left over. Rent would have to increase by $205 (not $105) for expenses to equal income, and decreasing utilities would only make the surplus bigger."
+    "solution": "Current expenses are 1500 + 350 + 400 + 345 = $2595, which is less than the $2800 income, so the budget already balances with $205 left over.",
+    "traps": [
+      "Saying the budget needs to be modified because expenses are more than income compares the totals the wrong way: $2595 is less than $2800.",
+      "Rent increasing by $105 would not make expenses equal income - rent would have to increase by $205, the size of the surplus.",
+      "Utilities decreasing by $205 moves the budget the wrong way; it would only make the surplus bigger."
+    ]
   },
   {
     "id": "EQAO-2023-FIN-33",
@@ -1977,6 +2119,11 @@
       }
     ],
     "correct": "C",
-    "solution": "Plan A: 2700 / 75 = 36 months. Plan B: 2400 / 50 = 48 months. Plan C: 2700 / 50 = 54 biweekly payments, which is about 24.9 months. Plan D: 2400 / 30 = 80 biweekly payments, which is about 36.9 months. Plan C is fastest."
+    "solution": "The plan with $300 down and $50 every two weeks leaves 2700 to pay: 2700 / 50 = 54 biweekly payments, which is about 24.9 months - the least time of the four plans.",
+    "traps": [
+      "$300 down and $75 monthly: 2700 / 75 = 36 months. The larger payment looks faster, but it arrives only once a month.",
+      "$600 down and $50 monthly: 2400 / 50 = 48 months. The biggest down payment does not mean the fastest payoff.",
+      "$600 down and $30 every two weeks: 2400 / 30 = 80 biweekly payments, which is about 36.9 months. Paying every two weeks helps only when the payment is large enough."
+    ]
   }
 ]

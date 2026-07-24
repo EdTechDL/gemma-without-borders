@@ -1,8 +1,11 @@
 [
  {
   "n": 1,
-  "title": "After the quiz \u2014 Changing the base when operating on powers",
-  "body": "**Parent report** \u2014 scored 0 of 5 (0%). The trick that caught them most: **Changing the base when operating on powers**.\n\nDear Parents,\n\nWe've noticed your child is having some difficulty with simplifying expressions involving exponents. It seems they\u2019re sometimes assuming you can change the base of a power without adjusting the exponent correctly, which suggests they are looking for shortcuts rather than carefully following the rules \u2013 it shows an eagerness to find patterns but needs more attention to detail.\n\n**Try at home**\n\n- Rewrite 2\u00b3 x 2\u00b2 as repeated multiplication (e.g., 2x2x2 x 2x\n- and then compare that to how you\u2019d write 2^(3+2).\n- Take a number like 3, raise it to two different powers (like 2 and 4), and then ask your child to explain why the answers are different.\n- Have them simplify expressions like 4\u00b2 / 4\u00b9 step by step, showing each multiplication or division clearly.",
-  "kind": "quiz"
+  "title": "After the quiz \u2014 Mean by Default",
+  "body": "**Parent report** \u2014 scored 0 of 5 (0%). The trick that caught them most: **Mean by Default**.\n\nDear Parents,\n\nWe've noticed your child is consistently using the average (mean) even when it\u2019s not the best way to describe a set of information; this suggests they are looking for a single, easy answer rather than considering which measure truly represents the data. It seems like they sometimes jump to conclusions without fully thinking through all the possibilities and how different measures might be more appropriate.\n\n**Try at home**\n\n- Collect some cereal boxes from the pantry and have your child estimate their heights \u2013 then find the tallest one and compare that to the average height of all the boxes.\n- Gather a handful of coins (different denominations are good) and ask them to describe how many there are, trying different ways beyond just adding them up.\n- Look at a chart showing favorite ice cream flavors in your family or friends \u2013 which way best describes what most people like?",
+  "kind": "quiz",
+  "trick_id": "DAT-3",
+  "trick_name": "Mean by Default",
+  "strand": "Data"
  }
 ]
