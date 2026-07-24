@@ -51,13 +51,14 @@ class _Budget:
 
 
 def build_sheet(trick_id: str, trick_name: str, strand: str, questions: list,
-                want: int = 10, exclude_ids=()) -> dict:
+                want: int = 10, exclude_ids=(), topic: str = "") -> dict:
     """Build one printable practice sheet for a single trick.
 
     Returns {"items": [...], "html": "<...>", "counts": {"bank": n, "generated": m}}
     where "html" is a complete standalone document ready for the printer."""
     exclude = set(exclude_ids or ())
-    items = _bank_items(trick_id, strand, questions or [], want, exclude)
+    items = _bank_items(trick_id, trick_name, strand, questions or [], want,
+                        exclude, topic)
     bank_count = len(items)
 
     if len(items) < want:
@@ -72,8 +73,8 @@ def build_sheet(trick_id: str, trick_name: str, strand: str, questions: list,
 
 
 # ------------------------------------------------------------------- BANK
-def _bank_items(trick_id: str, strand: str, questions: list, want: int,
-                exclude: set) -> list:
+def _bank_items(trick_id: str, trick_name: str, strand: str, questions: list,
+                want: int, exclude: set, topic: str = "") -> list:
     """Verified items on THIS idea only, closest first.
 
     A sheet titled with one idea must not quietly fill up with a neighbouring
@@ -81,7 +82,7 @@ def _bank_items(trick_id: str, strand: str, questions: list, want: int,
     distributive property are both Algebra, and a parent working through ten
     questions would have no way to tell the sheet had drifted."""
     picked, taken = [], set(exclude)
-    for q in on_idea_pool(questions, trick_id, taken, trick_name):
+    for q in on_idea_pool(questions, trick_id, taken, trick_name, topic):
         if len(picked) >= want:
             break
         taken.add(q["id"])

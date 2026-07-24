@@ -1363,6 +1363,15 @@ def onboard_stage():
                    "and the monsters will simply call you Challenger.")
 
 
+def _topic_for_snare(snare_id: str) -> str:
+    """The topic the bank teaches this idea in, so a sheet cannot wander into a
+    neighbouring one. Empty when nothing in the bank carries the tag."""
+    for q in QUESTIONS:
+        if any(o.get("trick_id") == snare_id for o in q.get("options", [])):
+            return q.get("topic", "")
+    return ""
+
+
 def parents_stage():
     st.markdown('<div class="gwb-kicker">GEMMA MONSTERS · letters home</div>',
                 unsafe_allow_html=True)
@@ -1446,7 +1455,8 @@ def parents_stage():
                                       use_container_width=True):
                         with st.spinner(f"Building ten questions on {tname}..."):
                             st.session_state[key] = practice_sheet.build_sheet(
-                                tid, tname, tstrand, QUESTIONS, want=10)
+                                tid, tname, tstrand, QUESTIONS, want=10,
+                                topic=_topic_for_snare(tid))
                         st.rerun()
                 else:
                     sheet = st.session_state[key]

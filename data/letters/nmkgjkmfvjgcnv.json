@@ -1,0 +1,20 @@
+[
+ {
+  "n": 1,
+  "title": "After the quiz \u2014 Bigger Sample Cures Bias",
+  "body": "**Parent report** \u2014 scored 1 of 5 (20%). The trick that caught them most: **Bigger Sample Cures Bias**.\n\nDear Parents,\n\nWe've noticed your child is having a little trouble understanding how increasing the amount of information you have doesn\u2019t automatically fix problems with how that information was gathered \u2013 they seem to be thinking more data always solves everything, which shows a really logical approach but needs a bit of refining. This suggests they are looking for simple solutions, which is great, but we need to ensure they understand *how* those solutions work and when they don't.\n\n**Try at home**\n\n- Collect everyone\u2019s favorite candies \u2013 ask each person their top 3 choices. Then, combine the lists and see if just having more votes automatically picks the \"best\" candy for everyone.\n- Have your child survey three people about their favorite ice cream flavor versus surveying twenty; discuss whether more responses guarantee a truly representative answer.\n- Find three different online product reviews (like toys or games) \u2013 compare them, then imagine you had fifty reviews; would that *guarantee* the product was perfect?",
+  "kind": "quiz",
+  "trick_id": "DAT-1",
+  "trick_name": "Bigger Sample Cures Bias",
+  "strand": "Data"
+ },
+ {
+  "n": 2,
+  "title": "After the quiz \u2014 Additive/Linear Formula Reasoning",
+  "body": "**Parent report** \u2014 scored 2 of 5 (40%). The trick that caught them most: **Additive/Linear Formula Reasoning**.\n\nDear Parents,\n\nWe've noticed your child is sometimes adding things together when a problem actually needs a different approach \u2013 it seems they\u2019re relying on a simple \u201cmore of this plus more of that\u201d method, which suggests they are looking for straightforward addition where other calculations are needed. This can show a tendency to apply familiar patterns without fully considering the specific context of the math problem.\n\n**Try at home**\n\n- Use LEGO bricks to build two rectangular prisms \u2013 one long and thin, one short and wide \u2013 with the same volume. Discuss how their surface areas differ.\n- Cut out two identical rectangles from paper. Fold one in half lengthwise and the other widthwise; compare the resulting areas.\n- Draw a line on a piece of paper. Now draw another line next to it. Ask your child what the total length is, then ask them if that's always true when combining lengths.",
+  "kind": "quiz",
+  "trick_id": "GEO-2",
+  "trick_name": "Additive/Linear Formula Reasoning",
+  "strand": "Geometry & Measurement"
+ }
+]
