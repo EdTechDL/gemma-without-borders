@@ -1087,7 +1087,11 @@ function init(){
   scene.add(embers);
 
   addEventListener('resize',refit);
-  renderer.domElement.addEventListener('click',onClick);
+  // Selection rides on pointerup, not click: OrbitControls preventDefault()s
+  // touchstart, and a cancelled touchstart means the browser never synthesizes
+  // the click - so on a phone a tap orbited the camera but never picked.
+  // pointerup fires for mouse and touch alike.
+  renderer.domElement.addEventListener('pointerup',onTap);
 }
 
 function makeMonster(shape,col){
@@ -1167,8 +1171,21 @@ function svgMini(col){
   return '<svg width="72" height="72" viewBox="0 0 40 40"><circle cx="20" cy="20" r="14" fill="'+col+'" opacity="0.85"/><circle cx="20" cy="20" r="17" fill="none" stroke="'+col+'" stroke-width="1.4" opacity="0.5"/></svg>';
 }
 
-let __downXY=null;
-addEventListener('pointerdown',e=>{ __downXY=[e.clientX,e.clientY]; });
+let __downXY=null,__ptrs=0,__multi=false;
+addEventListener('pointerdown',e=>{
+  __ptrs++; if(__ptrs>1) __multi=true;          // a second finger = pinch, not a tap
+  if(e.isPrimary!==false) __downXY=[e.clientX,e.clientY];
+});
+// runs after onTap (canvas target phase first, then window bubble), so the
+// pinch flag is still up while the tap of the last-lifted finger is judged
+addEventListener('pointerup',()=>{
+  __ptrs=Math.max(0,__ptrs-1);
+  if(__ptrs===0) setTimeout(function(){ __multi=false; },0);
+});
+addEventListener('pointercancel',()=>{
+  __ptrs=Math.max(0,__ptrs-1);
+  if(__ptrs===0) setTimeout(function(){ __multi=false; },0);
+});
 
 function stationAtPointer(e){
   mouse.x=(e.clientX/innerWidth)*2-1; mouse.y=-(e.clientY/innerHeight)*2+1;
@@ -1191,9 +1208,13 @@ function stationAtPointer(e){
   return best>=0 ? best : undefined;
 }
 
-function onClick(e){
+function onTap(e){
+  if(e.isPrimary===false || __multi) return;           // second finger of a pinch
+  if(e.button!==undefined && e.button>0) return;       // right/middle button
   if(e.target.closest && e.target.closest('#ui a, #ui button, #card, input')) return;
-  if(__downXY && Math.hypot(e.clientX-__downXY[0], e.clientY-__downXY[1])>7) return; // was a drag
+  // a finger wobbles more than a mouse before it reads as a drag
+  const wob=(e.pointerType==='touch')?12:7;
+  if(__downXY && Math.hypot(e.clientX-__downXY[0], e.clientY-__downXY[1])>wob) return; // was a drag
   const gi=stationAtPointer(e);
   if(gi!==undefined) focus(gi);
 }
