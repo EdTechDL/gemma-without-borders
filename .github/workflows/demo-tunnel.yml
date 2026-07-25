@@ -1,0 +1,92 @@
+name: demo-tunnel
+
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: "Ollama model tag to serve"
+        default: "gemma3:4b"
+        required: false
+  push:
+    branches: [claude/local-demo-cloudflare-sqha63]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: demo-tunnel
+  cancel-in-progress: true
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    env:
+      GEMMA_MODEL: ${{ github.event.inputs.model || 'gemma3:4b' }}
+      GEMMA_TIMEOUT_S: "300"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Ollama, start the model pull in the background
+        run: |
+          curl -fsSL https://ollama.com/install.sh | sh
+          if ! curl -sf http://localhost:11434/api/tags >/dev/null; then
+            (nohup ollama serve >/tmp/ollama.log 2>&1 &)
+          fi
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:11434/api/tags >/dev/null && break
+            sleep 1
+          done
+          nohup ollama pull "$GEMMA_MODEL" > /tmp/pull.log 2>&1 &
+
+      - name: Install app dependencies
+        run: pip install -q -r requirements.txt
+
+      - name: Start Streamlit
+        run: |
+          nohup streamlit run app.py \
+            --server.port 8501 --server.address 127.0.0.1 --server.headless true \
+            --server.enableCORS false --server.enableXsrfProtection false \
+            > /tmp/streamlit.log 2>&1 &
+          for i in $(seq 1 60); do
+            curl -sf http://localhost:8501/_stcore/health >/dev/null && exit 0
+            sleep 1
+          done
+          cat /tmp/streamlit.log; exit 1
+
+      - name: Open Cloudflare tunnel
+        id: tunnel
+        run: |
+          curl -sSL -o /usr/local/bin/cloudflared \
+            https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+          chmod +x /usr/local/bin/cloudflared
+          nohup cloudflared tunnel --no-autoupdate --url http://localhost:8501 > /tmp/cf.log 2>&1 &
+          URL=""
+          for i in $(seq 1 60); do
+            URL=$(grep -oE 'https://[a-z0-9-]+\.trycloudflare\.com' /tmp/cf.log | head -1 || true)
+            [ -n "$URL" ] && break
+            sleep 2
+          done
+          if [ -z "$URL" ]; then cat /tmp/cf.log; exit 1; fi
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          echo "## Demo link: $URL" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publish the link to the branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          echo "${{ steps.tunnel.outputs.url }}" > DEMO_LINK.md
+          git add DEMO_LINK.md
+          git commit -m "Demo tunnel link (auto-generated, expires with the workflow run)"
+          git pull --rebase origin "${{ github.ref_name }}" || true
+          git push origin "HEAD:${{ github.ref_name }}"
+
+      - name: Keep the tunnel alive (up to ~5h45m)
+        run: |
+          echo "Serving $GEMMA_MODEL — pull status:"
+          tail -5 /tmp/pull.log || true
+          sleep 20400
