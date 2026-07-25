@@ -46,7 +46,7 @@ const SCENES: Scene[] = [
     {text: 'Give the citadel your name. The monsters remember it.', from: 0.4},
   ]},
   {kind: 'clip', sec: 7.5, src: 'desktop.webm', from: 51.5, caps: [
-    {text: 'Five monsters guard the maths, and each one lives on a snare — a move that feels right until it isn't.', from: 0.4},
+    {text: 'Five monsters guard the maths, and each one lives on a snare — a move that feels right until it isn’t.', from: 0.4},
   ]},
   {kind: 'clip', sec: 8, src: 'desktop.webm', from: 72.5, crop: true, caps: [
     {text: 'The whole citadel — monsters, maths and the tutor inside — lives on one ordinary laptop.', from: 0.6},
