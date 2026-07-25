@@ -48,7 +48,7 @@ on you.
 monster models lit against the dark, title lock-up bottom left. Along the bottom, a
 five-cell strip pairing each monster name with its strand and its colour. Top right, a
 small plain box listing the running parts: Streamlit, three.js (vendored), Ollama on
-localhost:11434, gemma3. The track and team line sits as small text along the bottom
+localhost:11434, gemma4. The track and team line sits as small text along the bottom
 edge.
 
 **Why it is here:** Establishes that everything on the following slides is running
@@ -88,7 +88,7 @@ uncomfortable.
 ## Slide 3 - We split the system between what code owns and what Gemma judges
 
 **Says:**
-gemma3 at this size reads a student's typed reasoning and tells you honestly whether it
+gemma4 at this size reads a student's typed reasoning and tells you honestly whether it
 holds up. Show it four teaching approaches and a student's own words, and the one it
 picks is usually the right one. As a judge it is genuinely good.
 
@@ -594,8 +594,8 @@ What we are not claiming. Nothing here measures retention and nothing times a se
 no student has used it yet. The bank is audited against the published expectations, but
 the items do not store an expectation code. Balancing the answer key removes the
 single-letter guessing edge, which is not the same as making the bank ungameable. The app
-runs on gemma3:12b, set through the GEMMA_MODEL environment variable, and the committed
-default in the code is still gemma3:1b, one variable away; the same architecture and the
+runs on gemma4:12b, set through the GEMMA_MODEL environment variable, and the committed
+default in the code is still gemma4:1b, one variable away; the same architecture and the
 same prompts run either way, and the smaller model just trips the fallbacks more often,
 which is what the fallbacks are for.
 

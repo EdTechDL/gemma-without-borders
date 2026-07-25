@@ -433,7 +433,7 @@
       {\textbf{AGENT CONTROLLER}\\[2pt]\scriptsize deterministic loop · 55-item verified bank · fixed ladder · hard caps\\
        \scriptsize decides \emph{when} the model is called, and what it is allowed to say};
     \node[codebox, minimum width=9.4cm, text width=8.8cm] (gemma) at (0,-1.4)
-      {\textbf{OLLAMA + GEMMA}\\[2pt]\scriptsize \texttt{gemma3:12b} the primary brain --- \texttt{gemma3:1b} for modest hardware\\
+      {\textbf{OLLAMA + GEMMA}\\[2pt]\scriptsize \texttt{gemma4:12b} the primary brain --- \texttt{gemma4:1b} for modest hardware\\
        \scriptsize one environment variable, \texttt{GEMMA\_MODEL}, switches every call site};
     \draw[arr] ($(game.south)+(-0.9,0)$) -- ($(agent.north)+(-0.9,0)$);
     \draw[arr] ($(agent.north)+(0.9,0)$) -- ($(game.south)+(0.9,0)$);

@@ -116,9 +116,15 @@ streamlit run app.py
 Optional, for the live brain: install [Ollama](https://ollama.com) and pull a model —
 
 ```bash
-ollama pull gemma3:1b     # small and fast
-ollama pull gemma3:12b    # what it ships on
-ollama pull gemma3:27b    # if your machine has the room
+ollama pull gemma4:1b     # small and fast
+ollama pull gemma4:12b    # what it ships on
+ollama pull gemma4:27b    # if your machine has the room
+```
+
+Then launch the game pointed at the one you pulled:
+
+```bash
+GEMMA_MODEL=gemma4:12b streamlit run app.py
 ```
 
 Without Ollama the app still runs, just with placeholder text instead of Gemma.
@@ -129,18 +135,18 @@ One environment variable, and every call site moves with it. No code changes,
 the same prompts, and the same guardrails on every size:
 
 ```bash
-GEMMA_MODEL=gemma3:27b streamlit run app.py     # or 1b, 4b, 12b
+GEMMA_MODEL=gemma4:27b streamlit run app.py     # or 1b, 4b, 12b
 ```
 
-`gemma3:12b` is the default because it is what the app was built and tested
-against. Anything Ollama can serve will run.
+`gemma4:12b` is the size the game is tuned for. Anything Ollama can serve
+will run.
 
 A larger model is slower, and a single call on modest hardware can outlast the
 default 120-second timeout. Nothing breaks if it does — the app falls back to
 placeholder text for that one call — but you will want more room:
 
 ```bash
-GEMMA_MODEL=gemma3:27b GEMMA_TIMEOUT_S=300 streamlit run app.py
+GEMMA_MODEL=gemma4:27b GEMMA_TIMEOUT_S=300 streamlit run app.py
 ```
 
 Two more knobs, rarely needed: `OLLAMA_URL` points at a model server somewhere
