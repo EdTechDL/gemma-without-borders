@@ -13,3 +13,6 @@ env/
 .DS_Store
 .vscode/
 .idea/
+
+# Video production pipeline (local only - renders and footage stay off the repo)
+/video/
