@@ -73,9 +73,9 @@ away from the intro screen.
 ## How to run it (this Mac)
 ```bash
 cd /Users/amarah/gemma-without-borders
-GEMMA_MODEL=gemma3:12b ./.venv/bin/streamlit run app.py --server.headless true --server.port 8501
+GEMMA_MODEL=gemma4:12b ./.venv/bin/streamlit run app.py --server.headless true --server.port 8501
 ```
-- Ollama must be running (it autostarts; `ollama list` shows gemma3:1b and gemma3:12b installed).
+- Ollama must be running (it autostarts; `ollama list` shows gemma4:1b and gemma4:12b installed).
 - No model? App still runs with placeholder text (stub fallback).
 - If port 8501 is stuck: `lsof -ti :8501 | xargs kill -9` then relaunch (KEEP 8501 — the team's tunnel URL points at it).
 
@@ -93,7 +93,7 @@ file edits hot-reload for viewers; restarts keep the same URL as long as port 85
 Teammates can also clone + run locally (README has steps; 1B model is an 815MB pull).
 
 ## Current state (what is DONE and verified)
-- Quiz → results → study guide → mastery loop: working live on gemma3:12b (0.8s/call)
+- Quiz → results → study guide → mastery loop: working live on gemma4:12b (0.8s/call)
 - Diagnosis = table lookup on tagged options (100% deterministic); answer keys from bank
 - Explanations/hints grounded in verified solutions (model may not invent numbers — we
   caught the 1B inventing wrong math and architected around it; good writeup material)
@@ -151,7 +151,7 @@ Teammates can also clone + run locally (README has steps; 1B model is an 815MB p
   source of math truth. Tables in README and docs/ARCHITECTURE.md.
 
 ## Models on this machine
-- ollama: gemma3:1b (fast, text-only), gemma3:12b (main — quality, 0.8s/call after load)
+- ollama: gemma4:1b (fast, text-only), gemma4:12b (main — quality, 0.8s/call after load)
 - Switch via env var GEMMA_MODEL (default 1b; run the demo on 12b)
 
 ## Working agreements

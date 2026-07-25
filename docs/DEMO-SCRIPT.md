@@ -14,7 +14,7 @@ Read the **Before you record** section first. Two of those steps will save you a
 ```bash
 cd ~/gemma-without-borders
 pkill -9 -f "streamlit run app.py"; sleep 2
-GEMMA_MODEL=gemma3:12b GEMMA_TIMEOUT_S=300 ./.venv/bin/streamlit run app.py --server.headless true --server.port 8501
+GEMMA_MODEL=gemma4:12b GEMMA_TIMEOUT_S=300 ./.venv/bin/streamlit run app.py --server.headless true --server.port 8501
 ```
 
 Then open `http://localhost:8501` in a **fresh browser window**, not a tab in your

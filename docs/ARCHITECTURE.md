@@ -25,7 +25,7 @@ Gemma is not a text box bolted onto a quiz — it sits at every decision point o
 
 The reports for mum and dad (`agent.teacher_report`, `mastery.escalation_report`) use the same door: the facts (score, diagnosed tricks, strategies tried, attempt counts) are computed deterministically and injected into the prompt; Gemma writes only the interpretation and the ten-minute kitchen-table activities under "Try at home:".
 
-What Gemma is deliberately not allowed to do: grade multiple-choice answers (ground-truth key), diagnose bank items (ground-truth tags), invent a destination for the director, or decide loop termination (hard caps in plain code). Model size is a dial, not a rewrite: set `GEMMA_MODEL=gemma3:12b` and every call above upgrades in place.
+What Gemma is deliberately not allowed to do: grade multiple-choice answers (ground-truth key), diagnose bank items (ground-truth tags), invent a destination for the director, or decide loop termination (hard caps in plain code). Model size is a dial, not a rewrite: set `GEMMA_MODEL=gemma4:12b` and every call above upgrades in place.
 
 ## Reliability by design
 
