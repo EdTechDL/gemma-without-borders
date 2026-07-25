@@ -43,38 +43,38 @@ const SCENES: Scene[] = [
   {kind: 'title', sec: 6},
   {kind: 'hook', sec: 8.5},
   {kind: 'clip', sec: 6.5, src: 'desktop.webm', from: 21.0, caps: [
-    {text: 'Tell the citadel your name — the monsters will use it.', from: 0.4},
+    {text: 'Give the citadel your name. The monsters remember it.', from: 0.4},
   ]},
   {kind: 'clip', sec: 7.5, src: 'desktop.webm', from: 51.5, caps: [
-    {text: 'Five monsters, one per curriculum strand — each one IS a wrong idea that feels right.', from: 0.4},
+    {text: 'Five monsters guard the maths, and each one lives on a snare — a move that feels right until it isn't.', from: 0.4},
   ]},
   {kind: 'clip', sec: 8, src: 'desktop.webm', from: 72.5, crop: true, caps: [
-    {text: 'The nexus. Streamlit + three.js + Gemma 4 through Ollama — everything on one laptop.', from: 0.6},
+    {text: 'The whole citadel — monsters, maths and the tutor inside — lives on one ordinary laptop.', from: 0.6},
   ]},
   {kind: 'clip', sec: 7.6, src: 'desktop.webm', from: 104.6, crop: true, caps: [
-    {text: 'Pick your battle. Equazor guards Algebra.', from: 0.5},
+    {text: 'Pick your battle. This one is Equazor, and he twists equations.', from: 0.5},
   ]},
   {kind: 'clip', sec: 2, src: 'desktop.webm', from: 110.9, crop: true, caps: []},
   {kind: 'clip', sec: 5.9, src: 'desktop.webm', from: 119.6, crop: true, caps: [
-    {text: 'Into its lair — it already remembers you.', from: 0.3, gold: true},
+    {text: 'Walk into his lair and he greets you by name. He remembers.', from: 0.3, gold: true},
   ]},
   {kind: 'clip', sec: 11, src: 'desktop.webm', from: 127.5, rate: 2.05, caps: [
-    {text: 'Its questions are bent around its favourite snare.', from: 0.3, dur: 4.6},
-    {text: 'We answer wrong the way real students do — the minus sign slips.', from: 5.2},
+    {text: 'Every question he asks is bent around his favourite snare.', from: 0.3, dur: 4.6},
+    {text: 'So we fall for it, the way real students do. The minus sign slips.', from: 5.2},
   ]},
   {kind: 'clip', sec: 9.6, src: 'desktop.webm', from: 150.6, caps: [
-    {text: 'The wrong answer NAMES the wrong idea — a verified lookup, not a model guess.', from: 0.3, dur: 4.6},
-    {text: 'Gemma explains why the method fails — grounded in the verified solution.', from: 5.1},
+    {text: 'The game knew the trap before you stepped in it. Every wrong answer carries its snare.', from: 0.3, dur: 4.6},
+    {text: 'Then Gemma explains why your path felt right, and where it bent away.', from: 5.1},
   ]},
   {kind: 'clip', sec: 11.5, src: 'desktop.webm', from: 162.0, rate: 1.53, caps: [
-    {text: 'The training loop asks HOW you got your answer.', from: 0.3, dur: 4.8},
-    {text: 'Right answer, thin reasoning? It does not count. The streak stays at zero.', from: 5.4, gold: true},
+    {text: 'Now the training grounds. Answer — and then say how you got there.', from: 0.3, dur: 4.8},
+    {text: 'A right answer with thin reasoning does not count. The citadel wants the thinking.', from: 5.4, gold: true},
   ]},
   {kind: 'clip', sec: 9, src: 'desktop.webm', from: 180.3, rate: 1.44, caps: [
-    {text: 'Miss again, and Gemma reads your own words — then switches teaching strategy, and says why.', from: 0.4},
+    {text: 'Miss again and Gemma reads your own words, tries a different way of teaching it, and tells you why it changed.', from: 0.4},
   ]},
   {kind: 'still', sec: 6.8, src: 'letters.png', caps: [
-    {text: 'Everything the agent learns goes home in plain language — with printable practice.', from: 0.3},
+    {text: 'And everything the citadel learns goes home to mum and dad, in plain language, with practice they can print.', from: 0.3},
   ]},
   {kind: 'phone', sec: 10, src: 'phone.webm', from: 24.5, rate: 2, caps: [
     {text: 'And the whole citadel fits in a pocket.', from: 0.5},
@@ -296,9 +296,9 @@ const TitleScene: React.FC<{durF: number}> = ({durF}) => {
 };
 
 const HOOK_LINES: Array<{text: string; at: number; gold?: boolean}> = [
-  {text: 'Ask a Grade 9 student:  what is 2/3 + 1/4 ?', at: 0.3},
-  {text: 'Many will answer 3/7 — tops with tops, bottoms with bottoms.', at: 2.8},
-  {text: 'That rule feels completely right. Marking it wrong teaches nothing.', at: 5.4, gold: true},
+  {text: 'Ask a Grade 9 student for 2/3 + 1/4, and watch for 3/7.', at: 0.3},
+  {text: 'Tops with tops, bottoms with bottoms. Tidy, symmetric, and wrong.', at: 2.8},
+  {text: 'Marking it wrong teaches nothing. They already believed it.', at: 5.4, gold: true},
 ];
 
 const HookScene: React.FC<{durF: number}> = ({durF}) => {
@@ -374,7 +374,7 @@ const ClosingScene: React.FC<{durF: number}> = ({durF}) => {
           marginTop: 34,
         }}
       >
-        No cloud. No accounts. Wi-Fi off — it keeps going.
+        Wi-Fi off, and the citadel keeps going. No cloud, no accounts.
       </div>
       <div
         style={{
