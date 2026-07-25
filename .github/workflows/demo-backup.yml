@@ -1,17 +1,24 @@
-name: demo-tunnel
+name: demo-backup
+
+# Backup demo tunnel, pinned to gemma3:12b regardless of the repo default.
+# Runs alongside demo-tunnel.yml on its own concurrency group so neither
+# cancels the other.
 
 on:
   workflow_dispatch:
     inputs:
       model:
         description: "Ollama model tag to serve"
-        default: "gemma3:4b"
+        default: "gemma3:12b"
         required: false
+  push:
+    branches: [claude/local-demo-cloudflare-sqha63]
+
 permissions:
   contents: write
 
 concurrency:
-  group: demo-tunnel
+  group: demo-backup
   cancel-in-progress: true
 
 jobs:
@@ -19,7 +26,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 350
     env:
-      GEMMA_MODEL: ${{ github.event.inputs.model || 'gemma3:4b' }}
+      GEMMA_MODEL: ${{ github.event.inputs.model || 'gemma3:12b' }}
+      GEMMA_VISION_MODEL: ${{ github.event.inputs.model || 'gemma3:12b' }}
       GEMMA_TIMEOUT_S: "300"
     steps:
       - uses: actions/checkout@v4
@@ -70,15 +78,15 @@ jobs:
           done
           if [ -z "$URL" ]; then cat /tmp/cf.log; exit 1; fi
           echo "url=$URL" >> "$GITHUB_OUTPUT"
-          echo "## Demo link: $URL" >> "$GITHUB_STEP_SUMMARY"
+          echo "## Backup demo link: $URL" >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Publish the link to the branch
+      - name: Publish the backup link to the branch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          echo "${{ steps.tunnel.outputs.url }}" > DEMO_LINK.md
-          git add DEMO_LINK.md
-          git commit -m "Demo tunnel link (auto-generated, expires with the workflow run)"
+          echo "${{ steps.tunnel.outputs.url }}" > DEMO_LINK_BACKUP.md
+          git add DEMO_LINK_BACKUP.md
+          git commit -m "Backup demo tunnel link (gemma3:12b, auto-generated)"
           git pull --rebase origin "${{ github.ref_name }}" || true
           git push origin "HEAD:${{ github.ref_name }}"
 
