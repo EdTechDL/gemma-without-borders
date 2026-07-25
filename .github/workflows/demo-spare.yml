@@ -1,0 +1,97 @@
+name: demo-spare
+
+# Spare tunnel launcher. Unlike demo-tunnel/demo-backup this one KEEPS its
+# push trigger and has NO concurrency group, so every push starts an
+# additional independent tunnel and nothing ever cancels an existing one.
+# This is the restart lever: if a live tunnel dies, a push here mints a
+# replacement without touching whatever is still running.
+
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: "Ollama model tag to serve"
+        default: "gemma3:4b"
+        required: false
+  push:
+    branches: [claude/local-demo-cloudflare-sqha63]
+    paths:
+      - ".spare-trigger"
+
+permissions:
+  contents: write
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    env:
+      GEMMA_MODEL: ${{ github.event.inputs.model || 'gemma3:4b' }}
+      GEMMA_VISION_MODEL: ${{ github.event.inputs.model || 'gemma3:4b' }}
+      GEMMA_TIMEOUT_S: "300"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Ollama, start the model pull in the background
+        run: |
+          curl -fsSL https://ollama.com/install.sh | sh
+          if ! curl -sf http://localhost:11434/api/tags >/dev/null; then
+            (nohup ollama serve >/tmp/ollama.log 2>&1 &)
+          fi
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:11434/api/tags >/dev/null && break
+            sleep 1
+          done
+          nohup ollama pull "$GEMMA_MODEL" > /tmp/pull.log 2>&1 &
+
+      - name: Install app dependencies
+        run: pip install -q -r requirements.txt
+
+      - name: Start Streamlit
+        run: |
+          nohup streamlit run app.py \
+            --server.port 8501 --server.address 127.0.0.1 --server.headless true \
+            --server.enableCORS false --server.enableXsrfProtection false \
+            > /tmp/streamlit.log 2>&1 &
+          for i in $(seq 1 60); do
+            curl -sf http://localhost:8501/_stcore/health >/dev/null && exit 0
+            sleep 1
+          done
+          cat /tmp/streamlit.log; exit 1
+
+      - name: Open Cloudflare tunnel
+        id: tunnel
+        run: |
+          curl -sSL -o /tmp/cloudflared \
+            https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+          chmod +x /tmp/cloudflared
+          nohup /tmp/cloudflared tunnel --no-autoupdate --url http://localhost:8501 > /tmp/cf.log 2>&1 &
+          URL=""
+          for i in $(seq 1 60); do
+            URL=$(grep -oE 'https://[a-z0-9-]+\.trycloudflare\.com' /tmp/cf.log | head -1 || true)
+            [ -n "$URL" ] && break
+            sleep 2
+          done
+          if [ -z "$URL" ]; then cat /tmp/cf.log; exit 1; fi
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          echo "## Spare demo link: $URL" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publish the spare link to the branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          echo "${{ steps.tunnel.outputs.url }}" > DEMO_LINK_SPARE.md
+          git add DEMO_LINK_SPARE.md
+          git commit -m "Spare demo tunnel link (auto-generated)"
+          git pull --rebase origin "${{ github.ref_name }}" || true
+          git push origin "HEAD:${{ github.ref_name }}"
+
+      - name: Keep the tunnel alive (up to ~5h45m)
+        run: |
+          echo "Serving $GEMMA_MODEL — pull status:"
+          tail -5 /tmp/pull.log || true
+          sleep 20400
