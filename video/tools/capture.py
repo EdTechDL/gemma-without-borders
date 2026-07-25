@@ -44,6 +44,10 @@ async def desktop(p):
     b.start("onboard_load")
     await page.goto(URL)
     await page.wait_for_timeout(9000)
+    # the probe can miss in headless runs, leaving the provisional "Phone"
+    # default - pick Computer explicitly so the citadel records full-bleed
+    await page.get_by_text("Computer", exact=True).click()
+    await page.wait_for_timeout(3500)
     b.end()
 
     b.start("name")

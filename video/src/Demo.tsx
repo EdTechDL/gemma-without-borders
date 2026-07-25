@@ -30,51 +30,53 @@ type Clip = {
   src: string;
   from: number;
   rate?: number;
+  crop?: boolean; // magnify the top 800px of the page (full-bleed scenes)
   caps: Cap[];
 };
+type Still = {kind: 'still'; sec: number; src: string; caps: Cap[]};
 type Card = {kind: 'title' | 'hook' | 'closing'; sec: number; caps?: Cap[]};
-type Scene = Clip | Card;
+type Scene = Clip | Still | Card;
 
-// Source timestamps come from the scripted capture (desktop-beats.json).
+// Source timestamps come from the scripted capture (desktop-beats.json),
+// verified frame-by-frame against the actual footage.
 const SCENES: Scene[] = [
   {kind: 'title', sec: 6},
   {kind: 'hook', sec: 8.5},
-  {kind: 'clip', sec: 6.5, src: 'desktop.webm', from: 12.0, caps: [
+  {kind: 'clip', sec: 6.5, src: 'desktop.webm', from: 21.0, caps: [
     {text: 'Tell the citadel your name — the monsters will use it.', from: 0.4},
   ]},
-  {kind: 'clip', sec: 7.5, src: 'desktop.webm', from: 25.7, caps: [
-    {text: 'Five monsters, one per curriculum strand — each one IS a wrong idea that feels right.', from: 0.3, dur: 4.6},
-    {text: 'And one more, for students who keep slipping…', from: 5.1, gold: true},
+  {kind: 'clip', sec: 7.5, src: 'desktop.webm', from: 51.5, caps: [
+    {text: 'Five monsters, one per curriculum strand — each one IS a wrong idea that feels right.', from: 0.4},
   ]},
-  {kind: 'clip', sec: 9, src: 'desktop.webm', from: 61.5, rate: 1.32, caps: [
+  {kind: 'clip', sec: 8, src: 'desktop.webm', from: 72.5, crop: true, caps: [
     {text: 'The nexus. Streamlit + three.js + Gemma 4 through Ollama — everything on one laptop.', from: 0.6},
   ]},
-  {kind: 'clip', sec: 7.6, src: 'desktop.webm', from: 136.6, caps: [
-    {text: 'Pick your battle. Equazor guards Algebra.', from: 0.4},
+  {kind: 'clip', sec: 7.6, src: 'desktop.webm', from: 104.6, crop: true, caps: [
+    {text: 'Pick your battle. Equazor guards Algebra.', from: 0.5},
   ]},
-  {kind: 'clip', sec: 7.6, src: 'desktop.webm', from: 144.6, caps: [
-    {text: 'Into its lair.', from: 0.5, dur: 3.4},
-    {text: 'It already remembers you.', from: 4.2, gold: true},
+  {kind: 'clip', sec: 2, src: 'desktop.webm', from: 110.9, crop: true, caps: []},
+  {kind: 'clip', sec: 5.9, src: 'desktop.webm', from: 119.6, crop: true, caps: [
+    {text: 'Into its lair — it already remembers you.', from: 0.3, gold: true},
   ]},
-  {kind: 'clip', sec: 11, src: 'desktop.webm', from: 157.2, rate: 2.4, caps: [
+  {kind: 'clip', sec: 11, src: 'desktop.webm', from: 127.5, rate: 2.05, caps: [
     {text: 'Its questions are bent around its favourite snare.', from: 0.3, dur: 4.6},
     {text: 'We answer wrong the way real students do — the minus sign slips.', from: 5.2},
   ]},
-  {kind: 'clip', sec: 9.6, src: 'desktop.webm', from: 184.3, caps: [
+  {kind: 'clip', sec: 9.6, src: 'desktop.webm', from: 150.6, caps: [
     {text: 'The wrong answer NAMES the wrong idea — a verified lookup, not a model guess.', from: 0.3, dur: 4.6},
     {text: 'Gemma explains why the method fails — grounded in the verified solution.', from: 5.1},
   ]},
-  {kind: 'clip', sec: 11.5, src: 'desktop.webm', from: 194.8, rate: 1.62, caps: [
+  {kind: 'clip', sec: 11.5, src: 'desktop.webm', from: 162.0, rate: 1.53, caps: [
     {text: 'The training loop asks HOW you got your answer.', from: 0.3, dur: 4.8},
     {text: 'Right answer, thin reasoning? It does not count. The streak stays at zero.', from: 5.4, gold: true},
   ]},
-  {kind: 'clip', sec: 9, src: 'desktop.webm', from: 214.0, rate: 1.45, caps: [
+  {kind: 'clip', sec: 9, src: 'desktop.webm', from: 180.3, rate: 1.44, caps: [
     {text: 'Miss again, and Gemma reads your own words — then switches teaching strategy, and says why.', from: 0.4},
   ]},
-  {kind: 'clip', sec: 6.8, src: 'desktop.webm', from: 228.0, caps: [
+  {kind: 'still', sec: 6.8, src: 'letters.png', caps: [
     {text: 'Everything the agent learns goes home in plain language — with printable practice.', from: 0.3},
   ]},
-  {kind: 'phone', sec: 10, src: 'phone.webm', from: 24.0, rate: 2, caps: [
+  {kind: 'phone', sec: 10, src: 'phone.webm', from: 24.5, rate: 2, caps: [
     {text: 'And the whole citadel fits in a pocket.', from: 0.5},
   ]},
 ];
@@ -139,13 +141,22 @@ const Vignette: React.FC = () => (
 );
 
 const ClipScene: React.FC<{s: Clip; durF: number}> = ({s, durF}) => (
-  <AbsoluteFill style={{background: '#000'}}>
+  <AbsoluteFill style={{background: '#000', overflow: 'hidden'}}>
     <OffthreadVideo
       muted
       src={staticFile(s.src)}
       startFrom={Math.round(s.from * FPS)}
       playbackRate={s.rate ?? 1}
-      style={{width: '100%', height: '100%', objectFit: 'cover'}}
+      style={{
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
+        // full-bleed pages fill only the top 800px of the recording; magnify
+        // that band to fill the frame so no dead page-bottom shows
+        ...(s.crop
+          ? {transform: 'scale(1.35)', transformOrigin: 'top center'}
+          : {}),
+      }}
     />
     <Vignette />
     {s.caps.map((c, i) => (
@@ -154,6 +165,30 @@ const ClipScene: React.FC<{s: Clip; durF: number}> = ({s, durF}) => (
     <EdgeFade durF={durF} />
   </AbsoluteFill>
 );
+
+const StillScene: React.FC<{s: Still; durF: number}> = ({s, durF}) => {
+  const f = useCurrentFrame();
+  const scale = interpolate(f, [0, durF], [1.02, 1.1]);
+  return (
+    <AbsoluteFill style={{background: '#000', overflow: 'hidden'}}>
+      <img
+        src={staticFile(s.src)}
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          transform: `scale(${scale})`,
+          transformOrigin: 'center 30%',
+        }}
+      />
+      <Vignette />
+      {s.caps.map((c, i) => (
+        <Panel key={i} cap={c} durF={durF} />
+      ))}
+      <EdgeFade durF={durF} />
+    </AbsoluteFill>
+  );
+};
 
 const PhoneScene: React.FC<{s: Clip; durF: number}> = ({s, durF}) => (
   <AbsoluteFill
@@ -392,6 +427,7 @@ export const Demo: React.FC = () => {
     let node: React.ReactNode;
     if (s.kind === 'clip') node = <ClipScene s={s} durF={durF} />;
     else if (s.kind === 'phone') node = <PhoneScene s={s} durF={durF} />;
+    else if (s.kind === 'still') node = <StillScene s={s} durF={durF} />;
     else if (s.kind === 'title') node = <TitleScene durF={durF} />;
     else if (s.kind === 'hook') node = <HookScene durF={durF} />;
     else node = <ClosingScene durF={durF} />;
