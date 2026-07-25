@@ -556,6 +556,67 @@ not, quite, so it picks a different way to explain and tells you which and why
 (5). You clear the idea, and it chooses where you go next (8). Then the night
 ends and it writes home (10).
 
+\subsection{The same ten, as a scan}
+
+For a reader in a hurry, here is the whole integration on one axis: in every
+row, \themodel\ is doing judgement work a template cannot do --- and in every
+row, a specific piece of code makes that judgement safe to put in front of a
+fourteen-year-old. Depth on the left, engineering on the right.
+
+\vspace{0.4em}
+\begin{center}
+\begin{tabularx}{0.97\textwidth}{@{}>{\sffamily\bfseries\color{Coral}}L{27mm} X X@{}}
+\toprule
+\textcolor{Gold}{\sffamily JOB} & \textcolor{Gold}{\sffamily WHAT \MakeUppercase{\themodel} DOES} &
+\textcolor{Gold}{\sffamily WHY IT CAN BE TRUSTED}\\
+\midrule
+1 --- Lessons & Writes the actual teaching prose, in the style of whichever
+approach is currently being tried. & The verified working rides inside the
+prompt, and it may not state a number that is not already in it.\\[0.5em]
+2 --- The miss & Explains why the option you picked felt reasonable, and where
+the method bends away from the truth. & The snare itself is a data-bank lookup,
+and the correct answer is already on the page --- nothing is re-derived.\\[0.5em]
+3 --- Hints & Writes a nudge first, then one concrete opening step. & Code
+chooses the depth, and both depths are grounded in the same verified
+working.\\[0.5em]
+4 --- Reasoning & Reads the sentence the student typed and judges whether the
+understanding is real. & The reply must be one of three labels; anything
+unparseable fails in the student's favour, and sentences with no mathematics in
+them never reach the model at all.\\[0.5em]
+5 --- Strategy & Picks which of the remaining teaching approaches to try next,
+and says why in one visible sentence. & The four approaches are fixed in code;
+a pick that is not on the list falls back to the ladder, out loud.\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\vspace{0.5em}
+\begin{center}
+\begin{tabularx}{0.97\textwidth}{@{}>{\sffamily\bfseries\color{Coral}}L{27mm} X X@{}}
+\toprule
+\textcolor{Gold}{\sffamily JOB} & \textcolor{Gold}{\sffamily WHAT \MakeUppercase{\themodel} DOES} &
+\textcolor{Gold}{\sffamily WHY IT CAN BE TRUSTED}\\
+\midrule
+6 --- Fresh questions & Writes a same-kind question modelled on the exact one
+the student missed. & It must declare which idea it is targeting, and code
+checks that declaration against the real one before anything is shown.\\[0.5em]
+7 --- The self-audit & Solves its own freshly written question again, blind,
+without the key. & The two answers must match; a mismatch destroys the question,
+and three failures stop the loop and say so.\\[0.5em]
+8 --- Direction & Chooses the next fight from the live candidates and names the
+evidence for the choice. & Code builds the candidate list from session state,
+refuses off-list replies, and the Collector's arrival is a hard rule the model
+cannot touch.\\[0.5em]
+9 --- The voice & Writes greetings, reactions and relic names from the player's
+actual history. & It is grounded in facts code assembles, told not to invent
+history, and none of it can move a score.\\[0.5em]
+10 --- The letter & Turns the evening's coded facts into a warm note a parent
+can act on. & On the progress page it may not print a single number: any digit
+in the reply, and code writes the sentence instead.\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
 \begin{quietbox}
 \textbf{One door, and what it buys.} Every prompt and every reply in this game
 passes through a single function. That is why the caps can be counted at all.
@@ -576,21 +637,21 @@ Here is the line the whole design is built on. Code owns what is \textbf{true}.
 \begin{center}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tikzpicture}
-  \node[cool, text width=70mm, align=left, minimum height=0mm, inner sep=3.6mm] (L)
+  \node[cool, text width=76mm, align=left, minimum height=0mm, inner sep=3.6mm] (L)
     {\textbf{CODE OWNS WHAT IS TRUE}\\[0.4em]
-     Every answer key\\
-     The snare on each wrong option\\
-     Every number that reaches a page\\
-     The lists it may choose from\\
-     The streak, the caps, the stop};
-  \node[gld, text width=70mm, align=left, minimum height=0mm, inner sep=3.6mm,
+     Every answer key comes from the verified vault, never from a model reply.\\[0.35em]
+     The snare behind each wrong option is stored data, found by lookup, not inference.\\[0.35em]
+     Every number a parent reads was printed by code; the model may not add one.\\[0.35em]
+     Every list the model chooses from is built by code, from the live session.\\[0.35em]
+     The streak, the call caps and the stopping rules are plain code, beyond argument.};
+  \node[gld, text width=76mm, align=left, minimum height=0mm, inner sep=3.6mm,
         right=13mm of L] (R)
     {\textbf{\themodel\ OWNS WHAT IS JUDGED}\\[0.4em]
-     How to explain this snare tonight\\
-     Whether your reasoning holds up\\
-     Which approach is worth trying next\\
-     Which fight this run has earned\\
-     What all of it means, for a parent};
+     How tonight's lesson should explain this particular snare, to this student.\\[0.35em]
+     Whether the reasoning the student typed shows real understanding or luck.\\[0.35em]
+     Which of the remaining teaching approaches is the most promising next try.\\[0.35em]
+     Which fight this run has earned, with the evidence named in one sentence.\\[0.35em]
+     What the whole evening means, told warmly, for the parent reading at home.};
   \draw[Muted, line width=0.9pt, dashed]
     ($(L.north east)!0.5!(R.north west)$) -- ($(L.south east)!0.5!(R.south west)$);
 \end{tikzpicture}
