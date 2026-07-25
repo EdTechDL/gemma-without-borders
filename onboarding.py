@@ -112,6 +112,31 @@ ONBOARDING_TEMPLATE = r"""
     transition:all .4s ease}
   .dot.on{background:#e08d6d;box-shadow:0 0 10px rgba(224,141,109,.9);transform:scale(1.25)}
 
+  /* ---- the setup callout: the name field and the phone/computer answer live
+     BELOW this scene, and a judge moving fast walks straight past both. So the
+     first beat says it mid-hall, where the stage is empty - big enough that it
+     cannot be missed, smaller than the title so it never competes with it. It
+     leaves when the tour moves on, and for good the moment a name lands. ---- */
+  #setup{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);
+    z-index:11;width:min(620px,86vw);box-sizing:border-box;text-align:center;
+    background:rgba(16,9,14,.78);border:1px solid rgba(224,141,109,.65);
+    border-radius:14px;padding:18px 22px 12px;pointer-events:none;
+    backdrop-filter:blur(3px);opacity:0;transition:opacity .5s ease;
+    animation:setupPulse 2.6s ease-in-out infinite}
+  #setup.on{opacity:1}
+  #setup .s-kick{font-size:clamp(.98rem,1.9vw,1.22rem);font-weight:900;
+    letter-spacing:.14em;text-transform:uppercase;color:#ffd87a;
+    text-shadow:0 0 14px rgba(255,216,122,.4)}
+  #setup .s-line{margin-top:7px;color:#f2e8dc;font-size:clamp(.86rem,1.5vw,1rem);
+    line-height:1.5}
+  #setup .s-line b{color:#ffe9d6}
+  #setup .s-arrow{margin-top:5px;color:#e08d6d;font-size:1.15rem;
+    animation:setupNudge 1.4s ease-in-out infinite}
+  @keyframes setupPulse{
+    0%,100%{box-shadow:0 0 26px rgba(224,141,109,.22),inset 0 0 22px rgba(224,141,109,.05)}
+    50%{box-shadow:0 0 40px rgba(224,141,109,.45),inset 0 0 26px rgba(224,141,109,.1)}}
+  @keyframes setupNudge{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
+
   /* ---- PHONE ----------------------------------------------------------
      Portrait first. The title band gives most of its share back to the
      monsters, the name plates keep only what stays legible in a fifth of a
@@ -119,6 +144,7 @@ ONBOARDING_TEMPLATE = r"""
      maths downstream reads these strips from the DOM, so the models reframe
      themselves the moment the copy shrinks - nothing here is hand-tuned. */
   @media (max-width:700px){
+    #setup{top:47%;padding:13px 14px 9px;border-radius:12px}
     #copy{height:19vh;padding:2vh 5vw 0}
     .beat{left:5vw;right:5vw;top:2vh}
     .beat h1{font-size:1.62rem;letter-spacing:-.3px;line-height:1.06}
@@ -203,6 +229,13 @@ ONBOARDING_TEMPLATE = r"""
            This mark, wherever you see it, is where mum and dad can read what
            the citadel has noticed about your maths.</p>
       </div>
+    </div>
+    <div id="setup" class="on">
+      <div class="s-kick">Hey challenger — two things before you enter</div>
+      <div class="s-line">Type <b>your name</b> and tell us if you are on a
+        <b>phone or a computer</b> — both live just below this hall, and the
+        citadel shapes the whole experience around them.</div>
+      <div class="s-arrow">&#9660;</div>
     </div>
     <div id="labels"></div>
     <div id="bar">
@@ -736,6 +769,20 @@ window.addEventListener('load', function(){
   var nextBtn=document.getElementById('next');
   var enterA=document.getElementById('enter');
 
+  // The setup callout leaves for good the moment a name lands in the field
+  // below - read through the parent document, the same way the probe writes.
+  var setupEl=document.getElementById('setup'), setupDone=false;
+  (function setupPoll(){
+    if(setupDone) return;
+    try{
+      var el=window.parent.document.querySelector('.st-key-onboard_name input');
+      if(el && el.value.trim()){
+        setupDone=true; setupEl.classList.remove('on'); return;
+      }
+    }catch(e){}
+    setTimeout(setupPoll, 800);
+  })();
+
   function setStep(n){
     step=Math.max(1,Math.min(STEPS,n));
     var beats=document.querySelectorAll('.beat');
@@ -754,6 +801,7 @@ window.addEventListener('load', function(){
     });
     if(collector) collector.holder.userData.want=(step===4)?1:0;
     gate.visible=(step===1||step===5);
+    if(setupEl) setupEl.classList.toggle('on', step===1 && !setupDone);
     document.getElementById('vig').classList.toggle('dread',step===4);
     moodTo=(step===4)?DREAD:WARM;
     keyWant=(step===1||step===5)?0.34:1.0;

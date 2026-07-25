@@ -5,7 +5,7 @@ Everywhere the app needs AI, it calls ask_gemma(). The model runs locally via
 Ollama (http://localhost:11434) — fully on-device, no data leaves the machine.
 
 Model selection: set the GEMMA_MODEL environment variable to switch models with
-zero code changes (e.g. GEMMA_MODEL=gemma3:12b once the larger pull finishes).
+zero code changes (e.g. GEMMA_MODEL=gemma4:12b once the larger pull finishes).
 
 If Ollama isn't running (a teammate without it installed), the app still works:
 it falls back to clearly-marked placeholder text instead of crashing.
@@ -95,9 +95,9 @@ def plainify(text: str) -> str:
     return t.strip()
 
 OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434")
-MODEL = os.environ.get("GEMMA_MODEL", "gemma3:12b")  # 1b runs too, one env var away
+MODEL = os.environ.get("GEMMA_MODEL", "gemma4:12b")  # 1b runs too, one env var away
 # Vision needs a multimodal Gemma (4b/12b/27b - the 1b is text-only).
-VISION_MODEL = os.environ.get("GEMMA_VISION_MODEL", "gemma3:12b")
+VISION_MODEL = os.environ.get("GEMMA_VISION_MODEL", "gemma4:12b")
 TIMEOUT_S = int(os.environ.get("GEMMA_TIMEOUT_S", "120"))
 
 
@@ -107,7 +107,7 @@ def ask_gemma(prompt: str, max_new_tokens: int = 600) -> str:
     A model that is slow, busy or gone answers the same way one that was never
     installed does: with clearly marked placeholder text. That matters most on
     the largest models, where a single call on modest hardware can outlast the
-    timeout - a judge running gemma3:27b should see the app degrade, not throw.
+    timeout - a judge running gemma4:27b should see the app degrade, not throw.
     Raise GEMMA_TIMEOUT_S to give a big model more room.
     """
     if gemma_available():

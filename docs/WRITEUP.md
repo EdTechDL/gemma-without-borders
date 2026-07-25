@@ -15,7 +15,7 @@ Five monsters hold the citadel, each out to get the student in its own favourite
 
 ## How we built it - which Gemma model, RAG, prompt engineering or fine-tuning, what frameworks?
 
-**Model.** `gemma3:12b` served locally by Ollama. `gemma3:1b` is one environment variable away (`GEMMA_MODEL`), and every call site switches with it. We developed against both, because what the 1b gets wrong told us where the guardrails had to go: on identical prompts it under-detects thin reasoning that the 12b catches reliably, so the code, never the model, owns the streak and the caps.
+**Model.** `gemma4:12b` served locally by Ollama. `gemma4:1b` is one environment variable away (`GEMMA_MODEL`), and every call site switches with it. We developed against both, because what the 1b gets wrong told us where the guardrails had to go: on identical prompts it under-detects thin reasoning that the 12b catches reliably, so the code, never the model, owns the streak and the caps.
 
 **No fine-tuning. No vector RAG.** Retrieval is a deterministic tag lookup against a verified bank — similarity search was never needed, because the payload is an exact answer key. Everything else is prompt engineering wrapped in code that refuses bad replies.
 

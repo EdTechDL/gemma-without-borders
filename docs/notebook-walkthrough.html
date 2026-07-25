@@ -199,7 +199,7 @@
     <div class="nb-bar">
       <span class="nb-name">gemma_without_borders_demo.ipynb</span>
       <span class="chip">Python 3 (ipykernel)</span>
-      <span class="chip live">Ollama: gemma3:1b running locally</span>
+      <span class="chip live">Ollama: gemma4:1b running locally</span>
     </div>
     <div class="nb-body">
 
@@ -237,7 +237,7 @@ Number: 8   Algebra: 7   Data: 5   Geometry &amp; Measurement: 8   Financial Lit
         <div class="prompt">In [2]:</div>
         <div class="code"><pre><span class="k">import</span> requests
 
-MODEL = <span class="s">"gemma3:1b"</span>  <span class="c"># later: "gemma3:12b" — one string, nothing else changes</span>
+MODEL = <span class="s">"gemma4:1b"</span>  <span class="c"># later: "gemma4:12b" — one string, nothing else changes</span>
 
 <span class="k">def</span> <span class="f">ask_gemma</span>(prompt):
     r = requests.post(<span class="s">"http://localhost:11434/api/generate"</span>,
@@ -383,7 +383,7 @@ Suggested action: short 1:1 on the focus trick before moving on.</pre></div>
     fast, predictable, impossible to hallucinate. Gemma appears in exactly two places
     (cells 3 and 6), both through the single <code class="inline">ask_gemma()</code> door.
     Swapping to the 12B model when it finishes downloading is one edit:
-    <code class="inline">MODEL = "gemma3:12b"</code>. The same cells run unchanged in a
+    <code class="inline">MODEL = "gemma4:12b"</code>. The same cells run unchanged in a
     Kaggle notebook for the judges — point <code class="inline">ask_gemma()</code> at the
     Kaggle GPU version from our notebook and everything else stays identical.
   </p>

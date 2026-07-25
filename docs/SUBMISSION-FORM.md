@@ -5,7 +5,7 @@ they are marked **[YOU FILL IN]**.
 
 One decision before you paste: the model line says **Gemma 4 (`gemma4:12b`)**. Only
 paste that if a teammate has confirmed it actually runs. If not, change it to
-**Gemma 3 (`gemma3:12b`)** — the paragraph reads correctly either way, and it is far
+**Gemma 4 (`gemma4:12b`)** — the paragraph reads correctly either way, and it is far
 better to name the model you actually ran than to be caught by a judge who runs it.
 
 ---
