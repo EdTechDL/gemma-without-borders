@@ -11,9 +11,6 @@ on:
         description: "Ollama model tag to serve"
         default: "gemma3:12b"
         required: false
-  push:
-    branches: [claude/local-demo-cloudflare-sqha63]
-
 permissions:
   contents: write
 
