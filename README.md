@@ -164,5 +164,12 @@ The 1b under-detects thin reasoning that the 12b catches, which is why the code
 - three.js and its loaders are vendored into `static/vendor`.
 - The citadel, introduction and Collector themes were generated with ElevenLabs by the team and ship in `static/audio`; battle stingers are procedural WebAudio. Nothing is fetched from the internet at runtime.
 
+## License
+
+Apache 2.0 — the full text is in [LICENSE](LICENSE), and [NOTICE](NOTICE) carries
+the attribution that redistributions have to keep.
+
+Copyright 2026 Amarah.
+
 ---
 *Built for the GDG Windsor · Build with AI — Gemma Hackathon. Edge / On-Device track.*
